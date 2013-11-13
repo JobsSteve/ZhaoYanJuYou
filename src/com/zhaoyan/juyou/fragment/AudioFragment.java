@@ -257,6 +257,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				mDeleteDialog.cancel();
 				mDeleteDialog = null;
 			}
+			updateUI(mAdapter.getCount());
 			mNotice.showToast("操作完成");
 		}
     	
@@ -345,6 +346,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				
 				@Override
 				public void onTransportFail() {
+					Log.e(TAG, "onMenuClick.onTransportFail");
 				}
 			});
 			showMenuBar(false);

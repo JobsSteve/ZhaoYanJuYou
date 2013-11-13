@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.TransportAnimationView;
 import com.zhaoyan.juyou.common.ZYConstant;
 
 public class BaseFragment extends Fragment{
@@ -21,6 +24,7 @@ public class BaseFragment extends Fragment{
 	
 	//title
 	protected TextView mTitleNameView,mTitleNumView;
+	private ViewGroup mViewGroup;
 	
 	/**
 	 * current fragment file size
@@ -36,6 +40,7 @@ public class BaseFragment extends Fragment{
 	}
 	
 	protected void initTitle(View view, int title_resId){
+		mViewGroup = (ViewGroup) view;
 		mTitleNameView = (TextView) view.findViewById(R.id.tv_title_name);
 		mTitleNameView.setText(title_resId);
 		mTitleNumView = (TextView) view.findViewById(R.id.tv_title_num);
@@ -44,9 +49,9 @@ public class BaseFragment extends Fragment{
 	
 	protected void updateTitleNum(int selected){
 		if (selected == -1) {
-			mTitleNumView.setText(count + "");
+			mTitleNumView.setText(getString(R.string.num_format, count));
 		}else {
-			mTitleNumView.setText(selected + "/" + count);
+			mTitleNumView.setText(getString(R.string.num_format2, selected, count));
 		}
 	}
 	
@@ -56,9 +61,10 @@ public class BaseFragment extends Fragment{
 	 * @param startViews The transport item image view.
 	 */
 	public void showTransportAnimation(ImageView... startViews) {
-//		if (mFragmentActivity != null) {
-//			mFragmentActivity.showTransportAnimation(startViews);
-//		}
+		TransportAnimationView transportAnimationView = new TransportAnimationView(
+				mContext);
+		transportAnimationView.startTransportAnimation(mViewGroup,
+				mTitleNameView, startViews);
 	}
 	
 	/**

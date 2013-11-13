@@ -5,7 +5,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Display;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.ZYUtils;
@@ -108,6 +111,17 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		mFilePath = filePath;
 		mModified = date;
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATEUI_SINGLE));
+	}
+	
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		super.show();
+		WindowManager windowManager = getWindow().getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		WindowManager.LayoutParams lp = getWindow().getAttributes();
+		lp.width = (int)display.getWidth();
+		getWindow().setAttributes(lp);
 	}
 	
 	

@@ -12,6 +12,7 @@ public class BaseActivity extends Activity {
 	// title view
 	protected View mCustomTitleView;
 	protected TextView mTitleNameView;
+	protected TextView mTitleNumView;
 
 	protected void initTitle(int titleName) {
 		mCustomTitleView = findViewById(R.id.title);
@@ -20,7 +21,11 @@ public class BaseActivity extends Activity {
 		mTitleNameView = (TextView) mCustomTitleView
 				.findViewById(R.id.tv_title_name);
 		mTitleNameView.setText(titleName);
-
+		mTitleNumView = (TextView) mCustomTitleView.findViewById(R.id.tv_title_num);
+	}
+	
+	protected void updateTitleNum(int num) {
+		mTitleNumView.setText(getString(R.string.num_format, num));
 	}
 
 	protected void finishWithAnimation() {

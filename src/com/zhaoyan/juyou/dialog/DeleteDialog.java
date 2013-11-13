@@ -115,6 +115,7 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 					R.layout.dialog_delete_item, mDeleteNameList);
 			mDeleteListView.setAdapter(adapter);
 			mDeletingView.setVisibility(View.GONE);
+			
 		}else {
 			mDeletingView.setVisibility(View.VISIBLE);
 			mDeleteListView.setVisibility(View.GONE);
