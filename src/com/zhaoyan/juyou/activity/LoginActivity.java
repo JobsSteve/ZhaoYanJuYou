@@ -81,6 +81,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		intent.setClass(this, MainActivity.class);
 		startActivity(intent);
+		overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 	}
 
 	@Override

@@ -1,20 +1,44 @@
 package com.zhaoyan.juyou.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.activity.AudioActivity;
 
 
-public class GuanJiaFragment extends Fragment {
-
+public class GuanJiaFragment extends BaseFragment implements OnClickListener {
+	private static final String TAG = "GuanJiaFragment";
+	
+	//items
+	private View mMusicView;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View viweRoot = inflater.inflate(R.layout.guanjia_fragment, container, false);
-		return viweRoot;
+		View rootView = inflater.inflate(R.layout.guanjia_fragment, container, false);
+		
+		initView(rootView);
+		return rootView;
+	}
+	
+	public void initView(View view){
+		mMusicView = view.findViewById(R.id.rl_guanjia_music);
+		mMusicView.setOnClickListener(this);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.rl_guanjia_music:
+			openActivity(AudioActivity.class);
+			break;
+
+		default:
+			break;
+		}
 	}
 }

@@ -2,19 +2,24 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.    -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+            backward-compatibility can go here.        -->
     </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    <style name="CustomTheme.NoTitleBar" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/welcome</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:screenOrientation">portrait</item>
     </style>
 
     <style name="login_input">
@@ -63,11 +68,23 @@
         <item name="android:layout_marginLeft">10.0dip</item>
     </style>
 
-    <style name="Translucent" parent="android:Theme.Light">
+    <style name="Theme.Translucent" parent="@style/AppTheme">
         <item name="android:windowBackground">@color/translucent</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:screenOrientation">portrait</item>
+        <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
     </style>
+    
+    <style name="Custom.ProgressBar.Horizontal" parent="android:Widget.ProgressBar.Horizontal">  
+    	<item name="android:indeterminateOnly">false</item>  
+    	<item name="android:progressDrawable">@drawable/custom_progressbar</item>  
+    	<item name="android:minHeight">5dip</item>  
+    	<item name="android:maxHeight">5dip</item>  
+	</style> 
 
+    <style name="ActivityAnimation">
+        <item name="android:windowEnterAnimation">@anim/activity_right_in</item>
+        <item name="android:windowExitAnimation">@anim/activity_right_out</item>
+    </style>
 </resources>

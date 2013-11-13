@@ -9,5 +9,17 @@
     <color name="translucent">#00000000</color>
     <color name="table_title_selected">#5d91be</color>
     <color name="table_title_unselected">#696969</color>
+    
+    <!-- traffic statistics color -->
+    <color name="traffic_send">#5eb95e</color>
+	<color name="traffic_receive">#ff33b5e5</color>
+	<color name="orange">#ffa400</color>
+	<color name="blue1">#8BCFFC</color>
+	
+	<color name="holo_blue1">#33b5e5</color>
+	<color name="holo_blue2">#0099cc</color>
+	
+	<color name="black">#000000</color>
+    <color name="disable_color">#D9D9D9</color>
 
 </resources>

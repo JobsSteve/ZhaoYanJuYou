@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+
+    <TextView
+        android:id="@+id/title_veiw"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:text="@string/delete_confirm_msg"
+        android:gravity="center_horizontal"
+         />
+    
+    <ListView
+        android:id="@+id/lv_delete"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:clickable="false"
+        android:layout_margin="10dp"
+        android:divider="@android:color/transparent"
+        android:visibility="visible" >
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/rl_deleting"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        android:orientation="vertical"
+         >
+         
+          <TextView
+            android:id="@+id/name_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="@color/black"
+            android:textIsSelectable="false"
+             />
+          
+         <ProgressBar
+            android:id="@+id/bar_delete"
+            style="@style/Custom.ProgressBar.Horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
+
+    </LinearLayout>
+    
+    <include
+        android:id="@+id/button_layout"
+        android:layout_weight="1"
+        android:visibility="gone"
+        layout="@layout/dialog_button" />
+</LinearLayout>

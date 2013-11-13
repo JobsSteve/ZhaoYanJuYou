@@ -47,31 +47,38 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait" 
+            android:theme="@style/CustomTheme.NoTitleBar"
+            >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.AccountSettingActivity"
-            android:theme="@style/Translucent" >
+            android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.InviteActivity"
-            android:theme="@style/Translucent" >
+            android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.InviteBluetoothActivity"
-            android:theme="@style/Translucent" >
+            android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.InviteHttpActivity"
-            android:theme="@style/Translucent" >
+            android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.ConnectFriendsActivity"
-            android:theme="@style/Translucent" >
+            android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.RegisterAccountActivity"
-            android:theme="@style/Translucent" >
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AudioActivity"
+            android:theme="@style/Theme.Translucent">
         </activity>
 
         <service android:name="com.zhaoyan.communication.search.WifiOrAPSearchService" >

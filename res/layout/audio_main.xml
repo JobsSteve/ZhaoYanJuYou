@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/activity_background"
+    android:id="@+id/rl_audio_main"
+     >
+     
+    <include 
+        android:id="@+id/title"
+        layout="@layout/title"
+        />
+
+   <ListView 
+       android:id="@+id/audio_listview"
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+       android:cacheColorHint="#00000000"
+       android:fastScrollEnabled="true"
+       android:fastScrollAlwaysVisible="false"
+       android:focusable="true"
+       android:layout_above="@+id/bottom"
+       android:layout_below="@+id/title"
+      />
+   
+   <ProgressBar 
+       android:id="@+id/audio_progressbar"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_centerInParent="true"
+       android:indeterminateDrawable="@drawable/loading_progressbar"
+       />
+   
+   <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" 
+        android:visibility="visible"
+        >
+        <include
+            android:id="@+id/menubar_bottom"
+            layout="@layout/menubar_bottom" 
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

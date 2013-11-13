@@ -27,7 +27,7 @@ public class BaseFragmentActivity extends FragmentActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			finish();
-			overridePendingTransition(0, R.anim.activity_right_out);
+//			overridePendingTransition(0, R.anim.activity_right_out);
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);

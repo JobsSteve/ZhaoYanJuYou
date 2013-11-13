@@ -9,13 +9,18 @@
     <string name="cancel">取消</string>
     <string name="delete_confirm">删除确认</string>
     <string name="info">属性: <xliff:g id="info">%1$s</xliff:g></string>
-    <string name="name">名称:<xliff:g id="name">%1$s</xliff:g></string>
-    <string name="version">版本:<xliff:g id="version">%1$s</xliff:g></string>
-    <string name="location">位置:<xliff:g id="location">%1$s</xliff:g></string>
-    <string name="pkg_name">包名:<xliff:g id="package">%1$s</xliff:g></string>
-    <string name="size">大小:<xliff:g id="size">%1$s</xliff:g></string>
-    <string name="modif_date">修改日期:<xliff:g id="date">%1$s</xliff:g></string>
-    <string name="type">类型:<xliff:g id="type">%1$s</xliff:g></string>
+    <string name="info1">属性</string>
+    <string name="info2">%s 属性</string>
+    <string name="name">名称: <xliff:g id="name">%1$s</xliff:g></string>
+    <string name="version">版本: <xliff:g id="version">%1$s</xliff:g></string>
+    <string name="location">位置: <xliff:g id="location">%1$s</xliff:g></string>
+    <string name="pkg_name">包名: <xliff:g id="package">%1$s</xliff:g></string>
+    <string name="size">大小: <xliff:g id="size">%1$s</xliff:g></string>
+    <string name="include_files">包含: %1$d个文件, %2$d个文件夹</string>
+    <string name="modif_date">修改日期: <xliff:g id="date">%1$s</xliff:g></string>
+    <string name="type">类型: <xliff:g id="type">%1$s</xliff:g></string>
+    <string name="type_file">类型: 文件</string>
+    <string name="type_folder">类型: 文件夹</string>
     
     <string name="network">网络邻居</string>
     <string name="recommend">精品推荐</string>
@@ -51,13 +56,14 @@
     <string name="menu_start">启动</string>
     <string name="menu_open">打开</string>
     <string name="menu_send">发送</string>
+    <string name="menu_backup">备份</string>
     <string name="menu_delete">删除</string>
     <string name="menu_rename">重命名</string>
     <string name="menu_info">属性</string>
     <string name="menu_play">播放</string>
     <string name="menu_more">更多</string>
-    <string name="menu_app_info">应用程序信息</string>
-    <string name="menu_uninstall">卸载程序</string>
+    <string name="menu_app_info">应用信息</string>
+    <string name="menu_uninstall">卸载</string>
     <string name="menu_move_to_game">移至游戏</string>
     <string name="menu_move_to_app">移至应用</string>
     <string name="menu_install">安装</string>
@@ -66,12 +72,16 @@
     <string name="video_type">电影视频</string>
     <string name="video_type_tip">支持rmvb,mkv,mov,flv等格式</string>
     <string name="doc_type">办公文档</string>
-    <string name="doc_type_tip">支持doc,ppt,xls,pdf等格式</string>
+    <string name="doc_type_format">办公文档(%d)</string>
+    <string name="doc_type_tip">支持doc,ppt,xls等格式</string>
     <string name="ebook_type">电子书籍</string>
-    <string name="ebook_type_tip">支持umd,ebk,txt,chm等格式</string>
+    <string name="ebook_type_format">电子书籍(%d)</string>
+    <string name="ebook_type_tip">支持umd,pdf,txt,chm等格式</string>
     <string name="apk_type">应用安装包</string>
+    <string name="apk_type_format">应用安装包(%d)</string>
     <string name="apk_type_tip">支持apk格式</string>
     <string name="archive_type">压缩包文件</string>
+    <string name="archive_type_format">压缩包文件(%d)</string>
     <string name="archive_type_tip">支持7z,rar,zip,iso等格式</string>
     <string name="big_file_type">大文件</string>
     <string name="big_file_type_tip">支持50M以上任意格式文件</string>
@@ -127,7 +137,7 @@
     <string name="copy_cancel">取消</string>
      <string name="copy_cancel_msg">将不会改变任何文件</string>
      
-     <string name="delete_confirm_msg">确定要删除这个文件？</string>
+     <string name="delete_confirm_msg">确定要删除这些？</string>
      <string name="delete_fail">无法删除这个文件</string>
      
      <string name="remote_share_server_list_msg">远程文件共享列表</string>
@@ -154,6 +164,7 @@
      <string name="me">我</string>
      
      <string name="num_format">(<xliff:g id="num">%1$d</xliff:g>)</string>
+     <string name="num_format2">( %1$d/%2$d )</string>
      <string name="transfer_all">全部发送(<xliff:g id="num">%1$d</xliff:g>)</string>
      <string name="transfer_limit">超过同时发送文件个数上限(5)</string>
      <string name="check_one_please">至少选中一个文件</string>
@@ -162,7 +173,7 @@
      <string name="select_msg">已选中%1$s</string>
      
      <string name="invite">邀请</string>
-     <string name="invite_install">邀请朋友安装聚游</string>
+     <string name="invite_install">邀请朋友安装朝颜无限</string>
      <string name="invite_weixin">微信邀请</string>
      <string name="invite_qq">QQ邀请</string>
      <string name="invite_bluetooth">蓝牙邀请</string>
@@ -180,4 +191,11 @@
      
      <string name="select_all">全选</string>
      <string name="unselect_all">取消全选</string>
+     
+     <string name="handling">正在处理：</string>
+     <string name="backuping">正在备份：</string>
+     <string name="backup_fail">%s 备份失败</string>
+     <string name="backuping_app">正在备份应用：%1s</string>
+     <string name="backup_tip">滑动此处查看备份进度</string>
+     <string name="backup_over">备份完成</string>
 </resources>

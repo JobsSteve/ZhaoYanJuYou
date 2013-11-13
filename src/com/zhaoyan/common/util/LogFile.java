@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.zhaoyan.common.file.FileUtil;
-
 import android.util.Log;
 
 import android.content.Context;
@@ -123,7 +121,7 @@ public class LogFile {
 				return;
 			}
 		}
-		char[] log = FileUtil.getChars(logs);
+		char[] log = ZYUtils.getChars(logs);
 		try {
 			mWriter.write(log);
 			mWriter.flush();
