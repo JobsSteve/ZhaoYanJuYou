@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/activity_background" >
+
+    <include
+        android:id="@+id/title"
+        layout="@layout/title" />
+
+    <LinearLayout
+        android:id="@+id/ll_input"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/title"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_nick_name"
+            style="@style/edit_text_label"
+            android:text="@string/nick_name_label" />
+
+        <EditText
+            android:id="@+id/et_nick_name"
+            style="@style/edit_text"
+            android:hint="@string/nick_name_input_hint"
+            android:maxLength="50" >
+
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_input"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="120.0dip"
+            android:layout_height="35.0dip"
+            android:background="@drawable/btn_selector"
+            android:text="@string/cancel"
+            android:textColor="@color/button_text_selector"
+            android:textSize="16.0sp" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="120.0dip"
+            android:layout_height="35.0dip"
+            android:layout_marginLeft="30.0dip"
+            android:background="@drawable/btn_selector"
+            android:text="@string/save"
+            android:textColor="@color/button_text_selector"
+            android:textSize="16.0sp" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f5f7fa" >
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/title_bg" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/guan_jia"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" >
+        </TextView>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="15dp" >
+
+            <!-- Connect -->
+
+            <RelativeLayout
+                android:id="@+id/rl_guanjia_connect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_item_bg"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_guanjia_connect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/connect" />
+
+                <ImageView
+                    android:id="@+id/iv_guanjia_connect_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_guanjia_connect_arrow"
+                    android:layout_toRightOf="@id/iv_guanjia_connect"
+                    android:text="@string/connect_friends"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <!-- Inivte -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_invite"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_invite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/invite" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_invite_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_invite_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_invite"
+                        android:text="@string/invite"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <!-- History -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_history"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_history"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/history" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_history_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_history_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_history"
+                        android:text="@string/history"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <!-- Game -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_game"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_game"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/game" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_game_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_game_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_game"
+                        android:text="@string/game"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <!-- Application -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_application"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_application"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/application" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_application_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_application_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_application"
+                        android:text="@string/application"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <!-- Photo -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_photo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_photo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/photo" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_photo_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_photo_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_photo"
+                        android:text="@string/photo"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <!-- Picture -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_picture"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_picture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/picture" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_picture_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_picture_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_picture"
+                        android:text="@string/picture"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <!-- Music -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_music"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_music"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/music" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_music_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_music_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_music"
+                        android:text="@string/music"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <!-- Video -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_video"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_video"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/video" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_video_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_video_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_video"
+                        android:text="@string/video"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <!-- File document -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_file_document"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_document"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/file_document" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_document_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_file_document_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_file_document"
+                        android:text="@string/file_document"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <!-- File compressed -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_file_compressed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_compressed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/file_compressed" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_compressed_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_file_compressed_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_file_compressed"
+                        android:text="@string/file_compressed"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <!-- File apk -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_file_apk"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_apk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/file_apk" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_apk_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_file_apk_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_file_apk"
+                        android:text="@string/file_apk"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+                <!-- File all -->
+
+                <RelativeLayout
+                    android:id="@+id/rl_guanjia_file_all"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/file_all" />
+
+                    <ImageView
+                        android:id="@+id/iv_guanjia_file_all_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/iv_guanjia_file_all_arrow"
+                        android:layout_toRightOf="@id/iv_guanjia_file_all"
+                        android:text="@string/file_all"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

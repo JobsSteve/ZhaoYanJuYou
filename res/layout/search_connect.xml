@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include
+        android:id="@+id/search_init"
+        layout="@layout/search_connect_init" >
+    </include>
+
+    <include
+        android:id="@+id/search_seach_result"
+        layout="@layout/search_connect_search_result"
+        android:visibility="gone" >
+    </include>
+
+    <include
+        android:id="@+id/search_connecting"
+        layout="@layout/search_connect_connecting"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/search_creating_server"
+        layout="@layout/search_connect_creating_server"
+        android:visibility="gone" >
+    </include>
+
+</RelativeLayout>

@@ -1,0 +1,73 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="login_input">
+        <item name="android:textSize">16.0sp</item>
+        <item name="android:textColor">#ff59616b</item>
+        <item name="android:textColorHint">#ffb0b0b0</item>
+        <item name="android:background">@drawable/login_edittext_selector</item>
+        <item name="android:paddingLeft">55.0dip</item>
+        <item name="android:paddingRight">10.0dip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">40.0dip</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="login_label">
+        <item name="android:textSize">14.0sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ff59616b</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_marginLeft">15.0dip</item>
+    </style>
+
+    <style name="edit_text">
+        <item name="android:textSize">16.0sp</item>
+        <item name="android:textColor">#ff59616b</item>
+        <item name="android:textColorHint">#ffb0b0b0</item>
+        <item name="android:background">@drawable/login_edittext_selector</item>
+        <item name="android:paddingLeft">10.0dip</item>
+        <item name="android:paddingRight">10.0dip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">40.0dip</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="edit_text_label">
+        <item name="android:textSize">14.0sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ff59616b</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_marginLeft">10.0dip</item>
+    </style>
+
+    <style name="Translucent" parent="android:Theme.Light">
+        <item name="android:windowBackground">@color/translucent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:screenOrientation">portrait</item>
+    </style>
+
+</resources>

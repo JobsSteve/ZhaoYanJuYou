@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is my string, donot write here,if you really want write here,tell me,OK????? -->
+<resources
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    >
+    
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="delete_confirm">删除确认</string>
+    <string name="info">属性: <xliff:g id="info">%1$s</xliff:g></string>
+    <string name="name">名称:<xliff:g id="name">%1$s</xliff:g></string>
+    <string name="version">版本:<xliff:g id="version">%1$s</xliff:g></string>
+    <string name="location">位置:<xliff:g id="location">%1$s</xliff:g></string>
+    <string name="pkg_name">包名:<xliff:g id="package">%1$s</xliff:g></string>
+    <string name="size">大小:<xliff:g id="size">%1$s</xliff:g></string>
+    <string name="modif_date">修改日期:<xliff:g id="date">%1$s</xliff:g></string>
+    <string name="type">类型:<xliff:g id="type">%1$s</xliff:g></string>
+    
+    <string name="network">网络邻居</string>
+    <string name="recommend">精品推荐</string>
+    <string name="zy_tiandi">朝颜天地</string>
+    <string name="file_browser">批量传输</string>
+    <string name="game">游戏</string>
+    <string name="app">应用</string>
+    <string name="audio">音频</string>
+    <string name="video">视频</string>
+    <string name="file">文件</string>
+    <string name="folder">文件夹</string>
+    <string name="camera">相机</string>
+    <string name="gallery">图库</string>
+    <string name="image">图片</string>
+    <string name="media">影音</string>
+    <string name="remote_share">远程访问</string>
+    <string name="history">记录</string>
+    
+    <string name="connect">连接</string>
+    <string name="connecting">"正在连接&#8230;"</string>
+    <string name="creating">正在创建&#8230;</string>
+    <string name="create_ok">创建成功,等待加入&#8230;</string>
+    <string name="close">关闭</string>
+    
+    <string name="file_classify">文件分类</string>
+    <string name="all_file">全部文件</string>
+    <string name="sdcard">SD卡</string>
+    <string name="internal_sdcard">手机存储</string>
+    <string name="no_sdcard">SDCard不存在</string>
+    
+    <!-- menu start -->
+    <string name="menu">菜单</string>
+    <string name="menu_start">启动</string>
+    <string name="menu_open">打开</string>
+    <string name="menu_send">发送</string>
+    <string name="menu_delete">删除</string>
+    <string name="menu_rename">重命名</string>
+    <string name="menu_info">属性</string>
+    <string name="menu_play">播放</string>
+    <string name="menu_more">更多</string>
+    <string name="menu_app_info">应用程序信息</string>
+    <string name="menu_uninstall">卸载程序</string>
+    <string name="menu_move_to_game">移至游戏</string>
+    <string name="menu_move_to_app">移至应用</string>
+    <string name="menu_install">安装</string>
+    <!-- menu end -->
+    
+    <string name="video_type">电影视频</string>
+    <string name="video_type_tip">支持rmvb,mkv,mov,flv等格式</string>
+    <string name="doc_type">办公文档</string>
+    <string name="doc_type_tip">支持doc,ppt,xls,pdf等格式</string>
+    <string name="ebook_type">电子书籍</string>
+    <string name="ebook_type_tip">支持umd,ebk,txt,chm等格式</string>
+    <string name="apk_type">应用安装包</string>
+    <string name="apk_type_tip">支持apk格式</string>
+    <string name="archive_type">压缩包文件</string>
+    <string name="archive_type_tip">支持7z,rar,zip,iso等格式</string>
+    <string name="big_file_type">大文件</string>
+    <string name="big_file_type_tip">支持50M以上任意格式文件</string>
+    
+    <string name="item_msg">第<xliff:g id="item">%1$d</xliff:g>项</string>
+    
+    <string name="folder_content_null">"&#060;空文件夹&#062;"</string>
+    <string name="camera_content_null">"&#060;没有发现照片&#062;"</string>
+    <string name="gallery_content_null">"&#060;没有发现图片&#062;"</string>
+    <string name="audio_content_null">"&#060;没有发现音频&#062;"</string>
+    <string name="video_content_null">"&#060;没有发现视频&#062;"</string>
+    <string name="apk_content_null">"&#060;没有发现用户应用程序&#062;"</string>
+    <string name="game_app_content_null">"&#060;我还没安装游戏&#062;"</string>
+    <string name="dream_app_content_null">"&#060;还没游戏,去下载一个&#062;"</string>
+    
+    <string name="cannot_start_app">无法从这里启动该程序</string>
+    <string name="app_has_started">该程序已经启动</string>
+    
+    <string name="invite_bluetooth">蓝牙邀请</string>
+    <string name="invite_bluetooth_first_step">第一步:</string>
+    <string name="invite_bluetooth_second_step">第二步:</string>
+    <string name="invite_bluetooth_send">搜索-发送</string>
+    <string name="invite_bluetooth_first_step_tip">请身边好友打开蓝牙,保持对附近的蓝牙设备可见（如图所示）</string>
+    <string name="invite_bluetooth_second_step_tip">好友完成第一步后,请点击搜索-发送按钮，就可以搜索TA的手机并把朝颜无限发送过去</string>
+    <string name="back">返回</string>
+    
+    <string name="connect_tip_msg">选择与朋友互连</string>
+    <string name="search_sever">搜索连接</string>
+    <string name="searching_sever">正在搜索&#8230;</string><!-- &#8230; ... -->
+    <string name="server_not_found">未发现周围可用连接</string>
+    <string name="create_server">创建连接</string>
+    <string name="connectable">可用连接</string>
+    <string name="connect_access">已连接,开始远程访问</string>
+    
+    <string name="name_setting">设置名称</string>
+    <string name="save">保存</string>
+    <string name="user_name">名称:</string>
+    <string name="click_to_set">点我设置名称</string>
+    <string name="name_set_tip">名称最大长度为8个字符</string>
+    <string name="save_setting">保存设置</string>
+    
+    <string name="copy_ready">准备下载:<xliff:g id="copy">%1$s</xliff:g></string>
+    <string name="copying">正在下载:<xliff:g id="copy">%1$s</xliff:g></string>
+    <string name="copy_ok">下载完成:<xliff:g id="copy">%1$s</xliff:g></string>
+    <string name="copy_fail">下载失败:<xliff:g id="copy">%1$s</xliff:g></string>
+    <string name="stop">停止</string>
+    
+    <string name="file_exist">此位置已包含同名的文件</string>
+    <string name="copy_replace">覆盖</string>
+    <string name="copy_replace_msg">使用正在复制中的文件替换目标文件夹的文件\n<xliff:g id="replace">%1$s</xliff:g></string>
+    <string name="copy_rename">重命名</string>
+    <string name="copy_rename_msg">正在复制的文件将重命名为 “<xliff:g id="rename">%1$s</xliff:g>“</string>
+    <string name="copy_cancel">取消</string>
+     <string name="copy_cancel_msg">将不会改变任何文件</string>
+     
+     <string name="delete_confirm_msg">确定要删除这个文件？</string>
+     <string name="delete_fail">无法删除这个文件</string>
+     
+     <string name="remote_share_server_list_msg">远程文件共享列表</string>
+     <string name="create_remote_share">创建共享</string>
+     <string name="search_remote_share">搜索共享列表</string>
+     
+     <string name="hide">隐藏</string>
+     <string name="exit_app">退出程序</string>
+     <string name="confirm_exit">确定要退出朝颜无限？</string>
+     <string name="running">正在运行&#8230;</string>
+     <string name="unconnected">未连接局域网</string>
+     <string name="connected">已连接局域网</string>
+     <string name="connect_first">请先连接！</string>
+     
+     <string name="storage_space">存储空间:共<xliff:g id="total">%1$s</xliff:g>,<xliff:g id="free">%2$s</xliff:g>可用</string>
+     
+     <string name="user_list">用户列表</string>
+     <string name="pre_send">准备发送给:<xliff:g id="pre_send">%1$s</xliff:g></string>
+     <string name="sending">发送给:<xliff:g id="sending">%1$s</xliff:g></string>
+     <string name="send_ok">已发送给:<xliff:g id="send_ok">%1$s</xliff:g></string>
+     <string name="send_fail">传输失败:<xliff:g id="send_fail">%1$s</xliff:g></string>
+     <string name="receive_fail">传输失败</string>
+     <string name="open_file_fail">找不到打开该文件的应用</string>
+     <string name="me">我</string>
+     
+     <string name="num_format">(<xliff:g id="num">%1$d</xliff:g>)</string>
+     <string name="transfer_all">全部发送(<xliff:g id="num">%1$d</xliff:g>)</string>
+     <string name="transfer_limit">超过同时发送文件个数上限(5)</string>
+     <string name="check_one_please">至少选中一个文件</string>
+     <string name="delete_history_msg">删除记录或者文件</string>
+     
+     <string name="select_msg">已选中%1$s</string>
+     
+     <string name="invite">邀请</string>
+     <string name="invite_install">邀请朋友安装聚游</string>
+     <string name="invite_weixin">微信邀请</string>
+     <string name="invite_qq">QQ邀请</string>
+     <string name="invite_bluetooth">蓝牙邀请</string>
+     <string name="invite_sms">短信邀请</string>
+     <string name="invite_weibo_sina">新浪微博邀请</string>
+     <string name="invite_weibo_tencent">腾讯微博邀请</string>
+     <string name="invite_zero_gprs">零流量邀请</string>
+     <string name="invite_tip">仅支持邀请安卓用户</string>
+     <string name="dimen_code_download">扫一扫二维码下载朝颜无限</string>
+     <string name="traffic_statistics">流量统计</string>
+     <string name="traffic_send">发送流量：%s</string>
+     <string name="traffic_receive">接收流量：%s</string>
+     <string name="traffic_notice">通过朝颜无限手机之间互传文件的时候不会消耗任何一部手机的移动网络流量，
+         某些流量统计软件会有计算错误的情况，请放心使用！</string>
+     
+     <string name="select_all">全选</string>
+     <string name="unselect_all">取消全选</string>
+</resources>

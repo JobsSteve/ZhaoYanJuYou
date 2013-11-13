@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="white">#ffffff</color>
+    <color name="gray">#696969</color>
+    <color name="bottom_bar_selected">#ffffffff</color>
+    <color name="bottom_bar_unselected">#aaffffff</color>
+    <color name="activity_background">#f5f7fa</color>
+    <color name="translucent">#00000000</color>
+    <color name="table_title_selected">#5d91be</color>
+    <color name="table_title_unselected">#696969</color>
+
+</resources>
