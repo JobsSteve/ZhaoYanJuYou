@@ -1,5 +1,7 @@
 package com.zhaoyan.juyou.common;
 
+import com.zhaoyan.communication.FileTransferService;
+
 import android.R.integer;
 import android.net.Uri;
 import android.os.Environment;
@@ -79,7 +81,7 @@ public class ZYConstant {
 
 	public static final String MEDIA_AUDIO_ACTION = "intent.media.audio.action";
 	public static final String MEDIA_VIDEO_ACTION = "intent.media.video.action";
-	public static final String SEND_FILE_ACTION = "com.dreamlink.communication.sendfile";
+	public static final String SEND_FILE_ACTION = FileTransferService.ACTION_SEND_FILE;
 	public static final String RECEIVE_FILE_ACTION = "com.dreamlink.communication.receivefile";
 
 	public static final String FILE_EX = "file://";
@@ -108,4 +110,5 @@ public class ZYConstant {
 	/** the default folder that save the receive files */
 	public static final String DREAMLINK_FOLDER = DEFAULT_SDCARD + "/Dreamlink";
 	public static final String BACKUP_FOLDER = DREAMLINK_FOLDER + "/backup_apps";
+	public static final String DEFAULT_RECEIVE_FILE_FOLDER = DEFAULT_SDCARD + "/JuYou";
 }

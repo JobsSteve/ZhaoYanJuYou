@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
+import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
 
 public class WelcomeActivity extends Activity {
@@ -51,7 +52,13 @@ public class WelcomeActivity extends Activity {
 	 * thread.
 	 */
 	private void load() {
-
+		startFileTransferService();
+	}
+	
+	private void startFileTransferService(){
+		Intent intent = new Intent();
+		intent.setClass(this, FileTransferService.class);
+		startService(intent);
 	}
 
 	/**

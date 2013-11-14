@@ -28,8 +28,8 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HistoryCursorAdapter;
 import com.zhaoyan.juyou.provider.JuyouData;
 
-public class HistoryActivity extends BaseActivity implements
-		OnScrollListener, OnItemClickListener {
+public class HistoryActivity extends BaseActivity implements OnScrollListener,
+		OnItemClickListener {
 	private static final String TAG = "HistoryActivityTest";
 	private Context mContext;
 
@@ -49,11 +49,12 @@ public class HistoryActivity extends BaseActivity implements
 	private QueryHandler queryHandler = null;
 
 	private static final String[] PROJECTION = { JuyouData.History._ID,
-		JuyouData.History.FILE_PATH, JuyouData.History.FILE_NAME,
-		JuyouData.History.FILE_SIZE, JuyouData.History.SEND_USERNAME,
-		JuyouData.History.RECEIVE_USERNAME, JuyouData.History.PROGRESS,
-		JuyouData.History.DATE, JuyouData.History.STATUS,
-		JuyouData.History.MSG_TYPE, JuyouData.History.FILE_TYPE };
+			JuyouData.History.FILE_PATH, JuyouData.History.FILE_NAME,
+			JuyouData.History.FILE_SIZE, JuyouData.History.SEND_USERNAME,
+			JuyouData.History.RECEIVE_USERNAME, JuyouData.History.PROGRESS,
+			JuyouData.History.DATE, JuyouData.History.STATUS,
+			JuyouData.History.MSG_TYPE, JuyouData.History.FILE_TYPE,
+			JuyouData.History.FILE_ICON };
 
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -68,13 +69,13 @@ public class HistoryActivity extends BaseActivity implements
 			}
 		};
 	};
-	
-	class HistoryContent extends ContentObserver{
+
+	class HistoryContent extends ContentObserver {
 		public HistoryContent(Handler handler) {
 			super(handler);
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		@Override
 		public void onChange(boolean selfChange) {
 			super.onChange(selfChange);
@@ -93,12 +94,13 @@ public class HistoryActivity extends BaseActivity implements
 
 		initTitle(R.string.history);
 		mTitleNumView.setVisibility(View.VISIBLE);
-		
+
 		initView();
 		queryHandler = new QueryHandler(getContentResolver());
-		
+
 		HistoryContent historyContent = new HistoryContent(new Handler());
-		getContentResolver().registerContentObserver(JuyouData.History.CONTENT_URI, true, historyContent);
+		getContentResolver().registerContentObserver(
+				JuyouData.History.CONTENT_URI, true, historyContent);
 	}
 
 	@Override
@@ -128,10 +130,10 @@ public class HistoryActivity extends BaseActivity implements
 		mStorageTV = (TextView) findViewById(R.id.tv_storage);
 		String space = getResources().getString(
 				R.string.storage_space,
-				ZYUtils.getFormatSize(Environment
-						.getExternalStorageDirectory().getTotalSpace()),
-				ZYUtils.getFormatSize(Environment
-						.getExternalStorageDirectory().getFreeSpace()));
+				ZYUtils.getFormatSize(Environment.getExternalStorageDirectory()
+						.getTotalSpace()),
+				ZYUtils.getFormatSize(Environment.getExternalStorageDirectory()
+						.getFreeSpace()));
 		mStorageTV.setText(space);
 		mLoadingBar = (ProgressBar) findViewById(R.id.pb_history_loading);
 		mHistoryMsgLV = (ListView) findViewById(R.id.lv_history_msg);
@@ -165,8 +167,8 @@ public class HistoryActivity extends BaseActivity implements
 		}
 
 	}
-	
-	private void updateUI(int num){
+
+	private void updateUI(int num) {
 		Message message = mHandler.obtainMessage();
 		message.arg1 = num;
 		message.what = MSG_UPDATE_UI;

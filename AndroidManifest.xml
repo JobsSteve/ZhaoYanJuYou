@@ -47,9 +47,8 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.MainActivity"
-            android:screenOrientation="portrait" 
-            android:theme="@style/CustomTheme.NoTitleBar"
-            >
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.AccountSettingActivity"
@@ -75,20 +74,23 @@
             android:name="com.zhaoyan.juyou.activity.RegisterAccountActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
-        
         <activity
             android:name="com.zhaoyan.juyou.activity.AudioActivity"
-            android:theme="@style/Theme.Translucent">
+            android:theme="@style/Theme.Translucent" >
         </activity>
-        
         <activity
             android:name="com.zhaoyan.juyou.activity.HistoryActivity"
-            android:theme="@style/Theme.Translucent">
+            android:theme="@style/Theme.Translucent" >
         </activity>
 
         <service android:name="com.zhaoyan.communication.search.WifiOrAPSearchService" >
         </service>
         <service android:name="com.zhaoyan.communication.LoginService" >
+        </service>
+        <service android:name="com.zhaoyan.communication.FileTransferService" >
+            <meta-data
+                android:name="app_id"
+                android:value="111" />
         </service>
 
         <provider

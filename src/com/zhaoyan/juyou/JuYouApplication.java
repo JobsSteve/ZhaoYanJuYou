@@ -2,9 +2,11 @@ package com.zhaoyan.juyou;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.TrafficStatics;
 import com.zhaoyan.communication.UserManager;
@@ -21,6 +23,14 @@ public class JuYouApplication extends Application {
 
 	public static void quitApplication(Context context) {
 		stopCommunication(context);
+		stopFileTransferService(context);
+		
+	}
+
+	private static void stopFileTransferService(Context context) {
+		Intent intent = new Intent();
+		intent.setClass(context, FileTransferService.class);
+		context.stopService(intent);
 	}
 
 	private static void stopCommunication(Context context) {

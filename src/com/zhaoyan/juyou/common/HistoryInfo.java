@@ -38,7 +38,7 @@ public class HistoryInfo implements Parcelable{
 	private int status;
 	
 	/**icon*/
-	private Drawable icon;
+	private byte[] icon;
 	/**file type,image,apk,video and so on*/
 	private int fileType;
 	
@@ -130,11 +130,11 @@ public class HistoryInfo implements Parcelable{
 		this.status = status;
 	}
 	
-	public Drawable getIcon(){
+	public byte[] getIcon(){
 		return icon;
 	}
 	
-	public void setIcon(Drawable icon){
+	public void setIcon(byte[] icon){
 		this.icon = icon;
 	}
 	

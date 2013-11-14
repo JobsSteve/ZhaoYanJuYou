@@ -372,7 +372,6 @@ public class FileInfoManager {
 				break;
 			}
 			info.setFileType(fileType);
-			info.setIcon(currentIcon);
 			return info;
 		}
 

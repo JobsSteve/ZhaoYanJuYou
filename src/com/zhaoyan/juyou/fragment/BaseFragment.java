@@ -11,8 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.TransportAnimationView;
 import com.zhaoyan.juyou.common.ZYConstant;
 
 public class BaseFragment extends Fragment{

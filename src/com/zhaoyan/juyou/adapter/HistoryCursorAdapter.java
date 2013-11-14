@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
@@ -122,6 +123,17 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		holder.msgLayout.setTag(new MsgData(id, fileName, filePath, type));
 
 		setIconView(holder, holder.iconView, filePath, fileType);
+		
+		byte[] fileIcon = cursor.getBlob(cursor.getColumnIndex(JuyouData.History.FILE_ICON));
+		if(fileIcon == null || fileIcon.length == 0) {
+			// There is no file icon, use default
+//			holder.iconView.setImageResource(R.drawable.icon_file);
+		} else {
+			Bitmap fileIconBitmap = BitmapFactory.decodeByteArray(fileIcon, 0, fileIcon.length);
+			if (fileIconBitmap != null) {
+				holder.iconView.setImageBitmap(fileIconBitmap);
+			}
+		}
 		setSendReceiveStatus(holder, status, reveiveUserName, fileSize,
 				progress);
 	}
