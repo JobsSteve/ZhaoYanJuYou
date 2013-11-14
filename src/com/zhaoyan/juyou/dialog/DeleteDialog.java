@@ -8,7 +8,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -140,6 +142,17 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		this.progress = progress;
 		this.fileName = fileName;
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_PROGRESS));
+	}
+	
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		super.show();
+		WindowManager windowManager = getWindow().getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		WindowManager.LayoutParams lp = getWindow().getAttributes();
+		lp.width = (int)display.getWidth();
+		getWindow().setAttributes(lp);
 	}
 
 	@Override

@@ -76,7 +76,7 @@ public class FileTransferService extends Service implements
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			Log.i(TAG, "action = " + action);
+			Log.i(TAG, "onReceive.action:" + action);
 			if (ACTION_SEND_FILE.equals(action)) {
 				handleSendFileRequest(intent);
 			}
