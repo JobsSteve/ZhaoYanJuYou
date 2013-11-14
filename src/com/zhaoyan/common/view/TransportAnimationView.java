@@ -1,4 +1,4 @@
-package com.zhaoyan.juyou;
+package com.zhaoyan.common.view;
 
 import android.content.Context;
 import android.view.View;

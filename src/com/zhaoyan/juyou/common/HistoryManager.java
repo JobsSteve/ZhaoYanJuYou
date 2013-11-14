@@ -99,6 +99,7 @@ public class HistoryManager {
     		values.put(JuyouData.History.STATUS, historyInfo.getStatus());
     		values.put(JuyouData.History.MSG_TYPE, historyInfo.getMsgType());
     		values.put(JuyouData.History.FILE_TYPE, historyInfo.getFileType());
+    		values.put(JuyouData.History.FILE_ICON, historyInfo.getIcon());
     		
     		return values;
 	    }
