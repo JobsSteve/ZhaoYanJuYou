@@ -27,6 +27,7 @@ import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncImageLoader;
 import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
+import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.HistoryManager;
@@ -344,7 +345,16 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			final String filePath = data.filePath;
 			String fileName = data.fileName;
 			final int type = data.type;
-			
+			int status = data.status;
+			ActionMenu actionMenu = new ActionMenu(mContext);
+			switch (status) {
+			case HistoryManager.STATUS_SENDING:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
+				break;
+
+			default:
+				break;
+			}
 
 			new AlertDialog.Builder(mContext)
 					.setTitle(fileName)
