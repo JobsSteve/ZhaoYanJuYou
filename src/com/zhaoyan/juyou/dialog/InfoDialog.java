@@ -18,6 +18,7 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 
 	private TextView mOkButton;
 	
+	private TextView mTitleView;
 	private TextView mTypeView,mLoacationView,mSizeView,mIncludeView,mDateView;
 	private View mDividerView;
 	
@@ -64,7 +65,7 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 	};
 	
 	public InfoDialog(Context context, int type) {
-		super(context);
+		super(context, R.style.Custom_Dialog);
 		mContext = context;
 		this.type = type;
 	}
@@ -74,6 +75,7 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dialog_info);
 		
+		mTitleView = (TextView) findViewById(R.id.tv_info_title);
 		mTypeView = (TextView) findViewById(R.id.tv_info_type);
 		mLoacationView = (TextView) findViewById(R.id.tv_info_location);
 		mSizeView = (TextView) findViewById(R.id.tv_info_size);
@@ -122,6 +124,16 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
 		lp.width = (int)display.getWidth();
 		getWindow().setAttributes(lp);
+	}
+	
+	@Override
+	public void setTitle(CharSequence title) {
+		mTitleView.setText(title);
+	}
+	
+	@Override
+	public void setTitle(int titleId) {
+		mTitleView.setText(titleId);
 	}
 	
 	

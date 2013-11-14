@@ -58,29 +58,10 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		};
 	};
 	
-	
-	public DeleteDialog(Context context, int theme, String path) {
-		super(context, theme);
-		mFilePath = path;
-		mContext = context;
-	}
-	
-	public DeleteDialog(Context context, int theme, int size){
-		super(context, theme);
-		mContext = context;
-		mSize = size;
-	}
-	
 	public DeleteDialog(Context context, List<String> nameList){
-		super(context);
+		super(context, R.style.Custom_Dialog);
 		mContext = context;
 		mDeleteNameList = nameList;
-	}
-	
-	public DeleteDialog(Context context, int size){
-		super(context);
-		mContext = context;
-		mSize = size;
 	}
 	
 	@Override

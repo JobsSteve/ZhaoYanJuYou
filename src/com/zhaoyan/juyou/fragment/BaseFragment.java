@@ -48,10 +48,12 @@ public class BaseFragment extends Fragment{
 	}
 	
 	protected void updateTitleNum(int selected){
-		if (selected == -1) {
-			mTitleNumView.setText(getString(R.string.num_format, count));
-		}else {
-			mTitleNumView.setText(getString(R.string.num_format2, selected, count));
+		if (isAdded()) {
+			if (selected == -1) {
+				mTitleNumView.setText(getString(R.string.num_format, count));
+			}else {
+				mTitleNumView.setText(getString(R.string.num_format2, selected, count));
+			}
 		}
 	}
 	
