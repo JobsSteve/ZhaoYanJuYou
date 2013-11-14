@@ -41,7 +41,7 @@ public class FileTransferInfo implements Serializable, Parcelable {
 		Log.d(TAG, "getFileInfo file = " + file.getName() + ", type = "
 				+ fileType);
 		switch (fileType) {
-		case FileManager.TYPE_APK:
+		case FileManager.APK:
 			getApkFileInfo(file, context);
 			break;
 

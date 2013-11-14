@@ -21,12 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncImageLoader;
 import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
-import com.zhaoyan.juyou.common.AsyncImageLoader2;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.HistoryManager;
@@ -38,7 +38,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	private int mStatus = -1;
 	private Notice mNotice = null;
 	private Context mContext;
-	private AsyncImageLoader2 bitmapLoader2 = null;
 	private AsyncImageLoader bitmapLoader = null;
 	private boolean mIdleFlag = true;
 	private MsgOnClickListener mClickListener = new MsgOnClickListener();
@@ -51,7 +50,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		mListView = listView;
 		mNotice = new Notice(context);
 		mLayoutInflater = LayoutInflater.from(context);
-		bitmapLoader2 = new AsyncImageLoader2(context);
 		bitmapLoader = new AsyncImageLoader(context);
 	}
 
@@ -88,7 +86,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context arg1, Cursor cursor) {
-		Log.d(TAG, "bindView.count=" + cursor.getCount());
+//		Log.d(TAG, "bindView.count=" + cursor.getCount());
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.position = cursor.getPosition();
 
@@ -120,14 +118,12 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		holder.fileNameView.setText(fileName);
 		holder.fileSizeView.setTextColor(Color.BLACK);
 		holder.receiveUserNameView.setTextColor(Color.BLACK);
-		holder.msgLayout.setTag(new MsgData(id, fileName, filePath, type));
-
-		setIconView(holder, holder.iconView, filePath, fileType);
+		holder.msgLayout.setTag(new MsgData(id, fileName, filePath, type, status));
 		
 		byte[] fileIcon = cursor.getBlob(cursor.getColumnIndex(JuyouData.History.FILE_ICON));
 		if(fileIcon == null || fileIcon.length == 0) {
 			// There is no file icon, use default
-//			holder.iconView.setImageResource(R.drawable.icon_file);
+			setIconView(holder, holder.iconView, filePath, fileType);
 		} else {
 			Bitmap fileIconBitmap = BitmapFactory.decodeByteArray(fileIcon, 0, fileIcon.length);
 			if (fileIconBitmap != null) {
@@ -160,7 +156,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			Log.d(TAG, "percent=" + HistoryManager.nf.format(percent));
 			holder.transferBar.setProgress((int) (percent * 100));
 			holder.fileSizeView.setText(HistoryManager.nf.format(percent)
-					+ " | " + ZYUtils.getFormatSize(fileSize));
+					+ " | " + ZYUtils.getFormatSize(progress) + "/" + ZYUtils.getFormatSize(fileSize));
 			break;
 		case HistoryManager.STATUS_SEND_SUCCESS:
 			holder.receiveUserNameView.setText(mContext.getResources()
@@ -179,7 +175,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			Log.d(TAG, "percent=" + HistoryManager.nf.format(percent2));
 			holder.transferBar.setProgress((int) (percent2 * 100));
 			holder.fileSizeView.setText(HistoryManager.nf.format(percent2)
-					+ " | " + ZYUtils.getFormatSize(fileSize));
+					+ " | " + ZYUtils.getFormatSize(progress) + "/" + ZYUtils.getFormatSize(fileSize));
 		case HistoryManager.STATUS_RECEIVE_FAIL:
 			holder.titleBar.setVisibility(View.GONE);
 			holder.fileSizeView.setText(R.string.receive_fail);
@@ -200,38 +196,41 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	 */
 	private void setIconView(ViewHolder holder, final ImageView iconView, final String filePath, int fileType) {
 		Log.d(TAG, "scroll flag=" + mIdleFlag);
-		if (!mIdleFlag) {
-			if (AsyncImageLoader2.bitmapCache.size() > 0
-					&& AsyncImageLoader2.bitmapCache.get(filePath) != null) {
-				iconView.setImageBitmap(AsyncImageLoader2.bitmapCache.get(
-						filePath).get());
+		switch (fileType) {
+		case FileManager.IMAGE:
+		case FileManager.VIDEO:
+			if (!mIdleFlag) {
+				if (AsyncImageLoader.bitmapCache.size() > 0
+						&& AsyncImageLoader.bitmapCache.get(filePath) != null) {
+					iconView.setImageBitmap(AsyncImageLoader.bitmapCache.get(
+							filePath).get());
+				} else {
+					setImageViewIcon(iconView, fileType);
+				}
+				return;
 			} else {
-				iconView.setImageResource(R.drawable.icon_file);
-			}
-			return;
-		} else {
-			// just load image,video,apk file icon;others use default icon
-			if (FileInfoManager.TYPE_IMAGE == fileType
-					|| FileInfoManager.TYPE_APK == fileType
-					|| FileInfoManager.TYPE_VIDEO == fileType) {
-				Bitmap bitmap = bitmapLoader.loadImage(filePath, fileType, new ILoadImageCallback() {
-					@Override
-					public void onObtainBitmap(Bitmap bitmap, String url) {
-						ImageView imageView = (ImageView) mListView.findViewWithTag(filePath);
-						if (null != bitmap && null != imageView) {
-							imageView.setImageBitmap(bitmap);
-						}
-					}
-				});
-				
+				Bitmap bitmap = bitmapLoader.loadImage(filePath, fileType,
+						new ILoadImageCallback() {
+							@Override
+							public void onObtainBitmap(Bitmap bitmap, String url) {
+								ImageView imageView = (ImageView) mListView
+										.findViewWithTag(filePath);
+								if (null != bitmap && null != imageView) {
+									imageView.setImageBitmap(bitmap);
+								}
+							}
+						});
+
 				if (null == bitmap) {
-					iconView.setImageResource(R.drawable.icon_file);
+					setImageViewIcon(iconView, fileType);
 				} else {
 					iconView.setImageBitmap(bitmap);
 				}
-			} else {
-				iconView.setImageResource(R.drawable.icon_file);
 			}
+			break;
+		default:
+			setImageViewIcon(iconView, fileType);
+			break;
 		}
 	}
 
@@ -268,6 +267,41 @@ public class HistoryCursorAdapter extends CursorAdapter {
 
 		return view;
 	}
+	
+	private void setImageViewIcon(ImageView imageView, int type){
+		switch (type) {
+		case FileManager.IMAGE:
+			imageView.setImageResource(R.drawable.icon_image);
+			break;
+		case FileManager.VIDEO:
+			imageView.setImageResource(R.drawable.icon_video);
+			break;
+		case FileManager.AUDIO:
+			imageView.setImageResource(R.drawable.icon_audio);
+			break;
+		case FileManager.EBOOK:
+			imageView.setImageResource(R.drawable.icon_txt);
+			break;
+		case FileManager.ARCHIVE:
+			imageView.setImageResource(R.drawable.icon_rar);
+			break;
+		case FileManager.WORD:
+			imageView.setImageResource(R.drawable.icon_doc);
+			break;
+		case FileManager.PPT:
+			imageView.setImageResource(R.drawable.icon_ppt);
+			break;
+		case FileManager.EXCEL:
+			imageView.setImageResource(R.drawable.icon_xls);
+			break;
+		case FileManager.PDF:
+			imageView.setImageResource(R.drawable.icon_pdf);
+			break;
+		default:
+			imageView.setImageResource(R.drawable.icon_file);
+			break;
+		}
+	}
 
 	class ViewHolder {
 		ProgressBar titleBar;
@@ -288,12 +322,14 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		String fileName;
 		String filePath;
 		int type;
+		int status;
 
-		public MsgData(int itemID, String fileName, String filePath, int type) {
+		public MsgData(int itemID, String fileName, String filePath, int type, int status) {
 			this.itemID = itemID;
 			this.fileName = fileName;
 			this.filePath = filePath;
 			this.type = type;
+			this.status = status;
 		}
 	}
 

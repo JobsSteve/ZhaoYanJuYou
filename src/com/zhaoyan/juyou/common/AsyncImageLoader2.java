@@ -76,17 +76,17 @@ public class AsyncImageLoader2 {
 			public void run() {
 				Bitmap bitmap = null;
 				switch (type) {
-				case FileInfoManager.TYPE_APK:
+				case FileInfoManager.APK:
 					Drawable drawable = fileInfoManager.getApkIcon(path);
 					BitmapDrawable bd = (BitmapDrawable) drawable;
 					if (null != bd) {
 						bitmap = bd.getBitmap();
 					}
 					break;
-				case FileInfoManager.TYPE_IMAGE:
+				case FileInfoManager.IMAGE:
 					bitmap = getBitmapFromUrl(path, caches);
 					break;
-				case FileInfoManager.TYPE_VIDEO:
+				case FileInfoManager.VIDEO:
 					bitmap = ThumbnailUtils.createVideoThumbnail(path, Thumbnails.MINI_KIND);
 					break;
 				default:

@@ -45,16 +45,6 @@ public class FileInfoManager {
 	public static final int ARCHIVE = 0x11;
 	public static final int IMAGE = 0x12;
 	public static final int UNKNOW = 0x20;
-
-	public static final int TYPE_DEFAULT = 0x20;//32
-	public static final int TYPE_EBOOK = 0x21;
-	public static final int TYPE_VIDEO = 0x22;
-	public static final int TYPE_DOC = 0x23;
-	public static final int TYPE_APK = 0x24;//36
-	public static final int TYPE_ARCHIVE = 0x25;
-	public static final int TYPE_BIG_FILE = 0x26;
-	public static final int TYPE_IMAGE = 0x27;
-	public static final int TYPE_AUDIO = 0x28;//40
 	
 	/**
 	 * save num in sharedPrefernce
@@ -225,65 +215,52 @@ public class FileInfoManager {
 	// 判断文件类型，根据不同类型设置图标
 	public FileInfo getFileInfo(File currentFile) {
 		Drawable currentIcon = null;
-		int fileType = FileInfoManager.TYPE_DEFAULT;
 		// 取得文件路径
 		String filePath = currentFile.getPath();
 
 		// 根据文件名来判断文件类型，设置不同的图标
 		int result = fileFilter(filePath);
+		int fileType = result;
 		switch (result) {
 		case TEXT:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_txt);
-			fileType = FileInfoManager.TYPE_EBOOK;
 			break;
-		// case HTML:
-		// currentIcon = context.getResources().getDrawable(R.drawable.webtext);
-		// break;
 		case IMAGE:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_image);
-			fileType = FileInfoManager.TYPE_IMAGE;
 			break;
 		case AUDIO:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_audio);
-			fileType = FileInfoManager.TYPE_AUDIO;
 			break;
 		case VIDEO:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_video);
-			fileType = FileInfoManager.TYPE_VIDEO;
 			break;
 		case WORD:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_doc);
-			fileType = FileInfoManager.TYPE_DOC;
 			break;
 		case PPT:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_ppt);
-			fileType = FileInfoManager.TYPE_DOC;
 			break;
 		case EXCEL:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_xls);
-			fileType = FileInfoManager.TYPE_DOC;
 			break;
 		case PDF:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_pdf);
-			fileType = FileInfoManager.TYPE_DOC;
 			break;
 		case ARCHIVE:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_rar);
-			fileType = FileInfoManager.TYPE_ARCHIVE;
 			break;
 		case APK:
 			currentIcon = context.getResources().getDrawable(
 					R.drawable.icon_apk);
-			fileType = FileInfoManager.TYPE_APK;
 			break;
 		default:
 			// 默认
@@ -305,65 +282,52 @@ public class FileInfoManager {
 		public HistoryInfo getHistoryInfo(HistoryInfo historyInfo) {
 			HistoryInfo info = historyInfo;
 			Drawable currentIcon = null;
-			int fileType = FileInfoManager.TYPE_DEFAULT;
 			// 取得文件路径
 			String filePath = historyInfo.getFile().getAbsolutePath();
 
 			// 根据文件名来判断文件类型，设置不同的图标
 			int result = fileFilter(filePath);
+			int fileType = result;
 			switch (result) {
 			case TEXT:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_txt);
-				fileType = FileInfoManager.TYPE_EBOOK;
 				break;
-			// case HTML:
-			// currentIcon = context.getResources().getDrawable(R.drawable.webtext);
-			// break;
 			case IMAGE:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_image);
-				fileType = FileInfoManager.TYPE_IMAGE;
 				break;
 			case AUDIO:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_audio);
-				fileType = FileInfoManager.TYPE_AUDIO;
 				break;
 			case VIDEO:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_video);
-				fileType = FileInfoManager.TYPE_VIDEO;
 				break;
 			case WORD:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_doc);
-				fileType = FileInfoManager.TYPE_DOC;
 				break;
 			case PPT:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_ppt);
-				fileType = FileInfoManager.TYPE_DOC;
 				break;
 			case EXCEL:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_xls);
-				fileType = FileInfoManager.TYPE_DOC;
 				break;
 			case PDF:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_pdf);
-				fileType = FileInfoManager.TYPE_DOC;
 				break;
 			case ARCHIVE:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_rar);
-				fileType = FileInfoManager.TYPE_ARCHIVE;
 				break;
 			case APK:
 				currentIcon = context.getResources().getDrawable(
 						R.drawable.icon_apk);
-				fileType = FileInfoManager.TYPE_APK;
 				break;
 			default:
 				// 默认

@@ -66,7 +66,7 @@ public class AsyncImageLoader {
 		};
 		
 		switch (type) {
-		case FileInfoManager.TYPE_APK:
+		case FileInfoManager.APK:
 			pool.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -83,7 +83,7 @@ public class AsyncImageLoader {
 				}
 			});
 			break;
-		case FileInfoManager.TYPE_IMAGE:
+		case FileInfoManager.IMAGE:
 			pool.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -95,7 +95,7 @@ public class AsyncImageLoader {
 				}
 			});
 			break;
-		case FileInfoManager.TYPE_VIDEO:
+		case FileInfoManager.VIDEO:
 			pool.execute(new Runnable() {
 				@Override
 				public void run() {

@@ -16,7 +16,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -52,10 +51,8 @@ public class FileTransferService extends Service implements
 
 	private Notice mNotice;
 	private SocketCommunicationManager mSocketMgr;
-	private FileInfoManager mFileInfoManager = null;
 	private HistoryManager mHistoryManager = null;
 	private UserManager mUserManager = null;
-	private PackageManager pm = null;
 
 	private Map<Object, Uri> mTransferMap = new ConcurrentHashMap<Object, Uri>();
 	private int mAppId = -1;
@@ -92,7 +89,6 @@ public class FileTransferService extends Service implements
 		registerReceiver(transferReceiver, filter);
 
 		mNotice = new Notice(this);
-		mFileInfoManager = new FileInfoManager(this);
 		mHistoryManager = new HistoryManager(this);
 		mSocketMgr = SocketCommunicationManager.getInstance(this);
 		mAppId = AppUtil.getAppID(this);
@@ -100,13 +96,11 @@ public class FileTransferService extends Service implements
 		mSocketMgr.registerOnFileTransportListener(this, mAppId);
 
 		mUserManager = UserManager.getInstance();
-		pm = getPackageManager();
-
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(TAG, "FileTransferService.onStartCommand()");
+		Log.d(TAG, "onStartCommand");
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -175,7 +169,7 @@ public class FileTransferService extends Service implements
 			historyInfo.setStatus(HistoryManager.STATUS_PRE_SEND);
 			historyInfo.setFileType(FileManager.getFileType(
 					getApplicationContext(), file));
-			if (FileManager.TYPE_APK == FileManager.getFileType(
+			if (FileManager.APK == FileManager.getFileType(
 					getApplicationContext(), file)) {
 				byte[] fileIcon = FileTransferInfo
 						.bitmapToByteArray(FileTransferInfo

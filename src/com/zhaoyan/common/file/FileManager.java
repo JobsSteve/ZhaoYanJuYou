@@ -8,7 +8,7 @@ import com.zhaoyan.juyou.R;
 
 public class FileManager {
 	private static final String TAG = "FileManager";
-	public static final int TEXT = 0x01;
+	public static final int EBOOK = 0x01;
 	public static final int HTML = 0x02;
 	public static final int WORD = 0x03;
 	public static final int EXCEL = 0x04;
@@ -22,23 +22,13 @@ public class FileManager {
 	public static final int IMAGE = 0x12;
 	public static final int UNKNOW = 0x20;
 
-	public static final int TYPE_DEFAULT = 0x20;// 32
-	public static final int TYPE_EBOOK = 0x21;
-	public static final int TYPE_VIDEO = 0x22;
-	public static final int TYPE_DOC = 0x23;
-	public static final int TYPE_APK = 0x24;// 36
-	public static final int TYPE_ARCHIVE = 0x25;
-	public static final int TYPE_BIG_FILE = 0x26;
-	public static final int TYPE_IMAGE = 0x27;
-	public static final int TYPE_AUDIO = 0x28;// 40
-
 	public static int getFileType(Context context, String filepath) {
 		return getFileType(context, new File(filepath));
 	}
 
 	public static int getFileType(Context context, File file) {
-		int fileNameExtension = fileFilter(context, file);
-		return getFileTypeByFileNameExtension(fileNameExtension);
+		int fileType = fileFilter(context, file);
+		return fileType;
 	}
 
 	private static int fileFilter(Context context, File file) {
@@ -48,7 +38,7 @@ public class FileManager {
 		if (checkEndsWithInStringArray(fileName, context.getResources()
 				.getStringArray(R.array.fileEndingEbook))) {
 			// text
-			ret = TEXT;
+			ret = EBOOK;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
 				.getStringArray(R.array.fileEndingImage))) {
 			// Images
@@ -107,44 +97,5 @@ public class FileManager {
 				return true;
 		}
 		return false;
-	}
-
-	private static int getFileTypeByFileNameExtension(int fileNameExtension) {
-		int fileType = TYPE_DEFAULT;
-		switch (fileNameExtension) {
-		case TEXT:
-			fileType = TYPE_EBOOK;
-			break;
-		case IMAGE:
-			fileType = TYPE_IMAGE;
-			break;
-		case AUDIO:
-			fileType = TYPE_AUDIO;
-			break;
-		case VIDEO:
-			fileType = TYPE_VIDEO;
-			break;
-		case WORD:
-			fileType = TYPE_DOC;
-			break;
-		case PPT:
-			fileType = TYPE_DOC;
-			break;
-		case EXCEL:
-			fileType = TYPE_DOC;
-			break;
-		case PDF:
-			fileType = TYPE_DOC;
-			break;
-		case ARCHIVE:
-			fileType = TYPE_ARCHIVE;
-			break;
-		case APK:
-			fileType = TYPE_APK;
-			break;
-		default:
-			break;
-		}
-		return fileType;
 	}
 }

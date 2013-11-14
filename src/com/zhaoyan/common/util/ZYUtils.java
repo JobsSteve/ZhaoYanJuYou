@@ -53,20 +53,20 @@ public class ZYUtils {
 	 * @param size like 3232332
 	 * @return like 3.23M
 	 */
-	public static String getFormatSize(long size){
-		if (size >= 1024 * 1024 * 1024){
-			Double dsize = (double) (size / (1024 * 1024 * 1024));
-			return new DecimalFormat("#.00").format(dsize) + "G";
-		}else if (size >= 1024 * 1024) {
-			Double dsize = (double) (size / (1024 * 1024));
-			return new DecimalFormat("#.00").format(dsize) + "M";
-		}else if (size >= 1024) {
-			Double dsize = (double) (size / 1024);
-			return new DecimalFormat("#.00").format(dsize) + "K";
-		}else {
-			return String.valueOf((int)size) + "B";
-		}
-	}
+//	public static String getFormatSize(long size){
+//		if (size >= 1024 * 1024 * 1024){
+//			Double dsize = (double) (size / (1024 * 1024 * 1024));
+//			return new DecimalFormat("#.00").format(dsize) + "G";
+//		}else if (size >= 1024 * 1024) {
+//			Double dsize = (double) (size / (1024 * 1024));
+//			return new DecimalFormat("#.00").format(dsize) + "M";
+//		}else if (size >= 1024) {
+//			Double dsize = (double) (size / 1024);
+//			return new DecimalFormat("#.00").format(dsize) + "K";
+//		}else {
+//			return String.valueOf((int)size) + "B";
+//		}
+//	}
 	
 	public static String getFormatSize(double size){
 		if (size >= 1024 * 1024 * 1024){
