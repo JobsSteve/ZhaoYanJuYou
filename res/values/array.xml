@@ -93,7 +93,7 @@
          <item>@string/menu_open</item>
          <item>@string/menu_delete</item>
     </string-array>
-    
+
     <string-array name="send_history_delete_menu">
         <item>删除记录</item>
     </string-array>

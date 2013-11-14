@@ -26,11 +26,14 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncImageLoader;
+import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.HistoryManager;
+import com.zhaoyan.juyou.dialog.HistoryMenuDialog;
+import com.zhaoyan.juyou.dialog.HistoryMenuDialog.OnMenuItemClickListener;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class HistoryCursorAdapter extends CursorAdapter {
@@ -348,52 +351,70 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			int status = data.status;
 			ActionMenu actionMenu = new ActionMenu(mContext);
 			switch (status) {
+			case HistoryManager.STATUS_PRE_SEND:
 			case HistoryManager.STATUS_SENDING:
 				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
 				break;
-
+			case HistoryManager.STATUS_SEND_SUCCESS:
+			case HistoryManager.STATUS_SEND_FAIL:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				break;
+			case HistoryManager.STATUS_PRE_RECEIVE:
+			case HistoryManager.STATUS_RECEIVING:
+				//cancel menu wait for work
+				break;
+			case HistoryManager.STATUS_RECEIVE_SUCCESS:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				break;
+			case HistoryManager.STATUS_RECEIVE_FAIL:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				break;
 			default:
+				Log.e(TAG, "MsgOnClickListener.STATUS_ERROR:" + status);
 				break;
 			}
 
-			new AlertDialog.Builder(mContext)
-					.setTitle(fileName)
-					.setItems(R.array.history_menu,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									switch (which) {
-									case 0:
-										// send
-										File file = new File(filePath);
-										if (!file.exists()) {
-											Log.d(TAG,
-													"Send file fail. File is not exits. "
-															+ filePath);
-											mNotice.showToast("文件不存在");
-											break;
-										} else {
-											FileTransferUtil fileSendUtil = new FileTransferUtil(
-													mContext);
-											fileSendUtil.sendFile(filePath);
-										}
-										
-										break;
-									case 1:
-										// open
-										FileInfoManager fileInfoManager = new FileInfoManager(
-												mContext);
-										fileInfoManager.openFile(filePath);
-										break;
-									case 2:
-										// delete
-//										delete(new File(filePath), id);
-										showDeleteDialog(new File(filePath), id, type);
-										break;
-									}
-								}
-							}).create().show();
+			HistoryMenuDialog dialog = new HistoryMenuDialog(mContext, actionMenu);
+			dialog.setTitle(fileName);
+			dialog.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+				@Override
+				public void onMenuClick(ActionMenuItem menuItem) {
+					// TODO Auto-generated method stub
+					switch (menuItem.getItemId()) {
+					case ActionMenu.ACTION_MENU_SEND:
+						File file = new File(filePath);
+						if (!file.exists()) {
+							Log.d(TAG,
+									"Send file fail. File is not exits. "
+											+ filePath);
+							mNotice.showToast("文件不存在");
+							break;
+						} else {
+							FileTransferUtil fileSendUtil = new FileTransferUtil(
+									mContext);
+							fileSendUtil.sendFile(filePath);
+						}
+						break;
+					case ActionMenu.ACTION_MENU_DELETE:
+						showDeleteDialog(new File(filePath), id, type);
+						break;
+					case ActionMenu.ACTION_MENU_OPEN:
+						FileInfoManager fileInfoManager = new FileInfoManager(
+								mContext);
+						fileInfoManager.openFile(filePath);
+						break;
+
+					default:
+						break;
+					}
+				}
+			});
+			dialog.show();
 		}
 
 	}
