@@ -151,7 +151,7 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth();
+		lp.width = (int)display.getWidth() - 100;
 		getWindow().setAttributes(lp);
 	}
 

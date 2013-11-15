@@ -160,6 +160,9 @@
      <string name="send_ok">已发送给:<xliff:g id="send_ok">%1$s</xliff:g></string>
      <string name="send_fail">传输失败:<xliff:g id="send_fail">%1$s</xliff:g></string>
      <string name="receive_fail">传输失败</string>
+     <string name="transfer_wait">等待传输</string>
+     <string name="transfer_ok">传输完成</string>
+     <string name="transfer_fail">传输失败</string>
      <string name="open_file_fail">找不到打开该文件的应用</string>
      <string name="me">我</string>
      
@@ -168,6 +171,8 @@
      <string name="transfer_all">全部发送(<xliff:g id="num">%1$d</xliff:g>)</string>
      <string name="transfer_limit">超过同时发送文件个数上限(5)</string>
      <string name="check_one_please">至少选中一个文件</string>
+     <string name="delete_history">删除记录</string>
+     <string name="delete_history_and_file">删除记录和文件</string>
      <string name="delete_history_msg">删除记录或者文件</string>
      
      <string name="select_msg">已选中%1$s</string>

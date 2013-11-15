@@ -3,6 +3,7 @@ package com.zhaoyan.juyou.adapter;
 import java.io.File;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -26,16 +27,19 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncImageLoader;
+import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
+import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.HistoryManager;
+import com.zhaoyan.juyou.dialog.HistoryMenuDialog;
+import com.zhaoyan.juyou.dialog.HistoryMenuDialog.OnMenuItemClickListener;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class HistoryCursorAdapter extends CursorAdapter {
 	private static final String TAG = "HistoryCursorAdapter";
 	private LayoutInflater mLayoutInflater = null;
-	private int mStatus = -1;
 	private Notice mNotice = null;
 	private Context mContext;
 	private AsyncImageLoader bitmapLoader = null;
@@ -76,10 +80,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		return 2;
 	}
 
-	public void setStatus(int status) {
-		this.mStatus = status;
-	}
-
 	public void setIdleFlag(boolean flag) {
 		this.mIdleFlag = flag;
 	}
@@ -100,9 +100,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		String fileName = cursor.getString(cursor
 				.getColumnIndex(JuyouData.History.FILE_NAME));
 		String sendUserName = cursor.getString(cursor
-				.getColumnIndex(JuyouData.History.SEND_USERNAME));
-		String reveiveUserName = cursor.getString(cursor
-				.getColumnIndex(JuyouData.History.RECEIVE_USERNAME));
+				.getColumnIndex(JuyouData.History.SEND_USERNAME));;
+		String reveiveUserName;
 		long fileSize = cursor.getLong(cursor
 				.getColumnIndex(JuyouData.History.FILE_SIZE));
 		double progress = cursor.getDouble(cursor
@@ -111,80 +110,71 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				.getColumnIndex(JuyouData.History.STATUS));
 		int fileType = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.History.FILE_TYPE));
-
-		holder.iconView.setTag(filePath);
-		holder.dateView.setText(ZYUtils.getFormatDate(time));
+		
+		if (HistoryManager.TYPE_SEND == type) {
+			reveiveUserName = cursor.getString(cursor
+					.getColumnIndex(JuyouData.History.RECEIVE_USERNAME));
+			holder.contentTitleView.setText(mContext.getString(R.string.sending, reveiveUserName));
+		}
+		
 		holder.userNameView.setText(sendUserName);
+		holder.fileIconView.setTag(filePath);
+		holder.dateView.setText(ZYUtils.getFormatDate(time));
 		holder.fileNameView.setText(fileName);
 		holder.fileSizeView.setTextColor(Color.BLACK);
-		holder.receiveUserNameView.setTextColor(Color.BLACK);
 		holder.msgLayout.setTag(new MsgData(id, fileName, filePath, type, status));
 		
 		byte[] fileIcon = cursor.getBlob(cursor.getColumnIndex(JuyouData.History.FILE_ICON));
 		if(fileIcon == null || fileIcon.length == 0) {
 			// There is no file icon, use default
-			setIconView(holder, holder.iconView, filePath, fileType);
+			setIconView(holder, holder.fileIconView, filePath, fileType);
 		} else {
 			Bitmap fileIconBitmap = BitmapFactory.decodeByteArray(fileIcon, 0, fileIcon.length);
 			if (fileIconBitmap != null) {
-				holder.iconView.setImageBitmap(fileIconBitmap);
+				holder.fileIconView.setImageBitmap(fileIconBitmap);
 			}
 		}
-		setSendReceiveStatus(holder, status, reveiveUserName, fileSize,
+		setSendReceiveStatus(holder, status, fileSize,
 				progress);
 	}
 
-	private void setSendReceiveStatus(ViewHolder holder, int status,
-			String reveiveUserName, long fileSize, double progress) {
-		Log.d(TAG, "status=" + status);
+	private void setSendReceiveStatus(ViewHolder holder, int status, long fileSize, double progress) {
+		Log.d(TAG, "setSendReceiveStatus.status=" + status);
+		String statusStr= "";
+		int color = Color.BLACK;
+		String fileSizeStr = ZYUtils.getFormatSize(fileSize);
+		String percentStr = HistoryManager.nf.format(progress/ fileSize);
+		boolean showBar = false;
 		switch (status) {
 		case HistoryManager.STATUS_PRE_SEND:
-			holder.receiveUserNameView.setText(mContext.getResources()
-					.getString(R.string.pre_send, reveiveUserName));
-			holder.transferBar.setVisibility(View.GONE);
-			holder.titleBar.setVisibility(View.VISIBLE);
-			holder.fileSizeView.setText(ZYUtils.getFormatSize(fileSize));
+			statusStr = mContext.getString(R.string.transfer_wait);
+			color = Color.RED;
 			break;
-
 		case HistoryManager.STATUS_SENDING:
-			holder.receiveUserNameView.setText(mContext.getResources()
-					.getString(R.string.sending, reveiveUserName));
 		case HistoryManager.STATUS_RECEIVING:
-			holder.transferBar.setVisibility(View.VISIBLE);
-			holder.titleBar.setVisibility(View.GONE);
-			double percent = progress / fileSize;
-			Log.d(TAG, "percent=" + HistoryManager.nf.format(percent));
-			holder.transferBar.setProgress((int) (percent * 100));
-			holder.fileSizeView.setText(HistoryManager.nf.format(percent)
-					+ " | " + ZYUtils.getFormatSize(progress) + "/" + ZYUtils.getFormatSize(fileSize));
+			showBar = true;
+			statusStr = percentStr;
+			fileSizeStr = ZYUtils.getFormatSize(progress) + "/" + fileSizeStr;
 			break;
 		case HistoryManager.STATUS_SEND_SUCCESS:
-			holder.receiveUserNameView.setText(mContext.getResources()
-					.getString(R.string.send_ok, reveiveUserName));
 		case HistoryManager.STATUS_RECEIVE_SUCCESS:
-			holder.transferBar.setVisibility(View.GONE);
-			holder.titleBar.setVisibility(View.GONE);
-			holder.fileSizeView.setText(ZYUtils.getFormatSize(fileSize));
+			statusStr = mContext.getString(R.string.transfer_ok);
+			color = mContext.getResources().getColor(R.color.holo_blue1);
 			break;
 		case HistoryManager.STATUS_SEND_FAIL:
-			holder.receiveUserNameView.setText(mContext.getResources()
-					.getString(R.string.send_fail, reveiveUserName));
-			holder.receiveUserNameView.setTextColor(Color.RED);
-			holder.transferBar.setVisibility(View.VISIBLE);
-			double percent2 = progress / fileSize;
-			Log.d(TAG, "percent=" + HistoryManager.nf.format(percent2));
-			holder.transferBar.setProgress((int) (percent2 * 100));
-			holder.fileSizeView.setText(HistoryManager.nf.format(percent2)
-					+ " | " + ZYUtils.getFormatSize(progress) + "/" + ZYUtils.getFormatSize(fileSize));
 		case HistoryManager.STATUS_RECEIVE_FAIL:
-			holder.titleBar.setVisibility(View.GONE);
-			holder.fileSizeView.setText(R.string.receive_fail);
-			holder.fileSizeView.setTextColor(Color.RED);
+			statusStr = mContext.getString(R.string.transfer_fail);
+			color = Color.RED;
+			fileSizeStr = ZYUtils.getFormatSize(progress) + "/" + fileSizeStr;
 			break;
-
 		default:
+			Log.e(TAG, "setSendReceiveStatus.Error.status=" + status);
 			break;
 		}
+		holder.transferBar.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+		holder.sendStatusView.setText(statusStr);
+		holder.sendStatusView.setTextColor(color);
+		holder.fileSizeView.setText(fileSizeStr);
 	}
 
 	/**
@@ -239,27 +229,26 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		int type = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.History.MSG_TYPE));
 		View view = null;
-		if (HistoryManager.TYPE_RECEIVE == type) {
-			view = mLayoutInflater.inflate(R.layout.history_item_left, null);
-		} else {
-			view = mLayoutInflater.inflate(R.layout.history_item_right, null);
-		}
-
 		ViewHolder holder = new ViewHolder();
-
-		holder.receiveUserNameView = (TextView) view
-				.findViewById(R.id.tv_send_title_msg);
-		holder.titleBar = (ProgressBar) view.findViewById(R.id.bar_send_title);
+		if (HistoryManager.TYPE_RECEIVE == type) {
+			view = mLayoutInflater.inflate(R.layout.history_item_rev, null);
+		} else {
+			view = mLayoutInflater.inflate(R.layout.history_item_send, null);
+			holder.contentTitleView = (TextView) view
+					.findViewById(R.id.tv_send_title_msg);
+		}
+		
 		holder.transferBar = (ProgressBar) view
 				.findViewById(R.id.bar_progressing);
 		holder.transferBar.setMax(100);
-		holder.iconView = (ImageView) view.findViewById(R.id.iv_send_file_icon);
+		holder.fileIconView = (ImageView) view.findViewById(R.id.iv_send_file_icon);
 		holder.dateView = (TextView) view.findViewById(R.id.tv_sendtime);
 		holder.userNameView = (TextView) view.findViewById(R.id.tv_username);
 		holder.fileNameView = (TextView) view
 				.findViewById(R.id.tv_send_file_name);
 		holder.fileSizeView = (TextView) view
 				.findViewById(R.id.tv_send_file_size);
+		holder.sendStatusView = (TextView) view.findViewById(R.id.tv_send_status);
 		holder.msgLayout = (LinearLayout) view
 				.findViewById(R.id.layout_chatcontent);
 		holder.msgLayout.setOnClickListener(mClickListener);
@@ -304,14 +293,14 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	}
 
 	class ViewHolder {
-		ProgressBar titleBar;
 		ProgressBar transferBar;
 		TextView dateView;
 		TextView userNameView;
 		TextView fileNameView;
 		TextView fileSizeView;
-		TextView receiveUserNameView;
-		ImageView iconView;
+		TextView contentTitleView;
+		TextView sendStatusView;
+		ImageView fileIconView;
 		// msg layout
 		LinearLayout msgLayout;
 		int position;
@@ -344,46 +333,88 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			final String filePath = data.filePath;
 			String fileName = data.fileName;
 			final int type = data.type;
-			
+			int status = data.status;
+			ActionMenu actionMenu = new ActionMenu(mContext);
+			switch (status) {
+			case HistoryManager.STATUS_PRE_SEND:
+			case HistoryManager.STATUS_SENDING:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
+				break;
+			case HistoryManager.STATUS_SEND_SUCCESS:
+			case HistoryManager.STATUS_RECEIVE_SUCCESS:
+			case HistoryManager.STATUS_SEND_FAIL:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				break;
+			case HistoryManager.STATUS_PRE_RECEIVE:
+			case HistoryManager.STATUS_RECEIVING:
+				//cancel menu wait for work
+				return;
+			case HistoryManager.STATUS_RECEIVE_FAIL:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				break;
+			default:
+				Log.e(TAG, "MsgOnClickListener.STATUS_ERROR:" + status);
+				break;
+			}
 
-			new AlertDialog.Builder(mContext)
-					.setTitle(fileName)
-					.setItems(R.array.history_menu,
-							new DialogInterface.OnClickListener() {
+			HistoryMenuDialog dialog = new HistoryMenuDialog(mContext, fileName, actionMenu);
+			dialog.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+				@Override
+				public void onMenuClick(ActionMenuItem menuItem) {
+					File file = new File(filePath);
+					switch (menuItem.getItemId()) {
+					case ActionMenu.ACTION_MENU_SEND:
+						if (!file.exists()) {
+							Builder dialog = new AlertDialog.Builder(mContext);
+							dialog.setMessage("该文件不存在或已被删除，是否删除记录");
+							dialog.setNeutralButton(R.string.cancel, null);
+							dialog.setPositiveButton(R.string.delete_history, new DialogInterface.OnClickListener() {
 								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									switch (which) {
-									case 0:
-										// send
-										File file = new File(filePath);
-										if (!file.exists()) {
-											Log.d(TAG,
-													"Send file fail. File is not exits. "
-															+ filePath);
-											mNotice.showToast("文件不存在");
-											break;
-										} else {
-											FileTransferUtil fileSendUtil = new FileTransferUtil(
-													mContext);
-											fileSendUtil.sendFile(filePath);
-										}
-										
-										break;
-									case 1:
-										// open
-										FileInfoManager fileInfoManager = new FileInfoManager(
-												mContext);
-										fileInfoManager.openFile(filePath);
-										break;
-									case 2:
-										// delete
-//										delete(new File(filePath), id);
-										showDeleteDialog(new File(filePath), id, type);
-										break;
-									}
+								public void onClick(DialogInterface dialog, int which) {
+									deleteHistory(id);
 								}
-							}).create().show();
+							});
+							dialog.create().show();
+							break;
+						} else {
+							FileTransferUtil fileSendUtil = new FileTransferUtil(
+									mContext);
+							fileSendUtil.sendFile(filePath);
+						}
+						break;
+					case ActionMenu.ACTION_MENU_DELETE:
+						showDeleteDialog(file, id, type);
+						break;
+					case ActionMenu.ACTION_MENU_OPEN:
+						if (!file.exists()) {
+							Builder dialog = new AlertDialog.Builder(mContext);
+							dialog.setMessage("该文件不存在或已被删除，是否删除记录");
+							dialog.setNeutralButton(R.string.cancel, null);
+							dialog.setPositiveButton(R.string.delete_history, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									deleteHistory(id);
+								}
+							});
+							dialog.create().show();
+							break;
+						} else {
+							FileInfoManager fileInfoManager = new FileInfoManager(
+									mContext);
+							fileInfoManager.openFile(filePath);
+						}
+						break;
+
+					default:
+						break;
+					}
+				}
+			});
+			dialog.setCancelable(true);
+			dialog.show();
 		}
 
 	}
