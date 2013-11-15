@@ -98,6 +98,8 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		setTitle(R.string.info1);
 		mOkButton = (TextView) findViewById(R.id.btn_info_ok);
 		mOkButton.setOnClickListener(this);
+		
+		setCanceledOnTouchOutside(true);
 	}
 	
 	
@@ -122,7 +124,7 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth();
+		lp.width = (int)display.getWidth() - 100;
 		getWindow().setAttributes(lp);
 	}
 	

@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class HistoryManager {
@@ -103,4 +104,34 @@ public class HistoryManager {
     		
     		return values;
 	    }
+	    
+	    /**
+		 * when app finish,modfiy all pre(pre_send/pre_receive) status to fail
+		 * status that file transfer history in history stable
+		 */
+		public static void modifyHistoryDb(Context context) {
+			try {
+				ContentValues values = new ContentValues();
+				// 更新两次，第一次将pre_send,改为send_fail
+				values.put(JuyouData.History.STATUS, HistoryManager.STATUS_SEND_FAIL);
+				String where = JuyouData.History.STATUS + "="
+						+ HistoryManager.STATUS_PRE_SEND + " or " + 
+						JuyouData.History.STATUS + "=" + HistoryManager.STATUS_SENDING;
+				context.getContentResolver().update(
+						JuyouData.History.CONTENT_URI,
+						values, where, null);
+
+				// 第二次，将pre_receive,改为receive_fail
+				values.put(JuyouData.History.STATUS,
+						HistoryManager.STATUS_RECEIVE_FAIL);
+				where = JuyouData.History.STATUS + "="
+						+ HistoryManager.STATUS_PRE_RECEIVE + " or "
+						+ JuyouData.History.STATUS + "=" + HistoryManager.STATUS_RECEIVING;
+				context.getContentResolver().update(
+						JuyouData.History.CONTENT_URI,
+						values, where , null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 }

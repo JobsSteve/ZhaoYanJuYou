@@ -95,12 +95,12 @@
     </string-array>
 
     <string-array name="send_history_delete_menu">
-        <item>删除记录</item>
+        <item>@string/delete_history</item>
     </string-array>
     
     <string-array name="receive_history_delete_menu">
-        <item>删除记录</item>
-        <item>删除记录及文件</item>
+        <item>@string/delete_history</item>
+        <item>@string/delete_history_and_file</item>
     </string-array>
     
     <string-array name="main_menu_item">

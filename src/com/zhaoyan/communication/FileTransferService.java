@@ -318,7 +318,7 @@ public class FileTransferService extends Service implements
 	@Override
 	public void onReceiveProgress(long receivedBytes, File file, Object key) {
 		ContentValues values = new ContentValues();
-		values.put(JuyouData.History.STATUS, HistoryManager.STATUS_SENDING);
+		values.put(JuyouData.History.STATUS, HistoryManager.STATUS_RECEIVING);
 		values.put(JuyouData.History.PROGRESS, receivedBytes);
 		getContentResolver().update(getFileUri(key), values, null, null);
 	}
@@ -327,10 +327,10 @@ public class FileTransferService extends Service implements
 	public void onReceiveFinished(boolean success, File file, Object key) {
 		int status;
 		if (success) {
-			status = HistoryManager.STATUS_SEND_SUCCESS;
+			status = HistoryManager.STATUS_RECEIVE_SUCCESS;
 			new SingleMediaScanner(getApplicationContext(), file);
 		} else {
-			status = HistoryManager.STATUS_SEND_FAIL;
+			status = HistoryManager.STATUS_RECEIVE_FAIL;
 			if (file.exists()) {
 				file.delete();
 			}

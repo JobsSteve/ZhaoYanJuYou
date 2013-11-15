@@ -26,13 +26,15 @@ public class HistoryMenuDialog extends Dialog implements OnItemClickListener {
 	
 	private Context mContext;
 	private ActionMenu mActionMenu;
+	private String mTitle;
 	
 	private OnMenuItemClickListener mClickListener;
 	
-	public HistoryMenuDialog(Context context, ActionMenu menu){
+	public HistoryMenuDialog(Context context, String title, ActionMenu menu){
 		super(context, R.style.Custom_Dialog);
 		mContext = context;
 		mActionMenu = menu;
+		mTitle = title;
 	}
 	
 	@Override
@@ -43,6 +45,8 @@ public class HistoryMenuDialog extends Dialog implements OnItemClickListener {
 		mDialogTitle = (TextView) findViewById(R.id.tv_history_title);
 		mListView = (ListView) findViewById(R.id.lv_history);
 		mListView.setOnItemClickListener(this);
+		
+		setTitle(mTitle);
 		
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < mActionMenu.size(); i++) {
@@ -56,6 +60,8 @@ public class HistoryMenuDialog extends Dialog implements OnItemClickListener {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, 
 				android.R.layout.simple_list_item_1, android.R.id.text1, list);
 		mListView.setAdapter(adapter);
+		
+		setCanceledOnTouchOutside(true);
 	}
 	
 	
@@ -66,7 +72,7 @@ public class HistoryMenuDialog extends Dialog implements OnItemClickListener {
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth();
+		lp.width = (int)display.getWidth() - 100;
 		getWindow().setAttributes(lp);
 	}
 	
@@ -94,6 +100,7 @@ public class HistoryMenuDialog extends Dialog implements OnItemClickListener {
 		try {
 			ActionMenuItem item = mActionMenu.getItem(position);
 			mClickListener.onMenuClick(item);
+			dismiss();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

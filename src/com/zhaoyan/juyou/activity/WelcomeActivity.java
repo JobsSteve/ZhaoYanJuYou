@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.HistoryManager;
 
 public class WelcomeActivity extends Activity {
 	private static final String TAG = "WelcomeActivity";
@@ -53,6 +54,8 @@ public class WelcomeActivity extends Activity {
 	 */
 	private void load() {
 		startFileTransferService();
+		
+		HistoryManager.modifyHistoryDb(WelcomeActivity.this);
 	}
 	
 	private void startFileTransferService(){
