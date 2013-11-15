@@ -11,6 +11,7 @@ import android.widget.EditText;
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.juyou.R;
 
 public class AccountSettingActivity extends BaseActivity implements
@@ -99,6 +100,8 @@ public class AccountSettingActivity extends BaseActivity implements
 			name = DEFAULT_NAME;
 		}
 		user.setUserName(name);
+		UserManager userManager = UserManager.getInstance();
+		userManager.setLocalUser(user);
 		UserHelper.saveUser(this, user);
 		mNotice.showToast(R.string.account_setting_saved_message);
 	}
