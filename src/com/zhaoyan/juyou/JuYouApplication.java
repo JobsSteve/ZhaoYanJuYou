@@ -1,6 +1,7 @@
 package com.zhaoyan.juyou;
 
 import android.app.Application;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 
@@ -12,6 +13,8 @@ import com.zhaoyan.communication.TrafficStatics;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.search.ConnectHelper;
 import com.zhaoyan.communication.search.SearchUtil;
+import com.zhaoyan.juyou.common.HistoryManager;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 public class JuYouApplication extends Application {
 
@@ -24,7 +27,6 @@ public class JuYouApplication extends Application {
 	public static void quitApplication(Context context) {
 		stopCommunication(context);
 		stopFileTransferService(context);
-		
 	}
 
 	private static void stopFileTransferService(Context context) {
@@ -50,9 +52,9 @@ public class JuYouApplication extends Application {
 		// Clear wifi connect history.
 		SearchUtil.clearWifiConnectHistory(context);
 		// Stop record log and close log file.
+		
 		Log.stopAndSave();
 		
 		System.exit(0);
 	}
-
 }

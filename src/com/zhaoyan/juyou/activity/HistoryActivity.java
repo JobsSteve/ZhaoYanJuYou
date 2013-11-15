@@ -195,6 +195,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			break;
 		case OnScrollListener.SCROLL_STATE_IDLE:
 			mAdapter.setIdleFlag(true);
+			mAdapter.notifyDataSetChanged();
 			break;
 		case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 			mAdapter.setIdleFlag(false);
@@ -203,6 +204,5 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		default:
 			break;
 		}
-		mAdapter.notifyDataSetChanged();
 	}
 }
