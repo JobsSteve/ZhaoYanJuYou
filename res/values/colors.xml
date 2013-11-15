@@ -7,6 +7,7 @@
     <color name="bottom_bar_unselected">#aaffffff</color>
     <color name="activity_background">#f5f7fa</color>
     <color name="translucent">#00000000</color>
+    <color name="translucent_background">#80000000</color>
     <color name="table_title_selected">#5d91be</color>
     <color name="table_title_unselected">#696969</color>
     
