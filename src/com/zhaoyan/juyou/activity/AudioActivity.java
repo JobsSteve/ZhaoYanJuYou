@@ -1,5 +1,6 @@
 package com.zhaoyan.juyou.activity;
 
+import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.fragment.AudioFragment;
 
 import android.os.Bundle;
@@ -27,6 +28,7 @@ public class AudioActivity extends FragmentActivity{
 			boolean ret = mAudioFragment.onBackPressed();
 			if (ret) {
 				finish();
+				overridePendingTransition(0, R.anim.activity_right_out);
 				return true;
 			}else {
 				return false;

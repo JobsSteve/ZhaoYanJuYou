@@ -99,10 +99,12 @@ public class BaseFragment extends Fragment{
 	 */
 	protected void openActivity(Class<?> pClass, Bundle bundle){
 		Intent intent = new Intent(getActivity(), pClass);
+		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		if (bundle != null) {
 			intent.putExtras(bundle);
 		}
 		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.activity_right_in, 0);
 	}
 	
 	/**

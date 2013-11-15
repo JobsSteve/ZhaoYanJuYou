@@ -1,78 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zhaoyan.common.view.RightSlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/activity_background"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <!-- main ui title -->
-    <include 
-        android:id="@+id/title"
-        layout="@layout/title" />
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical" >
+        android:background="@color/activity_background"
+        android:orientation="vertical" >
 
-        <LinearLayout
+        <!-- main ui title -->
+
+        <include
+            android:id="@+id/title"
+            layout="@layout/title" />
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" >
 
-            <TextView
-                android:layout_width="75dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/invite_ways"
-                android:padding="5dp"
-                android:text="@string/http_share_first_step"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/tv_network_http_share_ap_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="14dp"
-                android:text="@string/http_share_first_step_tip" />
+                <TextView
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/invite_ways"
+                    android:padding="5dp"
+                    android:text="@string/http_share_first_step"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
 
-            <TextView
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/invite_ways"
-                android:padding="5dp"
-                android:text="@string/http_share_second_step"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/tv_network_http_share_ap_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/http_share_first_step_tip" />
 
-            <TextView
-                android:id="@+id/tv_network_http_share_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="14dp"
-                android:autoLink="all"
-                android:text="@string/http_share_second_step_tip1" />
+                <TextView
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/invite_ways"
+                    android:padding="5dp"
+                    android:text="@string/http_share_second_step"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="14dp"
-                android:text="@string/http_share_second_step_tip2" />
+                <TextView
+                    android:id="@+id/tv_network_http_share_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="14dp"
+                    android:autoLink="all"
+                    android:text="@string/http_share_second_step_tip1" />
 
-            <ImageView
-                android:id="@+id/iv_network_http_share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-    </ScrollView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/http_share_second_step_tip2" />
 
-</LinearLayout>
+                <ImageView
+                    android:id="@+id/iv_network_http_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</com.zhaoyan.common.view.RightSlideLayout>
