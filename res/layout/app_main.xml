@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhaoyan.common.view.RightSlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rl_ui_app"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/activity_background" >
+
+        <include
+            android:id="@+id/title"
+            layout="@layout/title" />
+        
+        <GridView
+            android:id="@+id/app_normal_gridview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/bottom"
+            android:layout_below="@+id/title"
+            android:gravity="center"
+            android:horizontalSpacing="4dip"
+            android:numColumns="4"
+            android:padding="4dip"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="4dip" />
+
+        <ProgressBar
+            android:id="@+id/app_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminateDrawable="@drawable/loading_progressbar" />
+
+        <RelativeLayout
+            android:id="@+id/bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="visible" >
+
+            <include
+                android:id="@+id/menubar_bottom"
+                layout="@layout/menubar_bottom"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</com.zhaoyan.common.view.RightSlideLayout>

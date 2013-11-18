@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.BadgeView;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.activity.AudioActivity;
+import com.zhaoyan.juyou.activity.GameActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
 import com.zhaoyan.juyou.common.HistoryManager;
@@ -23,11 +24,7 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "GuanJiaFragment";
 	
 	//items
-	private View mMusicView;
-	private View mHistoryView;
 	private BadgeView badgeView;
-	private View mHistoryIconView;
-	private View mVideoView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,23 +53,29 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		}else {
 			badgeView.hide();
 		}
+		cursor.close();
 	}
 	
 	public void initView(View view){
-		mMusicView = view.findViewById(R.id.rl_guanjia_music);
-		mMusicView.setOnClickListener(this);
+		View musicView = view.findViewById(R.id.rl_guanjia_music);
+		musicView.setOnClickListener(this);
 		
-		mHistoryView = view.findViewById(R.id.rl_guanjia_history);
-		mHistoryView.setOnClickListener(this);
+		View historyView = view.findViewById(R.id.rl_guanjia_history);
+		historyView.setOnClickListener(this);
 		
-		mHistoryIconView = view.findViewById(R.id.iv_guanjia_history);
-		badgeView = new BadgeView(mContext, mHistoryIconView);
+		badgeView = new BadgeView(mContext, view.findViewById(R.id.iv_guanjia_history));
 		badgeView.setBackgroundResource(R.drawable.assist_block_count_bk);
 		badgeView.setPadding(0, 0, 0, 0);
 		badgeView.setText("");
 		
-		mVideoView = view.findViewById(R.id.rl_guanjia_video);
-		mVideoView.setOnClickListener(this);
+		View videoView = view.findViewById(R.id.rl_guanjia_video);
+		videoView.setOnClickListener(this);
+		
+		View appView = view.findViewById(R.id.rl_guanjia_application);
+		appView.setOnClickListener(this);
+		
+		View gameView = view.findViewById(R.id.rl_guanjia_game);
+		gameView.setOnClickListener(this);
 	}
 
 	@Override
@@ -86,6 +89,12 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			break;
 		case R.id.rl_guanjia_video:
 			openActivity(VideoActivity.class);
+			break;
+		case R.id.rl_guanjia_application:
+			openActivity(AppActivity.class);
+			break;
+		case R.id.rl_guanjia_game:
+			openActivity(GameActivity.class);
 			break;
 
 		default:

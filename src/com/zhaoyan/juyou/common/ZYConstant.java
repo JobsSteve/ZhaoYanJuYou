@@ -2,7 +2,6 @@ package com.zhaoyan.juyou.common;
 
 import com.zhaoyan.communication.FileTransferService;
 
-import android.R.integer;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -82,7 +81,7 @@ public class ZYConstant {
 	public static final String MEDIA_AUDIO_ACTION = "intent.media.audio.action";
 	public static final String MEDIA_VIDEO_ACTION = "intent.media.video.action";
 	public static final String SEND_FILE_ACTION = FileTransferService.ACTION_SEND_FILE;
-	public static final String RECEIVE_FILE_ACTION = "com.dreamlink.communication.receivefile";
+	public static final String RECEIVE_FILE_ACTION = "com.zhaoyan.juyou.receivefile";
 
 	public static final String FILE_EX = "file://";
 	public static final String ENTER = "\n";
@@ -97,7 +96,7 @@ public class ZYConstant {
 	public static final Uri IMAGE_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
 	/** package name for this app */
-	public static final String PACKAGE_NAME = "com.dreamlink.communication";
+	public static final String PACKAGE_NAME = "com.zhaoyan.juyou";
 
 	public static final String EXIT_ACTION = "intent.exit.aciton";
 	public static final String APP_ACTION = "com.dreamlink.communication.action.app";
@@ -108,7 +107,7 @@ public class ZYConstant {
 
 	public static final String DEFAULT_SDCARD = Environment.getExternalStorageDirectory().getAbsolutePath();
 	/** the default folder that save the receive files */
-	public static final String DREAMLINK_FOLDER = DEFAULT_SDCARD + "/Dreamlink";
+	public static final String DREAMLINK_FOLDER = DEFAULT_SDCARD + "/JuYou";
 	public static final String BACKUP_FOLDER = DREAMLINK_FOLDER + "/backup_apps";
 	public static final String DEFAULT_RECEIVE_FILE_FOLDER = DEFAULT_SDCARD + "/JuYou";
 }
