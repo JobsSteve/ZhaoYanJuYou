@@ -79,6 +79,10 @@
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
+            android:name="com.zhaoyan.juyou.activity.VideoActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
             android:name="com.zhaoyan.juyou.activity.HistoryActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
