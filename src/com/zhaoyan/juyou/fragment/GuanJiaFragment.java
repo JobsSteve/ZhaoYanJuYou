@@ -13,6 +13,7 @@ import com.zhaoyan.common.view.BadgeView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AudioActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
+import com.zhaoyan.juyou.activity.VideoActivity;
 import com.zhaoyan.juyou.common.HistoryManager;
 import com.zhaoyan.juyou.provider.JuyouData;
 import com.zhaoyan.juyou.provider.JuyouData.History;
@@ -26,6 +27,7 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private View mHistoryView;
 	private BadgeView badgeView;
 	private View mHistoryIconView;
+	private View mVideoView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,6 +70,9 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		badgeView.setBackgroundResource(R.drawable.assist_block_count_bk);
 		badgeView.setPadding(0, 0, 0, 0);
 		badgeView.setText("");
+		
+		mVideoView = view.findViewById(R.id.rl_guanjia_video);
+		mVideoView.setOnClickListener(this);
 	}
 
 	@Override
@@ -78,6 +83,9 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			break;
 		case R.id.rl_guanjia_history:
 			openActivity(HistoryActivity.class);
+			break;
+		case R.id.rl_guanjia_video:
+			openActivity(VideoActivity.class);
 			break;
 
 		default:
