@@ -1,5 +1,6 @@
 package com.zhaoyan.juyou.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,9 @@ import com.zhaoyan.common.view.BadgeView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AudioActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
+import com.zhaoyan.juyou.common.HistoryManager;
+import com.zhaoyan.juyou.provider.JuyouData;
+import com.zhaoyan.juyou.provider.JuyouData.History;
 
 
 public class GuanJiaFragment extends BaseFragment implements OnClickListener {
@@ -21,6 +25,7 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private View mMusicView;
 	private View mHistoryView;
 	private BadgeView badgeView;
+	private View mHistoryIconView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +41,19 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onResume();
 		Log.d(TAG, "onResume()");
+		
+		String where = JuyouData.History.STATUS + "="
+				+ HistoryManager.STATUS_PRE_SEND + " or " + 
+				JuyouData.History.STATUS + "=" + HistoryManager.STATUS_SENDING + " or " + 
+				JuyouData.History.STATUS + "="
+				+ HistoryManager.STATUS_PRE_RECEIVE + " or "
+				+ JuyouData.History.STATUS + "=" + HistoryManager.STATUS_RECEIVING;
+		Cursor cursor = getActivity().getContentResolver().query(History.CONTENT_URI, null, where, null, null);
+		if (cursor != null && cursor.getCount() > 0) {
+			badgeView.show();
+		}else {
+			badgeView.hide();
+		}
 	}
 	
 	public void initView(View view){
@@ -45,10 +63,11 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		mHistoryView = view.findViewById(R.id.rl_guanjia_history);
 		mHistoryView.setOnClickListener(this);
 		
-		View imageView = view.findViewById(R.id.iv_guanjia_history);
-		badgeView = new BadgeView(mContext, imageView);
-		badgeView.setText("12");
-		badgeView.show();
+		mHistoryIconView = view.findViewById(R.id.iv_guanjia_history);
+		badgeView = new BadgeView(mContext, mHistoryIconView);
+		badgeView.setBackgroundResource(R.drawable.assist_block_count_bk);
+		badgeView.setPadding(0, 0, 0, 0);
+		badgeView.setText("");
 	}
 
 	@Override
@@ -65,4 +84,5 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			break;
 		}
 	}
+	
 }
