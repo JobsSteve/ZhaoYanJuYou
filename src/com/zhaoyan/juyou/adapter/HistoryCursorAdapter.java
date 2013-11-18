@@ -162,8 +162,12 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			color = mContext.getResources().getColor(R.color.holo_blue1);
 			break;
 		case HistoryManager.STATUS_SEND_FAIL:
+			statusStr = mContext.getString(R.string.send_fail);
+			color = Color.RED;
+			fileSizeStr = ZYUtils.getFormatSize(progress) + "/" + fileSizeStr;
+			break;
 		case HistoryManager.STATUS_RECEIVE_FAIL:
-			statusStr = mContext.getString(R.string.transfer_fail);
+			statusStr = mContext.getString(R.string.receive_fail);
 			color = Color.RED;
 			fileSizeStr = ZYUtils.getFormatSize(progress) + "/" + fileSizeStr;
 			break;
@@ -327,8 +331,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		@Override
 		public void onClick(View v) {
 			MsgData data = (MsgData) v.getTag();
-			Log.d(TAG, "onClick id = " + data.itemID + ", name = "
-					+ data.fileName);
 			final int id = data.itemID;
 			final String filePath = data.filePath;
 			String fileName = data.fileName;
@@ -343,17 +345,21 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				break;
 			case HistoryManager.STATUS_SEND_SUCCESS:
 			case HistoryManager.STATUS_RECEIVE_SUCCESS:
-			case HistoryManager.STATUS_SEND_FAIL:
 				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				break;
+			case HistoryManager.STATUS_SEND_FAIL:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0, R.string.cancel);
 				break;
 			case HistoryManager.STATUS_PRE_RECEIVE:
 			case HistoryManager.STATUS_RECEIVING:
 				//cancel menu wait for work
 				return;
 			case HistoryManager.STATUS_RECEIVE_FAIL:
-				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0, R.string.cancel);
 				break;
 			default:
 				Log.e(TAG, "MsgOnClickListener.STATUS_ERROR:" + status);
@@ -406,6 +412,11 @@ public class HistoryCursorAdapter extends CursorAdapter {
 									mContext);
 							fileInfoManager.openFile(filePath);
 						}
+						break;
+					case ActionMenu.ACTION_MENU_CANCEL:
+						String selection = JuyouData.History._ID + "=" + id;
+						mContext.getContentResolver().delete(
+								JuyouData.History.CONTENT_URI, selection, null);
 						break;
 
 					default:

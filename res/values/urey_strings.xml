@@ -163,6 +163,8 @@
      <string name="transfer_wait">等待传输</string>
      <string name="transfer_ok">传输完成</string>
      <string name="transfer_fail">传输失败</string>
+     <string name="send_fail">发送失败</string>
+     <string name="receive_fail">接收失败</string>
      <string name="open_file_fail">找不到打开该文件的应用</string>
      <string name="me">我</string>
      

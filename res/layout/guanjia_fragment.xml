@@ -117,7 +117,7 @@
 
                 <!-- History -->
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/rl_guanjia_history"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -125,34 +125,43 @@
                     android:layout_weight="1"
                     android:background="@drawable/setting_item_bg"
                     android:clickable="true"
-                    android:padding="10dp" >
+                    android:padding="10dp" 
+                    android:orientation="horizontal"
+                    >
 
                     <ImageView
                         android:id="@+id/iv_guanjia_history"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="15dp"
                         android:src="@drawable/history" />
 
-                    <ImageView
-                        android:id="@+id/iv_guanjia_history_arrow"
+                    <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
+                        android:layout_height="wrap_content" 
+                        android:layout_gravity="center"
+                        >
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_guanjia_history_arrow"
-                        android:layout_toRightOf="@id/iv_guanjia_history"
-                        android:text="@string/history"
-                        android:textSize="14sp" />
-                </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/iv_guanjia_history_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/setting_item_arrow" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@id/iv_guanjia_history_arrow"
+                            android:text="@string/history"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+                    
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
