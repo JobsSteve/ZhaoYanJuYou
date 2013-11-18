@@ -49,7 +49,7 @@ public class NetWorkUtil {
 			NetworkInfo networkInfo = connectivityManager
 					.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 			if (networkInfo != null) {
-				return networkInfo.isAvailable();
+				return networkInfo.isConnected();
 			}
 		}
 		return false;

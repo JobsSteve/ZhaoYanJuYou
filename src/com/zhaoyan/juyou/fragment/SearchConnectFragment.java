@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.TableTitleView;
 import com.zhaoyan.common.view.TableTitleView.OnTableSelectChangeListener;
@@ -59,13 +60,23 @@ public class SearchConnectFragment extends Fragment implements
 	}
 
 	@Override
-	public void onDestroy() {
+	public void onDestroyView() {
+		Log.d(TAG, "onDestroyView");
+		super.onDestroyView();
 		try {
 			mContext.unregisterReceiver(mWifiBroadcastReceiver);
 		} catch (Exception e) {
 		}
 
-		super.onDestroy();
+		mCurrentFragment = null;
+		if (mApFragment != null) {
+			mApFragment.setOnServerChangeListener(null);
+			mApFragment = null;
+		}
+		if (mWifiFragment != null) {
+			mWifiFragment.setOnServerChangeListener(null);
+			mWifiFragment = null;
+		}
 	}
 
 	private void transactTo(Fragment fragment) {
@@ -85,21 +96,6 @@ public class SearchConnectFragment extends Fragment implements
 		mCurrentFragment = fragment;
 	}
 
-	@Override
-	public void onDestroyView() {
-		Log.d(TAG, "onDestroyView");
-		super.onDestroyView();
-		mCurrentFragment = null;
-		if (mApFragment != null) {
-			mApFragment.setOnServerChangeListener(null);
-			mApFragment = null;
-		}
-		if (mWifiFragment != null) {
-			mWifiFragment.setOnServerChangeListener(null);
-			mWifiFragment = null;
-		}
-	}
-
 	private void initView(View rootView) {
 		mTableTitleView = (TableTitleView) rootView
 				.findViewById(R.id.ttv_sc_title);
@@ -112,9 +108,10 @@ public class SearchConnectFragment extends Fragment implements
 	}
 
 	private String getWifiServerNumberTitle(int number) {
+		boolean isWifiConnected = NetWorkUtil.isWifiConnected(mContext);
 		String wifiServerNumberTitle;
 		WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-		if (wifiInfo != null) {
+		if (isWifiConnected && wifiInfo != null) {
 			String ssid = wifiInfo.getSSID();
 			wifiServerNumberTitle = getString(R.string.wifi_server_number,
 					ssid, number);
@@ -135,8 +132,14 @@ public class SearchConnectFragment extends Fragment implements
 			mWifiFragment = new SearchConnectWifiFragment();
 			mWifiFragment.setOnServerChangeListener(this);
 		}
-
-		transactTo(mApFragment);
+		
+		if (NetWorkUtil.isWifiConnected(mContext)) {
+			transactTo(mWifiFragment);
+			mTableTitleView.setSelectedPostion(POSTION_WIFI_FRAGMENT);
+		} else {
+			transactTo(mApFragment);
+			mTableTitleView.setSelectedPostion(POSTION_AP_FRAGMENT);
+		}
 	}
 
 	@Override
@@ -182,19 +185,12 @@ public class SearchConnectFragment extends Fragment implements
 			if (networkInfo.isConnected()) {
 				int serverNumber = mWifiFragment.getServerNumber();
 				String ssid = mWifiManager.getConnectionInfo().getSSID();
-				mTableTitleView.setTableTitle(
-						POSTION_WIFI_FRAGMENT,
-						getString(R.string.wifi_server_number, ssid,
-								serverNumber));
+				mTableTitleView.setTableTitle(POSTION_WIFI_FRAGMENT,
+						getWifiServerNumberTitle(serverNumber));
 			} else {
 				int serverNumber = mWifiFragment.getServerNumber();
-				mTableTitleView
-						.setTableTitle(
-								POSTION_WIFI_FRAGMENT,
-								getString(
-										R.string.wifi_server_number,
-										getString(R.string.wifi_server_number_wifi_name_default),
-										serverNumber));
+				mTableTitleView.setTableTitle(POSTION_WIFI_FRAGMENT,
+						getWifiServerNumberTitle(serverNumber));
 			}
 		};
 	};
