@@ -24,11 +24,14 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		OnUserChangedListener {
 	private static final String TAG = "ConnectFriendsActivity";
 	private SocketCommunicationManager mCommunicationManager;
+	private UserManager mUserManager;
+
 	private FragmentManager mFragmentManager;
 	private SearchConnectFragment mSearchAndConnectFragment;
 	private ConnectedInfoFragment mConnectedInfoFragment;
-	private Fragment mCurrentFragment;
-	private UserManager mUserManager;
+	private static final String FRAGMENT_TAG_SEARCH_CONNECT = "SearchConnectFragment";
+	private static final String FRAGMENT_TAG_CONNECTED_INFO = "ConnectedInfoFragment";
+	private String mCurrentFragmentTag;
 
 	private static final int MSG_SHOW_LOGIN_DIALOG = 1;
 	private static final int MSG_UPDATE_NETWORK_STATUS = 2;
@@ -47,8 +50,7 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		mFragmentManager = getSupportFragmentManager();
 		initTitle(R.string.connect_friends);
 
-		initView();
-		initFragment();
+		initFragment(savedInstanceState);
 		updateFragment();
 
 		IntentFilter filter = new IntentFilter();
@@ -56,42 +58,72 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		registerReceiver(mReceiver, filter);
 	}
 
-	private void initFragment() {
-		mSearchAndConnectFragment = new SearchConnectFragment();
-		mConnectedInfoFragment = new ConnectedInfoFragment();
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putString("fragment", mCurrentFragmentTag);
+		super.onSaveInstanceState(outState);
+	}
+
+	private void initFragment(Bundle savedInstanceState) {
+		mSearchAndConnectFragment = (SearchConnectFragment) mFragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_SEARCH_CONNECT);
+		if (mSearchAndConnectFragment == null) {
+			mSearchAndConnectFragment = new SearchConnectFragment();
+		}
+
+		mConnectedInfoFragment = (ConnectedInfoFragment) mFragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_CONNECTED_INFO);
+		if (mConnectedInfoFragment == null) {
+			mConnectedInfoFragment = new ConnectedInfoFragment();
+		}
+
+		// Restore from save instance.
+		if (savedInstanceState != null) {
+			mCurrentFragmentTag = savedInstanceState.getString("fragment");
+			if (FRAGMENT_TAG_CONNECTED_INFO.equals(mCurrentFragmentTag)) {
+				if (mSearchAndConnectFragment.isAdded()) {
+					mFragmentManager.beginTransaction()
+							.hide(mSearchAndConnectFragment).commit();
+				}
+			} else if (FRAGMENT_TAG_SEARCH_CONNECT.equals(mCurrentFragmentTag)) {
+				if (mConnectedInfoFragment.isAdded()) {
+					mFragmentManager.beginTransaction()
+							.hide(mSearchAndConnectFragment).commit();
+				}
+			}
+		}
 	}
 
 	private void updateFragment() {
 		if (mCommunicationManager.isConnected()
 				|| mCommunicationManager.isServerAndCreated()) {
-			transactTo(mConnectedInfoFragment);
+			transactTo(mConnectedInfoFragment, FRAGMENT_TAG_CONNECTED_INFO);
 		} else {
-			transactTo(mSearchAndConnectFragment);
+			transactTo(mSearchAndConnectFragment, FRAGMENT_TAG_SEARCH_CONNECT);
 		}
 	}
 
-	private void transactTo(Fragment fragment) {
-		if (fragment == mCurrentFragment) {
+	private void transactTo(Fragment fragment, String tag) {
+		if (tag.equals(mCurrentFragmentTag)) {
 			return;
 		}
+		Fragment currentFragment = mFragmentManager
+				.findFragmentByTag(mCurrentFragmentTag);
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		if (mCurrentFragment != null) {
-			transaction.hide(mCurrentFragment);
+		if (currentFragment != null) {
+			transaction.hide(currentFragment);
 		}
 		try {
 			if (!fragment.isAdded()) {
-				transaction.add(R.id.fl_cf_container, fragment).commit();
+				transaction.add(R.id.fl_cf_container, fragment,
+						fragment.getClass().getSimpleName()).commit();
 			} else {
 				transaction.show(fragment).commit();
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "transactTo " + e);
 		}
-
-		mCurrentFragment = fragment;
-	}
-
-	private void initView() {
+		mCurrentFragmentTag = tag;
 	}
 
 	@Override

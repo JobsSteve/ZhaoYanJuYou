@@ -26,9 +26,11 @@ public class SearchConnectFragment extends Fragment implements
 		OnTableSelectChangeListener, OnServerChangeListener {
 	private static final String TAG = "SearchConnectFragment";
 
-	private Fragment mCurrentFragment;
+	private String mCurrentFragmentTag;
 	private SearchConnectApFragment mApFragment;
 	private SearchConnectWifiFragment mWifiFragment;
+	private static final String FRAGMENT_TAG_AP = "ap";
+	private static final String FRAGMENT_TAG_WIFI = "wifi";
 	private static final int POSTION_AP_FRAGMENT = 0;
 	private static final int POSTION_WIFI_FRAGMENT = 1;
 	private FragmentManager mFragmentManager;
@@ -50,13 +52,18 @@ public class SearchConnectFragment extends Fragment implements
 
 		mFragmentManager = getFragmentManager();
 		initView(rootView);
-
-		initFragment(rootView);
+		initFragment(savedInstanceState);
 
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		mContext.registerReceiver(mWifiBroadcastReceiver, intentFilter);
 		return rootView;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putString("fragment", mCurrentFragmentTag);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -68,32 +75,31 @@ public class SearchConnectFragment extends Fragment implements
 		} catch (Exception e) {
 		}
 
-		mCurrentFragment = null;
 		if (mApFragment != null) {
 			mApFragment.setOnServerChangeListener(null);
-			mApFragment = null;
 		}
 		if (mWifiFragment != null) {
 			mWifiFragment.setOnServerChangeListener(null);
-			mWifiFragment = null;
 		}
 	}
 
-	private void transactTo(Fragment fragment) {
-		if (fragment == mCurrentFragment) {
+	private void transactTo(Fragment fragment, String tag) {
+		if (tag.equals(mCurrentFragmentTag)) {
 			return;
 		}
+		Fragment currentFragment = (Fragment) mFragmentManager
+				.findFragmentByTag(mCurrentFragmentTag);
 		Log.d(TAG, "transactTo " + fragment.getClass().getSimpleName());
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		if (mCurrentFragment != null) {
-			transaction.hide(mCurrentFragment);
+		if (currentFragment != null) {
+			transaction.hide(currentFragment);
 		}
 		if (!fragment.isAdded()) {
-			transaction.add(R.id.fl_sc_container, fragment).commit();
+			transaction.add(R.id.fl_sc_container, fragment, tag).commit();
 		} else {
 			transaction.show(fragment).commit();
 		}
-		mCurrentFragment = fragment;
+		mCurrentFragmentTag = tag;
 	}
 
 	private void initView(View rootView) {
@@ -123,21 +129,40 @@ public class SearchConnectFragment extends Fragment implements
 		return wifiServerNumberTitle;
 	}
 
-	private void initFragment(View rootView) {
+	private void initFragment(Bundle savedInstanceState) {
+		mApFragment = (SearchConnectApFragment) mFragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_AP);
 		if (mApFragment == null) {
 			mApFragment = new SearchConnectApFragment();
-			mApFragment.setOnServerChangeListener(this);
 		}
+		mApFragment.setOnServerChangeListener(this);
+
+		mWifiFragment = (SearchConnectWifiFragment) mFragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_WIFI);
 		if (mWifiFragment == null) {
 			mWifiFragment = new SearchConnectWifiFragment();
-			mWifiFragment.setOnServerChangeListener(this);
 		}
+		mWifiFragment.setOnServerChangeListener(this);
 		
+		// Restore from save instance.
+		if (savedInstanceState != null) {
+			mCurrentFragmentTag = savedInstanceState.getString("fragment");
+			if (mCurrentFragmentTag.equals(FRAGMENT_TAG_AP)) {
+				if (mWifiFragment.isAdded()) {
+					mFragmentManager.beginTransaction().hide(mWifiFragment).commit();
+				}
+			} else if (mCurrentFragmentTag.equals(FRAGMENT_TAG_WIFI)) {
+				if (mApFragment.isAdded()) {
+					mFragmentManager.beginTransaction().hide(mApFragment).commit();
+				}
+			}
+		}
+
 		if (NetWorkUtil.isWifiConnected(mContext)) {
-			transactTo(mWifiFragment);
+			transactTo(mWifiFragment, FRAGMENT_TAG_WIFI);
 			mTableTitleView.setSelectedPostion(POSTION_WIFI_FRAGMENT);
 		} else {
-			transactTo(mApFragment);
+			transactTo(mApFragment, FRAGMENT_TAG_AP);
 			mTableTitleView.setSelectedPostion(POSTION_AP_FRAGMENT);
 		}
 	}
@@ -146,10 +171,10 @@ public class SearchConnectFragment extends Fragment implements
 	public void onTableSelect(int position) {
 		switch (position) {
 		case POSTION_AP_FRAGMENT:
-			transactTo(mApFragment);
+			transactTo(mApFragment, FRAGMENT_TAG_AP);
 			break;
 		case POSTION_WIFI_FRAGMENT:
-			transactTo(mWifiFragment);
+			transactTo(mWifiFragment, FRAGMENT_TAG_WIFI);
 			break;
 		default:
 			break;
