@@ -51,6 +51,8 @@ public class TableTitleView extends LinearLayout implements OnClickListener {
 		tableTitleParams.gravity = Gravity.CENTER;
 
 		TextView tableTitleTextView;
+		final int paddingTop = ViewUtil.dp2px(mContext, 20);
+		final int paddingBottom = paddingTop;
 		for (String title : tableTitles) {
 			tableTitleTextView = new TextView(mContext);
 			tableTitleTextView.setText(title);
@@ -58,7 +60,7 @@ public class TableTitleView extends LinearLayout implements OnClickListener {
 			tableTitleTextView.setTextColor(mContext.getResources().getColor(
 					R.color.table_title_unselected));
 			tableTitleTextView.setGravity(Gravity.CENTER);
-			tableTitleTextView.setPadding(0, 30, 0, 30);
+			tableTitleTextView.setPadding(0, paddingTop, 0, paddingBottom);
 			tableTitleTextView.setClickable(true);
 			tableTitleTextView.setOnClickListener(this);
 			mTableTitles.add(tableTitleTextView);

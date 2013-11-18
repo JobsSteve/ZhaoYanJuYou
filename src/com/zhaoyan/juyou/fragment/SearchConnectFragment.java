@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.TableTitleView;
 import com.zhaoyan.common.view.TableTitleView.OnTableSelectChangeListener;
@@ -25,9 +26,11 @@ public class SearchConnectFragment extends Fragment implements
 		OnTableSelectChangeListener, OnServerChangeListener {
 	private static final String TAG = "SearchConnectFragment";
 
-	private Fragment mCurrentFragment;
+	private String mCurrentFragmentTag;
 	private SearchConnectApFragment mApFragment;
 	private SearchConnectWifiFragment mWifiFragment;
+	private static final String FRAGMENT_TAG_AP = "ap";
+	private static final String FRAGMENT_TAG_WIFI = "wifi";
 	private static final int POSTION_AP_FRAGMENT = 0;
 	private static final int POSTION_WIFI_FRAGMENT = 1;
 	private FragmentManager mFragmentManager;
@@ -49,8 +52,7 @@ public class SearchConnectFragment extends Fragment implements
 
 		mFragmentManager = getFragmentManager();
 		initView(rootView);
-
-		initFragment(rootView);
+		initFragment(savedInstanceState);
 
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
@@ -59,45 +61,45 @@ public class SearchConnectFragment extends Fragment implements
 	}
 
 	@Override
-	public void onDestroy() {
-		try {
-			mContext.unregisterReceiver(mWifiBroadcastReceiver);
-		} catch (Exception e) {
-		}
-
-		super.onDestroy();
-	}
-
-	private void transactTo(Fragment fragment) {
-		if (fragment == mCurrentFragment) {
-			return;
-		}
-		Log.d(TAG, "transactTo " + fragment.getClass().getSimpleName());
-		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		if (mCurrentFragment != null) {
-			transaction.hide(mCurrentFragment);
-		}
-		if (!fragment.isAdded()) {
-			transaction.add(R.id.fl_sc_container, fragment).commit();
-		} else {
-			transaction.show(fragment).commit();
-		}
-		mCurrentFragment = fragment;
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putString("fragment", mCurrentFragmentTag);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	public void onDestroyView() {
 		Log.d(TAG, "onDestroyView");
 		super.onDestroyView();
-		mCurrentFragment = null;
+		try {
+			mContext.unregisterReceiver(mWifiBroadcastReceiver);
+		} catch (Exception e) {
+		}
+
 		if (mApFragment != null) {
 			mApFragment.setOnServerChangeListener(null);
-			mApFragment = null;
 		}
 		if (mWifiFragment != null) {
 			mWifiFragment.setOnServerChangeListener(null);
-			mWifiFragment = null;
 		}
+	}
+
+	private void transactTo(Fragment fragment, String tag) {
+		if (tag.equals(mCurrentFragmentTag)) {
+			return;
+		}
+		Fragment currentFragment = (Fragment) mFragmentManager
+				.findFragmentByTag(mCurrentFragmentTag);
+		Log.d(TAG, "transactTo " + fragment.getClass().getSimpleName());
+		FragmentTransaction transaction = mFragmentManager.beginTransaction();
+		if (currentFragment != null) {
+			transaction.hide(currentFragment);
+		}
+		if (!fragment.isAdded()) {
+			transaction.add(R.id.fl_sc_container, fragment, tag).commit();
+		} else {
+			transaction.show(fragment).commit();
+		}
+		mCurrentFragmentTag = tag;
 	}
 
 	private void initView(View rootView) {
@@ -112,9 +114,10 @@ public class SearchConnectFragment extends Fragment implements
 	}
 
 	private String getWifiServerNumberTitle(int number) {
+		boolean isWifiConnected = NetWorkUtil.isWifiConnected(mContext);
 		String wifiServerNumberTitle;
 		WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-		if (wifiInfo != null) {
+		if (isWifiConnected && wifiInfo != null) {
 			String ssid = wifiInfo.getSSID();
 			wifiServerNumberTitle = getString(R.string.wifi_server_number,
 					ssid, number);
@@ -126,27 +129,52 @@ public class SearchConnectFragment extends Fragment implements
 		return wifiServerNumberTitle;
 	}
 
-	private void initFragment(View rootView) {
+	private void initFragment(Bundle savedInstanceState) {
+		mApFragment = (SearchConnectApFragment) mFragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_AP);
 		if (mApFragment == null) {
 			mApFragment = new SearchConnectApFragment();
-			mApFragment.setOnServerChangeListener(this);
 		}
+		mApFragment.setOnServerChangeListener(this);
+
+		mWifiFragment = (SearchConnectWifiFragment) mFragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_WIFI);
 		if (mWifiFragment == null) {
 			mWifiFragment = new SearchConnectWifiFragment();
-			mWifiFragment.setOnServerChangeListener(this);
+		}
+		mWifiFragment.setOnServerChangeListener(this);
+		
+		// Restore from save instance.
+		if (savedInstanceState != null) {
+			mCurrentFragmentTag = savedInstanceState.getString("fragment");
+			if (mCurrentFragmentTag.equals(FRAGMENT_TAG_AP)) {
+				if (mWifiFragment.isAdded()) {
+					mFragmentManager.beginTransaction().hide(mWifiFragment).commit();
+				}
+			} else if (mCurrentFragmentTag.equals(FRAGMENT_TAG_WIFI)) {
+				if (mApFragment.isAdded()) {
+					mFragmentManager.beginTransaction().hide(mApFragment).commit();
+				}
+			}
 		}
 
-		transactTo(mApFragment);
+		if (NetWorkUtil.isWifiConnected(mContext)) {
+			transactTo(mWifiFragment, FRAGMENT_TAG_WIFI);
+			mTableTitleView.setSelectedPostion(POSTION_WIFI_FRAGMENT);
+		} else {
+			transactTo(mApFragment, FRAGMENT_TAG_AP);
+			mTableTitleView.setSelectedPostion(POSTION_AP_FRAGMENT);
+		}
 	}
 
 	@Override
 	public void onTableSelect(int position) {
 		switch (position) {
 		case POSTION_AP_FRAGMENT:
-			transactTo(mApFragment);
+			transactTo(mApFragment, FRAGMENT_TAG_AP);
 			break;
 		case POSTION_WIFI_FRAGMENT:
-			transactTo(mWifiFragment);
+			transactTo(mWifiFragment, FRAGMENT_TAG_WIFI);
 			break;
 		default:
 			break;
@@ -182,19 +210,12 @@ public class SearchConnectFragment extends Fragment implements
 			if (networkInfo.isConnected()) {
 				int serverNumber = mWifiFragment.getServerNumber();
 				String ssid = mWifiManager.getConnectionInfo().getSSID();
-				mTableTitleView.setTableTitle(
-						POSTION_WIFI_FRAGMENT,
-						getString(R.string.wifi_server_number, ssid,
-								serverNumber));
+				mTableTitleView.setTableTitle(POSTION_WIFI_FRAGMENT,
+						getWifiServerNumberTitle(serverNumber));
 			} else {
 				int serverNumber = mWifiFragment.getServerNumber();
-				mTableTitleView
-						.setTableTitle(
-								POSTION_WIFI_FRAGMENT,
-								getString(
-										R.string.wifi_server_number,
-										getString(R.string.wifi_server_number_wifi_name_default),
-										serverNumber));
+				mTableTitleView.setTableTitle(POSTION_WIFI_FRAGMENT,
+						getWifiServerNumberTitle(serverNumber));
 			}
 		};
 	};

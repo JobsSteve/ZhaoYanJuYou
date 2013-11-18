@@ -61,13 +61,12 @@
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@id/iv_juyou_connect_arrow"
                         android:layout_toRightOf="@id/iv_juyou_connect_friends"
-                        android:orientation="vertical" >
+                        android:orientation="horizontal" >
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginTop="5dp"
+                            android:layout_gravity="center_vertical"
                             android:text="@string/connect_friends"
                             android:textSize="14sp" />
 
@@ -75,6 +74,8 @@
                             android:id="@+id/ll_juyou_connected_users"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:orientation="horizontal" >
 
