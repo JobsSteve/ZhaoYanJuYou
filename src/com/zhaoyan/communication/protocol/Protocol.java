@@ -1,6 +1,11 @@
 package com.zhaoyan.communication.protocol;
 
 public class Protocol {
+	/**
+	 *  Heart beat message. Note this message is only used by {@link #HeartBeat}
+	 */
+	public static final int DATA_TYPE_HEADER_HEART_BEAT = 1;
+
 	public static final int DATA_SIZE_HEADER_SIZE = 4;
 	public static final int DATA_TYPE_HEADER_SIZE = 4;
 
@@ -30,7 +35,7 @@ public class Protocol {
 	public static final int DATA_TYPE_HEADER_SEND_SINGLE = 200;
 	// Send to single
 	public static final int DATA_TYPE_HEADER_SEND_ALL = 201;
-	
+
 	// File transport
 	public static final int DATA_TYPE_HEADER_SEND_FILE = 300;
 	public static final int SEND_FILE_SERVER_PORT_HEAD_SIZE = 4;
