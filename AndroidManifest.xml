@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhaoyan.juyou"
     android:versionCode="1"
-    android:versionName="1.0.3" >
+    android:versionName="1.0.4" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -83,6 +83,14 @@
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
+            android:name="com.zhaoyan.juyou.activity.AppActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.GameActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
             android:name="com.zhaoyan.juyou.activity.HistoryActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
@@ -100,6 +108,12 @@
         <provider
             android:name="com.zhaoyan.juyou.provider.JuyouProvider"
             android:authorities="com.zhaoyan.juyou.provider.JuyouProvider"
+            android:exported="false" >
+        </provider>
+        
+        <provider
+            android:name="com.zhaoyan.juyou.provider.AppProvider"
+            android:authorities="com.zhaoyan.juyou.provider.AppProvider"
             android:exported="false" >
         </provider>
     </application>

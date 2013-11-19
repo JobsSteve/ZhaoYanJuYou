@@ -1,7 +1,13 @@
 package com.zhaoyan.juyou.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -9,9 +15,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.AppInfo;
+import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.HistoryManager;
+import com.zhaoyan.juyou.provider.AppData;
 
 public class WelcomeActivity extends Activity {
 	private static final String TAG = "WelcomeActivity";
@@ -56,6 +66,11 @@ public class WelcomeActivity extends Activity {
 		startFileTransferService();
 		
 		HistoryManager.modifyHistoryDb(WelcomeActivity.this);
+		
+		// Delete old APP Database table and refresh it.
+		getContentResolver().delete(AppData.App.CONTENT_URI, null, null);
+		LoadAppThread thread =  new LoadAppThread();
+		thread.start();
 	}
 	
 	private void startFileTransferService(){
@@ -128,5 +143,55 @@ public class WelcomeActivity extends Activity {
 			loadFinished();
 		}
 	};
+	
+	private class LoadAppThread extends Thread {
+		@Override
+		public void run() {
+			AppManager appManager = new AppManager(WelcomeActivity.this);
+			loadAppToDb(appManager);
+		}
+	}
+
+	private void loadAppToDb(AppManager appManager) {
+		long start = System.currentTimeMillis();
+
+		List<ContentValues> valuesList = new ArrayList<ContentValues>();
+		// Retrieve all known applications.
+		PackageManager pm = getPackageManager();
+		List<ApplicationInfo> apps = pm.getInstalledApplications(0);
+		if (apps == null) {
+			apps = new ArrayList<ApplicationInfo>();
+		}
+		ContentValues values = null;
+		for (int i = 0; i < apps.size(); i++) {
+			ApplicationInfo info = apps.get(i);
+			// 获取非系统应用
+			int flag1 = info.flags & ApplicationInfo.FLAG_SYSTEM;
+			if (flag1 <= 0) {
+				AppInfo entry = new AppInfo(WelcomeActivity.this, apps.get(i));
+				entry.setPackageName(info.packageName);
+				entry.loadLabel();
+				entry.setAppIcon(info.loadIcon(pm));
+				entry.loadVersion();
+				boolean is_game_app = appManager.isGameApp(info.packageName);
+				if (is_game_app) {
+					entry.setType(AppManager.GAME_APP);
+				} else {
+					entry.setType(AppManager.NORMAL_APP);
+				}
+				values = appManager.getValuesByAppInfo(entry);
+				valuesList.add(values);
+			} else {
+				// system app
+			}
+		}
+
+		// get values
+		ContentValues[] contentValues = new ContentValues[0];
+		contentValues = valuesList.toArray(contentValues);
+		getContentResolver().bulkInsert(AppData.App.CONTENT_URI, contentValues);
+		Log.d(TAG, "loadAppToDb cost time = "
+				+ (System.currentTimeMillis() - start));
+	}
 
 }

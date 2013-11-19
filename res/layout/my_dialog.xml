@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
+        >
+        
+        <TextView
+            android:id="@+id/name_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="等待开始"
+            android:textColor="@color/black"
+            android:textIsSelectable="false" 
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/num_view"
+            />
+        
+        <TextView 
+            android:id="@+id/num_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textIsSelectable="false" 
+            android:layout_alignParentRight="true"
+            />
+
+    </RelativeLayout>
+    
+    <ProgressBar
+        android:id="@+id/bar_move"
+        style="@style/Custom.ProgressBar.Horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"     
+         />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#d1d1d1" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/blue_bg"
+            android:text="Cancel"
+            android:textColor="@color/black"
+            android:textSize="16sp" 
+            />
+
+        <View
+            android:id="@+id/divider_one"
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#d1d1d1" 
+            android:visibility="gone"
+            />
+
+        <Button
+            android:id="@+id/btn_hide"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/blue_bg"
+            android:text="@string/hide"
+            android:textColor="@color/black"
+            android:textSize="16sp" 
+            android:visibility="gone"
+            />
+    </LinearLayout>
+
+</LinearLayout>
