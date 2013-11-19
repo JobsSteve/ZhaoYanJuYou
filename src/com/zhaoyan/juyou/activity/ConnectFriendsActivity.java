@@ -115,8 +115,7 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		}
 		try {
 			if (!fragment.isAdded()) {
-				transaction.add(R.id.fl_cf_container, fragment,
-						fragment.getClass().getSimpleName()).commit();
+				transaction.add(R.id.fl_cf_container, fragment, tag).commit();
 			} else {
 				transaction.show(fragment).commit();
 			}
