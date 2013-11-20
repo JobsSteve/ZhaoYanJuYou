@@ -116,6 +116,10 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 	private HeartBeat mHeartBeat;
 
 	public SocketCommunication(Socket socket, OnReceiveMessageListener listener) {
+		if (socket == null) {
+			// This is a fake one, used by UserManager.
+			return;
+		}
 		this.mSocket = socket;
 		this.mOnReceiveMessageListener = listener;
 		mHeartBeat = new HeartBeat(this, this);
@@ -313,9 +317,7 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		/**
 		 * Heart beat message is only for {@link #HeartBeat}.
 		 */
-		if (HeartBeat.isHeartBeatMessage(msg)) {
-			mHeartBeat.receivedHeartBeat();
-		} else {
+		if (!mHeartBeat.processHeartBeat(msg)){
 			mOnReceiveMessageListener.onReceiveMessage(msg, this);
 			mRxListener.addRxBytes(msg.length);
 		}
@@ -358,11 +360,21 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 	 * @return return true if send success, return false if send fail.
 	 */
 	public boolean sendMessage(byte[] msg) {
+		return sendMessage(msg, true);
+	}
+
+	/**
+	 * Used for some message that without traffic statics.
+	 * @param msg
+	 * @param doTrafficStatic
+	 * @return
+	 */
+	boolean sendMessage(byte[] msg, boolean doTrafficStatic) {
 		int messageLength = msg.length;
 		if (messageLength > MAX_SEND_SIZE_ONE_TIME) {
-			return sendMultiPacketMessage(msg);
+			return sendMultiPacketMessage(msg, doTrafficStatic);
 		} else {
-			return sendSinglePacketMessage(msg);
+			return sendSinglePacketMessage(msg, doTrafficStatic);
 		}
 	}
 
@@ -370,11 +382,12 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 	 * The msg length length bigger than {@link #MAX_SEND_SIZE_ONE_TIME}
 	 * 
 	 * @param msg
+	 * @param doTrafficStatic
 	 * @return
 	 */
-	private boolean sendMultiPacketMessage(byte[] msg) {
+	private boolean sendMultiPacketMessage(byte[] msg, boolean doTrafficStatic) {
 		if (msg.length <= MAX_SEND_SIZE_ONE_TIME) {
-			return sendSinglePacketMessage(msg);
+			return sendSinglePacketMessage(msg, doTrafficStatic);
 		}
 
 		int totalLength = msg.length;
@@ -385,7 +398,8 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		boolean isLastPacket = false;
 		while (sentLength < totalLength) {
 			boolean sendResult = sendPacketMessage(
-					Arrays.copyOfRange(msg, start, end), isLastPacket);
+					Arrays.copyOfRange(msg, start, end), isLastPacket,
+					doTrafficStatic);
 			if (!sendResult) {
 				return false;
 			}
@@ -402,17 +416,20 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		return false;
 	}
 
-	private boolean sendSinglePacketMessage(byte[] msg) {
-		return sendPacketMessage(msg, true);
+	private boolean sendSinglePacketMessage(byte[] msg, boolean doTrafficStatic) {
+		return sendPacketMessage(msg, true, doTrafficStatic);
 	}
 
-	private boolean sendPacketMessage(byte[] msg, boolean isLastPacket) {
+	private boolean sendPacketMessage(byte[] msg, boolean isLastPacket,
+			boolean doTrafficStatic) {
 		try {
 			if (mDataOutputStream != null) {
 				mDataOutputStream.write(encode(msg, isLastPacket));
 				mDataOutputStream.flush();
 
-				mTxListener.addTxBytes(msg.length);
+				if (doTrafficStatic) {
+					mTxListener.addTxBytes(msg.length);
+				}
 			} else {
 				communicationLost();
 				return false;
@@ -449,6 +466,14 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 	public void onHeartBeatTimeOut() {
 		Log.d(TAG, "onHeartBeatTimeOut");
 		stopComunication();
+	}
+	
+	public void setScreenOn() {
+		mHeartBeat.setScreenOn();
+	}
+	
+	public void setScreenOff() {
+		mHeartBeat.setScreenOff();
 	}
 
 }

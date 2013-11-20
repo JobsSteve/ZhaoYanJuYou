@@ -379,6 +379,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			}
 			notifyComunicationChange();
 		}
+		startScreenMonitor();
 	}
 
 	@Override
@@ -394,6 +395,22 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mUserManager.removeUser(communication);
 		mUserManager.removeLocalCommunication(communication);
 		sendMessageToUpdateAllUser();
+
+		if (mCommunications.isEmpty()) {
+			stopScreenMonitor();
+		}
+	}
+
+	private void startScreenMonitor() {
+		Intent intent = new Intent();
+		intent.setClass(mContext, ScreenMonitor.class);
+		mContext.startService(intent);
+	}
+
+	private void stopScreenMonitor() {
+		Intent intent = new Intent();
+		intent.setClass(mContext, ScreenMonitor.class);
+		mContext.stopService(intent);
 	}
 
 	public void registered(OnCommunicationListener iSubscribe) {

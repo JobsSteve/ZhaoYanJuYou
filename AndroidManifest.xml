@@ -104,13 +104,14 @@
                 android:name="app_id"
                 android:value="111" />
         </service>
+        <service android:name="com.zhaoyan.communication.ScreenMonitor" >
+        </service>
 
         <provider
             android:name="com.zhaoyan.juyou.provider.JuyouProvider"
             android:authorities="com.zhaoyan.juyou.provider.JuyouProvider"
             android:exported="false" >
         </provider>
-        
         <provider
             android:name="com.zhaoyan.juyou.provider.AppProvider"
             android:authorities="com.zhaoyan.juyou.provider.AppProvider"
