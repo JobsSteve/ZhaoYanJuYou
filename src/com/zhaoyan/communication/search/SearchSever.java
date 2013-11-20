@@ -45,6 +45,12 @@ public class SearchSever {
 
 	public void setOnSearchListener(OnSearchListener listener) {
 		mListener = listener;
+		if (mSearchSeverLan != null) {
+			mSearchSeverLan.setOnSearchListener(listener);
+		}
+		if (mSearchSeverLanAndroidAP != null) {
+			mSearchSeverLanAndroidAP.setOnSearchListener(listener);
+		}
 	}
 
 	public void startSearch() {
