@@ -54,6 +54,7 @@
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
+                <!-- Remove android:autoLink="all" to avoid memory leak. -->
                 <TextView
                     android:id="@+id/tv_network_http_share_address"
                     android:layout_width="wrap_content"
@@ -61,7 +62,6 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="14dp"
-                    android:autoLink="all"
                     android:text="@string/http_share_second_step_tip1" />
 
                 <TextView
