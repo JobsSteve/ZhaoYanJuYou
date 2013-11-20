@@ -27,7 +27,8 @@ public class NetWorkUtil {
 
 	public static boolean isNetworkConnected(Context context) {
 		ConnectivityManager cm = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
+				.getApplicationContext().getSystemService(
+						Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 
 		boolean isWifiApEnabled = isWifiApEnabled(context);
@@ -45,7 +46,8 @@ public class NetWorkUtil {
 	public static boolean isWifiConnected(Context context) {
 		if (context != null) {
 			ConnectivityManager connectivityManager = (ConnectivityManager) context
-					.getSystemService(Context.CONNECTIVITY_SERVICE);
+					.getApplicationContext().getSystemService(
+							Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connectivityManager
 					.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 			if (networkInfo != null) {
@@ -61,7 +63,7 @@ public class NetWorkUtil {
 	}
 
 	public static boolean isWifiApEnabled(Context context) {
-		WifiManager wifiManager = (WifiManager) context
+		WifiManager wifiManager = (WifiManager) context.getApplicationContext()
 				.getSystemService(Context.WIFI_SERVICE);
 		try {
 			Method method = wifiManager.getClass().getMethod("isWifiApEnabled");
@@ -74,7 +76,7 @@ public class NetWorkUtil {
 	}
 
 	public static String getLocalIpAddress2(Context context) {
-		WifiManager wifiManager = (WifiManager) context
+		WifiManager wifiManager = (WifiManager) context.getApplicationContext()
 				.getSystemService(Context.WIFI_SERVICE);
 
 		if (!wifiManager.isWifiEnabled()) {
@@ -148,14 +150,14 @@ public class NetWorkUtil {
 	}
 
 	public static String getLocalMacAddress(Context context) {
-		WifiManager wifi = (WifiManager) context
+		WifiManager wifi = (WifiManager) context.getApplicationContext()
 				.getSystemService(Context.WIFI_SERVICE);
 		WifiInfo info = wifi.getConnectionInfo();
 		return info.getMacAddress();
 	}
 
 	public synchronized static void acquireWifiMultiCastLock(Context context) {
-		WifiManager wifiManager = (WifiManager) context
+		WifiManager wifiManager = (WifiManager) context.getApplicationContext()
 				.getSystemService(Context.WIFI_SERVICE);
 		if (mMulticastLock == null) {
 			mMulticastLock = wifiManager.createMulticastLock("multicast.test");

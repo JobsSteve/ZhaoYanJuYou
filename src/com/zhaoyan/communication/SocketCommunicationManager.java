@@ -548,7 +548,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 				return true;
 			}
 		} else {
-			if (mCommunications.isEmpty()) {
+			if (mCommunications.isEmpty() || mUserManager.getAllUser().size() == 0) {
 				return false;
 			}
 		}

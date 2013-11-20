@@ -128,6 +128,8 @@ public class WifiOrAPSearchService extends Service {
 		mSearchClient = SearchClient.getInstance(this);
 		if (searchListener != null) {
 			mSearchClient.setOnSearchListener(searchListener);
+		} else {
+			mSearchClient.setOnSearchListener(null);
 		}
 		if (serverType != null
 				&& ConnectHelper.SERVER_TYPE_WIFI.equals(serverType)) {

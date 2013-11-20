@@ -103,6 +103,7 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		View rootView = inflater.inflate(R.layout.search_connect, container,
 				false);
 		initView(rootView);
+		mServerAdapter = new ServerAdapter(getActivity().getApplicationContext(), mServerData);
 
 		mConnectHelper = ConnectHelper.getInstance(mContext
 				.getApplicationContext());
@@ -172,7 +173,7 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mListView = getListView();
-		mServerAdapter = new ServerAdapter(getActivity(), mServerData);
+		
 		mListView.setAdapter(mServerAdapter);
 	}
 

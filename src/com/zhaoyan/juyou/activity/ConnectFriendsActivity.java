@@ -36,12 +36,14 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 	private static final int MSG_SHOW_LOGIN_DIALOG = 1;
 	private static final int MSG_UPDATE_NETWORK_STATUS = 2;
 	private static final int MSG_UPDATE_USER = 3;
+	private Handler mHandler;
+	private BroadcastReceiver mReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connect_friends);
-
+		mHandler = new UiHandler();
 		mCommunicationManager = SocketCommunicationManager
 				.getInstance(getApplicationContext());
 		mUserManager = UserManager.getInstance();
@@ -53,6 +55,7 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		initFragment(savedInstanceState);
 		updateFragment();
 
+		mReceiver = new CreateServerReceiver();
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(ConnectHelper.ACTION_SERVER_CREATED);
 		registerReceiver(mReceiver, filter);
@@ -137,7 +140,7 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		mHandler.sendEmptyMessage(MSG_UPDATE_USER);
 	}
 
-	private Handler mHandler = new Handler() {
+	private class UiHandler extends Handler {
 
 		@Override
 		public void handleMessage(android.os.Message msg) {
@@ -163,11 +166,13 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		} catch (Exception e) {
 			Log.e(TAG, "onDestroy " + e);
 		}
+		mReceiver = null;
+		mHandler = null;
 
 		super.onDestroy();
 	}
 
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+	private class CreateServerReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {

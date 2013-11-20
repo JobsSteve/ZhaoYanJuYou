@@ -45,7 +45,7 @@ public class SearchConnectFragment extends Fragment implements
 			Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView");
 		mContext = getActivity();
-		mWifiManager = (WifiManager) mContext
+		mWifiManager = (WifiManager) mContext.getApplicationContext()
 				.getSystemService(Context.WIFI_SERVICE);
 		View rootView = inflater.inflate(R.layout.search_connect_pages,
 				container, false);
@@ -81,6 +81,7 @@ public class SearchConnectFragment extends Fragment implements
 		if (mWifiFragment != null) {
 			mWifiFragment.setOnServerChangeListener(null);
 		}
+		mWifiManager = null;
 	}
 
 	private void transactTo(Fragment fragment, String tag) {
@@ -143,17 +144,19 @@ public class SearchConnectFragment extends Fragment implements
 			mWifiFragment = new SearchConnectWifiFragment();
 		}
 		mWifiFragment.setOnServerChangeListener(this);
-		
+
 		// Restore from save instance.
 		if (savedInstanceState != null) {
 			mCurrentFragmentTag = savedInstanceState.getString("fragment");
 			if (mCurrentFragmentTag.equals(FRAGMENT_TAG_AP)) {
 				if (mWifiFragment.isAdded()) {
-					mFragmentManager.beginTransaction().hide(mWifiFragment).commit();
+					mFragmentManager.beginTransaction().hide(mWifiFragment)
+							.commit();
 				}
 			} else if (mCurrentFragmentTag.equals(FRAGMENT_TAG_WIFI)) {
 				if (mApFragment.isAdded()) {
-					mFragmentManager.beginTransaction().hide(mApFragment).commit();
+					mFragmentManager.beginTransaction().hide(mApFragment)
+							.commit();
 				}
 			}
 		}
