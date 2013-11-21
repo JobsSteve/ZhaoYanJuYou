@@ -114,6 +114,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	protected void onDestroy() {
 		if (mAdapter != null && mAdapter.getCursor() != null) {
 			mAdapter.getCursor().close();
+			mAdapter.swapCursor(null);
 		}
 		
 		if (mHistoryContent != null) {
