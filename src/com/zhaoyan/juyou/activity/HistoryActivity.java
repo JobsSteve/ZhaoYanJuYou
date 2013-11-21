@@ -41,7 +41,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 
 	// adapter
 	private HistoryCursorAdapter mAdapter;
-	
+
 	private HistoryContent mHistoryContent = null;
 
 	private Notice mNotice;
@@ -119,7 +119,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			mAdapter.getCursor().close();
 			mAdapter.swapCursor(null);
 		}
-		
+
 		if (mHistoryContent != null) {
 			getApplicationContext().getContentResolver().unregisterContentObserver(mHistoryContent);
 			mHistoryContent = null;
@@ -219,6 +219,5 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			break;
 		}
 	}
-	
-	
+
 }
