@@ -17,7 +17,9 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:paddingTop="5dp"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:textColor="@color/black"
+         />
 
     <TextView
         android:id="@+id/app_size_textview"

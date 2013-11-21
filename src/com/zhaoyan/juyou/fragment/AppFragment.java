@@ -225,6 +225,10 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
     
 	@Override
 	public void onDestroyView() {
+		if (mAdapter != null && mAdapter.getCursor() != null) {
+			mAdapter.getCursor().close();
+			mAdapter.changeCursor(null);
+		}
 		super.onDestroyView();
 	}
 
@@ -475,13 +479,5 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	@Override
 	public int getMenuMode() {
 		return mAdapter.getMode();
-	}
-	
-	@Override
-	public void onDestroy() {
-		if (mAdapter != null && mAdapter.getCursor() != null) {
-			mAdapter.getCursor().close();
-		}
-		super.onDestroy();
 	}
 }

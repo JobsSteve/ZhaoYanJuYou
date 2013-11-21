@@ -123,7 +123,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 	public void onDestroyView() {
 		if (mAdapter != null && mAdapter.getCursor() != null) {
 			mAdapter.getCursor().close();
-			mAdapter.swapCursor(null);
+			mAdapter.changeCursor(null);
 		}
 		super.onDestroyView();
 	}
@@ -158,7 +158,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			int num = 0;
 			if (null != cursor) {
 				Log.d(TAG, "onQueryComplete.count=" + cursor.getCount());
-				mAdapter.swapCursor(cursor);
+				mAdapter.changeCursor(cursor);
 				mAdapter.selectAll(false);
 				num = cursor.getCount();
 			}
