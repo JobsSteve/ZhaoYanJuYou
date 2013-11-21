@@ -110,7 +110,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		mAdapter = new AppCursorAdapter(mContext);
+		mAdapter = new AppCursorAdapter(getActivity().getApplicationContext());
 		query();
 		super.onActivityCreated(savedInstanceState);
 	}

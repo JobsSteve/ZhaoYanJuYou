@@ -27,10 +27,7 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 	
 	public AppCursorAdapter(Context context){
 		super(context, null, true);
-		
-		this.mContext = context;
 		inflater = LayoutInflater.from(context);
-		
 		pm = context.getPackageManager();
 	}
 	

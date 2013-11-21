@@ -349,18 +349,18 @@ public class ClassifyActivity extends BaseActivity implements OnItemClickListene
 		ArrayList<String> checkedList = (ArrayList<String>) mAdapter.getSelectedFilePaths();
 
 		// send
-		FileTransferUtil fileTransferUtil = new FileTransferUtil(getActivity());
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(ClassifyActivity.this);
 		fileTransferUtil.sendFiles(checkedList, new TransportCallback() {
 
 			@Override
 			public void onTransportSuccess() {
-				int first = mFileListView.getFirstVisiblePosition();
-				int last = mFileListView.getLastVisiblePosition();
-				List<Integer> checkedItems = mItemAdapter.getSelectedItemPositions();
+				int first = mListView.getFirstVisiblePosition();
+				int last = mListView.getLastVisiblePosition();
+				List<Integer> checkedItems = mAdapter.getSelectedItemPositions();
 				ArrayList<ImageView> icons = new ArrayList<ImageView>();
 				for (int id : checkedItems) {
 					if (id >= first && id <= last) {
-						View view = mFileListView.getChildAt(id - first);
+						View view = mListView.getChildAt(id - first);
 						if (view != null) {
 							ViewHolder viewHolder = (ViewHolder) view.getTag();
 							icons.add(viewHolder.iconView);
@@ -370,7 +370,7 @@ public class ClassifyActivity extends BaseActivity implements OnItemClickListene
 
 				if (icons.size() > 0) {
 					ImageView[] imageViews = new ImageView[0];
-					showTransportAnimation(icons.toArray(imageViews));
+//					showTransportAnimation(icons.toArray(imageViews));
 				}
 			}
 

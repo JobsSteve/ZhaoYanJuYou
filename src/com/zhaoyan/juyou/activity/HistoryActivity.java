@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -40,6 +39,8 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 
 	// adapter
 	private HistoryCursorAdapter mAdapter;
+	
+	private HistoryContent mHistoryContent = null;
 
 	private Notice mNotice;
 
@@ -98,9 +99,9 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		initView();
 		queryHandler = new QueryHandler(getContentResolver());
 
-		HistoryContent historyContent = new HistoryContent(new Handler());
+		mHistoryContent = new HistoryContent(new Handler());
 		getContentResolver().registerContentObserver(
-				JuyouData.History.CONTENT_URI, true, historyContent);
+				JuyouData.History.CONTENT_URI, true, mHistoryContent);
 	}
 
 	@Override
@@ -113,6 +114,11 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	protected void onDestroy() {
 		if (mAdapter != null && mAdapter.getCursor() != null) {
 			mAdapter.getCursor().close();
+		}
+		
+		if (mHistoryContent != null) {
+			getContentResolver().unregisterContentObserver(mHistoryContent);
+			mHistoryContent = null;
 		}
 		super.onDestroy();
 	}
@@ -202,5 +208,6 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			break;
 		}
 	}
+	
 	
 }
