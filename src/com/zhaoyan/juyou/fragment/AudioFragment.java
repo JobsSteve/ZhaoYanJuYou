@@ -116,11 +116,22 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	}
 	
 	@Override
+	public void onDestroyView() {
+		Log.d(TAG, "onDestroyView()");
+		if (mAdapter != null && mAdapter.getCursor() != null) {
+			mAdapter.getCursor().close();
+			mAdapter.swapCursor(null);
+		}
+		super.onDestroyView();
+	}
+	
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mFileInfoManager = new FileInfoManager();
 		
-		mQueryHandler = new QueryHandler(getActivity().getContentResolver());
+		mQueryHandler = new QueryHandler(getActivity().getApplicationContext()
+				.getContentResolver());
 		query();
 	}
 	
@@ -460,14 +471,5 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void onDestroy() {
-		Log.d(TAG, "onDestroy()");
-		if (mAdapter != null && mAdapter.getCursor() != null) {
-			mAdapter.getCursor().close();
-		}
-		super.onDestroy();
 	}
 }
