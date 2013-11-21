@@ -404,7 +404,9 @@ public class WifiOrAPSearchService extends Service {
 							.getUserName(result.SSID));
 					info.setServerType(ConnectHelper.SERVER_TYPE_WIFI_AP);
 					info.setServerSsid(result.SSID);
-					onSearchListener.onSearchSuccess(info);
+					if (onSearchListener != null) {
+						onSearchListener.onSearchSuccess(info);
+					}
 				}
 			}
 		}
