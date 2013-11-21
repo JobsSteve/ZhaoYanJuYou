@@ -3,12 +3,10 @@ package com.zhaoyan.juyou.fragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -25,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -33,7 +30,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileHomeAdapter;
@@ -318,7 +314,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, R.drawable.ic_action_delete_enable, R.string.menu_delete);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME,R.drawable.ic_action_rename, R.string.menu_rename);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME,R.drawable.ic_action_rename, R.string.rename);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 
@@ -343,8 +339,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			fillList(file.listFiles());
 
 			// sort
-			Collections.sort(mFolderLists);
-			Collections.sort(mFileLists);
+			Collections.sort(mFolderLists, FileInfo.NAME_COMPARATOR);
+			Collections.sort(mFileLists, FileInfo.NAME_COMPARATOR);
 
 			mAllLists.addAll(mFolderLists);
 			mAllLists.addAll(mFileLists);
@@ -407,59 +403,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 	}
 
-	private int renameFlag = 0;
-	/**
-	 * show rename dialog
-	 * 
-	 * @param fileInfo
-	 *            the file info
-	 * @param position
-	 *            the click position
-	 */
-	public void showRenameDialog(final List<FileInfo> list) {
-		LayoutInflater inflater = LayoutInflater.from(mContext);
-		View view = inflater.inflate(R.layout.dialog_rename, null);
-		final EditText editText = (EditText) view.findViewById(R.id.et_rename);
-		editText.setText(list.get(renameFlag).fileName);
-		editText.selectAll();
-		new AlertDialog.Builder(mContext).setTitle("重命名").setView(view)
-				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						String newName = editText.getText().toString().trim();
-						list.get(renameFlag).fileName = newName;
-						list.get(renameFlag).filePath = mFileInfoManager.rename(new File(list.get(renameFlag).filePath), newName);
-						renameFlag ++ ;
-						if (renameFlag < list.size() - 1) {
-							ZYUtils.setDialogDismiss(dialog, false);
-							editText.setText(list.get(renameFlag).fileName);
-							editText.selectAll();
-						}else {
-							ZYUtils.setDialogDismiss(dialog, true);
-							renameFlag = 0;
-							mItemAdapter.notifyDataSetChanged();
-						}
-					}
-				}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						renameFlag ++ ;
-						if (renameFlag < list.size() - 1) {
-							ZYUtils.setDialogDismiss(dialog, false);
-							editText.setText(list.get(renameFlag).fileName);
-							editText.selectAll();
-						}else {
-							ZYUtils.setDialogDismiss(dialog, true);
-							renameFlag = 0;
-							mItemAdapter.notifyDataSetChanged();
-						}
-					}
-				}).create().show();
-	}
-
 	/**
 	 * show delete confrim dialog
 	 */
@@ -505,7 +448,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				int position = positionList.get(i);
 				fileInfo = fileList.get(position);
 				file = new File(fileInfo.filePath);
-				Log.d(TAG, "doInBackground.pos=" + position + ",path:" + file.getAbsolutePath());
 				deleteList.add(file);
 			}
 
@@ -528,7 +470,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				mDeleteDialog.cancel();
 				mDeleteDialog = null;
 			}
-			mNotice.showToast("操作完成");
+			mNotice.showToast(R.string.operator_over);
 		}
 
 	}
@@ -930,7 +872,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			break;
 		case ActionMenu.ACTION_MENU_RENAME:
 			List<FileInfo> renameList = mItemAdapter.getSelectedFileInfos();
-			showRenameDialog(renameList);
+			mFileInfoManager.showRenameDialog(getActivity(), renameList);
+			mItemAdapter.notifyDataSetChanged();
 			showMenuBar(false);
 			break;
 		default:

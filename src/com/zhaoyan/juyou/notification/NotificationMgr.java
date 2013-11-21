@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.activity.MainActivity;
 
 public class NotificationMgr {
 	private Context mContext;

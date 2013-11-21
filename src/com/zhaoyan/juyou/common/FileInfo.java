@@ -12,7 +12,7 @@ import android.os.Parcelable;
 /**
  *description a file infos 
  */
-public class FileInfo implements Parcelable,Comparable<FileInfo>{
+public class FileInfo implements Parcelable{
 	
 	public boolean isDir = false;
 	//File name
@@ -38,30 +38,6 @@ public class FileInfo implements Parcelable,Comparable<FileInfo>{
 	
 	private FileInfo(Parcel in){
 		readFromParcel(in);
-	}
-	
-	/**
-	 * bytes convert
-	 */
-	public String getFormatFileSize(){
-		if (fileSize > 1024 * 1024) {
-			Double dsize = (double) (fileSize / (1024 * 1024));
-			return new DecimalFormat("#.00").format(dsize) + "MB";
-		}else if (fileSize > 1024) {
-			Double dsize = (double)fileSize / (1024);
-			return new DecimalFormat("#.00").format(dsize) + "KB";
-		}else {
-			return String.valueOf((int)fileSize) + " Bytes";
-		}
-	}
-	
-	/**
-	 * date format
-	 */
-	public String getFormateDate(){
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dateString = format.format(new Date(fileDate));
-		return dateString;
 	}
 	
 	public static final Parcelable.Creator<FileInfo> CREATOR  = new Parcelable.Creator<FileInfo>() {
@@ -98,17 +74,20 @@ public class FileInfo implements Parcelable,Comparable<FileInfo>{
 		fileDate = in.readLong();
 		filePath = in.readString();
 	}
-
-	//make it can sort
-	@Override
-	public int compareTo(FileInfo another) {
-		if (fileName.compareToIgnoreCase(another.fileName) < 0) {
-			return -1;
-		}else if (fileName.compareToIgnoreCase(another.fileName) > 0) {
-			return 1;
+	
+	public static final Comparator<FileInfo> NAME_COMPARATOR = new Comparator<FileInfo>() {
+		@Override
+		public int compare(FileInfo lhs, FileInfo rhs) {
+			String name1 = lhs.fileName;
+			String name2 = rhs.fileName;
+			if (name1.compareToIgnoreCase(name2) < 0) {
+				return -1;
+			}else if (name1.compareToIgnoreCase(name2) > 0) {
+				return 1;
+			}
+			return 0;
 		}
-		return 0;
-	}
+	};
 	
 	/**
 	 * sort by modify date

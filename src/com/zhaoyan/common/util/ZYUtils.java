@@ -83,7 +83,7 @@ public class ZYUtils {
 		}
 	}
 	
-	/**get app install date*/
+	/**get date format*/
 	public static String getFormatDate(long date){
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateString = format.format(new Date(date));

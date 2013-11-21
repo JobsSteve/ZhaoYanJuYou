@@ -59,7 +59,7 @@
     
     <string-array name="file_save_menu">
         <item>@string/copy_replace</item>
-        <item>@string/copy_rename</item>
+        <item>@string/rename</item>
         <item>@string/copy_cancel</item>
     </string-array>
     <string-array name="file_save_menu_tip">
@@ -80,12 +80,12 @@
         <item>@string/menu_send</item>
         <item>@string/menu_delete</item>
         <item>@string/menu_info</item>
-		<item>@string/menu_rename</item>        
+		<item>@string/rename</item>        
     </string-array>
     
     <string-array name="folder_menu">
         <item>@string/menu_info</item>
-		<item>@string/menu_rename</item>        
+		<item>@string/rename</item>        
     </string-array>
     
     <string-array name="history_menu">
@@ -101,20 +101,6 @@
     <string-array name="receive_history_delete_menu">
         <item>@string/delete_history</item>
         <item>@string/delete_history_and_file</item>
-    </string-array>
-    
-    <string-array name="main_menu_item">
-        <item>朝颜天地</item>
-        <item>网上邻居</item>
-        <item>精品推荐</item>
-        <item>@string/image</item>
-        <item>@string/audio</item>
-        <item>@string/video</item>
-        <item>@string/app</item>
-        <item>@string/game</item>
-<!--         <item>批量传输</item> -->
-<!--         <item>@string/settings_title</item> -->
-<!--         <item>@string/help_title</item> -->
     </string-array>
     
 </resources>

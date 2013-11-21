@@ -21,6 +21,7 @@
     <string name="type">类型: <xliff:g id="type">%1$s</xliff:g></string>
     <string name="type_file">类型: 文件</string>
     <string name="type_folder">类型: 文件夹</string>
+    <string name="rename">重命名</string>
     
     <string name="network">网络邻居</string>
     <string name="recommend">精品推荐</string>
@@ -58,7 +59,6 @@
     <string name="menu_send">发送</string>
     <string name="menu_backup">备份</string>
     <string name="menu_delete">删除</string>
-    <string name="menu_rename">重命名</string>
     <string name="menu_info">属性</string>
     <string name="menu_play">播放</string>
     <string name="menu_more">更多</string>
@@ -132,7 +132,6 @@
     <string name="file_exist">此位置已包含同名的文件</string>
     <string name="copy_replace">覆盖</string>
     <string name="copy_replace_msg">使用正在复制中的文件替换目标文件夹的文件\n<xliff:g id="replace">%1$s</xliff:g></string>
-    <string name="copy_rename">重命名</string>
     <string name="copy_rename_msg">正在复制的文件将重命名为 “<xliff:g id="rename">%1$s</xliff:g>“</string>
     <string name="copy_cancel">取消</string>
      <string name="copy_cancel_msg">将不会改变任何文件</string>
@@ -205,4 +204,5 @@
      <string name="backuping_app">正在备份应用：%1s</string>
      <string name="backup_tip">滑动此处查看备份进度</string>
      <string name="backup_over">备份完成</string>
+     <string name="operator_over">操作完成</string>
 </resources>
