@@ -223,7 +223,7 @@ public class AppBaseFragment extends BaseFragment{
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			Log.d(TAG, "onPostExecute");
-			if (null != mMyDialog) {
+			if (null != mMyDialog && mMyDialog.isShowing()) {
 				mMyDialog.cancel();
 				mMyDialog = null;
 			}
