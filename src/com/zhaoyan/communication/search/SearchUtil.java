@@ -15,7 +15,7 @@ public class SearchUtil {
 
 	public static void clearWifiConnectHistory(Context context) {
 		Log.d(TAG, "clearWifiConnectHistory");
-		WifiManager wifiManager = (WifiManager) context
+		WifiManager wifiManager = (WifiManager) context.getApplicationContext()
 				.getSystemService(Context.WIFI_SERVICE);
 
 		List<WifiConfiguration> configurations = wifiManager

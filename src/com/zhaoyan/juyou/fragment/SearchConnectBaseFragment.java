@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.SocketServer;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
@@ -103,6 +104,7 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		View rootView = inflater.inflate(R.layout.search_connect, container,
 				false);
 		initView(rootView);
+		mServerAdapter = new ServerAdapter(getActivity().getApplicationContext(), mServerData);
 
 		mConnectHelper = ConnectHelper.getInstance(mContext
 				.getApplicationContext());
@@ -132,6 +134,14 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 			Log.e(TAG, "onDestroyView unregisterReceiver " + e);
 		}
 		mUserManager.unregisterOnUserChangedListener(this);
+		cancelStopSearchTimer();
+		if (!SocketCommunicationManager.getInstance(
+				mContext.getApplicationContext()).isServerAndCreated()) {
+			mConnectHelper.stopSearch();
+		}
+		
+		mConnectHelper.setSearchClientListener(null);
+		mConnectHelper.setSearchServerListener(null);
 		super.onDestroyView();
 	}
 
@@ -172,7 +182,7 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mListView = getListView();
-		mServerAdapter = new ServerAdapter(getActivity(), mServerData);
+		
 		mListView.setAdapter(mServerAdapter);
 	}
 
@@ -217,6 +227,7 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		if (mStopSearchTimer != null) {
 			try {
 				mStopSearchTimer.cancel();
+				mStopSearchTimer = null;
 			} catch (Exception e) {
 				Log.d(TAG, "cancelStopSearchTimer." + e);
 			}

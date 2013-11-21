@@ -56,6 +56,7 @@ public class ConnectedInfoFragment extends ListFragment implements
 		View rootView = inflater.inflate(R.layout.connected_info, container,
 				false);
 		initView(rootView);
+		mUserListAdapter = new UserListAdapter(mContext, mUserInfos);
 		return rootView;
 	}
 
@@ -70,6 +71,8 @@ public class ConnectedInfoFragment extends ListFragment implements
 	public void onDestroyView() {
 		Log.d(TAG, "onDestroyView");
 		super.onDestroyView();
+		mUserListAdapter = null;
+		mUserManager.unregisterOnUserChangedListener(this);
 	}
 
 	private void initView(View rootView) {
@@ -82,7 +85,6 @@ public class ConnectedInfoFragment extends ListFragment implements
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mUserListView = getListView();
-		mUserListAdapter = new UserListAdapter(mContext, mUserInfos);
 		mUserListView.setAdapter(mUserListAdapter);
 	}
 

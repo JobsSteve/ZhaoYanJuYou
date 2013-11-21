@@ -27,7 +27,7 @@ public class SearchConnectWifiFragment extends SearchConnectBaseFragment {
 
 	@Override
 	protected void createServer() {
-		mConnectHelper.createServer("wifi", this);
+		mConnectHelper.createServer("wifi", null);
 	}
 
 	@Override

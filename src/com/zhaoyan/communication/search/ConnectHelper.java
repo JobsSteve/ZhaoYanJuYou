@@ -249,6 +249,51 @@ public class ConnectHelper {
 		connection = null;
 	}
 
+	/**
+	 * This is designed for release listener.
+	 * 
+	 * @param listener
+	 */
+	public void setSearchClientListener(OnSearchListener listener) {
+		if (mDirectService != null) {
+			// TODO to be implement.
+		}
+
+		if (mDirectServiceConnection != null) {
+			// TODO to be implement.
+		}
+
+		if (mWifiOrAPService != null) {
+			mWifiOrAPService.setSearchClientListener(listener);
+		}
+
+		if (mWifiOrAPServiceConnection != null) {
+			mWifiOrAPServiceConnection.setOnSearchListener(listener);
+		}
+	}
+
+	/**
+	 * This is designed for release listener.
+	 * 
+	 * @param listener
+	 */
+	public void setSearchServerListener(OnSearchListener listener) {
+		if (mDirectService != null) {
+			// TODO to be implement.
+		}
+
+		if (mDirectServiceConnection != null) {
+			// TODO to be implement.
+		}
+
+		if (mWifiOrAPService != null) {
+			mWifiOrAPService.setSearchServerListener(listener);
+		}
+
+		if (mWifiOrAPServiceConnection != null) {
+			mWifiOrAPServiceConnection.setOnSearchListener(listener);
+		}
+	}
 
 	/**
 	 * Service connection for {@link #WifiOrAPService}.
@@ -285,6 +330,10 @@ public class ConnectHelper {
 		public void onServiceDisconnected(ComponentName name) {
 			mWifiOrAPService = null;
 			mDirectServiceConnection = null;
+		}
+
+		public void setOnSearchListener(OnSearchListener listener) {
+			mListener = listener;
 		}
 
 	}
@@ -329,5 +378,8 @@ public class ConnectHelper {
 			mWifiOrAPServiceConnection = null;
 		}
 
+		public void setOnSearchListener(OnSearchListener listener) {
+			mListener = listener;
+		}
 	}
 }

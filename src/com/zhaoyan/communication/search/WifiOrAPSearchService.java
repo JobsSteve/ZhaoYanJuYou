@@ -77,11 +77,13 @@ public class WifiOrAPSearchService extends Service {
 	public boolean onUnbind(Intent intent) {
 		if (mSearchClient != null) {
 			mSearchClient.stopSearch();
+			mSearchClient.setOnSearchListener(null);
 			flag = false;
 			mSearchClient = null;
 		}
 		if (mSearchServer != null) {
 			mSearchServer.stopSearch();
+			mSearchServer.setOnSearchListener(null);
 			mSearchServer = null;
 		}
 		if (server_register) {
@@ -114,11 +116,13 @@ public class WifiOrAPSearchService extends Service {
 	public void startServer(String serverType, OnSearchListener searchListener) {
 		if (mSearchClient != null) {
 			mSearchClient.stopSearch();
+			mSearchClient.setOnSearchListener(null);
 			flag = false;
 			mSearchClient = null;
 		}
 		if (mSearchServer != null) {
 			mSearchServer.stopSearch();
+			mSearchServer.setOnSearchListener(null);
 			mSearchServer = null;
 		}
 		if (server_register) {
@@ -128,6 +132,8 @@ public class WifiOrAPSearchService extends Service {
 		mSearchClient = SearchClient.getInstance(this);
 		if (searchListener != null) {
 			mSearchClient.setOnSearchListener(searchListener);
+		} else {
+			mSearchClient.setOnSearchListener(null);
 		}
 		if (serverType != null
 				&& ConnectHelper.SERVER_TYPE_WIFI.equals(serverType)) {
@@ -176,6 +182,18 @@ public class WifiOrAPSearchService extends Service {
 			}
 		}
 	}
+	
+	/**
+	 * This is designed for release listener.
+	 * 
+	 * @param listener
+	 */
+	public void setSearchClientListener(OnSearchListener listener) {
+		if (mSearchClient != null) {
+			mSearchClient.setOnSearchListener(listener);
+		}
+		onSearchListener = null;
+	}
 
 	private String getWifiNameSuffixFromSharedPreferences() {
 		return WifiNameSuffixLoader.getWifiNameSuffix(getApplicationContext());
@@ -215,6 +233,7 @@ public class WifiOrAPSearchService extends Service {
 				Log.d(TAG, "WIFI_AP_STATE_DISABLED");
 				if (mSearchClient != null) {
 					mSearchClient.stopSearch();
+					mSearchClient.setOnSearchListener(null);
 					mSearchClient = null;
 					flag = false;
 				}
@@ -252,9 +271,11 @@ public class WifiOrAPSearchService extends Service {
 		this.onSearchListener = searchListener;
 		if (mSearchServer != null) {
 			mSearchServer.stopSearch();
+			mSearchServer.setOnSearchListener(null);
 		}
 		if (mSearchClient != null) {
 			mSearchClient.stopSearch();
+			mSearchClient.setOnSearchListener(null);
 			flag = false;
 			mSearchClient = null;
 		}
@@ -266,7 +287,7 @@ public class WifiOrAPSearchService extends Service {
 		// If Wifi is connected, start search server.
 		if (NetWorkUtil.isWifiConnected(getApplicationContext())) {
 			mSearchServer = SearchSever.getInstance(this);
-			mSearchServer.setOnSearchListener(onSearchListener);
+			mSearchServer.setOnSearchListener(searchListener);
 			mSearchServer.startSearch();
 		}
 
@@ -276,6 +297,21 @@ public class WifiOrAPSearchService extends Service {
 		mWiFiFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		registerReceiver(mWifiBroadcastReceiver, mWiFiFilter);
 		client_register = true;
+	}
+	
+	/**
+	 * This is designed for release listener.
+	 * 
+	 * @param listener
+	 */
+	public void setSearchServerListener(OnSearchListener listener) {
+		if (mSearchServer != null) {
+			Log.d(TAG, "setSearchServerListener ok.");
+			mSearchServer.setOnSearchListener(listener);
+		} else {
+			Log.d(TAG, "setSearchServerListener fail.");
+		}
+		onSearchListener = listener;
 	}
 
 	private void setWifiEnabled(boolean enable) {
@@ -381,6 +417,7 @@ public class WifiOrAPSearchService extends Service {
 			// Network is connected.
 			if (mSearchServer != null) {
 				mSearchServer.stopSearch();
+				mSearchServer.setOnSearchListener(null);
 				mSearchServer = null;
 			}
 			mSearchServer = SearchSever.getInstance(getApplicationContext());
@@ -390,6 +427,7 @@ public class WifiOrAPSearchService extends Service {
 			// Network is not connected.
 			if (mSearchServer != null) {
 				mSearchServer.stopSearch();
+				mSearchServer.setOnSearchListener(null);
 				mSearchServer = null;
 			}
 		}
@@ -491,9 +529,11 @@ public class WifiOrAPSearchService extends Service {
 		}
 		if (mSearchClient != null) {
 			mSearchClient.stopSearch();
+			mSearchClient.setOnSearchListener(null);
 		}
 		if (mSearchServer != null) {
 			mSearchServer.stopSearch();
+			mSearchServer.setOnSearchListener(null);
 		}
 	}
 }

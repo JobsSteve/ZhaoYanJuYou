@@ -11,9 +11,9 @@ import android.annotation.SuppressLint;
 
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.HeartBeat.HeartBeatListener;
 import com.zhaoyan.communication.TrafficStaticInterface.TrafficStaticsRxListener;
 import com.zhaoyan.communication.TrafficStaticInterface.TrafficStaticsTxListener;
-
 
 /**
  * Thread for send and receive message.</br>
@@ -35,9 +35,11 @@ import com.zhaoyan.communication.TrafficStaticInterface.TrafficStaticsTxListener
  * 
  * For Details, see {@link #encode(byte[])} and {@link #decode(DataInputStream)}
  * </br>
+ * 
+ * 3. Process heart beat. For Details, see {@link #HeartBeat}</br>
  */
 @SuppressLint("NewApi")
-public class SocketCommunication extends Thread {
+public class SocketCommunication extends Thread implements HeartBeatListener {
 	private static final String TAG = "SocketCommunication";
 	/** Socket server port */
 	public static final int PORT = SocketPort.COMMUNICATION_SERVER_PORT;
@@ -111,9 +113,16 @@ public class SocketCommunication extends Thread {
 	private TrafficStaticsRxListener mRxListener = TrafficStatics.getInstance();
 	private TrafficStaticsTxListener mTxListener = TrafficStatics.getInstance();
 
+	private HeartBeat mHeartBeat;
+
 	public SocketCommunication(Socket socket, OnReceiveMessageListener listener) {
+		if (socket == null) {
+			// This is a fake one, used by UserManager.
+			return;
+		}
 		this.mSocket = socket;
 		this.mOnReceiveMessageListener = listener;
+		mHeartBeat = new HeartBeat(this, this);
 	}
 
 	public InetAddress getConnectedAddress() {
@@ -132,20 +141,25 @@ public class SocketCommunication extends Thread {
 			mDataInputStream = new DataInputStream(mSocket.getInputStream());
 			mDataOutputStream = new DataOutputStream(mSocket.getOutputStream());
 			mListener.OnCommunicationEstablished(this);
+			mHeartBeat.start();
 			mReceiveBuffer = new byte[RECEIVE_BUFFER_SIZE];
 			while (!mSocket.isClosed()) {
 				boolean isContinue = decode(mDataInputStream);
 				if (!isContinue) {
-					mListener.OnCommunicationLost(this);
+					communicationLost();
 					break;
 				}
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "Read socket error. " + e);
-			mDataInputStream = null;
-			mDataOutputStream = null;
-			mListener.OnCommunicationLost(this);
+			communicationLost();
 		}
+	}
+
+	private void communicationLost() {
+		mHeartBeat.stop();
+		mListener.OnCommunicationLost(this);
+		stopComunication();
 	}
 
 	/**
@@ -299,8 +313,14 @@ public class SocketCommunication extends Thread {
 			msg = ArrayUtil.join(mLargeMessageBuffer, msg);
 			mLargeMessageBuffer = null;
 		}
-		mOnReceiveMessageListener.onReceiveMessage(msg, this);
-		mRxListener.addRxBytes(msg.length);
+
+		/**
+		 * Heart beat message is only for {@link #HeartBeat}.
+		 */
+		if (!mHeartBeat.processHeartBeat(msg)){
+			mOnReceiveMessageListener.onReceiveMessage(msg, this);
+			mRxListener.addRxBytes(msg.length);
+		}
 	}
 
 	private void receiveNotLastPacket(byte[] msg) {
@@ -340,11 +360,21 @@ public class SocketCommunication extends Thread {
 	 * @return return true if send success, return false if send fail.
 	 */
 	public boolean sendMessage(byte[] msg) {
+		return sendMessage(msg, true);
+	}
+
+	/**
+	 * Used for some message that without traffic statics.
+	 * @param msg
+	 * @param doTrafficStatic
+	 * @return
+	 */
+	boolean sendMessage(byte[] msg, boolean doTrafficStatic) {
 		int messageLength = msg.length;
 		if (messageLength > MAX_SEND_SIZE_ONE_TIME) {
-			return sendMultiPacketMessage(msg);
+			return sendMultiPacketMessage(msg, doTrafficStatic);
 		} else {
-			return sendSinglePacketMessage(msg);
+			return sendSinglePacketMessage(msg, doTrafficStatic);
 		}
 	}
 
@@ -352,11 +382,12 @@ public class SocketCommunication extends Thread {
 	 * The msg length length bigger than {@link #MAX_SEND_SIZE_ONE_TIME}
 	 * 
 	 * @param msg
+	 * @param doTrafficStatic
 	 * @return
 	 */
-	private boolean sendMultiPacketMessage(byte[] msg) {
+	private boolean sendMultiPacketMessage(byte[] msg, boolean doTrafficStatic) {
 		if (msg.length <= MAX_SEND_SIZE_ONE_TIME) {
-			return sendSinglePacketMessage(msg);
+			return sendSinglePacketMessage(msg, doTrafficStatic);
 		}
 
 		int totalLength = msg.length;
@@ -367,7 +398,8 @@ public class SocketCommunication extends Thread {
 		boolean isLastPacket = false;
 		while (sentLength < totalLength) {
 			boolean sendResult = sendPacketMessage(
-					Arrays.copyOfRange(msg, start, end), isLastPacket);
+					Arrays.copyOfRange(msg, start, end), isLastPacket,
+					doTrafficStatic);
 			if (!sendResult) {
 				return false;
 			}
@@ -384,24 +416,27 @@ public class SocketCommunication extends Thread {
 		return false;
 	}
 
-	private boolean sendSinglePacketMessage(byte[] msg) {
-		return sendPacketMessage(msg, true);
+	private boolean sendSinglePacketMessage(byte[] msg, boolean doTrafficStatic) {
+		return sendPacketMessage(msg, true, doTrafficStatic);
 	}
 
-	private boolean sendPacketMessage(byte[] msg, boolean isLastPacket) {
+	private boolean sendPacketMessage(byte[] msg, boolean isLastPacket,
+			boolean doTrafficStatic) {
 		try {
 			if (mDataOutputStream != null) {
 				mDataOutputStream.write(encode(msg, isLastPacket));
 				mDataOutputStream.flush();
 
-				mTxListener.addTxBytes(msg.length);
+				if (doTrafficStatic) {
+					mTxListener.addTxBytes(msg.length);
+				}
 			} else {
-				mListener.OnCommunicationLost(this);
+				communicationLost();
 				return false;
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "sendMessage fail. msg = " + msg + ", error = " + e);
-			mListener.OnCommunicationLost(this);
+			communicationLost();
 		}
 		return true;
 	}
@@ -411,17 +446,34 @@ public class SocketCommunication extends Thread {
 	 */
 	public void stopComunication() {
 		try {
-			if (mDataInputStream != null && mDataOutputStream != null) {
+			if (mDataInputStream != null) {
 				mDataInputStream.close();
-				mDataOutputStream.close();
-				mListener.OnCommunicationLost(this);
 			}
-			mSocket.close();
+			if (mDataOutputStream != null) {
+				mDataOutputStream.close();
+			}
+			if (!mSocket.isClosed()) {
+				mSocket.close();
+			}
 		} catch (IOException e) {
 			Log.e(TAG, "stopComunication fail." + e);
 		} catch (Exception e) {
 			Log.e(TAG, "stopComunication fail." + e);
 		}
+	}
+
+	@Override
+	public void onHeartBeatTimeOut() {
+		Log.d(TAG, "onHeartBeatTimeOut");
+		stopComunication();
+	}
+	
+	public void setScreenOn() {
+		mHeartBeat.setScreenOn();
+	}
+	
+	public void setScreenOff() {
+		mHeartBeat.setScreenOff();
 	}
 
 }

@@ -32,7 +32,7 @@ public class SearchConnectApFragment extends SearchConnectBaseFragment {
 		if (NetWorkUtil.isWifiApEnabled(mContext)) {
 			NetWorkUtil.setWifiAPEnabled(mContext, null, false);
 		}
-		mConnectHelper.createServer("wifi-ap", this);
+		mConnectHelper.createServer("wifi-ap", null);
 
 	}
 	
