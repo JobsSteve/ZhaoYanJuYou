@@ -1,5 +1,7 @@
 package com.zhaoyan.juyou.activity;
 
+import java.lang.ref.WeakReference;
+
 import android.annotation.SuppressLint;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
@@ -97,7 +99,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		mTitleNumView.setVisibility(View.VISIBLE);
 
 		initView();
-		queryHandler = new QueryHandler(getContentResolver());
+		queryHandler = new QueryHandler(getContentResolver(), this);
 
 		mHistoryContent = new HistoryContent(new Handler());
 		getContentResolver().registerContentObserver(
@@ -119,6 +121,11 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		if (mHistoryContent != null) {
 			getContentResolver().unregisterContentObserver(mHistoryContent);
 			mHistoryContent = null;
+		}
+		
+		if (queryHandler != null) {
+			queryHandler.cancelOperation(11);
+			queryHandler = null;
 		}
 		super.onDestroy();
 	}
@@ -149,24 +156,26 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	}
 
 	// query db
-	private class QueryHandler extends AsyncQueryHandler {
-
-		public QueryHandler(ContentResolver cr) {
+	private static class QueryHandler extends AsyncQueryHandler {
+		WeakReference<HistoryActivity> mActivity;
+		public QueryHandler(ContentResolver cr, HistoryActivity activity) {
 			super(cr);
+			mActivity = new WeakReference<HistoryActivity>(activity);
 		}
 
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			Log.d(TAG, "onQueryComplete");
-			mLoadingBar.setVisibility(View.INVISIBLE);
+			HistoryActivity historyActivity = mActivity.get();
+			historyActivity.mLoadingBar.setVisibility(View.INVISIBLE);
 			int num = 0;
 			if (null != cursor) {
 				Log.d(TAG, "onQueryComplete.count=" + cursor.getCount());
-				mAdapter.swapCursor(cursor);
+				historyActivity.mAdapter.swapCursor(cursor);
 				num = cursor.getCount();
 			}
 
-			updateUI(num);
+			historyActivity.updateUI(num);
 		}
 
 	}
