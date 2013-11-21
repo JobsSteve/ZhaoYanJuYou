@@ -7,7 +7,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
-import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class HistoryManager {

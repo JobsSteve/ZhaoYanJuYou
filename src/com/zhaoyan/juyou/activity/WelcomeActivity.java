@@ -74,7 +74,7 @@ public class WelcomeActivity extends Activity {
 	private void load() {
 		startFileTransferService();
 		
-		HistoryManager.modifyHistoryDb(WelcomeActivity.this);
+		HistoryManager.modifyHistoryDb(getApplicationContext());
 		
 		// Delete old APP Database table and refresh it.
 		getContentResolver().delete(AppData.App.CONTENT_URI, null, null);

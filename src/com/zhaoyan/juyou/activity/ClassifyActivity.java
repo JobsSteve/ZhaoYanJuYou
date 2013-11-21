@@ -68,6 +68,9 @@ public class ClassifyActivity extends BaseActivity implements OnItemClickListene
 	private static final int MSG_UPDATE_UI = 0;
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
+			mLoadingBar.setVisibility(View.INVISIBLE);
+			mTipView.setVisibility(View.INVISIBLE);
+			
 			try {
 				Collections.sort(mTestList, FileInfo.DATE_COMPARATOR);
 			} catch (Exception e) {
@@ -146,12 +149,7 @@ public class ClassifyActivity extends BaseActivity implements OnItemClickListene
 		protected void onPostExecute(Object result) {
 			super.onPostExecute(result);
 			Log.d(TAG, "GetFileTask.onPostExecute");
-			mLoadingBar.setVisibility(View.INVISIBLE);
-			mTipView.setVisibility(View.INVISIBLE);
-			
-			Message message = mHandler.obtainMessage();
-			message.what = MSG_UPDATE_UI;
-			message.sendToTarget();
+			mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_UI), 500);
 		}
 
 		protected void listFile(final File[] files) {

@@ -120,7 +120,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		Log.d(TAG, "onDestroyView()");
 		if (mAdapter != null && mAdapter.getCursor() != null) {
 			mAdapter.getCursor().close();
-			mAdapter.swapCursor(null);
+			mAdapter.changeCursor(null);
 		}
 		super.onDestroyView();
 	}
@@ -156,7 +156,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			mLoadingBar.setVisibility(View.INVISIBLE);
 			int num = 0;
 			if (null != cursor) {
-				mAdapter.swapCursor(cursor);
+				mAdapter.changeCursor(cursor);
 				mAdapter.selectAll(false);
 				num = mAdapter.getCount();
 			}

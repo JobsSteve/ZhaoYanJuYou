@@ -131,7 +131,7 @@ public class FileTransferService extends Service implements
 		registerReceiver(transferReceiver, appFilter);
 
 		mNotice = new Notice(this);
-		mHistoryManager = new HistoryManager(this);
+		mHistoryManager = new HistoryManager(getApplicationContext());
 		mSocketMgr = SocketCommunicationManager.getInstance(this);
 		mAppId = AppUtil.getAppID(this);
 		Log.d(TAG, "mappid=" + mAppId);

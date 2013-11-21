@@ -6,7 +6,6 @@ import java.text.Collator;
 import java.util.Comparator;
 import java.util.List;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -44,7 +43,6 @@ public class AppBaseFragment extends BaseFragment{
 
 	protected AppCursorAdapter mAdapter = null;
 	
-	protected Context mContext;
 	protected int mAppId = -1;
 	
 	protected ActionMenu mActionMenu;
@@ -91,11 +89,10 @@ public class AppBaseFragment extends BaseFragment{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mContext = getActivity();
 		mNotice = new Notice(getActivity().getApplicationContext());
 		pm = getActivity().getPackageManager();
 		
-		mNotificationMgr = new NotificationMgr(mContext);
+		mNotificationMgr = new NotificationMgr(getActivity().getApplicationContext());
 	}
 	
 	protected void uninstallApp(){
