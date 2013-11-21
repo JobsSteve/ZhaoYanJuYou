@@ -50,6 +50,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	private static final int MSG_UPDATE_UI = 1;
 
 	private QueryHandler queryHandler = null;
+	private static final int HISTORY_QUERY_TOKEN = 11;
 
 	private static final String[] PROJECTION = { JuyouData.History._ID,
 			JuyouData.History.FILE_PATH, JuyouData.History.FILE_NAME,
@@ -99,10 +100,10 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		mTitleNumView.setVisibility(View.VISIBLE);
 
 		initView();
-		queryHandler = new QueryHandler(getContentResolver(), this);
+		queryHandler = new QueryHandler(getApplicationContext().getContentResolver(), this);
 
 		mHistoryContent = new HistoryContent(new Handler());
-		getContentResolver().registerContentObserver(
+		getApplicationContext().getContentResolver().registerContentObserver(
 				JuyouData.History.CONTENT_URI, true, mHistoryContent);
 	}
 
@@ -120,19 +121,19 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		}
 		
 		if (mHistoryContent != null) {
-			getContentResolver().unregisterContentObserver(mHistoryContent);
+			getApplicationContext().getContentResolver().unregisterContentObserver(mHistoryContent);
 			mHistoryContent = null;
 		}
 		
 		if (queryHandler != null) {
-			queryHandler.cancelOperation(11);
+			queryHandler.cancelOperation(HISTORY_QUERY_TOKEN);
 			queryHandler = null;
 		}
 		super.onDestroy();
 	}
 
 	public void query() {
-		queryHandler.startQuery(11, null, JuyouData.History.CONTENT_URI,
+		queryHandler.startQuery(HISTORY_QUERY_TOKEN, null, JuyouData.History.CONTENT_URI,
 				PROJECTION, null, null, JuyouData.History.SORT_ORDER_DEFAULT);
 	}
 
