@@ -120,12 +120,22 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 	}
 	
 	@Override
+	public void onDestroyView() {
+		if (mAdapter != null && mAdapter.getCursor() != null) {
+			mAdapter.getCursor().close();
+			mAdapter.swapCursor(null);
+		}
+		super.onDestroyView();
+	}
+	
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
 		mFileInfoManager = new FileInfoManager();
-		mQueryHandler = new QueryHandler(getActivity().getContentResolver());
-				
+		mQueryHandler = new QueryHandler(getActivity().getApplicationContext()
+				.getContentResolver());
+
 		query();
 	}
 	
@@ -466,12 +476,4 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		return mAdapter.getMode();
 	}
 
-	@Override
-	public void onDestroyView() {
-		if (mAdapter != null && mAdapter.getCursor() != null) {
-			mAdapter.getCursor().close();
-		}
-		super.onDestroyView();
-	}
-	
 }
