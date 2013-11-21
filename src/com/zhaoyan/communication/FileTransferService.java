@@ -16,6 +16,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -32,11 +34,14 @@ import com.zhaoyan.communication.FileSender.OnFileSendListener;
 import com.zhaoyan.communication.SocketCommunicationManager.OnFileTransportListener;
 import com.zhaoyan.communication.protocol.FileTransferInfo;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.AppInfo;
+import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.HistoryInfo;
 import com.zhaoyan.juyou.common.HistoryManager;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
+import com.zhaoyan.juyou.provider.AppData;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 /**
@@ -76,6 +81,36 @@ public class FileTransferService extends Service implements
 			Log.i(TAG, "onReceive.action:" + action);
 			if (ACTION_SEND_FILE.equals(action)) {
 				handleSendFileRequest(intent);
+			} else if (Intent.ACTION_PACKAGE_ADDED.equals(action)) {
+				// get install or uninstall app package name
+				String packageName = intent.getData().getSchemeSpecificPart();
+
+				// get installed app
+				AppInfo appInfo = null;
+				try {
+					ApplicationInfo info = getPackageManager().getApplicationInfo(packageName, 0);
+					appInfo = new AppInfo(getApplicationContext(), info);
+					appInfo.setPackageName(packageName);
+					appInfo.setAppIcon(info.loadIcon(getPackageManager()));
+					appInfo.loadLabel();
+					appInfo.loadVersion();
+					if (AppManager.isGameApp(context, packageName)) {
+						appInfo.setType(AppManager.GAME_APP);
+					} else {
+						appInfo.setType(AppManager.NORMAL_APP);
+					}
+					ContentValues values = AppManager.getValuesByAppInfo(appInfo);
+					getContentResolver().insert(AppData.App.CONTENT_URI, values);
+				} catch (NameNotFoundException e) {
+					e.printStackTrace();
+				}
+
+			} else if (Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
+				// get install or uninstall app package name
+				String packageName = intent.getData().getSchemeSpecificPart();
+				Uri uri = Uri
+						.parse(AppData.App.CONTENT_URI + "/" + packageName);
+				getContentResolver().delete(uri, null, null);
 			}
 		}
 	};
@@ -87,6 +122,13 @@ public class FileTransferService extends Service implements
 		// register broadcast
 		IntentFilter filter = new IntentFilter(ACTION_SEND_FILE);
 		registerReceiver(transferReceiver, filter);
+		
+		//register appliaction install/remove
+		IntentFilter appFilter = new IntentFilter();
+		appFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+		appFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+		appFilter.addDataScheme("package");
+		registerReceiver(transferReceiver, appFilter);
 
 		mNotice = new Notice(this);
 		mHistoryManager = new HistoryManager(this);
@@ -215,10 +257,21 @@ public class FileTransferService extends Service implements
 
 		Log.d(TAG, "onReceiveFile:" + fileName + "," + sendUserName + ",size="
 				+ fileSize);
+		HistoryInfo historyInfo = new HistoryInfo();
+		historyInfo.setFileSize(fileSize);
+		historyInfo.setSendUserName(sendUserName);
+		historyInfo.setReceiveUser(mUserManager.getLocalUser());
+		historyInfo.setMsgType(HistoryManager.TYPE_RECEIVE);
+		historyInfo.setDate(System.currentTimeMillis());
+		historyInfo.setStatus(HistoryManager.STATUS_PRE_RECEIVE);
 		// define a file to save the receive file
 		File fileDir = new File(ZYConstant.DEFAULT_RECEIVE_FILE_FOLDER);
 		if (!fileDir.exists()) {
-			fileDir.mkdirs();
+			boolean ret = fileDir.mkdirs();
+			if (!ret) {
+				Log.e(TAG, "can not create folder:" + fileDir.getAbsolutePath());
+				historyInfo.setStatus(HistoryManager.STATUS_RECEIVE_FAIL);
+			}
 		}
 
 		String filePath = ZYConstant.DEFAULT_RECEIVE_FILE_FOLDER
@@ -230,7 +283,7 @@ public class FileTransferService extends Service implements
 			} catch (IOException e) {
 				Log.e(TAG, "create file error:" + e.toString());
 				mNotice.showToast("can not create the file:" + fileName);
-				return;
+				historyInfo.setStatus(HistoryManager.STATUS_RECEIVE_FAIL);
 			}
 		} else {
 			// if file is exist,auto rename
@@ -244,16 +297,9 @@ public class FileTransferService extends Service implements
 			file = new File(filePath);
 		}
 
-		HistoryInfo historyInfo = new HistoryInfo();
 		historyInfo.setFile(file);
-		historyInfo.setFileSize(fileSize);
-		historyInfo.setSendUserName(sendUserName);
-		historyInfo.setReceiveUser(mUserManager.getLocalUser());
-		historyInfo.setMsgType(HistoryManager.TYPE_RECEIVE);
-		historyInfo.setDate(System.currentTimeMillis());
-		historyInfo.setStatus(HistoryManager.STATUS_PRE_RECEIVE);
 		historyInfo.setFileType(FileManager.getFileType(
-				getApplicationContext(), file));
+				getApplicationContext(), filePath));
 		if (fileIcon == null || fileIcon.length == 0) {
 			Log.d(TAG, "onReceiveFile file icon is null.");
 		} else {

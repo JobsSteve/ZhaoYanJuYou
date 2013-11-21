@@ -3,9 +3,7 @@ package com.zhaoyan.juyou.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,18 +13,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 
@@ -58,10 +52,7 @@ public class FileInfoManager {
 	//archive file
 	public static final String ARCHIVE_NUM = "archive_num";
 
-	private Context context;
-
-	public FileInfoManager(Context context) {
-		this.context = context;
+	public FileInfoManager() {
 	}
 
 	/**
@@ -213,13 +204,13 @@ public class FileInfoManager {
 	}
 
 	// 判断文件类型，根据不同类型设置图标
-	public FileInfo getFileInfo(File currentFile) {
+	public FileInfo getFileInfo(Context context, File currentFile) {
 		Drawable currentIcon = null;
 		// 取得文件路径
 		String filePath = currentFile.getPath();
 
 		// 根据文件名来判断文件类型，设置不同的图标
-		int result = fileFilter(filePath);
+		int result = fileFilter(context, filePath);
 		int fileType = result;
 		switch (result) {
 		case TEXT:
@@ -279,14 +270,14 @@ public class FileInfoManager {
 	}
 	
 	// 判断文件类型，根据不同类型设置图标
-		public HistoryInfo getHistoryInfo(HistoryInfo historyInfo) {
+		public HistoryInfo getHistoryInfo(Context context, HistoryInfo historyInfo) {
 			HistoryInfo info = historyInfo;
 			Drawable currentIcon = null;
 			// 取得文件路径
 			String filePath = historyInfo.getFile().getAbsolutePath();
 
 			// 根据文件名来判断文件类型，设置不同的图标
-			int result = fileFilter(filePath);
+			int result = fileFilter(context, filePath);
 			int fileType = result;
 			switch (result) {
 			case TEXT:
@@ -339,86 +330,7 @@ public class FileInfoManager {
 			return info;
 		}
 
-	/**
-	 * 未安装的程序通过apk文件获取icon
-	 * 
-	 * @param path
-	 *            apk文件路径
-	 * @return apk的icon
-	 */
-	public Drawable getApkIcon(String path) {
-		String apkPath = path; // apk 文件所在的路径
-		String PATH_PackageParser = "android.content.pm.PackageParser";
-		String PATH_AssetManager = "android.content.res.AssetManager";
-		try {
-			Class<?> pkgParserCls = Class.forName(PATH_PackageParser);
-			Class<?>[] typeArgs = { String.class };
-			Constructor<?> pkgParserCt = pkgParserCls.getConstructor(typeArgs);
-			Object[] valueArgs = { apkPath };
-			Object pkgParser = pkgParserCt.newInstance(valueArgs);
-
-			DisplayMetrics metrics = new DisplayMetrics();
-			metrics.setToDefaults();
-
-			typeArgs = new Class<?>[] { File.class, String.class,
-					DisplayMetrics.class, int.class };
-
-			Method pkgParser_parsePackageMtd = pkgParserCls.getDeclaredMethod(
-					"parsePackage", typeArgs);
-
-			valueArgs = new Object[] { new File(apkPath), apkPath, metrics, 0 };
-			Object pkgParserPkg = pkgParser_parsePackageMtd.invoke(pkgParser,
-					valueArgs);
-
-			Field appInfoFld = pkgParserPkg.getClass().getDeclaredField(
-					"applicationInfo");
-
-			ApplicationInfo info = (ApplicationInfo) appInfoFld
-					.get(pkgParserPkg);
-
-			Class<?> assetMagCls = Class.forName(PATH_AssetManager);
-			Object assetMag = assetMagCls.newInstance();
-			typeArgs = new Class[1];
-			typeArgs[0] = String.class;
-
-			Method assetMag_addAssetPathMtd = assetMagCls.getDeclaredMethod(
-					"addAssetPath", typeArgs);
-			valueArgs = new Object[1];
-			valueArgs[0] = apkPath;
-
-			assetMag_addAssetPathMtd.invoke(assetMag, valueArgs);
-
-			Resources res = context.getResources();
-
-			typeArgs = new Class[3];
-			typeArgs[0] = assetMag.getClass();
-			typeArgs[1] = res.getDisplayMetrics().getClass();
-			typeArgs[2] = res.getConfiguration().getClass();
-
-			Constructor<Resources> resCt = Resources.class
-					.getConstructor(typeArgs);
-
-			valueArgs = new Object[3];
-
-			valueArgs[0] = assetMag;
-			valueArgs[1] = res.getDisplayMetrics();
-			valueArgs[2] = res.getConfiguration();
-			res = (Resources) resCt.newInstance(valueArgs);
-
-			if (info != null) {
-				if (info.icon != 0) {
-					Drawable icon = res.getDrawable(info.icon);
-					return icon;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return context.getResources().getDrawable(
-				R.drawable.icon_apk);
-	}
-
-	public int fileFilter(String filepath) {
+	public int fileFilter(Context context, String filepath) {
 		// 首先取得文件名
 		String fileName = new File(filepath).getName();
 		int ret;
@@ -493,12 +405,12 @@ public class FileInfoManager {
 	 * @param filePath
 	 *            file path
 	 */
-	public void openFile(String filePath) {
+	public void openFile(Context context, String filePath) {
 		Intent intent = null;
 
 		// 根据不同的文件，执行不同的打开方式
 		// 根据文件名来判断文件类型，设置不同的图标
-		int result = fileFilter(filePath);
+		int result = fileFilter(context, filePath);
 		switch (result) {
 		case TEXT:
 			intent = getTextFileIntent(filePath);
@@ -560,7 +472,7 @@ public class FileInfoManager {
 	 * 
 	 * @param path
 	 */
-	public boolean deleteFileInMediaStore(Uri uri, String path) {
+	public boolean deleteFileInMediaStore(Context context, Uri uri, String path) {
 		Log.d(TAG, "deleteFileInMediaStore:" + path);
 		if (TextUtils.isEmpty(path)) {
 			return false;
@@ -586,7 +498,7 @@ public class FileInfoManager {
 	/**
 	 * 3.0以上系统，才可以使用该方法，删除多媒体文件
 	 */
-	public boolean deleteFileInMediaStore(String path) {
+	public boolean deleteFileInMediaStore(Context context, String path) {
 
 		if (TextUtils.isEmpty(path)) {
 			return false;
@@ -631,14 +543,9 @@ public class FileInfoManager {
 			oldFile.renameTo(newFile);
 			return newFile.getAbsolutePath();
 	}
-
-	public void showInfoDialog(FileInfo fileInfo) {
-		String info = getFileInfo(fileInfo);
-		ZYUtils.showInfoDialog(context, fileInfo.fileName, info);
-	}
 	
-	public void showInfoDialog(List<FileInfo> list){
-		GetFileSizeTask task = new GetFileSizeTask(list);
+	public void showInfoDialog(Context context, List<FileInfo> list){
+		GetFileSizeTask task = new GetFileSizeTask(context, list);
 		task.execute();
 	}
 	
@@ -649,9 +556,9 @@ public class FileInfoManager {
 		InfoDialog infoDialog = null;
 		int type;
 		List<FileInfo> fileList;
+		Context context;
 		
-		
-		GetFileSizeTask(List<FileInfo> list){
+		GetFileSizeTask(Context context, List<FileInfo> list){
 			fileList = list;
 			if (list.size() == 1) {
 				if (fileList.get(0).isDir) {
@@ -662,6 +569,8 @@ public class FileInfoManager {
 			}else {
 				type = InfoDialog.MULTI;
 			}
+			
+			this.context = context;
 		}
 		
 		@Override
@@ -715,33 +624,22 @@ public class FileInfoManager {
 		}
 		
 		private void getFileSize(File file){
-			if (file.isDirectory()) {
-				folderNum ++ ;
-				File[] files = file.listFiles();
-				for(File file2 : files){
-					getFileSize(file2);
-				}
+			if (isCancelled()) {
+				return;
 			}else {
-				fileNum ++;
-				size += file.length();
+				if (file.isDirectory()) {
+					folderNum ++ ;
+					File[] files = file.listFiles();
+					for(File file2 : files){
+						getFileSize(file2);
+					}
+				}else {
+					fileNum ++;
+					size += file.length();
+				}
+				onProgressUpdate();
 			}
-			onProgressUpdate();
 		}
-	}
-
-	private String getFileInfo(FileInfo fileInfo) {
-		String path = fileInfo.filePath.substring(0, fileInfo.filePath.lastIndexOf("/"));
-		String type = "";
-		if (fileInfo.isDir) {
-			type = "文件夹";
-		}else {
-			type = "文件";
-		}
-		String result = "类型:" + type + ZYConstant.ENTER
-				+ "位置:" + path + ZYConstant.ENTER
-				+ "大小:" + fileInfo.getFormatFileSize() + ZYConstant.ENTER
-				+ "修改日期:" + fileInfo.getFormateDate();
-		return result;
 	}
 	
 	private static final String kuohu1 = ")";
@@ -861,7 +759,7 @@ public class FileInfoManager {
      * 
      * @return the previous navigation path
      */
-    protected NavigationRecord getPrevNavigation() {
+    public NavigationRecord getPrevNavigation() {
         while (!mNavigationList.isEmpty()) {
             NavigationRecord navRecord = mNavigationList.get(mNavigationList.size() - 1);
             removeFromNavigationList();
@@ -880,7 +778,7 @@ public class FileInfoManager {
      * 
      * @param navigationRecord the Record
      */
-    protected void addToNavigationList(NavigationRecord navigationRecord) {
+    public void addToNavigationList(NavigationRecord navigationRecord) {
         if (mNavigationList.size() <= 20) {
             mNavigationList.add(navigationRecord);
         } else {
@@ -892,7 +790,7 @@ public class FileInfoManager {
     /**
      * This method removes a directory path from the navigation history
      */
-    protected void removeFromNavigationList() {
+    public void removeFromNavigationList() {
         if (!mNavigationList.isEmpty()) {
             mNavigationList.remove(mNavigationList.size() - 1);
         }

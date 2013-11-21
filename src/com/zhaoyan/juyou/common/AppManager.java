@@ -1,7 +1,6 @@
 package com.zhaoyan.juyou.common;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -17,13 +16,10 @@ import android.os.Build;
 import android.provider.Settings;
 
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.provider.AppData;
 
 public class AppManager {
 	private static final String TAG = "AppManager";
-	private final PackageManager pm;
-	private Context mContext;
 	
 	public static final int NORMAL_APP = 0;
 	public static final int GAME_APP = 1;
@@ -48,14 +44,8 @@ public class AppManager {
 	public static final int MENU_SHARE = 0x11;
 	public static final int MENU_UNINSTALL = 0x12;
 	public static final int MENU_MOVE = 0x13;
-	
 
-	public AppManager(Context context) {
-		mContext = context;
-		pm = mContext.getPackageManager();
-	}
-
-	public List<ApplicationInfo> getAllApps() {
+	public static List<ApplicationInfo> getAllApps(PackageManager pm) {
 		List<ApplicationInfo> allApps = pm.getInstalledApplications(0);
 		return allApps;
 	}
@@ -65,11 +55,11 @@ public class AppManager {
      * @param pkgName package name
      * @return true,is game app </br>false, is normal app
      */
-    public boolean  isGameApp(String pkgName){
+    public static boolean  isGameApp(Context context, String pkgName){
     	String selectionString = AppData.App.PKG_NAME + "=?" ;
     	String args[] = {pkgName};
     	boolean ret = false;
-    	Cursor cursor = mContext.getContentResolver().query(AppData.AppGame.CONTENT_URI, 
+    	Cursor cursor = context.getContentResolver().query(AppData.AppGame.CONTENT_URI, 
     			null, selectionString, args, null);
     	if (cursor.getCount() <= 0) {
 			ret = false;
@@ -80,7 +70,7 @@ public class AppManager {
     	return ret;
     }
     
-    public boolean isMyApp(String packageName){
+    public static boolean isMyApp(Context context, String packageName, PackageManager pm){
     	//get we app
 		Intent appIntent = new Intent(ZYConstant.APP_ACTION);
 		appIntent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -95,7 +85,7 @@ public class AppManager {
 		return false;
     }
     
-    public ContentValues getValuesByAppInfo(AppInfo appInfo){
+    public static ContentValues getValuesByAppInfo(AppInfo appInfo){
     	ContentValues values = new ContentValues();
     	values.put(AppData.App.PKG_NAME, appInfo.getPackageName());
     	values.put(AppData.App.LABEL, appInfo.getLabel());
@@ -115,7 +105,7 @@ public class AppManager {
      * </br>
      * 	int[1]:(the position in the list)
      */
-    public int[] getAppInfo(String packageName, List<AppInfo> normalAppList, List<AppInfo> gameAppList, List<AppInfo> myAppList){
+    public static int[] getAppInfo(String packageName, List<AppInfo> normalAppList, List<AppInfo> gameAppList, List<AppInfo> myAppList){
     	int[] result = new int[2];
     	
     	for (int i = 0; i < normalAppList.size(); i++) {
@@ -151,17 +141,8 @@ public class AppManager {
     	return null;
     }
     
-    /**
-     * send broad cast to update app ui
-     */
-    public void updateAppUI(){
-    	//send broadcast & update ui
-		Intent intent = new Intent(ACTION_REFRESH_APP);
-		mContext.sendBroadcast(intent);
-    }
-    
     /**return the position according to packagename*/
-    public int getAppPosition(String packageName, List<AppInfo> list){
+    public static int getAppPosition(String packageName, List<AppInfo> list){
     	for (int i = 0; i < list.size(); i++) {
 			AppInfo appInfo = list.get(i);
 			if (packageName.equals(appInfo.getPackageName())) {
@@ -171,30 +152,30 @@ public class AppManager {
     	return -1;
     }
     
-	public void installApk(String apkFilePath) {
+	public static void installApk(Context context, String apkFilePath) {
 		if (apkFilePath.endsWith(".apk")) {
-			installApk(new File(apkFilePath));
+			installApk(context, new File(apkFilePath));
 		}
 	}
 
-	public void installApk(File file) {
+	public static void installApk(Context context, File file) {
 		Intent intent = new Intent();
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.setAction(android.content.Intent.ACTION_VIEW);
 		Uri uri = Uri.fromFile(file);
 		intent.setDataAndType(uri, "application/vnd.android.package-archive");
-		mContext.startActivity(intent);
+		context.startActivity(intent);
 	}
 	
-	public void uninstallApp(String packageName){
+	public static void uninstallApp(Context context, String packageName){
 		Uri packageUri = Uri.parse("package:" + packageName);
 		Intent deleteIntent = new Intent();
 		deleteIntent.setAction(Intent.ACTION_DELETE);
 		deleteIntent.setData(packageUri);
-		mContext.startActivity(deleteIntent);
+		context.startActivity(deleteIntent);
 	}
 	
-	public String getAppLabel(String packageName){
+	public static String getAppLabel(String packageName, PackageManager pm){
 		ApplicationInfo applicationInfo = null;
 		try {
 			applicationInfo = pm.getApplicationInfo(packageName, 0);
@@ -206,7 +187,7 @@ public class AppManager {
 		return applicationInfo.loadLabel(pm).toString();
 	}
 	
-	public String getAppVersion(String packageName){
+	public static String getAppVersion(String packageName, PackageManager pm){
 		String version = "";
 		try {
 			version = pm.getPackageInfo(packageName, 0).versionName;
@@ -217,7 +198,7 @@ public class AppManager {
 		return version;
 	}
 	
-	public String getAppSourceDir(String packageName){
+	public static String getAppSourceDir(String packageName, PackageManager pm){
 		ApplicationInfo applicationInfo = null;
 		try {
 			applicationInfo = pm.getApplicationInfo(packageName, 0);
@@ -229,7 +210,7 @@ public class AppManager {
 	}
 	
 	
-	public void showInstalledAppDetails(String packageName){
+	public static void showInstalledAppDetails(Context context, String packageName){
 		Intent intent = new Intent();
 		final int apiLevel = Build.VERSION.SDK_INT;
 		if (apiLevel >= Build.VERSION_CODES.GINGERBREAD) {
@@ -241,39 +222,6 @@ public class AppManager {
 			intent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
 			intent.putExtra("pkg", packageName);
 		}
-		mContext.startActivity(intent);
-	}
-	
-	public void showInfoDialog(AppInfo appInfo){
-		String info  = getAppInfo(appInfo);
-		ZYUtils.showInfoDialog(mContext, appInfo.getLabel(), info);
-	}
-	
-	private String getAppInfo(AppInfo appInfo){
-		String result = "";
-		result = "类型:" + (appInfo.getType() == GAME_APP ? "游戏" : "应用") + ZYConstant.ENTER
-				+ "版本:" + appInfo.getVersion() + ZYConstant.ENTER
-				+ "包名:" + appInfo.getPackageName() + ZYConstant.ENTER
-				+ "位置:" + appInfo.getInstallPath() + ZYConstant.ENTER
-				+ "大小:" + appInfo.getFormatSize() + ZYConstant.ENTER
-				+ "修改日期:" + appInfo.getFormatDate();
-		return result;
-	}
-
-	public void copyApp(ApplicationInfo appInfo, String directory) {
-		File file = new File(directory); /* 创建临时文件 */
-		if (!file.exists())// 如果文件夹不存在创建
-		{
-			file.mkdirs();
-		}
-		String src = appInfo.sourceDir;
-		String name = appInfo.loadLabel(pm).toString() + ".apk";
-		Log.d(TAG, "backuping..." + name);
-		try {
-			ZYUtils.fileStreamCopy(src, directory + name);
-		} catch (IOException e) {
-			Log.e(TAG, "IO ERROR:" + name);
-			e.printStackTrace();
-		}
+		context.startActivity(intent);
 	}
 }

@@ -28,6 +28,8 @@ public class HistoryInfo implements Parcelable{
 	
 	/**send or receive file info*/
 	private File file;
+	/**send or recive file name*/
+	private String fileName;
 	private long fileSize;
 	
 	/**current transfer file size(bytes)*/
@@ -100,6 +102,14 @@ public class HistoryInfo implements Parcelable{
 	
 	public void setFile(File file){
 		this.file = file;
+	}
+	
+	public String getFileName(){
+		return fileName;
+	}
+	
+	public void setFileName(String fileName){
+		this.fileName = fileName;
 	}
 	
 	public long getFileSize(){

@@ -12,6 +12,8 @@ import com.zhaoyan.common.view.BadgeView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.activity.AudioActivity;
+import com.zhaoyan.juyou.activity.ClassifyActivity;
+import com.zhaoyan.juyou.activity.FileBrowserActivity;
 import com.zhaoyan.juyou.activity.GameActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
@@ -76,6 +78,18 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		
 		View gameView = view.findViewById(R.id.rl_guanjia_game);
 		gameView.setOnClickListener(this);
+		
+		View fileBrowserView = view.findViewById(R.id.rl_guanjia_file_all);
+		fileBrowserView.setOnClickListener(this);
+		
+		View docView = view.findViewById(R.id.rl_guanjia_file_document);
+		docView.setOnClickListener(this);
+		
+		View archiveView = view.findViewById(R.id.rl_guanjia_file_compressed);
+		archiveView.setOnClickListener(this);
+		
+		View apkView = view.findViewById(R.id.rl_guanjia_file_apk);
+		apkView.setOnClickListener(this);
 	}
 
 	@Override
@@ -95,6 +109,24 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			break;
 		case R.id.rl_guanjia_game:
 			openActivity(GameActivity.class);
+			break;
+		case R.id.rl_guanjia_file_all:
+			openActivity(FileBrowserActivity.class);
+			break;
+		case R.id.rl_guanjia_file_document:
+			Bundle docBundle = new Bundle();
+			docBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_DOC);
+			openActivity(ClassifyActivity.class, docBundle);
+			break;
+		case R.id.rl_guanjia_file_compressed:
+			Bundle archiveBundle = new Bundle();
+			archiveBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_ARCHIVE);
+			openActivity(ClassifyActivity.class, archiveBundle);
+			break;
+		case R.id.rl_guanjia_file_apk:
+			Bundle apkBundle = new Bundle();
+			apkBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_APK);
+			openActivity(ClassifyActivity.class, apkBundle);
 			break;
 
 		default:

@@ -15,22 +15,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore.Images.Thumbnails;
 
+import com.zhaoyan.common.file.APKFile;
 import com.zhaoyan.common.util.BitmapUtilities;
 
 public class AsyncImageLoader {
 	private static final String TAG = "AsyncImageLoader";
 	// SoftReference是软引用，是为了更好的为了系统回收变量
 	public static  HashMap<String, SoftReference<Bitmap>> bitmapCache;
-	private Context context;
 	private ExecutorService pool ; 
+	private Context context;
 	
-	private FileInfoManager fileInfoManager;
-
 	public AsyncImageLoader(Context context) {
-		this.context = context;
 		bitmapCache = new HashMap<String, SoftReference<Bitmap>>();
-		
-		fileInfoManager = new FileInfoManager(context);
+		this.context = context;
 		pool = Executors.newCachedThreadPool();
 	}
 	
@@ -71,7 +68,7 @@ public class AsyncImageLoader {
 				@Override
 				public void run() {
 					Bitmap bitmap = null;
-					Drawable drawable = fileInfoManager.getApkIcon(path);
+					Drawable drawable = APKFile.getApkIcon(context, path);
 					BitmapDrawable bd = (BitmapDrawable) drawable;
 					if (null != bd) {
 						bitmap = bd.getBitmap();

@@ -1,6 +1,5 @@
 package com.zhaoyan.juyou.dialog;
 
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -119,7 +118,6 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 	
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		super.show();
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();

@@ -21,6 +21,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
 import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.HistoryManager;
+import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.provider.AppData;
 
 public class WelcomeActivity extends Activity {
@@ -38,9 +39,17 @@ public class WelcomeActivity extends Activity {
 				R.drawable.welcome);
 		mBackgroundImageView = (ImageView) findViewById(R.id.iv_welcome);
 		mBackgroundImageView.setImageBitmap(mBackgroundBitmap);
+		
+		initMountManager();
 
 		LoadAsyncTask loadAsyncTask = new LoadAsyncTask();
 		loadAsyncTask.execute();
+	}
+	
+	private void initMountManager() {
+		// Get sdcards
+		MountManager mountManager = new MountManager(getApplicationContext());
+		mountManager.init();
 	}
 
 	@Override
@@ -147,12 +156,11 @@ public class WelcomeActivity extends Activity {
 	private class LoadAppThread extends Thread {
 		@Override
 		public void run() {
-			AppManager appManager = new AppManager(WelcomeActivity.this);
-			loadAppToDb(appManager);
+			loadAppToDb();
 		}
 	}
 
-	private void loadAppToDb(AppManager appManager) {
+	private void loadAppToDb() {
 		long start = System.currentTimeMillis();
 
 		List<ContentValues> valuesList = new ArrayList<ContentValues>();
@@ -173,13 +181,13 @@ public class WelcomeActivity extends Activity {
 				entry.loadLabel();
 				entry.setAppIcon(info.loadIcon(pm));
 				entry.loadVersion();
-				boolean is_game_app = appManager.isGameApp(info.packageName);
+				boolean is_game_app = AppManager.isGameApp(getApplicationContext(), info.packageName);
 				if (is_game_app) {
 					entry.setType(AppManager.GAME_APP);
 				} else {
 					entry.setType(AppManager.NORMAL_APP);
 				}
-				values = appManager.getValuesByAppInfo(entry);
+				values = AppManager.getValuesByAppInfo(entry);
 				valuesList.add(values);
 			} else {
 				// system app

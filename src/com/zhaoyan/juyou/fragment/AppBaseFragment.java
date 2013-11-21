@@ -55,7 +55,6 @@ public class AppBaseFragment extends BaseFragment{
 	
 	protected MyDialog mMyDialog = null;
 	protected List<String> mUninstallList = null;
-	protected AppManager mAppManager = null;
 	protected PackageManager pm = null;
 	protected Notice mNotice = null;
 	private static final int REQUEST_CODE_UNINSTALL = 0x101;
@@ -93,9 +92,8 @@ public class AppBaseFragment extends BaseFragment{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
-		mAppManager = new AppManager(mContext);
-		mNotice = new Notice(mContext);
-		pm = mContext.getPackageManager();
+		mNotice = new Notice(getActivity().getApplicationContext());
+		pm = getActivity().getPackageManager();
 		
 		mNotificationMgr = new NotificationMgr(mContext);
 	}
@@ -111,7 +109,7 @@ public class AppBaseFragment extends BaseFragment{
 		}
 		String uninstallPkg = mUninstallList.get(0);
 		mMyDialog.updateUI(mMyDialog.getMax() - mUninstallList.size() + 1, 
-				mAppManager.getAppLabel(uninstallPkg));
+				AppManager.getAppLabel(uninstallPkg, pm));
 		Uri packageUri = Uri.parse("package:" + uninstallPkg);
 		Intent deleteIntent = new Intent();
 		deleteIntent.setAction(Intent.ACTION_DELETE);
@@ -140,7 +138,7 @@ public class AppBaseFragment extends BaseFragment{
 		}
     	final BackupAsyncTask task = new BackupAsyncTask();
     	task.execute(packageList);
-    	mMyDialog = new MyDialog(mContext, packageList.size());
+    	mMyDialog = new MyDialog(getActivity(), packageList.size());
 		mMyDialog.setTitle(R.string.backuping);
 		mMyDialog.setOnCancelListener(new OnCancelListener() {
 			@Override
@@ -193,9 +191,9 @@ public class AppBaseFragment extends BaseFragment{
 					return null;
 				}
 				packageName = params[0].get(i);
-				label = mAppManager.getAppLabel(packageName);
-				version = mAppManager.getAppVersion(packageName);
-				sourceDir = mAppManager.getAppSourceDir(packageName);
+				label = AppManager.getAppLabel(packageName, pm);
+				version = AppManager.getAppVersion(packageName, pm);
+				sourceDir = AppManager.getAppSourceDir(packageName, pm);
 				
 				currentAppLabel = label;
 				currentProgress = i + 1;

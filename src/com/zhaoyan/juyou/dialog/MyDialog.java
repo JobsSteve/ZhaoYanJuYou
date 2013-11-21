@@ -19,7 +19,6 @@ public class MyDialog extends Dialog implements android.view.View.OnClickListene
 	
 	private Button mCancelButton, mHideButton;
 	private boolean mShowHideBtn = false;
-	private Context mContext;
 	
 	private OnHideListener mHideListener;
 	
@@ -44,7 +43,6 @@ public class MyDialog extends Dialog implements android.view.View.OnClickListene
 	
 	public MyDialog(Context context, int size){
 		super(context);
-		mContext = context;
 		max = size;
 	}
 	

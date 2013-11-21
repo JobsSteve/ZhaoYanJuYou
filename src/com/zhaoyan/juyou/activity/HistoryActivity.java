@@ -61,7 +61,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			switch (msg.what) {
 			case MSG_UPDATE_UI:
 				int num = msg.arg1;
-				updateTitleNum(num);
+				updateTitleNum(-1, num);
 				break;
 
 			default:
@@ -111,11 +111,8 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 
 	@Override
 	protected void onDestroy() {
-		if (mAdapter != null) {
-			Cursor cursor = mAdapter.getCursor();
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
+		if (mAdapter != null && mAdapter.getCursor() != null) {
+			mAdapter.getCursor().close();
 		}
 		super.onDestroy();
 	}
@@ -205,4 +202,5 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			break;
 		}
 	}
+	
 }

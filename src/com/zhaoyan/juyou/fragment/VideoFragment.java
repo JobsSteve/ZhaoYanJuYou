@@ -110,7 +110,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		mAdapter = new VideoCursorAdapter(mContext);
 		mGridView.setAdapter(mAdapter);
 		
-		initTitle(rootView, R.string.video);
+		initTitle(rootView.findViewById(R.id.rl_video_main), R.string.video);
 		
 		mMenuBottomView = rootView.findViewById(R.id.menubar_bottom);
 		mMenuBottomView.setVisibility(View.GONE);
@@ -123,7 +123,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		mFileInfoManager = new FileInfoManager(mContext);
+		mFileInfoManager = new FileInfoManager();
 		mQueryHandler = new QueryHandler(getActivity().getContentResolver());
 				
 		query();
@@ -189,7 +189,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			cursor.moveToPosition(position);
 			String url = cursor.getString(cursor
 					.getColumnIndex(MediaStore.Video.Media.DATA)); // 文件路径
-			mFileInfoManager.openFile(url);
+			mFileInfoManager.openFile(getActivity().getApplicationContext(), url);
 		}else {
 			mAdapter.setSelected(position);
 			mAdapter.notifyDataSetChanged();
@@ -215,7 +215,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		mAdapter.setSelected(position, !isSelected);
 		mAdapter.notifyDataSetChanged();
 		
-		mActionMenu = new ActionMenu(mContext);
+		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE,R.drawable.ic_action_delete_enable,R.string.menu_delete);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
@@ -282,7 +282,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
     }
     
     private void doDelete(String path) {
-		boolean ret = mFileInfoManager.deleteFileInMediaStore(ZYConstant.VIDEO_URI, path);
+		boolean ret = mFileInfoManager.deleteFileInMediaStore(getActivity().getApplicationContext(), ZYConstant.VIDEO_URI, path);
 		if (!ret) {
 			mNotice.showToast(R.string.delete_fail);
 			Log.e(TAG, path + " delete failed");
@@ -468,11 +468,8 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 
 	@Override
 	public void onDestroyView() {
-		if (mAdapter != null) {
-			Cursor cursor = mAdapter.getCursor();
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
+		if (mAdapter != null && mAdapter.getCursor() != null) {
+			mAdapter.getCursor().close();
 		}
 		super.onDestroyView();
 	}

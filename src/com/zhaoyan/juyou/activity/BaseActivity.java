@@ -24,8 +24,16 @@ public class BaseActivity extends Activity {
 		mTitleNumView = (TextView) mCustomTitleView.findViewById(R.id.tv_title_num);
 	}
 	
-	protected void updateTitleNum(int num) {
-		mTitleNumView.setText(getString(R.string.num_format, num));
+	protected void setTitleNumVisible(boolean visible){
+		mTitleNumView.setVisibility(visible ? View.VISIBLE : View.GONE);
+	}
+	
+	protected void updateTitleNum(int selected, int count) {
+		if (selected == -1) {
+			mTitleNumView.setText(getString(R.string.num_format, count));
+		}else {
+			mTitleNumView.setText(getString(R.string.num_format2, selected, count));
+		}
 	}
 
 	protected void finishWithAnimation() {
@@ -36,10 +44,18 @@ public class BaseActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			finish();
-			overridePendingTransition(0, R.anim.activity_right_out);
-			return true;
+			if (onBackKeyPressed()) {
+				finish();
+				overridePendingTransition(0, R.anim.activity_right_out);
+				return true;
+			}else {
+				return false;
+			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	public boolean onBackKeyPressed(){
+		return true;
 	}
 }

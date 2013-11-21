@@ -50,20 +50,6 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 	
 	private QueryHandler mQueryHandler;
 	
-	/**
-	 * Create a new instance of GameFragment, providing "appid" as an
-	 * argument.
-	 */
-	public static GameFragment newInstance(int appid) {
-		GameFragment f = new GameFragment();
-
-		Bundle args = new Bundle();
-		args.putInt(Extra.APP_ID, appid);
-		f.setArguments(args);
-
-		return f;
-	}
-	
 	private static final int MSG_UPDATE_UI = 0;
 	private static final int MSG_UPDATE_LIST= 1;
 	private Handler mHandler = new Handler(){
@@ -113,7 +99,7 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 		mMenuBottomView.setVisibility(View.GONE);
 		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
 		
-		initTitle(rootView, R.string.game);
+		initTitle(rootView.findViewById(R.id.rl_ui_app), R.string.game);
 		
 		mQueryHandler = new QueryHandler(getActivity().getContentResolver());
 
@@ -215,7 +201,7 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 		mAdapter.setSelected(position, !isSelected);
 		mAdapter.notifyDataSetChanged();
 		
-		mActionMenu = new ActionMenu(mContext);
+		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_BACKUP, R.drawable.ic_action_backup, R.string.menu_backup);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_UNINSTALL,R.drawable.ic_aciton_uninstall,R.string.menu_uninstall);
@@ -318,7 +304,7 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
 			String packageName = mAdapter.getSelectedPkgList().get(0);
-			mAppManager.showInstalledAppDetails(packageName);
+			AppManager.showInstalledAppDetails(getActivity().getApplicationContext(), packageName);
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
@@ -363,7 +349,7 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 		protected Void doInBackground(Void... params) {
 			String label = null;
 			for (int i = 0; i < pkgList.size(); i++) {
-				label = mAppManager.getAppLabel(pkgList.get(i));
+				label = AppManager.getAppLabel(pkgList.get(i), pm);
 				dialog.updateUI(i + 1, label);
 				moveToApp(pkgList.get(i));
 			}
@@ -483,5 +469,13 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 			return mAdapter.getMode();
 		}
 		return super.getMenuMode();
+	}
+	
+	@Override
+	public void onDestroy() {
+		if (mAdapter != null && mAdapter.getCursor() != null) {
+			mAdapter.getCursor().close();
+		}
+		super.onDestroy();
 	}
 }

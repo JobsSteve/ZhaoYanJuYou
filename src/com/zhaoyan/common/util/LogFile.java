@@ -63,7 +63,7 @@ public class LogFile {
 				mFile.getParentFile().mkdirs();
 				mFile.createNewFile();
 			} catch (IOException e) {
-				Log.e(TAG, "Creat file error. File is " + filePath + ". " + e);
+//				Log.e(TAG, "Creat file error. File is " + filePath + ". " + e);
 			}
 		}
 	}
@@ -77,16 +77,16 @@ public class LogFile {
 				mFile.getParentFile().mkdirs();
 				mFile.createNewFile();
 			} catch (IOException e) {
-				Log.e(TAG,
-						"Creat file error. File is " + mFile.getAbsolutePath()
-								+ ". " + e);
+//				Log.e(TAG,
+//						"Creat file error. File is " + mFile.getAbsolutePath()
+//								+ ". " + e);
 				return false;
 			}
 		}
 		try {
 			mWriter = new FileWriter(mFile);
 		} catch (IOException e) {
-			Log.e(TAG, "Open file error. " + e);
+//			Log.e(TAG, "Open file error. " + e);
 		}
 		return mWriter != null;
 	}
@@ -101,7 +101,7 @@ public class LogFile {
 	public void writeLog(String log) {
 		if (mWriter == null) {
 			if (!open()) {
-				Log.e(TAG, "writeLog error. open() file error.");
+//				Log.e(TAG, "writeLog error. open() file error.");
 				return;
 			}
 		}
@@ -110,14 +110,14 @@ public class LogFile {
 			mWriter.write(log);
 			mWriter.flush();
 		} catch (IOException e) {
-			Log.e(TAG, "writeLog write error." + e);
+//			Log.e(TAG, "writeLog write error." + e);
 		}
 	}
 
 	public void writeLog(byte[] logs) {
 		if (mWriter == null) {
 			if (!open()) {
-				Log.e(TAG, "writeLog error. open() file error.");
+//				Log.e(TAG, "writeLog error. open() file error.");
 				return;
 			}
 		}
@@ -126,7 +126,7 @@ public class LogFile {
 			mWriter.write(log);
 			mWriter.flush();
 		} catch (IOException e) {
-			Log.e(TAG, "writeLog write error." + e);
+//			Log.e(TAG, "writeLog write error." + e);
 		}
 	}
 
@@ -140,7 +140,7 @@ public class LogFile {
 		try {
 			mWriter.close();
 		} catch (IOException e) {
-			Log.e(TAG, "close error." + e);
+//			Log.e(TAG, "close error." + e);
 		}
 	}
 }

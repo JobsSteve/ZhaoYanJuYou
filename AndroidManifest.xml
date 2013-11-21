@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhaoyan.juyou"
     android:versionCode="1"
-    android:versionName="1.0.4" >
+    android:versionName="1.0.5" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -88,6 +88,14 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.GameActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+         <activity
+            android:name="com.zhaoyan.juyou.activity.FileBrowserActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+         <activity
+            android:name="com.zhaoyan.juyou.activity.ClassifyActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity

@@ -98,7 +98,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mMenuBottomView.setVisibility(View.GONE);
 		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
 		
-		initTitle(rootView, R.string.app);
+		initTitle(rootView.findViewById(R.id.rl_ui_app), R.string.app);
 		
 		mQueryHandler = new QueryHandler(getActivity().getContentResolver());
 
@@ -201,7 +201,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mAdapter.setSelected(position, !isSelected);
 		mAdapter.notifyDataSetChanged();
 		
-		mActionMenu = new ActionMenu(mContext);
+		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_BACKUP, R.drawable.ic_action_backup, R.string.menu_backup);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_UNINSTALL,R.drawable.ic_aciton_uninstall,R.string.menu_uninstall);
@@ -209,7 +209,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_app_info,R.string.menu_app_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 
-		mMenuManager = new MenuTabManager(mContext, mMenuHolder);
+		mMenuManager = new MenuTabManager(getActivity().getApplicationContext(), mMenuHolder);
 		showMenuBar(true);
 		mMenuManager.refreshMenus(mActionMenu);
 		mMenuManager.setOnMenuItemClickListener(this);
@@ -283,7 +283,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			break;
 		case ActionMenu.ACTION_MENU_UNINSTALL:
 			mUninstallList = mAdapter.getSelectedPkgList();
-			mMyDialog = new MyDialog(mContext, mUninstallList.size());
+			mMyDialog = new MyDialog(getActivity(), mUninstallList.size());
 			mMyDialog.setTitle(R.string.handling);
 			mMyDialog.setOnCancelListener(new OnCancelListener() {
 				
@@ -304,7 +304,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
 			String packageName = mAdapter.getSelectedPkgList().get(0);
-			mAppManager.showInstalledAppDetails(packageName);
+			AppManager.showInstalledAppDetails(mContext, packageName);
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
@@ -355,7 +355,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		protected Void doInBackground(Void... params) {
 			String label = null;
 			for (int i = 0; i < pkgList.size(); i++) {
-				label = mAppManager.getAppLabel(pkgList.get(i));
+				label = AppManager.getAppLabel(pkgList.get(i), pm);
 				dialog.updateUI(i + 1, label);
 				moveToGame(pkgList.get(i));
 			}
@@ -475,5 +475,13 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	@Override
 	public int getMenuMode() {
 		return mAdapter.getMode();
+	}
+	
+	@Override
+	public void onDestroy() {
+		if (mAdapter != null && mAdapter.getCursor() != null) {
+			mAdapter.getCursor().close();
+		}
+		super.onDestroy();
 	}
 }

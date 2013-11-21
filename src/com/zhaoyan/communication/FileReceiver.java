@@ -141,10 +141,8 @@ public class FileReceiver {
 				InputStream inputStream = mSocket.getInputStream();
 				copyFile(inputStream, new FileOutputStream(mReceivedFile));
 				Log.d(TAG, "Client: Data written");
-			} catch (IOException e) {
-				Log.e(TAG, e.toString());
 			} catch (Exception e) {
-				Log.e(TAG, e.toString());
+				Log.e(TAG, "FileReceiverThread:[" + e.toString() + "]");
 			} finally {
 				if (mSocket != null) {
 					if (mSocket.isConnected()) {
@@ -188,7 +186,7 @@ public class FileReceiver {
 			out.close();
 			inputStream.close();
 		} catch (IOException e) {
-			Log.d(TAG, e.toString());
+			Log.d(TAG, "copyFile:[" + e.toString() + "]");
 			notifyFinish(false);
 		}
 		long time = System.currentTimeMillis() - start;

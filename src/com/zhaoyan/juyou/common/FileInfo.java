@@ -2,6 +2,7 @@ package com.zhaoyan.juyou.common;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 
 import android.graphics.drawable.Drawable;
@@ -108,4 +109,22 @@ public class FileInfo implements Parcelable,Comparable<FileInfo>{
 		}
 		return 0;
 	}
+	
+	/**
+	 * sort by modify date
+	 */
+	public static final Comparator<FileInfo> DATE_COMPARATOR = new Comparator<FileInfo>() {
+		@Override
+		public int compare(FileInfo object1, FileInfo object2) {
+			long date1 = object1.fileDate;
+			long date2 = object2.fileDate;
+			if (date1 > date2) {
+				return -1;
+			} else if (date1 == date2) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
+	};
 }

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
@@ -16,9 +15,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ZYConstant;
 
 public class BaseFragment extends Fragment{
-//	protected UserManager mUserManager = null;
 	protected Notice mNotice = null;
-//	protected MainFragmentActivity mFragmentActivity;
 	protected boolean mIsSelectAll = false;
 	protected Context mContext = null;
 	

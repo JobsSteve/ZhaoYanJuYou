@@ -35,7 +35,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
-            android:background="@drawable/account_management"
+            android:background="@drawable/user_head_photo"
             android:focusable="false" />
 
         <LinearLayout

@@ -32,7 +32,6 @@ public class AppInfo implements Parcelable{
 	private String packageName;
 	/**app version*/
 	private String version;
-	private Context context;
 	private PackageManager pm;
 	private Intent launchIntent;
 	
@@ -41,13 +40,11 @@ public class AppInfo implements Parcelable{
 	}
 	
 	public AppInfo(Context context){
-		this.context = context;
 		mApkFile = null;
 		pm = context.getPackageManager();
 	}
 	
 	public AppInfo(Context context, ApplicationInfo info) {
-		this.context = context;
 		mInfo = info;
 		mApkFile = new File(info.sourceDir);
 		pm = context.getPackageManager();

@@ -144,6 +144,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		int color = Color.BLACK;
 		String fileSizeStr = ZYUtils.getFormatSize(fileSize);
 		String percentStr = HistoryManager.nf.format(progress/ fileSize);
+		int bar_progress = (int)((progress / fileSize) * 100);
 		boolean showBar = false;
 		switch (status) {
 		case HistoryManager.STATUS_PRE_SEND:
@@ -176,6 +177,9 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			break;
 		}
 		holder.transferBar.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+		if (showBar) {
+			holder.transferBar.setProgress(bar_progress);
+		}
 		holder.sendStatusView.setText(statusStr);
 		holder.sendStatusView.setTextColor(color);
 		holder.fileSizeView.setText(fileSizeStr);
@@ -408,9 +412,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 							dialog.create().show();
 							break;
 						} else {
-							FileInfoManager fileInfoManager = new FileInfoManager(
-									mContext);
-							fileInfoManager.openFile(filePath);
+							FileInfoManager fileInfoManager = new FileInfoManager();
+							fileInfoManager.openFile(mContext, filePath);
 						}
 						break;
 					case ActionMenu.ACTION_MENU_CANCEL:
