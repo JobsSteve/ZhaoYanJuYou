@@ -39,7 +39,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 
 	// adapter
 	private HistoryCursorAdapter mAdapter;
-	
+
 	private HistoryContent mHistoryContent = null;
 
 	private Notice mNotice;
@@ -97,7 +97,8 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		mTitleNumView.setVisibility(View.VISIBLE);
 
 		initView();
-		queryHandler = new QueryHandler(getContentResolver());
+		queryHandler = new QueryHandler(getApplicationContext()
+				.getContentResolver());
 
 		mHistoryContent = new HistoryContent(new Handler());
 		getContentResolver().registerContentObserver(
@@ -116,7 +117,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			mAdapter.getCursor().close();
 			mAdapter.swapCursor(null);
 		}
-		
+
 		if (mHistoryContent != null) {
 			getContentResolver().unregisterContentObserver(mHistoryContent);
 			mHistoryContent = null;
@@ -209,6 +210,5 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			break;
 		}
 	}
-	
-	
+
 }
