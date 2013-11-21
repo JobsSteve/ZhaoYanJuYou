@@ -1,5 +1,7 @@
 package com.zhaoyan.juyou.activity;
 
+import java.lang.ref.WeakReference;
+
 import android.annotation.SuppressLint;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
@@ -48,6 +50,7 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	private static final int MSG_UPDATE_UI = 1;
 
 	private QueryHandler queryHandler = null;
+	private static final int HISTORY_QUERY_TOKEN = 11;
 
 	private static final String[] PROJECTION = { JuyouData.History._ID,
 			JuyouData.History.FILE_PATH, JuyouData.History.FILE_NAME,
@@ -97,11 +100,10 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		mTitleNumView.setVisibility(View.VISIBLE);
 
 		initView();
-		queryHandler = new QueryHandler(getApplicationContext()
-				.getContentResolver());
+		queryHandler = new QueryHandler(getApplicationContext().getContentResolver(), this);
 
 		mHistoryContent = new HistoryContent(new Handler());
-		getContentResolver().registerContentObserver(
+		getApplicationContext().getContentResolver().registerContentObserver(
 				JuyouData.History.CONTENT_URI, true, mHistoryContent);
 	}
 
@@ -119,14 +121,19 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		}
 
 		if (mHistoryContent != null) {
-			getContentResolver().unregisterContentObserver(mHistoryContent);
+			getApplicationContext().getContentResolver().unregisterContentObserver(mHistoryContent);
 			mHistoryContent = null;
+		}
+		
+		if (queryHandler != null) {
+			queryHandler.cancelOperation(HISTORY_QUERY_TOKEN);
+			queryHandler = null;
 		}
 		super.onDestroy();
 	}
 
 	public void query() {
-		queryHandler.startQuery(11, null, JuyouData.History.CONTENT_URI,
+		queryHandler.startQuery(HISTORY_QUERY_TOKEN, null, JuyouData.History.CONTENT_URI,
 				PROJECTION, null, null, JuyouData.History.SORT_ORDER_DEFAULT);
 	}
 
@@ -151,24 +158,26 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	}
 
 	// query db
-	private class QueryHandler extends AsyncQueryHandler {
-
-		public QueryHandler(ContentResolver cr) {
+	private static class QueryHandler extends AsyncQueryHandler {
+		WeakReference<HistoryActivity> mActivity;
+		public QueryHandler(ContentResolver cr, HistoryActivity activity) {
 			super(cr);
+			mActivity = new WeakReference<HistoryActivity>(activity);
 		}
 
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			Log.d(TAG, "onQueryComplete");
-			mLoadingBar.setVisibility(View.INVISIBLE);
+			HistoryActivity historyActivity = mActivity.get();
+			historyActivity.mLoadingBar.setVisibility(View.INVISIBLE);
 			int num = 0;
 			if (null != cursor) {
 				Log.d(TAG, "onQueryComplete.count=" + cursor.getCount());
-				mAdapter.swapCursor(cursor);
+				historyActivity.mAdapter.swapCursor(cursor);
 				num = cursor.getCount();
 			}
 
-			updateUI(num);
+			historyActivity.updateUI(num);
 		}
 
 	}
