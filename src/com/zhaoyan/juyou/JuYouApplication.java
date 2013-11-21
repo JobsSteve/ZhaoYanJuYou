@@ -1,7 +1,6 @@
 package com.zhaoyan.juyou;
 
 import android.app.Application;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 
@@ -13,8 +12,6 @@ import com.zhaoyan.communication.TrafficStatics;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.search.ConnectHelper;
 import com.zhaoyan.communication.search.SearchUtil;
-import com.zhaoyan.juyou.common.HistoryManager;
-import com.zhaoyan.juyou.provider.JuyouData;
 
 public class JuYouApplication extends Application {
 
