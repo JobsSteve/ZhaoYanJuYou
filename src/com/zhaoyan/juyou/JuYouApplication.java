@@ -14,6 +14,7 @@ import com.zhaoyan.communication.search.ConnectHelper;
 import com.zhaoyan.communication.search.SearchUtil;
 
 public class JuYouApplication extends Application {
+	private static final String TAG = "JuYouApplication";
 
 	@Override
 	public void onCreate() {
@@ -22,7 +23,9 @@ public class JuYouApplication extends Application {
 	}
 
 	public static void quitApplication(Context context) {
+		Log.d(TAG, "quitApplication");
 		stopCommunication(context);
+		TrafficStatics.getInstance().quit();
 		stopFileTransferService(context);
 	}
 
@@ -42,14 +45,12 @@ public class JuYouApplication extends Application {
 		manager.closeAllCommunication();
 		manager.stopServer();
 
-		TrafficStatics.getInstance().quit();
-
 		// Disable wifi AP.
 		NetWorkUtil.setWifiAPEnabled(context, null, false);
 		// Clear wifi connect history.
 		SearchUtil.clearWifiConnectHistory(context);
 		// Stop record log and close log file.
-		
+
 		Log.stopAndSave();
 	}
 }
