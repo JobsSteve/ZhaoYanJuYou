@@ -19,14 +19,20 @@ public class JuYouApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		// Start save log to file.
+		Log.startSaveToFile();
+		// Initialize TrafficStatics
 		TrafficStatics.getInstance().init(getApplicationContext());
 	}
 
 	public static void quitApplication(Context context) {
 		Log.d(TAG, "quitApplication");
 		stopCommunication(context);
-		TrafficStatics.getInstance().quit();
 		stopFileTransferService(context);
+		// Release TrafficStatics
+		TrafficStatics.getInstance().quit();
+		// Stop record log and close log file.
+		Log.stopAndSave();
 	}
 
 	private static void stopFileTransferService(Context context) {
@@ -49,8 +55,5 @@ public class JuYouApplication extends Application {
 		NetWorkUtil.setWifiAPEnabled(context, null, false);
 		// Clear wifi connect history.
 		SearchUtil.clearWifiConnectHistory(context);
-		// Stop record log and close log file.
-
-		Log.stopAndSave();
 	}
 }
