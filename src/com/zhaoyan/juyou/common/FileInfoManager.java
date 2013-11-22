@@ -17,6 +17,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -486,7 +487,7 @@ public class FileInfoManager {
 			return false;
 		}
 
-		String where = MediaStore.Audio.Media.DATA + "=?";
+		String where = MediaColumns.DATA + "=?";
 		String[] whereArgs = new String[] { path };
 		ContentResolver cr = context.getContentResolver();
 		try {

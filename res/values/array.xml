@@ -103,4 +103,9 @@
         <item>@string/delete_history_and_file</item>
     </string-array>
     
+     <string-array name="clear_history_menu">
+        <item>@string/delete_history</item>
+        <item>@string/delete_history_and_received_file</item>
+    </string-array>
+    
 </resources>
