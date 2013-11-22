@@ -371,8 +371,9 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 					}.start();
 				}
 			}
+			mCommunications.clear();
 		}
-		mCommunications.clear();
+		
 		if (SocketServer.getInstance() != null) {
 			SocketServer.getInstance().stopServer();
 		}
