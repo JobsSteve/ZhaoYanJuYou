@@ -49,6 +49,7 @@ public class JuYouApplication extends Application {
 	private static void stopCommunication(Context context) {
 		ConnectHelper connectHelper = ConnectHelper.getInstance(context);
 		connectHelper.stopSearch();
+		connectHelper.release();
 
 		UserManager.getInstance().resetLocalUserID();
 		SocketCommunicationManager manager = SocketCommunicationManager
