@@ -51,7 +51,5 @@ public class JuYouApplication extends Application {
 		// Stop record log and close log file.
 		
 		Log.stopAndSave();
-		
-		System.exit(0);
 	}
 }
