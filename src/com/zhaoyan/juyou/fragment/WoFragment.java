@@ -2,7 +2,6 @@ package com.zhaoyan.juyou.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,9 @@ import android.view.View.OnClickListener;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AccountSettingActivity;
+import com.zhaoyan.juyou.activity.TrafficStatisticsActivity;
 
-public class WoFragment extends Fragment implements OnClickListener {
+public class WoFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "WoFragment";
 	private View mUserInfoSettingView;
 	private View mQuitView;
@@ -30,6 +30,9 @@ public class WoFragment extends Fragment implements OnClickListener {
 		mUserInfoSettingView.setOnClickListener(this);
 		mQuitView = rootView.findViewById(R.id.ll_wo_quit);
 		mQuitView.setOnClickListener(this);
+		
+		View trafficView = rootView.findViewById(R.id.rl_wo_traffic_statistics);
+		trafficView.setOnClickListener(this);
 	}
 
 	@Override
@@ -43,10 +46,10 @@ public class WoFragment extends Fragment implements OnClickListener {
 		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		switch (v.getId()) {
 		case R.id.rl_userinfo_setting:
-			intent.setClass(getActivity(), AccountSettingActivity.class);
-			startActivity(intent);
-			getActivity()
-					.overridePendingTransition(R.anim.activity_right_in, 0);
+			openActivity(AccountSettingActivity.class);
+			break;
+		case R.id.rl_wo_traffic_statistics:
+			openActivity(TrafficStatisticsActivity.class);
 			break;
 		case R.id.ll_wo_quit:
 			quit();

@@ -174,6 +174,7 @@
      <string name="check_one_please">至少选中一个文件</string>
      <string name="delete_history">删除记录</string>
      <string name="delete_history_and_file">删除记录和文件</string>
+     <string name="delete_history_and_received_file">删除记录和接收的文件</string>
      <string name="delete_history_msg">删除记录或者文件</string>
      
      <string name="select_msg">已选中%1$s</string>
@@ -205,4 +206,7 @@
      <string name="backup_tip">滑动此处查看备份进度</string>
      <string name="backup_over">备份完成</string>
      <string name="operator_over">操作完成</string>
+     
+     <string name="clear_history">清空记录</string>
+     <string name="clear_history_tip">该操作将删除所有传输记录</string>
 </resources>
