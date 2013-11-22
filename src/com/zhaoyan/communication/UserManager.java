@@ -319,5 +319,12 @@ public class UserManager {
 		}
 		return null;
 	}
+	
+	/**
+	 * Release resource.
+	 */
+	public void release(){
+		mInstance = null;
+	}
 
 }

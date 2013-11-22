@@ -19,16 +19,21 @@ public class JuYouApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		Log.d(TAG, "onCreate");
 		// Start save log to file.
 		Log.startSaveToFile();
 		// Initialize TrafficStatics
 		TrafficStatics.getInstance().init(getApplicationContext());
+		// Initialize SocketCommunicationManager
+		SocketCommunicationManager.getInstance().init(getApplicationContext());
 	}
 
 	public static void quitApplication(Context context) {
 		Log.d(TAG, "quitApplication");
 		stopCommunication(context);
 		stopFileTransferService(context);
+		// Release SocketCommunicationManager
+		SocketCommunicationManager.getInstance().release();
 		// Release TrafficStatics
 		TrafficStatics.getInstance().quit();
 		// Stop record log and close log file.
@@ -47,7 +52,7 @@ public class JuYouApplication extends Application {
 
 		UserManager.getInstance().resetLocalUserID();
 		SocketCommunicationManager manager = SocketCommunicationManager
-				.getInstance(context);
+				.getInstance();
 		manager.closeAllCommunication();
 		manager.stopServer();
 

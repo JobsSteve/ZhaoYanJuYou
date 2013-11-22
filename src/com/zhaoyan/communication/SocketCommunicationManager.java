@@ -133,6 +133,45 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 
 	private SocketCommunicationManager(Context context) {
 		mContext = context;
+		init(context);
+	}
+
+	/**
+	 * Use {@link #getInstance()} instead.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	@Deprecated
+	public static synchronized SocketCommunicationManager getInstance(
+			Context context) {
+		if (mInstance == null) {
+			mInstance = new SocketCommunicationManager(
+					context.getApplicationContext());
+		}
+		return mInstance;
+	}
+
+	/**
+	 * Get instance without context. If this is first called, must initialize
+	 * context by {@link #init(Context)}.
+	 * 
+	 * @return
+	 */
+	public static synchronized SocketCommunicationManager getInstance() {
+		if (mInstance == null) {
+			mInstance = new SocketCommunicationManager();
+		}
+		return mInstance;
+	}
+
+	/**
+	 * Initialize with application context.
+	 * 
+	 * @param context
+	 */
+	public void init(Context context) {
+		mContext = context;
 		mOnCommunicationListeners = new Vector<OnCommunicationListener>();
 		mNotice = new Notice(context);
 		mCommunications = new Vector<SocketCommunication>();
@@ -144,13 +183,23 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mProtocolDecoder.setLoginRespondCallback(this);
 	}
 
-	public static synchronized SocketCommunicationManager getInstance(
-			Context context) {
-		if (mInstance == null) {
-			mInstance = new SocketCommunicationManager(
-					context.getApplicationContext());
+	/**
+	 * Release resource.
+	 */
+	public void release() {
+		mContext = null;
+		mInstance = null;
+		if (mProtocolDecoder != null) {
+			mProtocolDecoder.setLoginRequestCallBack(null);
+			mProtocolDecoder.setLoginRespondCallback(null);
+			mProtocolDecoder = null;
 		}
-		return mInstance;
+		if (mUserManager != null) {
+			mUserManager.unregisterOnUserChangedListener(this);
+		}
+		UserManager.getInstance().release();
+
+		SocketServer.getInstance().release();
 	}
 
 	public void registerOnCommunicationListenerExternal(
@@ -548,7 +597,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 				return true;
 			}
 		} else {
-			if (mCommunications.isEmpty() || mUserManager.getAllUser().size() == 0) {
+			if (mCommunications.isEmpty()
+					|| mUserManager.getAllUser().size() == 0) {
 				return false;
 			}
 		}
