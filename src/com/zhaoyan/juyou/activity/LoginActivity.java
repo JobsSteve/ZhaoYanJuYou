@@ -94,6 +94,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			JuYouApplication.quitApplication(this);
+			finish();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
