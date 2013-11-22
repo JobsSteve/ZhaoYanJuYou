@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.common.AsyncImageLoader;
 import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
 import com.zhaoyan.juyou.common.FileInfo;
@@ -267,8 +268,8 @@ public class FileInfoAdapter extends BaseAdapter {
 
 		FileInfo fileInfo = mList.get(position);
 		holder.iconView.setTag(fileInfo.filePath);
-		String size = fileInfo.getFormatFileSize();
-		String date = fileInfo.getFormateDate();
+		String size = ZYUtils.getFormatSize(fileInfo.fileSize);
+		String date = ZYUtils.getFormatDate(fileInfo.fileDate);
 		// use async thread loader bitmap
 		if (!mIdleFlag) {
 			if (AsyncImageLoader.bitmapCache.size() > 0

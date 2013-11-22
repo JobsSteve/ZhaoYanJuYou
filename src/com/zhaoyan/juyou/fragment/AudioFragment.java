@@ -269,7 +269,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				mDeleteDialog = null;
 			}
 			updateUI(mAdapter.getCount());
-			mNotice.showToast("操作完成");
+			mNotice.showToast(R.string.operator_over);
 		}
     	
     }

@@ -1,6 +1,8 @@
 package com.zhaoyan.juyou.common;
 
 import java.io.File;
+import java.text.Collator;
+import java.util.Comparator;
 
 import com.zhaoyan.common.util.ZYUtils;
 
@@ -182,5 +184,16 @@ public class AppInfo implements Parcelable{
 	
 	public void readFromParcel(Parcel in){
 	}
+	
+	/**
+     * Perform alphabetical comparison of application entry objects.
+     */
+    public static final Comparator<AppInfo> LABEL_COMPARATOR = new Comparator<AppInfo>() {
+        private final Collator sCollator = Collator.getInstance();
+        @Override
+        public int compare(AppInfo object1, AppInfo object2) {
+            return sCollator.compare(object1.getLabel(), object2.getLabel());
+        }
+    };
 	
 }

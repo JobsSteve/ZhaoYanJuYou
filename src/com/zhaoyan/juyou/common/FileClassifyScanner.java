@@ -6,6 +6,8 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.zhaoyan.juyou.activity.ClassifyActivity;
+
 import android.content.Context;
 
 /**
@@ -15,6 +17,7 @@ import android.content.Context;
  */
 public class FileClassifyScanner {
 	private String[] mFilterType;
+	private int mType = -1;
 	private File mRootDir;
 	private Context mContext;
 	private FileClassifyScanListener mListener;
@@ -36,7 +39,7 @@ public class FileClassifyScanner {
 	 *            null means all type.
 	 */
 	public FileClassifyScanner(Context context, File rootDir,
-			String[] filterType) {
+			String[] filterType, int type) {
 		if (!rootDir.isDirectory()) {
 			throw new IllegalArgumentException(
 					"FileClassifyScanner, rootDir must be a directory.");
@@ -46,6 +49,7 @@ public class FileClassifyScanner {
 		mFileInfos = new Vector<FileInfo>();
 		mRootDir = rootDir;
 		mFilterType = filterType;
+		mType = type;
 	}
 
 	public void startScan() {
@@ -140,7 +144,11 @@ public class FileClassifyScanner {
 	private void scanDirAllFinish() {
 		mIsScanning = false;
 		try {
-			Collections.sort(mFileInfos, FileInfo.DATE_COMPARATOR);
+			if (ClassifyActivity.TYPE_APK == mType) {
+				Collections.sort(mFileInfos, FileInfo.NAME_COMPARATOR);
+			}else {
+				Collections.sort(mFileInfos, FileInfo.DATE_COMPARATOR);
+			}
 		} catch (Exception e) {
 		}
 		if (mListener != null) {

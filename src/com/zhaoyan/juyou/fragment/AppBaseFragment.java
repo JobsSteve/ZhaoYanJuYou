@@ -2,8 +2,6 @@ package com.zhaoyan.juyou.fragment;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.Collator;
-import java.util.Comparator;
 import java.util.List;
 
 import android.content.DialogInterface;
@@ -27,7 +25,6 @@ import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.AppCursorAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
-import com.zhaoyan.juyou.common.AppInfo;
 import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.ZYConstant;
@@ -114,17 +111,6 @@ public class AppBaseFragment extends BaseFragment{
 		startActivityForResult(deleteIntent, REQUEST_CODE_UNINSTALL);
 		mUninstallList.remove(0);
 	}
-	
-	/**
-     * Perform alphabetical comparison of application entry objects.
-     */
-    public static final Comparator<AppInfo> ALPHA_COMPARATOR = new Comparator<AppInfo>() {
-        private final Collator sCollator = Collator.getInstance();
-        @Override
-        public int compare(AppInfo object1, AppInfo object2) {
-            return sCollator.compare(object1.getLabel(), object2.getLabel());
-        }
-    };
     
     @SuppressWarnings("unchecked")
 	protected void showBackupDialog(List<String> packageList){
@@ -248,9 +234,7 @@ public class AppBaseFragment extends BaseFragment{
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.d(TAG, "onActivityResult.requestCode=" + requestCode);
 		if (REQUEST_CODE_UNINSTALL == requestCode) {
 			uninstallApp();
 		}

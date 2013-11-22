@@ -3,8 +3,11 @@ package com.zhaoyan.juyou.activity;
 import android.app.Activity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
 
 public class BaseActivity extends Activity {
@@ -34,6 +37,17 @@ public class BaseActivity extends Activity {
 		}else {
 			mTitleNumView.setText(getString(R.string.num_format2, selected, count));
 		}
+	}
+	
+	/**
+	 * Show transport animation.
+	 * 
+	 * @param startViews The transport item image view.
+	 */
+	protected void showTransportAnimation(ViewGroup viewGroup, ImageView... startViews) {
+		TransportAnimationView transportAnimationView = new TransportAnimationView(
+				getApplicationContext());
+		transportAnimationView.startTransportAnimation(viewGroup, mTitleNameView, startViews);
 	}
 
 	protected void finishWithAnimation() {

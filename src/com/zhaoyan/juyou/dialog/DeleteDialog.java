@@ -175,8 +175,7 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		case R.id.button3:
 			if (null != mClickListener3) {
 				mClickListener3.onClick(v, mFilePath);
-				setTitle("正在删除");
-				mDialogTitle.setVisibility(View.GONE);
+				mDialogTitle.setText("正在删除...");
 				mDeleteListView.setVisibility(View.GONE);
 				mDeletingView.setVisibility(View.VISIBLE);
 				mButton3.setVisibility(View.GONE);
@@ -216,7 +215,7 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 	}
 	
 	public interface OnDelClickListener{
-		public void onClick(View view, String path);
+		public void onClick(View view,String path);
 	}
 
 }

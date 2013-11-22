@@ -5,6 +5,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import com.zhaoyan.juyou.R;
+
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
@@ -88,6 +90,11 @@ public class APKFile {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		if (icon == null) {
+			icon = context.getResources().getDrawable(
+					R.drawable.icon_apk);
 		}
 		return icon;
 	}

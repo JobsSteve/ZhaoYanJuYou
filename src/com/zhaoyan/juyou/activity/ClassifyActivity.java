@@ -1,14 +1,18 @@
 package com.zhaoyan.juyou.activity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import android.app.AlertDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -20,6 +24,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
@@ -35,16 +40,18 @@ import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.dialog.DeleteDialog;
+import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
 public class ClassifyActivity extends BaseActivity implements
 		OnItemClickListener, OnItemLongClickListener, OnScrollListener,
 		onMenuItemClickListener, FileClassifyScanListener {
 	private static final String TAG = "ClassifyActivity";
-	protected ProgressBar mLoadingBar;
+	private ProgressBar mLoadingBar;
 	private ListView mListView;
-	protected TextView mTipView;
-	protected List<FileInfo> mItemLists = new ArrayList<FileInfo>();
-	private List<FileInfo> mTestList = new ArrayList<FileInfo>();
+	private TextView mTipView;
+	private ViewGroup mViewGroup;
+	private List<FileInfo> mItemLists = new ArrayList<FileInfo>();
 	protected FileInfoAdapter mAdapter;
 	protected FileInfoManager mFileInfoManager;
 	private FileClassifyScanner mFileClassifyScanner;
@@ -60,10 +67,14 @@ public class ClassifyActivity extends BaseActivity implements
 	public static final String CLASSIFY_TYPE = "CLASSIFY_TYPE";
 	private int mType = -1;
 	private String[] filterType = null;
+	private DeleteDialog mDeleteDialog = null;
+	
+	private Notice mNotice = null;
 
-	private static final int MSG_SCAN_START = 1;
-	private static final int MSG_SCAN_COMPLETE = 2;
-
+	private static final int MSG_UPDATE_UI = 0;
+	private static final int MSG_UPDATE_LIST = 1;
+	private static final int MSG_SCAN_START = 2;
+	private static final int MSG_SCAN_COMPLETE = 3;
 	private Handler mHandler = new Handler() {
 
 		@Override
@@ -82,13 +93,18 @@ public class ClassifyActivity extends BaseActivity implements
 				mAdapter.setList(fileInfos);
 				mAdapter.selectAll(false);
 				mAdapter.notifyDataSetChanged();
-				updateTitleNum(-1, mTestList.size());
+				updateTitleNum(-1, fileInfos.size());
+				break;
+			case MSG_UPDATE_LIST:
+				List<FileInfo> fileList = mAdapter.getList();
+				fileList.remove(msg.arg1);
+				mAdapter.notifyDataSetChanged();
+				updateTitleNum(-1, mAdapter.getCount());
 				break;
 
 			default:
 				break;
 			}
-
 		};
 	};
 
@@ -118,9 +134,10 @@ public class ClassifyActivity extends BaseActivity implements
 
 		mTipView = (TextView) findViewById(R.id.tv_classify_tip);
 		mLoadingBar = (ProgressBar) findViewById(R.id.bar_loading_classify);
-
-		mAdapter = new FileInfoAdapter(getApplicationContext(), mItemLists,
-				mListView);
+		
+		mViewGroup = (ViewGroup) findViewById(R.id.rl_classify_main);
+		
+		mAdapter = new FileInfoAdapter(getApplicationContext(), mItemLists, mListView);
 		mListView.setAdapter(mAdapter);
 
 		mFileInfoManager = new FileInfoManager();
@@ -128,13 +145,14 @@ public class ClassifyActivity extends BaseActivity implements
 		mMenuHolder = (LinearLayout) findViewById(R.id.ll_menutabs_holder);
 		mMenuBarView = findViewById(R.id.menubar_bottom);
 		mMenuBarView.setVisibility(View.GONE);
+		mNotice = new Notice(getApplicationContext());
 		mMenuTabManager = new MenuTabManager(getApplicationContext(),
 				mMenuHolder);
 
 		long start = System.currentTimeMillis();
 		mFileClassifyScanner = new FileClassifyScanner(getApplicationContext(),
 				Environment.getExternalStorageDirectory().getAbsoluteFile(),
-				filterType);
+				filterType, mType);
 		mFileClassifyScanner.setScanListener(this);
 		mFileClassifyScanner.startScan();
 		Log.d(TAG, "mFileClassifyScanner cost time = " + (System.currentTimeMillis() - start));
@@ -162,17 +180,12 @@ public class ClassifyActivity extends BaseActivity implements
 		mAdapter.notifyDataSetChanged();
 
 		mActionMenu = new ActionMenu(getApplicationContext());
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND,
-				R.drawable.ic_action_send, R.string.menu_send);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE,
-				R.drawable.ic_action_delete_enable, R.string.menu_delete);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME,
-				R.drawable.ic_action_rename, R.string.menu_rename);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,
-				R.drawable.ic_action_info, R.string.menu_info);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT,
-				R.drawable.ic_aciton_select, R.string.select_all);
-
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE,R.drawable.ic_action_delete_enable,R.string.menu_delete);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename, R.string.rename);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
+		
 		showMenuBar(true);
 		mMenuTabManager.refreshMenus(mActionMenu);
 		mMenuTabManager.setOnMenuItemClickListener(this);
@@ -229,20 +242,26 @@ public class ClassifyActivity extends BaseActivity implements
 	public void onMenuClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case ActionMenu.ACTION_MENU_SEND:
-			// doTransfer();
+			doTransfer();
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
 			List<Integer> posList = mAdapter.getSelectedItemPositions();
-			// showDeleteDialog(posList);
+			showDeleteDialog(posList);
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
 			List<FileInfo> list = mAdapter.getSelectedFileInfos();
-			// mFileInfoManager.showInfoDialog(list);
+			 mFileInfoManager.showInfoDialog(this, list);
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
 			doSelectAll();
+			break;
+		case ActionMenu.ACTION_MENU_RENAME:
+			List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
+			mFileInfoManager.showRenameDialog(this, renameList);
+			mAdapter.notifyDataSetChanged();
+			showMenuBar(false);
 			break;
 		default:
 			break;
@@ -347,7 +366,7 @@ public class ClassifyActivity extends BaseActivity implements
 
 				if (icons.size() > 0) {
 					ImageView[] imageViews = new ImageView[0];
-					// showTransportAnimation(icons.toArray(imageViews));
+					showTransportAnimation(mViewGroup, icons.toArray(imageViews));
 				}
 			}
 
@@ -357,7 +376,78 @@ public class ClassifyActivity extends BaseActivity implements
 			}
 		});
 	}
+	
+	/**
+	 * show delete confrim dialog
+	 */
+	public void showDeleteDialog(final List<Integer> posList) {
+		// get name list
+		List<String> nameList = new ArrayList<String>();
+		final List<FileInfo> fileList = mAdapter.getList();
+		for (int position : posList) {
+			nameList.add(fileList.get(position).fileName);
+		}
 
+		mDeleteDialog = new DeleteDialog(this, nameList);
+		mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
+			@Override
+			public void onClick(View view, String path) {
+				showMenuBar(false);
+				new DeleteTask(posList).execute();
+			}
+		});
+		mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
+		mDeleteDialog.show();
+	}
+
+	/**
+	 * Delete file task
+	 */
+	private class DeleteTask extends AsyncTask<Void, String, String> {
+		List<Integer> positionList = new ArrayList<Integer>();
+
+		DeleteTask(List<Integer> list) {
+			positionList = list;
+		}
+
+		@Override
+		protected String doInBackground(Void... params) {
+			List<FileInfo> fileList = mAdapter.getList();
+			List<File> deleteList = new ArrayList<File>();
+			// get delete path list
+			File file = null;
+			FileInfo fileInfo = null;
+			for (int i = 0; i < positionList.size(); i++) {
+				int position = positionList.get(i);
+				fileInfo = fileList.get(position);
+				file = new File(fileInfo.filePath);
+				deleteList.add(file);
+			}
+
+			for (int i = 0; i < deleteList.size(); i++) {
+				mDeleteDialog.setProgress(i + 1, deleteList.get(i).getName());
+				deleteList.get(i).delete();
+				int position = positionList.get(i) - i;
+				
+				Message message = mHandler.obtainMessage();
+				message.arg1 = position;
+				message.what = MSG_UPDATE_LIST;
+				message.sendToTarget();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if (null != mDeleteDialog) {
+				mDeleteDialog.cancel();
+				mDeleteDialog = null;
+			}
+			mNotice.showToast(R.string.operator_over);
+		}
+	}
+	
 	@Override
 	public boolean onBackKeyPressed() {
 		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
