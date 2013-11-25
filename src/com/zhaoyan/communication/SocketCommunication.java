@@ -157,6 +157,10 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 	}
 
 	private void communicationLost() {
+		if (mSocket == null) {
+			// This is a fake one, used by UserManager.
+			return;
+		}
 		mHeartBeat.stop();
 		mListener.OnCommunicationLost(this);
 		stopComunication();
