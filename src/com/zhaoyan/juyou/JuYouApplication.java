@@ -15,6 +15,7 @@ import com.zhaoyan.communication.search.SearchUtil;
 
 public class JuYouApplication extends Application {
 	private static final String TAG = "JuYouApplication";
+	private static boolean mIsQuit = false;
 
 	@Override
 	public void onCreate() {
@@ -26,10 +27,15 @@ public class JuYouApplication extends Application {
 		TrafficStatics.getInstance().init(getApplicationContext());
 		// Initialize SocketCommunicationManager
 		SocketCommunicationManager.getInstance().init(getApplicationContext());
+		mIsQuit = false;
 	}
 
 	public static void quitApplication(Context context) {
 		Log.d(TAG, "quitApplication");
+		if (mIsQuit) {
+			return;
+		}
+		mIsQuit = true;
 		stopCommunication(context);
 		stopFileTransferService(context);
 		// Release SocketCommunicationManager
