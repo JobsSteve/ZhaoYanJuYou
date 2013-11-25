@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string-array name="file_classify">
+    <string-array name="file_Category">
         <item>@string/doc_type</item>
         <item>@string/ebook_type</item>
         <item>@string/apk_type</item>
         <item>@string/archive_type</item>
     </string-array>
     
-    <string-array name="file_classify_tip">
+    <string-array name="file_Category_tip">
         <item>@string/doc_type_tip</item>
         <item>@string/ebook_type_tip</item>
         <item>@string/apk_type_tip</item>

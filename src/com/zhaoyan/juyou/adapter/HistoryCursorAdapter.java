@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
@@ -412,8 +413,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 							dialog.create().show();
 							break;
 						} else {
-							FileInfoManager fileInfoManager = new FileInfoManager();
-							fileInfoManager.openFile(mContext, filePath);
+							IntentBuilder.viewFile(mContext, filePath);
 						}
 						break;
 					case ActionMenu.ACTION_MENU_CANCEL:

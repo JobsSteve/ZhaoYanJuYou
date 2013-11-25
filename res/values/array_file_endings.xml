@@ -18,12 +18,8 @@
     <item>.amr</item>
 </array>
 <array name="fileEndingArchive">
-    <item>.jar</item>
     <item>.zip</item>
     <item>.rar</item>
-    <item>.gz</item>
-    <item>.7z</item>
-    <item>.iso</item>
 </array>
 <array name="fileEndingWebText">
     <item>.htm</item>
@@ -79,8 +75,8 @@
     <item>.cpp</item>
     <item>.xml</item>
 </array>
-<!-- Classify files -->
-<array name="classify_files_ending">
+<!-- Category files -->
+<array name="Category_files_ending">
     <item>.doc</item>
     <item>.docx</item>
     <item>.xls</item>
@@ -123,7 +119,5 @@
 <array name="archive_file">
     <item>.zip</item>
     <item>.rar</item>
-    <item>.7z</item>
-    <item>.iso</item>
 </array>
 </resources>

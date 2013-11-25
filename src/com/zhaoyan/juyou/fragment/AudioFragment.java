@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.AudioCursorAdapter;
@@ -174,7 +175,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			cursor.moveToPosition(position);
 			String url = cursor.getString(cursor
 					.getColumnIndex(MediaStore.Audio.Media.DATA)); // 文件路径
-			mFileInfoManager.openFile(getActivity().getApplicationContext(), url);
+			IntentBuilder.viewFile(getActivity(), url);
 		}else {
 			mAdapter.setSelected(position);
 			mAdapter.notifyDataSetChanged();

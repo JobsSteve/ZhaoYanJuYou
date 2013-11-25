@@ -25,14 +25,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter.ViewHolder;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
-import com.zhaoyan.juyou.common.FileClassifyScanner;
-import com.zhaoyan.juyou.common.FileClassifyScanner.FileClassifyScanListener;
+import com.zhaoyan.juyou.common.FileCategoryScanner;
+import com.zhaoyan.juyou.common.FileCategoryScanner.FileCategoryScanListener;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
@@ -43,10 +44,10 @@ import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
-public class ClassifyActivity extends BaseActivity implements
+public class FileCategoryActivity extends BaseActivity implements
 		OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-		onMenuItemClickListener, FileClassifyScanListener {
-	private static final String TAG = "ClassifyActivity";
+		onMenuItemClickListener, FileCategoryScanListener {
+	private static final String TAG = "CategoryActivity";
 	private ProgressBar mLoadingBar;
 	private ListView mListView;
 	private TextView mTipView;
@@ -54,7 +55,7 @@ public class ClassifyActivity extends BaseActivity implements
 	private List<FileInfo> mItemLists = new ArrayList<FileInfo>();
 	protected FileInfoAdapter mAdapter;
 	protected FileInfoManager mFileInfoManager;
-	private FileClassifyScanner mFileClassifyScanner;
+	private FileCategoryScanner mFileCategoryScanner;
 
 	private LinearLayout mMenuHolder;
 	private View mMenuBarView;
@@ -64,7 +65,7 @@ public class ClassifyActivity extends BaseActivity implements
 	public static final int TYPE_DOC = 0;
 	public static final int TYPE_ARCHIVE = 1;
 	public static final int TYPE_APK = 2;
-	public static final String CLASSIFY_TYPE = "CLASSIFY_TYPE";
+	public static final String CATEGORY_TYPE = "CATEGORY_TYPE";
 	private int mType = -1;
 	private String[] filterType = null;
 	private DeleteDialog mDeleteDialog = null;
@@ -83,7 +84,7 @@ public class ClassifyActivity extends BaseActivity implements
 			case MSG_SCAN_START:
 				mLoadingBar.setVisibility(View.VISIBLE);
 				mTipView.setVisibility(View.VISIBLE);
-				mTipView.setText(R.string.file_classify_loading);
+				mTipView.setText(R.string.file_Category_loading);
 				break;
 			case MSG_SCAN_COMPLETE:
 				mLoadingBar.setVisibility(View.INVISIBLE);
@@ -111,10 +112,10 @@ public class ClassifyActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(android.os.Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.classify_main);
+		setContentView(R.layout.category_main);
 
 		Bundle bundle = getIntent().getExtras();
-		mType = bundle.getInt(CLASSIFY_TYPE);
+		mType = bundle.getInt(CATEGORY_TYPE);
 		if (TYPE_DOC == mType) {
 			initTitle(R.string.file_document);
 			filterType = getResources().getStringArray(R.array.doc_file);
@@ -127,15 +128,15 @@ public class ClassifyActivity extends BaseActivity implements
 		}
 		setTitleNumVisible(true);
 
-		mListView = (ListView) findViewById(R.id.lv_classify);
+		mListView = (ListView) findViewById(R.id.lv_Category);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
 
-		mTipView = (TextView) findViewById(R.id.tv_classify_tip);
-		mLoadingBar = (ProgressBar) findViewById(R.id.bar_loading_classify);
+		mTipView = (TextView) findViewById(R.id.tv_Category_tip);
+		mLoadingBar = (ProgressBar) findViewById(R.id.bar_loading_Category);
 		
-		mViewGroup = (ViewGroup) findViewById(R.id.rl_classify_main);
+		mViewGroup = (ViewGroup) findViewById(R.id.rl_Category_main);
 		
 		mAdapter = new FileInfoAdapter(getApplicationContext(), mItemLists, mListView);
 		mListView.setAdapter(mAdapter);
@@ -150,19 +151,19 @@ public class ClassifyActivity extends BaseActivity implements
 				mMenuHolder);
 
 		long start = System.currentTimeMillis();
-		mFileClassifyScanner = new FileClassifyScanner(getApplicationContext(),
+		mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
 				Environment.getExternalStorageDirectory().getAbsoluteFile(),
 				filterType, mType);
-		mFileClassifyScanner.setScanListener(this);
-		mFileClassifyScanner.startScan();
-		Log.d(TAG, "mFileClassifyScanner cost time = " + (System.currentTimeMillis() - start));
+		mFileCategoryScanner.setScanListener(this);
+		mFileCategoryScanner.startScan();
+		Log.d(TAG, "mFileCategoryScanner cost time = " + (System.currentTimeMillis() - start));
 	};
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mFileClassifyScanner.cancelScan();
-		mFileClassifyScanner.setScanListener(null);
+		mFileCategoryScanner.cancelScan();
+		mFileCategoryScanner.setScanListener(null);
 	}
 
 	@Override
@@ -205,8 +206,7 @@ public class ClassifyActivity extends BaseActivity implements
 			mMenuTabManager.refreshMenus(mActionMenu);
 		} else {
 			// open file
-			mFileInfoManager.openFile(getApplicationContext(),
-					mAdapter.getItem(position).filePath);
+			IntentBuilder.viewFile(this, mAdapter.getItem(position).filePath);
 		}
 	}
 
@@ -344,7 +344,7 @@ public class ClassifyActivity extends BaseActivity implements
 
 		// send
 		FileTransferUtil fileTransferUtil = new FileTransferUtil(
-				ClassifyActivity.this);
+				FileCategoryActivity.this);
 		fileTransferUtil.sendFiles(checkedList, new TransportCallback() {
 
 			@Override

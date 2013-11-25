@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/rl_classify_main"
+        android:id="@+id/rl_Category_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/activity_background" >
@@ -22,7 +22,7 @@
             >
 
             <ListView
-                android:id="@+id/lv_classify"
+                android:id="@+id/lv_Category"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_above="@+id/bottom"
@@ -30,15 +30,15 @@
                 android:fastScrollEnabled="true" />
 
             <TextView
-                android:id="@+id/tv_classify_tip"
+                android:id="@+id/tv_Category_tip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/bar_loading_classify"
+                android:layout_below="@+id/bar_loading_Category"
                 android:layout_centerInParent="true"
                 android:visibility="invisible" />
 
             <ProgressBar
-                android:id="@+id/bar_loading_classify"
+                android:id="@+id/bar_loading_Category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

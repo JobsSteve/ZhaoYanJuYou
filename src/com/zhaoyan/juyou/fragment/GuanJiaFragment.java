@@ -12,7 +12,7 @@ import com.zhaoyan.common.view.BadgeView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.activity.AudioActivity;
-import com.zhaoyan.juyou.activity.ClassifyActivity;
+import com.zhaoyan.juyou.activity.FileCategoryActivity;
 import com.zhaoyan.juyou.activity.FileBrowserActivity;
 import com.zhaoyan.juyou.activity.GameActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
@@ -115,18 +115,18 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			break;
 		case R.id.rl_guanjia_file_document:
 			Bundle docBundle = new Bundle();
-			docBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_DOC);
-			openActivity(ClassifyActivity.class, docBundle);
+			docBundle.putInt(FileCategoryActivity.CATEGORY_TYPE, FileCategoryActivity.TYPE_DOC);
+			openActivity(FileCategoryActivity.class, docBundle);
 			break;
 		case R.id.rl_guanjia_file_compressed:
 			Bundle archiveBundle = new Bundle();
-			archiveBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_ARCHIVE);
-			openActivity(ClassifyActivity.class, archiveBundle);
+			archiveBundle.putInt(FileCategoryActivity.CATEGORY_TYPE, FileCategoryActivity.TYPE_ARCHIVE);
+			openActivity(FileCategoryActivity.class, archiveBundle);
 			break;
 		case R.id.rl_guanjia_file_apk:
 			Bundle apkBundle = new Bundle();
-			apkBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_APK);
-			openActivity(ClassifyActivity.class, apkBundle);
+			apkBundle.putInt(FileCategoryActivity.CATEGORY_TYPE, FileCategoryActivity.TYPE_APK);
+			openActivity(FileCategoryActivity.class, apkBundle);
 			break;
 
 		default:

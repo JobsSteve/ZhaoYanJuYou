@@ -95,7 +95,7 @@
             android:theme="@style/Theme.Translucent" >
         </activity>
          <activity
-            android:name="com.zhaoyan.juyou.activity.ClassifyActivity"
+            android:name="com.zhaoyan.juyou.activity.FileCategoryActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
          <activity
