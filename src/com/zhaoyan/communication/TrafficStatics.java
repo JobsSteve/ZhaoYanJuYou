@@ -30,7 +30,7 @@ public class TrafficStatics implements TrafficStaticsRxListener,
 	private int mRxStaticsCache = 0;
 	private int mTxStaticsCache = 0;
 
-	private static TrafficStatics mInstance = new TrafficStatics();
+	private static TrafficStatics mInstance;
 	private StaticsHandlerThread mHandlerThread;
 	private Handler mHandler;
 
@@ -54,9 +54,15 @@ public class TrafficStatics implements TrafficStaticsRxListener,
 
 	public void quit() {
 		mHandlerThread.quit();
+		mHandler = null;
+		mHandlerThread = null;
+		mInstance = null;
 	}
 
-	public static TrafficStatics getInstance() {
+	public synchronized static TrafficStatics getInstance() {
+		if (mInstance == null) {
+			mInstance = new TrafficStatics();
+		}
 		return mInstance;
 	}
 

@@ -14,16 +14,30 @@ import com.zhaoyan.communication.search.ConnectHelper;
 import com.zhaoyan.communication.search.SearchUtil;
 
 public class JuYouApplication extends Application {
+	private static final String TAG = "JuYouApplication";
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		Log.d(TAG, "onCreate");
+		// Start save log to file.
+		Log.startSaveToFile();
+		// Initialize TrafficStatics
 		TrafficStatics.getInstance().init(getApplicationContext());
+		// Initialize SocketCommunicationManager
+		SocketCommunicationManager.getInstance().init(getApplicationContext());
 	}
 
 	public static void quitApplication(Context context) {
+		Log.d(TAG, "quitApplication");
 		stopCommunication(context);
 		stopFileTransferService(context);
+		// Release SocketCommunicationManager
+		SocketCommunicationManager.getInstance().release();
+		// Release TrafficStatics
+		TrafficStatics.getInstance().quit();
+		// Stop record log and close log file.
+		Log.stopAndSave();
 	}
 
 	private static void stopFileTransferService(Context context) {
@@ -35,23 +49,17 @@ public class JuYouApplication extends Application {
 	private static void stopCommunication(Context context) {
 		ConnectHelper connectHelper = ConnectHelper.getInstance(context);
 		connectHelper.stopSearch();
+		connectHelper.release();
 
 		UserManager.getInstance().resetLocalUserID();
 		SocketCommunicationManager manager = SocketCommunicationManager
-				.getInstance(context);
+				.getInstance();
 		manager.closeAllCommunication();
 		manager.stopServer();
-
-		TrafficStatics.getInstance().quit();
 
 		// Disable wifi AP.
 		NetWorkUtil.setWifiAPEnabled(context, null, false);
 		// Clear wifi connect history.
 		SearchUtil.clearWifiConnectHistory(context);
-		// Stop record log and close log file.
-		
-		Log.stopAndSave();
-		
-		System.exit(0);
 	}
 }

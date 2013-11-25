@@ -3,6 +3,7 @@ package com.zhaoyan.juyou.fragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -109,6 +110,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private MenuTabManager mMenuTabManager;
 	private LinearLayout mMenuHolder;
 	private View mMenuBarView;
+	
+	private Comparator<FileInfo> NAME_COMPARATOR = FileInfo.getNameComparator();
 
 	private DeleteDialog mDeleteDialog;
 
@@ -341,8 +344,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			fillList(file.listFiles());
 
 			// sort
-			Collections.sort(mFolderLists, FileInfo.NAME_COMPARATOR);
-			Collections.sort(mFileLists, FileInfo.NAME_COMPARATOR);
+			Collections.sort(mFolderLists, NAME_COMPARATOR);
+			Collections.sort(mFileLists, NAME_COMPARATOR);
 
 			mAllLists.addAll(mFolderLists);
 			mAllLists.addAll(mFileLists);

@@ -248,6 +248,13 @@ public class ConnectHelper {
 		}
 		connection = null;
 	}
+	
+	/**
+	 * Release resource
+	 */
+	public void release() {
+		mInstance = null;
+	}
 
 	/**
 	 * This is designed for release listener.

@@ -145,9 +145,9 @@ public class FileCategoryScanner {
 		mIsScanning = false;
 		try {
 			if (FileCategoryActivity.TYPE_APK == mType) {
-				Collections.sort(mFileInfos, FileInfo.NAME_COMPARATOR);
+				Collections.sort(mFileInfos, FileInfo.getNameComparator());
 			}else {
-				Collections.sort(mFileInfos, FileInfo.DATE_COMPARATOR);
+				Collections.sort(mFileInfos, FileInfo.getDateComparator());
 			}
 		} catch (Exception e) {
 		}

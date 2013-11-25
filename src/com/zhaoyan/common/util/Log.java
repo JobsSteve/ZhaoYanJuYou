@@ -7,20 +7,6 @@ public class Log {
 	private static final String TAG = "zhaoyan/";
 	private static LogFile mLogFile;
 	private static LogcatSaver mLogcatSaver;
-	static {
-		if (isWriteToFile) {
-			mLogFile = new LogFile(TimeUtil.getCurrentTime() + ".txt");
-			mLogFile.open();
-			mLogFile.writeLog("**********Start Writing Log at time "
-					+ TimeUtil.getCurrentTime() + "**********\n");
-		}
-
-		if (isSaveLogcat) {
-			mLogcatSaver = new LogcatSaver(TimeUtil.getCurrentTime()
-					+ "_logcat.txt");
-			mLogcatSaver.start();
-		}
-	}
 
 	public static void v(String tag, String message) {
 		if (isDebug) {
@@ -68,6 +54,7 @@ public class Log {
 	 * Start saving log to file.
 	 */
 	public static void startSaveToFile() {
+		Log.d(TAG, "startSaveToFile");
 		stopAndSave();
 		if (isWriteToFile) {
 			mLogFile = new LogFile(TimeUtil.getCurrentTime() + ".txt");
@@ -90,9 +77,11 @@ public class Log {
 		Log.d(TAG, "closeLogFile");
 		if (isWriteToFile && mLogFile != null) {
 			mLogFile.close();
+			mLogFile = null;
 		}
 		if (isSaveLogcat && mLogcatSaver != null) {
 			mLogcatSaver.stop();
+			mLogcatSaver = null;
 		}
 	}
 

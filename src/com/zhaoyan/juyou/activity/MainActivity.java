@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.KeyEvent;
@@ -31,7 +32,16 @@ public class MainActivity extends FragmentActivity implements
 
 	private ViewPager mViewPager;
 	private SimpleFramgentPagerAdapter mPagerAdapter;
-	private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
+	private ArrayList<Fragment> mFragments;
+	private ArrayList<String> mFragmentTags;
+	private static final String FRAGMENT_TAG_JU_YOU = "JuYou";
+	private static final String FRAGMENT_TAG_GUAN_JIA = "GuanJia";
+	private static final String FRAGMENT_TAG_GUANG_CHANG = "GuangChang";
+	private static final String FRAGMENT_TAG_WO = "Wo";
+	private Fragment mJuYouFragment;
+	private Fragment mGuanJiaFragment;
+	private Fragment mGuangChangFragment;
+	private Fragment mWoFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +82,43 @@ public class MainActivity extends FragmentActivity implements
 	private void initViewPager() {
 		mViewPager = (ViewPager) findViewById(R.id.vp_zhaoyan);
 		mViewPager.setOffscreenPageLimit(0);
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		mJuYouFragment = (JuYouFragment) fragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_JU_YOU);
+		mGuanJiaFragment = (GuanJiaFragment) fragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_GUAN_JIA);
+		mGuangChangFragment = (GuangChangFragment) fragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_GUANG_CHANG);
+		mWoFragment = (WoFragment) fragmentManager
+				.findFragmentByTag(FRAGMENT_TAG_WO);
 
-		mFragments.add(new JuYouFragment());
-		mFragments.add(new GuanJiaFragment());
-		mFragments.add(new GuangChangFragment());
-		mFragments.add(new WoFragment());
+		if (mJuYouFragment == null) {
+			mJuYouFragment = new JuYouFragment();
+		}
+		if (mGuanJiaFragment == null) {
+			mGuanJiaFragment = new GuanJiaFragment();
+		}
+		if (mGuangChangFragment == null) {
+			mGuangChangFragment = new GuangChangFragment();
+		}
+		if (mWoFragment == null) {
+			mWoFragment = new WoFragment();
+		}
+
+		mFragments = new ArrayList<Fragment>();
+		mFragments.add(mJuYouFragment);
+		mFragments.add(mGuanJiaFragment);
+		mFragments.add(mGuangChangFragment);
+		mFragments.add(mWoFragment);
+
+		mFragmentTags = new ArrayList<String>();
+		mFragmentTags.add(FRAGMENT_TAG_JU_YOU);
+		mFragmentTags.add(FRAGMENT_TAG_GUAN_JIA);
+		mFragmentTags.add(FRAGMENT_TAG_GUANG_CHANG);
+		mFragmentTags.add(FRAGMENT_TAG_WO);
+
 		mPagerAdapter = new SimpleFramgentPagerAdapter(
-				getSupportFragmentManager(), mFragments);
+				getSupportFragmentManager(), mFragments, mFragmentTags);
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOnPageChangeListener(this);
 	}

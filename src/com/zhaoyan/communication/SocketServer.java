@@ -30,13 +30,16 @@ public class SocketServer {
 	private Socket socket;
 	private ServerSocket server;
 	private boolean mIsServerStarted = false;
-	private static SocketServer mInstance = new SocketServer();
+	private static SocketServer mInstance;
 
 	private SocketServer() {
 
 	}
 
-	public static SocketServer getInstance() {
+	public static synchronized SocketServer getInstance() {
+		if (mInstance == null) {
+			mInstance = new SocketServer();
+		}
 		return mInstance;
 	}
 
@@ -94,5 +97,9 @@ public class SocketServer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void release() {
+		mInstance = null;
 	}
 }

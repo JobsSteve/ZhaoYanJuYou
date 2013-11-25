@@ -31,10 +31,13 @@ public class HistoryManager {
 		
 		private Context mContext;
 		
+		public Comparator<HistoryInfo> getDateComparator() {
+			return new DateComparator();
+		}
 		/**
 	     * Perform alphabetical comparison of application entry objects.
 	     */
-	    public static final Comparator<HistoryInfo> DATE_COMPARATOR = new Comparator<HistoryInfo>() {
+	    public static class DateComparator implements Comparator<HistoryInfo> {
 	        @Override
 	        public int compare(HistoryInfo object1, HistoryInfo object2) {
 	        	long date1 = object1.getDate();
