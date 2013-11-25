@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileTransferService;
+import com.zhaoyan.juyou.JuYouApplication;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
 import com.zhaoyan.juyou.common.AppManager;
@@ -72,6 +73,7 @@ public class WelcomeActivity extends Activity {
 	 * thread.
 	 */
 	private void load() {
+		JuYouApplication.initApplication(getApplicationContext());
 		startFileTransferService();
 		
 		HistoryManager.modifyHistoryDb(getApplicationContext());

@@ -182,12 +182,11 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mProtocolDecoder.setLoginRequestCallBack(this);
 		mProtocolDecoder.setLoginRespondCallback(this);
 	}
-
+	
 	/**
 	 * Release resource.
 	 */
 	public void release() {
-		mContext = null;
 		mInstance = null;
 		if (mProtocolDecoder != null) {
 			mProtocolDecoder.setLoginRequestCallBack(null);
@@ -200,6 +199,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		UserManager.getInstance().release();
 
 		SocketServer.getInstance().release();
+		PlatformManager.getInstance(mContext).release();
 	}
 
 	public void registerOnCommunicationListenerExternal(

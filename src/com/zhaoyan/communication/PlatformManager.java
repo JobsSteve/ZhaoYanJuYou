@@ -68,6 +68,10 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 		}
 		return mPlatformManager;
 	}
+	
+	public void release() {
+		mPlatformManager = null;
+	}
 
 	@SuppressLint("UseSparseArrays")
 	public void onCreate() {
