@@ -27,12 +27,15 @@ public class FileManager {
 	}
 
 	public static int getFileType(Context context, File file) {
-		int fileType = fileFilter(context, file);
+		int fileType = fileFilter(context, file.getName());
 		return fileType;
 	}
+	
+	public static int getFileTypeByName(Context context, String fileName){
+		return fileFilter(context, fileName);
+	}
 
-	private static int fileFilter(Context context, File file) {
-		String fileName = file.getName();
+	private static int fileFilter(Context context, String fileName) {
 		int ret;
 
 		if (checkEndsWithInStringArray(fileName, context.getResources()

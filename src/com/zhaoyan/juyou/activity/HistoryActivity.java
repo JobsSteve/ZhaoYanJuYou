@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
+import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HistoryCursorAdapter;
 import com.zhaoyan.juyou.provider.JuyouData;
@@ -111,6 +113,12 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	protected void onResume() {
 		super.onResume();
 		query();
+		
+		//notify hide badgeview
+		Intent intent = new Intent(
+				FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE);
+		intent.putExtra(FileTransferService.EXTRA_BADGEVIEW_SHOW, false);
+		sendBroadcast(intent);
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package com.zhaoyan.juyou.fragment;
 
-import android.database.Cursor;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.BadgeView;
+import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.activity.AudioActivity;
@@ -17,17 +21,31 @@ import com.zhaoyan.juyou.activity.FileBrowserActivity;
 import com.zhaoyan.juyou.activity.GameActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.ImageActivity;
+import com.zhaoyan.juyou.activity.InviteActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
-import com.zhaoyan.juyou.common.HistoryManager;
-import com.zhaoyan.juyou.provider.JuyouData;
-import com.zhaoyan.juyou.provider.JuyouData.History;
 
 
 public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "GuanJiaFragment";
 	
+	private GuanjiaReceiver mGuanjiaReceiver = null;
+	
 	//items
 	private BadgeView badgeView;
+	
+	class GuanjiaReceiver extends BroadcastReceiver{
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			Log.d(TAG, "onReceive:action=" + action);
+			boolean show = intent.getBooleanExtra(FileTransferService.EXTRA_BADGEVIEW_SHOW, false);
+			if (show) {
+				badgeView.show();
+			}else {
+				badgeView.hide();
+			}
+		}
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,21 +60,14 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		Log.d(TAG, "onResume()");
-		
-		String where = JuyouData.History.STATUS + "="
-				+ HistoryManager.STATUS_PRE_SEND + " or " + 
-				JuyouData.History.STATUS + "=" + HistoryManager.STATUS_SENDING + " or " + 
-				JuyouData.History.STATUS + "="
-				+ HistoryManager.STATUS_PRE_RECEIVE + " or "
-				+ JuyouData.History.STATUS + "=" + HistoryManager.STATUS_RECEIVING;
-		Cursor cursor = getActivity().getContentResolver().query(History.CONTENT_URI, null, where, null, null);
-		if (cursor != null && cursor.getCount() > 0) {
-			badgeView.show();
-		}else {
-			badgeView.hide();
-		}
-		cursor.close();
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		IntentFilter filter = new IntentFilter(FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE);
+		mGuanjiaReceiver = new GuanjiaReceiver();
+		getActivity().getApplicationContext().registerReceiver(mGuanjiaReceiver, filter);
 	}
 	
 	public void initView(View view){
@@ -97,6 +108,9 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		
 		View galleryView = view.findViewById(R.id.rl_guanjia_picture);
 		galleryView.setOnClickListener(this);
+		
+		View inviteView = view.findViewById(R.id.rl_guanjia_invite);
+		inviteView.setOnClickListener(this);
 	}
 
 	@Override
@@ -145,10 +159,22 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			galleryBundle.putInt(ImageActivity.IMAGE_TYPE, ImageActivity.TYPE_GALLERY);
 			openActivity(ImageActivity.class, galleryBundle);
 			break;
+		case R.id.rl_guanjia_invite:
+			openActivity(InviteActivity.class);
+			break;
 
 		default:
 			break;
 		}
 	}
 	
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (mGuanjiaReceiver != null) {
+			getActivity().getApplicationContext().unregisterReceiver(mGuanjiaReceiver);
+			mGuanjiaReceiver = null;
+		}
+	}
 }

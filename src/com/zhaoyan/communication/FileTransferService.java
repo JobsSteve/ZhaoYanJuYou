@@ -53,6 +53,10 @@ public class FileTransferService extends Service implements
 	private static final String TAG = "FileTransferService";
 
 	public static final String ACTION_SEND_FILE = "com.zhaoyan.communication.FileTransferService.ACTION_SEND_FILE";
+	public static final String ACTION_NOTIFY_SEND_OR_RECEIVE = "com.zhaoyan.communication.FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE";
+	
+	//show badgeview or not
+	public static final String EXTRA_BADGEVIEW_SHOW = "badgeview_show";
 
 	private Notice mNotice;
 	private SocketCommunicationManager mSocketMgr;
@@ -236,6 +240,8 @@ public class FileTransferService extends Service implements
 			getContentResolver().update(getFileUri(key), values, null, null);
 			mSocketMgr.sendFile(file, FileTransferService.this, receiveUser,
 					mAppId, key);
+			//when send a file,notify othes that need to know
+			sendBroadcastForNotify(true);
 		}
 
 		public boolean isSendSending() {
@@ -246,9 +252,16 @@ public class FileTransferService extends Service implements
 			isFileSending = false;
 		}
 	}
+	
+	public void sendBroadcastForNotify(boolean show){
+		Intent intent = new Intent(ACTION_NOTIFY_SEND_OR_RECEIVE);
+		intent.putExtra(EXTRA_BADGEVIEW_SHOW, show);
+		sendBroadcast(intent);
+	}
 
 	@Override
 	public void onReceiveFile(FileReceiver fileReceiver) {
+		String currentRevFolder = "";
 		String fileName = fileReceiver.getFileTransferInfo().getFileName();
 		String sendUserName = fileReceiver.getSendUser().getUserName();
 		File file = null;
@@ -264,8 +277,27 @@ public class FileTransferService extends Service implements
 		historyInfo.setMsgType(HistoryManager.TYPE_RECEIVE);
 		historyInfo.setDate(System.currentTimeMillis());
 		historyInfo.setStatus(HistoryManager.STATUS_PRE_RECEIVE);
+		
+		int fileType = FileManager.getFileTypeByName(getApplicationContext(), fileName);
+		switch (fileType) {
+		case FileManager.APK:
+			currentRevFolder = ZYConstant.JUYOU_APP_FOLDER;
+			break;
+		case FileManager.AUDIO:
+			currentRevFolder = ZYConstant.JUYOU_MUSIC_FOLDER;
+			break;
+		case FileManager.VIDEO:
+			currentRevFolder = ZYConstant.JUYOU_VIDEO_FOLDER;
+			break;
+		case FileManager.IMAGE:
+			currentRevFolder = ZYConstant.JUYOU_IMAGE_FOLDER;
+			break;
+		default:
+			currentRevFolder = ZYConstant.JUYOU_OTHER_FOLDER;
+			break;
+		}
 		// define a file to save the receive file
-		File fileDir = new File(ZYConstant.DEFAULT_RECEIVE_FILE_FOLDER);
+		File fileDir = new File(currentRevFolder);
 		if (!fileDir.exists()) {
 			boolean ret = fileDir.mkdirs();
 			if (!ret) {
@@ -274,7 +306,7 @@ public class FileTransferService extends Service implements
 			}
 		}
 
-		String filePath = ZYConstant.DEFAULT_RECEIVE_FILE_FOLDER
+		String filePath = currentRevFolder
 				+ File.separator + fileName;
 		file = new File(filePath);
 		if (!file.exists()) {
@@ -288,11 +320,11 @@ public class FileTransferService extends Service implements
 		} else {
 			// if file is exist,auto rename
 			fileName = FileInfoManager.autoRename(fileName);
-			while (new File(ZYConstant.DEFAULT_RECEIVE_FILE_FOLDER
+			while (new File(currentRevFolder
 					+ File.separator + fileName).exists()) {
 				fileName = FileInfoManager.autoRename(fileName);
 			}
-			filePath = ZYConstant.DEFAULT_RECEIVE_FILE_FOLDER + File.separator
+			filePath = currentRevFolder + File.separator
 					+ fileName;
 			file = new File(filePath);
 		}
@@ -315,6 +347,8 @@ public class FileTransferService extends Service implements
 		Log.d(TAG, "onReceiveFile.mTransferMap.size=" + mTransferMap.size());
 
 		fileReceiver.receiveFile(file, FileTransferService.this, key);
+		//when receive a file,notify othes that need to know
+		sendBroadcastForNotify(true);
 	}
 
 	@Override

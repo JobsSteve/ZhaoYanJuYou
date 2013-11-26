@@ -399,6 +399,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 				dialog.updateUI(totalSize, fileNum, 0);
 			}
 			dialog.show();
+			dialog.invisbileLoadBar();
 			
 			showMenuBar(false);
 			//info

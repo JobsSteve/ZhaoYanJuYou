@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.ZYUtils;
@@ -20,6 +20,8 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 	private TextView mTitleView;
 	private TextView mTypeView,mLoacationView,mSizeView,mIncludeView,mDateView;
 	private View mDividerView;
+	
+	private ProgressBar mLoadingInfoBar;
 	
 	private long mTotalSize;
 	private int mFileNum;
@@ -82,14 +84,18 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		mDateView = (TextView) findViewById(R.id.tv_info_date);
 		mDividerView = findViewById(R.id.info_divider);
 		
+		mLoadingInfoBar = (ProgressBar) findViewById(R.id.bar_loading_info);
+		
 		if (MULTI == type) {
 			mTypeView.setVisibility(View.GONE);
 			mLoacationView.setVisibility(View.GONE);
 			mDateView.setVisibility(View.GONE);
 			mDividerView.setVisibility(View.GONE);
+			mLoadingInfoBar.setVisibility(View.VISIBLE);
 		}else if (SINGLE_FILE == type) {
 			mIncludeView.setVisibility(View.GONE);
 			mTypeView.setText(R.string.type_file);
+			mLoadingInfoBar.setVisibility(View.GONE);
 		}else {
 			mTypeView.setText(R.string.type_folder);
 		}
@@ -114,6 +120,10 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		mFilePath = filePath;
 		mModified = date;
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATEUI_SINGLE));
+	}
+	
+	public void invisbileLoadBar(){
+		mLoadingInfoBar.setVisibility(View.GONE);
 	}
 	
 	@Override

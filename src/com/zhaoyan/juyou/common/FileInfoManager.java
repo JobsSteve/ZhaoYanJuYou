@@ -473,6 +473,7 @@ public class FileInfoManager {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			Log.d(TAG, "onPostExecute.");
+			infoDialog.invisbileLoadBar();
 		}
 		
 		private void getFileSize(File file){
