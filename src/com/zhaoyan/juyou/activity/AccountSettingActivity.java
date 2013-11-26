@@ -35,10 +35,7 @@ public class AccountSettingActivity extends BaseActivity implements
 	private GridView mChooseHeadGridView;
 
 	private HeadChooseAdapter mHeadChooseAdapter;
-	private int[] mHeadImages = { R.drawable.head1, R.drawable.head2,
-			R.drawable.head3, R.drawable.head4, R.drawable.head5,
-			R.drawable.head6, R.drawable.head7, R.drawable.head8,
-			R.drawable.head9 };
+	private int[] mHeadImages = UserHelper.HEAD_IMAGES;
 	private int mCurrentHeadId = 0;
 
 	private Notice mNotice;
@@ -107,6 +104,7 @@ public class AccountSettingActivity extends BaseActivity implements
 		switch (v.getId()) {
 		case R.id.btn_save:
 			saveAccount();
+			setResult(RESULT_OK);
 			if (mIsFisrtLaunch) {
 				launchMain();
 				finish();
@@ -115,6 +113,7 @@ public class AccountSettingActivity extends BaseActivity implements
 			}
 			break;
 		case R.id.btn_cancel:
+			setResult(RESULT_CANCELED);
 			if (mIsFisrtLaunch) {
 				finish();
 			} else {

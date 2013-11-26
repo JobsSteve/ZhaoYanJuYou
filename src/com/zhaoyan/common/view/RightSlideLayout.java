@@ -23,7 +23,7 @@ import android.widget.Scroller;
  */
 public class RightSlideLayout extends ViewGroup {
 	private static final String TAG = "RightSlideLayout";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private VelocityTracker mVelocityTracker;
 
@@ -591,6 +591,7 @@ public class RightSlideLayout extends ViewGroup {
 			mOnSlideListener.onSlide();
 		} else if (getContext() instanceof Activity) {
 			Activity activity = (Activity) getContext();
+			activity.setResult(Activity.RESULT_CANCELED);
 			activity.finish();
 			activity.overridePendingTransition(0, R.anim.activity_alpha_out);
 		}

@@ -12,16 +12,27 @@ import android.util.Log;
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
+import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class UserHelper {
 	private static final String TAG = "UserHelper";
 	public static final String KEY_NAME = "name";
 	public static final String KEY_NAME_DEFAULT = "Unkown name";
+
+	public static final int[] HEAD_IMAGES = { R.drawable.head1,
+			R.drawable.head2, R.drawable.head3, R.drawable.head4,
+			R.drawable.head5, R.drawable.head6, R.drawable.head7,
+			R.drawable.head8, R.drawable.head9 };
+
 	private static final String[] PROJECTION = { JuyouData.User._ID,
 			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
 			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
 			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE };
+
+	public static final int getHeadImageResource(int headId) {
+		return HEAD_IMAGES[headId];
+	}
 
 	/**
 	 * Get the set name, if name is not set, return null
