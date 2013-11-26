@@ -44,7 +44,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_login:
-			if (UserHelper.getUserName(getApplicationContext()) == null) {
+			if (UserHelper.loadLocalUser(this) == null) {
 				launchAccountSetting();
 			} else {
 				launchMain();

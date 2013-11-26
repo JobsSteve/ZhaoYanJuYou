@@ -128,7 +128,7 @@ public class ConnectedInfoFragment extends ListFragment implements
 		UserInfo userInfo = null;
 		// TODO User icon is not implement.
 		Drawable userIcon = mContext.getResources().getDrawable(
-				R.drawable.user_head_photo);
+				R.drawable.head1);
 		for (Entry<Integer, User> entry : users.entrySet()) {
 			if (UserManager.isManagerServer(entry.getValue())) {
 				userInfo = new UserInfo(userIcon, entry.getValue()

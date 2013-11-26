@@ -38,7 +38,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="15dp"
-                    android:src="@drawable/user_head_photo" />
+                    android:src="@drawable/head1" />
 
                 <ImageView
                     android:id="@+id/iv_wo_head_name_arrow"

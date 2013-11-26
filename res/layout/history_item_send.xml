@@ -33,7 +33,7 @@
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/user_head_photo"
+            android:background="@drawable/head1"
             android:focusable="false" />
 
         <LinearLayout
