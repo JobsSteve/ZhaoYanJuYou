@@ -7,26 +7,24 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhaoyan.juyou.R;
 
 public class DeleteDialog extends Dialog implements android.view.View.OnClickListener {
 
-	private TextView mDialogTitle;
-	
 	private View mDeletingView;
-	private TextView mFileNameView;
-	private ProgressBar mProgressBar;
+	private View mPreDeleteView;
+	private View mButtonView;
 	private ListView mDeleteListView;
+	
+	private TextView mTitleView;
 	
 	private Button mButton1,mButton2, mButton3;
 	private View mDividerOne,mDividerTwo;
@@ -34,7 +32,6 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 	private String mBtnText1,mBtnText2,mBtnText3;
 	
 	private String mFilePath;
-	private int mSize;
 	private List<String> mDeleteNameList = new ArrayList<String>();
 	
 	private Context mContext;
@@ -42,23 +39,6 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 	private OnDelClickListener mClickListener1;
 	private OnDelClickListener mClickListener2;
 	private OnDelClickListener mClickListener3;
-	
-	private int progress;
-	private String fileName;
-	private static final int MSG_UPDATE_PROGRESS = 0x10;
-	private Handler mHandler = new Handler(){
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case MSG_UPDATE_PROGRESS:
-				mProgressBar.setProgress(progress);
-				mFileNameView.setText(fileName);
-				break;
-
-			default:
-				break;
-			}
-		};
-	};
 	
 	public DeleteDialog(Context context, List<String> nameList){
 		super(context, R.style.Custom_Dialog);
@@ -74,12 +54,9 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		setTitle(R.string.delete_confirm);
 		
 		mDeletingView = findViewById(R.id.rl_deleting);
-		
-		mProgressBar = (ProgressBar) findViewById(R.id.bar_delete);
-		mProgressBar.setMax(mDeleteNameList.size());
-		
-		mFileNameView = (TextView) findViewById(R.id.name_view);
-		mDialogTitle = (TextView) findViewById(R.id.title_veiw);
+//		mPreDeleteView = findViewById(R.id.ll_pre_delete);
+		mButtonView = findViewById(R.id.button_layout);
+		mTitleView = (TextView) findViewById(R.id.title_veiw);
 		
 		mDeleteListView = (ListView) findViewById(R.id.lv_delete);
 		
@@ -98,7 +75,6 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 					R.layout.dialog_delete_item, mDeleteNameList);
 			mDeleteListView.setAdapter(adapter);
 			mDeletingView.setVisibility(View.GONE);
-			
 		}else {
 			mDeletingView.setVisibility(View.VISIBLE);
 			mDeleteListView.setVisibility(View.GONE);
@@ -138,12 +114,6 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		}
 	}
 	
-	public void setProgress(int progress, String fileName){
-		this.progress = progress;
-		this.fileName = fileName;
-		mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_PROGRESS));
-	}
-	
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
@@ -151,7 +121,7 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth() - 100;
+		lp.width = (int)display.getWidth() - 60;
 		getWindow().setAttributes(lp);
 	}
 
@@ -175,10 +145,14 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		case R.id.button3:
 			if (null != mClickListener3) {
 				mClickListener3.onClick(v, mFilePath);
-				mDialogTitle.setText("正在删除...");
+//				mPreDeleteView.setVisibility(View.GONE);
+				mTitleView.setVisibility(View.GONE);
+//				mTitleView.setText(R.string.deleting);
 				mDeleteListView.setVisibility(View.GONE);
 				mDeletingView.setVisibility(View.VISIBLE);
-				mButton3.setVisibility(View.GONE);
+//				mButton3.setVisibility(View.GONE);
+//				mButton1.setVisibility(View.GONE);
+				mButtonView.setVisibility(View.GONE);
 			}else {
 				dismiss();
 			}

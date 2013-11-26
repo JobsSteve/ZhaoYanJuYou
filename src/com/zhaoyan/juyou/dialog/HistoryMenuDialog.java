@@ -72,7 +72,7 @@ public class HistoryMenuDialog extends Dialog implements OnItemClickListener {
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth() - 100;
+		lp.width = (int)display.getWidth() - 60;
 		getWindow().setAttributes(lp);
 	}
 	

@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.SingleMediaScanner;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
@@ -31,12 +32,12 @@ import com.zhaoyan.juyou.common.AsyncImageLoader;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
 import com.zhaoyan.juyou.common.ActionMenu;
-import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.HistoryManager;
 import com.zhaoyan.juyou.dialog.HistoryMenuDialog;
 import com.zhaoyan.juyou.dialog.HistoryMenuDialog.OnMenuItemClickListener;
 import com.zhaoyan.juyou.provider.JuyouData;
+import com.zhaoyan.juyou.provider.JuyouData.History;
 
 public class HistoryCursorAdapter extends CursorAdapter {
 	private static final String TAG = "HistoryCursorAdapter";
@@ -353,11 +354,15 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0, R.string.clear_history_only);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0, R.string.clear_history_file);
 				break;
 			case HistoryManager.STATUS_SEND_FAIL:
 				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0, R.string.cancel);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0, R.string.clear_history_only);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0, R.string.clear_history_file);
 				break;
 			case HistoryManager.STATUS_PRE_RECEIVE:
 			case HistoryManager.STATUS_RECEIVING:
@@ -365,6 +370,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				return;
 			case HistoryManager.STATUS_RECEIVE_FAIL:
 				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0, R.string.cancel);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0, R.string.clear_history_only);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0, R.string.clear_history_file);
 				break;
 			default:
 				Log.e(TAG, "MsgOnClickListener.STATUS_ERROR:" + status);
@@ -420,6 +427,56 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						String selection = JuyouData.History._ID + "=" + id;
 						mContext.getContentResolver().delete(
 								JuyouData.History.CONTENT_URI, selection, null);
+						break;
+					case ActionMenu.ACTION_MENU_CLEAR_HISTORY:
+						//delete history
+						//delete history table
+						new AlertDialog.Builder(mContext)
+							.setTitle(R.string.clear_history_only)
+							.setIcon(android.R.drawable.ic_dialog_alert)
+							.setMessage(R.string.clear_history_tip)
+							.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									mContext.getContentResolver().delete(History.CONTENT_URI, null, null);
+								}
+							})
+							.setNegativeButton(R.string.cancel, null)
+							.create().show();
+						break;
+					case ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE:
+						//delete history and received file
+						new AlertDialog.Builder(mContext)
+						.setTitle(R.string.clear_history_file)
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setMessage(R.string.clear_history_file_tip)
+						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								Cursor cursor = getCursor();
+								if (cursor.moveToFirst()) {
+									String filePath;
+									int type;
+									File file = null;
+									do {
+										type = cursor.getInt(cursor.getColumnIndex(History.MSG_TYPE));
+										//just delete the file that received from friends
+										if (HistoryManager.TYPE_RECEIVE == type) {
+											filePath = cursor.getString(cursor.getColumnIndex(History.FILE_PATH));
+											file = new File(filePath);
+											if (file.delete()) {
+												//if delete file success,update mediaProvider
+												new SingleMediaScanner(mContext, file);
+											}
+										}
+									} while (cursor.moveToNext());
+								}
+								cursor.close();
+								mContext.getContentResolver().delete(History.CONTENT_URI, null, null);
+							}
+						})
+						.setNegativeButton(R.string.cancel, null)
+						.create().show();
 						break;
 
 					default:

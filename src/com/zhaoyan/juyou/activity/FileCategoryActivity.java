@@ -425,7 +425,6 @@ public class FileCategoryActivity extends BaseActivity implements
 			}
 
 			for (int i = 0; i < deleteList.size(); i++) {
-				mDeleteDialog.setProgress(i + 1, deleteList.get(i).getName());
 				deleteList.get(i).delete();
 				int position = positionList.get(i) - i;
 				

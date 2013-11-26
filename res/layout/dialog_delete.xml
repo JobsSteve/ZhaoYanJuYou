@@ -28,30 +28,31 @@
 
     <LinearLayout
         android:id="@+id/rl_deleting"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:visibility="gone"
-        android:orientation="vertical"
+        android:visibility="visible"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
          >
-         
-          <TextView
-            android:id="@+id/name_view"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:textColor="@color/black"
-            android:textIsSelectable="false"
-             />
           
          <ProgressBar
             android:id="@+id/bar_delete"
-            style="@style/Custom.ProgressBar.Horizontal"
-            android:layout_width="fill_parent"
+          	android:indeterminateDrawable="@drawable/loading_progressbar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp" />
+         
+          <TextView
+            android:id="@+id/tv_deleting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textIsSelectable="false"
+            android:layout_gravity="center_vertical"
+            android:text="@string/deleting"
+            android:layout_marginLeft="15dp"
+             />
 
     </LinearLayout>
     

@@ -27,7 +27,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 
 public class FileInfoManager {
-	private static final String TAG = FileInfoManager.class.getName();
+	private static final String TAG = "FileInfoManager";
 	public static final int TEXT = 0x01;
 	public static final int HTML = 0x02;
 	public static final int WORD = 0x03;
@@ -267,13 +267,12 @@ public class FileInfoManager {
 	public boolean deleteFileInMediaStore(Context context, Uri uri, String path) {
 		Log.d(TAG, "deleteFileInMediaStore:" + path);
 		if (TextUtils.isEmpty(path)) {
+			Log.e(TAG, "deleteFileInMediaStore path is empty");
 			return false;
 		}
 		
-		if (!deleteFile(path)) {
-			return false;
-		}
-
+		deleteFile(path);
+		
 		String where = MediaColumns.DATA + "=?";
 		String[] whereArgs = new String[] { path };
 		ContentResolver cr = context.getContentResolver();
@@ -318,6 +317,7 @@ public class FileInfoManager {
 
 	public boolean deleteFile(File file) {
 		if (!file.exists()) {
+			Log.e(TAG, "file:" + file.getAbsolutePath() + " is not exist");
 			return false;
 		}
 

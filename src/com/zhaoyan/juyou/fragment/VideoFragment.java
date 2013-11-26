@@ -275,7 +275,6 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			//start delete file from delete list
 			for (int i = 0; i < deleteList.size(); i++) {
 				File file = new File(deleteList.get(i));
-				mDeleteDialog.setProgress(i + 1, file.getName());
 				doDelete(deleteList.get(i));
 			}
 			return null;

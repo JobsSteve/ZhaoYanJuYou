@@ -4,6 +4,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileTransferService;
@@ -20,6 +24,7 @@ public class JuYouApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		Log.d(TAG, "onCreate");
+		initImageLoader(getApplicationContext());
 		// Start save log to file.
 		Log.startSaveToFile();
 		// Initialize TrafficStatics
@@ -61,5 +66,17 @@ public class JuYouApplication extends Application {
 		NetWorkUtil.setWifiAPEnabled(context, null, false);
 		// Clear wifi connect history.
 		SearchUtil.clearWifiConnectHistory(context);
+	}
+	
+	public static void initImageLoader(Context context) {
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+				.threadPriority(Thread.NORM_PRIORITY - 2)
+				.denyCacheImageMultipleSizesInMemory()
+				.discCacheFileNameGenerator(new Md5FileNameGenerator())
+				.tasksProcessingOrder(QueueProcessingType.LIFO)
+				.writeDebugLogs() //remove it when release app
+				.build();
+		// Initialize ImageLoader with configuration.
+		ImageLoader.getInstance().init(config);
 	}
 }

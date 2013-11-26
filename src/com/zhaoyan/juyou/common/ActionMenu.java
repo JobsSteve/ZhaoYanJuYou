@@ -21,6 +21,8 @@ public class ActionMenu{
 	public static final int ACTION_MENU_MOVE_TO_APP = 0x11;
 	public static final int ACTION_MENU_BACKUP = 0x12;
 	public static final int ACTION_MENU_CANCEL = 0x13;
+	public static final int ACTION_MENU_CLEAR_HISTORY = 0x14;
+	public static final int ACTION_MENU_CLEAR_HISTORY_AND_FILE = 0x15;
 	
 	private List<ActionMenuItem> items = new ArrayList<ActionMenu.ActionMenuItem>();
 	

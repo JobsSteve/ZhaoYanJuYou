@@ -100,7 +100,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		
 		initTitle(rootView.findViewById(R.id.rl_ui_app), R.string.app);
 		
-		mQueryHandler = new QueryHandler(getActivity().getContentResolver());
+		mQueryHandler = new QueryHandler(getActivity().getApplicationContext().getContentResolver());
 
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);

@@ -457,7 +457,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			}
 
 			for (int i = 0; i < deleteList.size(); i++) {
-				mDeleteDialog.setProgress(i + 1, deleteList.get(i).getName());
 				doDelete(getActivity().getApplicationContext(), deleteList.get(i));
 				int position = positionList.get(i) - i;
 				Message message = mHandler.obtainMessage();

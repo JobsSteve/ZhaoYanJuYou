@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -71,6 +73,16 @@ public class MyDialog extends Dialog implements android.view.View.OnClickListene
 		}
 		
 		setCancelable(false);
+	}
+	
+	@Override
+	public void show() {
+		super.show();
+		WindowManager windowManager = getWindow().getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		WindowManager.LayoutParams lp = getWindow().getAttributes();
+		lp.width = (int)display.getWidth() - 60;
+		getWindow().setAttributes(lp);
 	}
 	
 	public void updateName(String name){
