@@ -392,6 +392,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				dialog.updateUI(size, fileNum, 0);
 			}
 			dialog.show();
+			dialog.invisbileLoadBar();
 			
 			showMenuBar(false);
 			//info
