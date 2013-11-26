@@ -38,7 +38,9 @@
     <string name="invite">邀请</string>
     <string name="invite_tips">邀请好友安装聚游</string>
     <string name="menu_info">属性</string>
-    <string name="guan_jia">管  家</string>
+    <string name="juyou">聚游</string>
+    <string name="guan_jia">管家</string>
+    <string name="wo">我</string>
     <string name="game">游戏</string>
     <string name="application">应用</string>
     <string name="photo">相册</string>
@@ -75,5 +77,6 @@
     <string name="file_classify_loading">正在加载...</string>
     <string name="select_head">选择头像</string>
     <string name="capture_head">拍照</string>
+    <string name="account">账号</string>
 
 </resources>
