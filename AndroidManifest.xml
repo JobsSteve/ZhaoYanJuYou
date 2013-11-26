@@ -52,7 +52,8 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.AccountSettingActivity"
-            android:theme="@style/Theme.Translucent" >
+            android:theme="@style/Theme.Translucent"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.InviteActivity"
@@ -90,15 +91,15 @@
             android:name="com.zhaoyan.juyou.activity.GameActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
-         <activity
+        <activity
             android:name="com.zhaoyan.juyou.activity.FileBrowserActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
-         <activity
+        <activity
             android:name="com.zhaoyan.juyou.activity.ClassifyActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
-         <activity
+        <activity
             android:name="com.zhaoyan.juyou.activity.TrafficStatisticsActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>

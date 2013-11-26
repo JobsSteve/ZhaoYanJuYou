@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class JuyouData {
 	public static final String DATABASE_NAME = "juyou.db";
-	public static final int DATABASE_VERSION = 2;
+	public static final int DATABASE_VERSION = 3;
 
 	public static final String AUTHORITY = "com.zhaoyan.juyou.provider.JuyouProvider";
 
@@ -148,6 +148,13 @@ public class JuyouData {
 		 * user status, type:int
 		 */
 		public static final String STATUS = "status";
+		/**
+		 * Local user or remote user, type:int. {@link #TYPE_LOCAL},
+		 * {@link #TYPE_REMOTE}.
+		 */
+		public static final String TYPE = "type";
+		public static final int TYPE_LOCAL = 0;
+		public static final int TYPE_REMOTE = 1;
 
 		/** order by DATE DESC */
 		public static final String SORT_ORDER_DEFAULT = USER_ID + " ASC";

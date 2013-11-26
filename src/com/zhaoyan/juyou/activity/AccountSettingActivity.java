@@ -5,17 +5,23 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.adapter.HeadChooseAdapter;
 
 public class AccountSettingActivity extends BaseActivity implements
-		OnClickListener {
+		OnClickListener, OnItemClickListener {
 	public static final String EXTRA_IS_FISRT_LAUNCH = "fist_launch";
 	private boolean mIsFisrtLaunch = false;
 
@@ -23,6 +29,17 @@ public class AccountSettingActivity extends BaseActivity implements
 	private Button mCanceButton;
 
 	private EditText mNickNameEditText;
+
+	private ImageView mHeadImageView;
+	private ImageButton mCaptureHeadButton;
+	private GridView mChooseHeadGridView;
+
+	private HeadChooseAdapter mHeadChooseAdapter;
+	private int[] mHeadImages = { R.drawable.head1, R.drawable.head2,
+			R.drawable.head3, R.drawable.head4, R.drawable.head5,
+			R.drawable.head6, R.drawable.head7, R.drawable.head8,
+			R.drawable.head9 };
+	private int mCurrentHeadId = 0;
 
 	private Notice mNotice;
 
@@ -44,13 +61,27 @@ public class AccountSettingActivity extends BaseActivity implements
 	}
 
 	private void setUserInfo() {
-		String name = UserHelper.loadUser(this).getUserName();
-		if (!TextUtils.isEmpty(name)
-				&& !UserHelper.KEY_NAME_DEFAULT.equals(name)) {
-			mNickNameEditText.setText(name);
-		} else {
+		User user = UserHelper.loadLocalUser(this);
+
+		if (user == null) {
 			mNickNameEditText.setText(DEFAULT_NAME);
+			mCurrentHeadId = 0;
+			mHeadImageView.setImageResource(mHeadImages[mCurrentHeadId]);
+		} else {
+			String name = user.getUserName();
+			if (!TextUtils.isEmpty(name)) {
+				mNickNameEditText.setText(name);
+			} else {
+				mNickNameEditText.setText(DEFAULT_NAME);
+			}
+
+			int headId = user.getHeadId();
+			if (headId != User.ID_NOT_PRE_INSTALL_HEAD) {
+				mCurrentHeadId = headId;
+				mHeadImageView.setImageResource(mHeadImages[mCurrentHeadId]);
+			}
 		}
+
 	}
 
 	private void initView() {
@@ -60,6 +91,15 @@ public class AccountSettingActivity extends BaseActivity implements
 		mCanceButton.setOnClickListener(this);
 
 		mNickNameEditText = (EditText) findViewById(R.id.et_nick_name);
+
+		mHeadImageView = (ImageView) findViewById(R.id.iv_as_head);
+		mCaptureHeadButton = (ImageButton) findViewById(R.id.btn_capture_head);
+		mCaptureHeadButton.setOnClickListener(this);
+
+		mChooseHeadGridView = (GridView) findViewById(R.id.gv_as_choose_head);
+		mChooseHeadGridView.setOnItemClickListener(this);
+		mHeadChooseAdapter = new HeadChooseAdapter(this, mHeadImages);
+		mChooseHeadGridView.setAdapter(mHeadChooseAdapter);
 	}
 
 	@Override
@@ -94,16 +134,33 @@ public class AccountSettingActivity extends BaseActivity implements
 	}
 
 	private void saveAccount() {
-		User user = UserHelper.loadUser(this);
+		User user = new User();
+		// name
 		String name = mNickNameEditText.getText().toString();
 		if (TextUtils.isEmpty(name)) {
 			name = DEFAULT_NAME;
 		}
 		user.setUserName(name);
+		// id
+		user.setUserID(0);
+		// head id
+		user.setHeadId(mCurrentHeadId);
+		// user type
+		user.setIsLocal(true);
+		// Save to database
+		UserHelper.saveUser(this, user);
+
+		// Update UserManager.
 		UserManager userManager = UserManager.getInstance();
 		userManager.setLocalUser(user);
-		UserHelper.saveUser(this, user);
 		mNotice.showToast(R.string.account_setting_saved_message);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		mCurrentHeadId = position;
+		mHeadImageView.setImageResource(mHeadImages[mCurrentHeadId]);
 	}
 
 }

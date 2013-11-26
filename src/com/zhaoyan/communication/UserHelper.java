@@ -1,20 +1,27 @@
 package com.zhaoyan.communication;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.dreamlink.communication.lib.SystemInfo;
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 public class UserHelper {
 	private static final String TAG = "UserHelper";
 	public static final String KEY_NAME = "name";
 	public static final String KEY_NAME_DEFAULT = "Unkown name";
+	private static final String[] PROJECTION = { JuyouData.User._ID,
+			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
+			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
+			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE };
 
 	/**
 	 * Get the set name, if name is not set, return null
@@ -23,36 +30,128 @@ public class UserHelper {
 	 * @return
 	 */
 	public static String getUserName(Context context) {
-		SharedPreferences sharedPreferences = SharedPreferenceUtil
-				.getSharedPreference(context);
-		String name = sharedPreferences.getString(KEY_NAME, KEY_NAME_DEFAULT);
-		if (KEY_NAME_DEFAULT.equals(name) || TextUtils.isEmpty(name)) {
-			return null;
+		String name = null;
+		User user = loadLocalUser(context);
+		if (user != null) {
+			name = user.getUserName();
 		}
 		return name;
 	}
 
 	/**
-	 * Load use info from shared preference.
+	 * Load use, if no local user, use default user.
+	 * 
+	 * Use {@link #loadLocalUser(Context)}.
 	 * 
 	 * @param user
 	 */
+	@Deprecated
 	public static User loadUser(Context context) {
-		SharedPreferences sharedPreferences = SharedPreferenceUtil
-				.getSharedPreference(context);
-		String name = sharedPreferences.getString(KEY_NAME, KEY_NAME_DEFAULT);
+		User user = loadLocalUser(context);
+		if (user == null) {
+			user = new User();
+			user.setUserName(KEY_NAME_DEFAULT);
+		}
+		return user;
+	}
+
+	private static User getUserFromCursor(Cursor cursor) {
 		User user = new User();
+		int id = cursor.getInt(cursor.getColumnIndex(JuyouData.User.USER_ID));
+		String name = cursor.getString(cursor
+				.getColumnIndex(JuyouData.User.USER_NAME));
+		int headID = cursor.getInt(cursor
+				.getColumnIndex(JuyouData.User.HEAD_ID));
+		int type = cursor.getInt(cursor.getColumnIndex(JuyouData.User.TYPE));
+		user.setUserID(id);
 		user.setUserName(name);
-		user.setSystemInfo(new SystemInfo().getLocalSystemInfo());
+		user.setHeadId(headID);
+		if (type == JuyouData.User.TYPE_LOCAL) {
+			user.setIsLocal(true);
+		} else {
+			user.setIsLocal(false);
+		}
 		return user;
 	}
 
 	/**
-	 * Save use info to shared preference.
+	 * Load local user from database. If there is no local user, return null.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public static User loadLocalUser(Context context) {
+		User user = null;
+
+		ContentResolver contentResolver = context.getContentResolver();
+		String selection = JuyouData.User.TYPE + "="
+				+ JuyouData.User.TYPE_LOCAL;
+		Cursor cursor = contentResolver.query(JuyouData.User.CONTENT_URI,
+				PROJECTION, selection, null, JuyouData.User.SORT_ORDER_DEFAULT);
+		if (cursor != null) {
+			try {
+				int count = cursor.getCount();
+				if (count == 0) {
+					Log.d(TAG, "No Local user");
+				} else if (count == 1) {
+					if (cursor.moveToFirst()) {
+						user = getUserFromCursor(cursor);
+					}
+				} else {
+					throw new IllegalStateException(TAG
+							+ ", There must be one local user at most!");
+				}
+			} catch (Exception e) {
+
+			} finally {
+				cursor.close();
+			}
+		}
+
+		return user;
+	}
+
+	/**
+	 * Save use info to database
 	 * 
 	 * @param user
 	 */
 	public static void saveUser(Context context, User user) {
+		ContentResolver contentResolver = context.getContentResolver();
+		String selection = JuyouData.User.TYPE + "="
+				+ JuyouData.User.TYPE_LOCAL;
+		Cursor cursor = contentResolver.query(JuyouData.User.CONTENT_URI,
+				PROJECTION, selection, null, JuyouData.User.SORT_ORDER_DEFAULT);
+		if (cursor != null) {
+			try {
+				int count = cursor.getCount();
+				if (count == 0) {
+					Log.d(TAG, "No Local user");
+					addUserToDatabase(context, user);
+				} else if (count == 1) {
+					if (cursor.moveToFirst()) {
+						int id = cursor.getInt(cursor
+								.getColumnIndex(JuyouData.User._ID));
+						updateUserToDatabase(context, user, id);
+					} else {
+						throw new IllegalStateException(TAG
+								+ " saveUser moveToFirst() error.");
+					}
+				} else {
+					throw new IllegalStateException(TAG
+							+ ",saveUser There must be one local user at most!");
+				}
+			} catch (Exception e) {
+
+			} finally {
+				cursor.close();
+			}
+		}
+
+		User originalUser = loadLocalUser(context);
+		if (originalUser == null) {
+
+		}
 		if (!TextUtils.isEmpty(user.getUserName())) {
 			SharedPreferences sharedPreferences = SharedPreferenceUtil
 					.getSharedPreference(context);
@@ -62,6 +161,30 @@ public class UserHelper {
 		} else {
 			Log.d(TAG, "saveUser: user name is empty, abort.");
 		}
+	}
+
+	private static void updateUserToDatabase(Context context, User user, int id) {
+		ContentResolver contentResolver = context.getContentResolver();
+		String selection = JuyouData.User._ID + "=" + id;
+		contentResolver.update(JuyouData.User.CONTENT_URI,
+				getContentValuesFromUser(user), selection, null);
+	}
+
+	private static ContentValues getContentValuesFromUser(User user) {
+		ContentValues values = new ContentValues();
+		values.put(JuyouData.User.USER_ID, user.getHeadId());
+		values.put(JuyouData.User.USER_NAME, user.getUserName());
+		values.put(JuyouData.User.HEAD_ID, user.getHeadId());
+		int type = user.isLocal() ? JuyouData.User.TYPE_LOCAL
+				: JuyouData.User.TYPE_REMOTE;
+		values.put(JuyouData.User.TYPE, type);
+		return values;
+	}
+
+	private static void addUserToDatabase(Context context, User user) {
+		ContentResolver contentResolver = context.getContentResolver();
+		contentResolver.insert(JuyouData.User.CONTENT_URI,
+				getContentValuesFromUser(user));
 	}
 
 	public static byte[] encodeUser(User user) {

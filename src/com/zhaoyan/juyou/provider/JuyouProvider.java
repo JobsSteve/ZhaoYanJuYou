@@ -331,13 +331,20 @@ public class JuyouProvider extends ContentProvider {
 					+ JuyouData.User.USER_NAME + " TEXT, "
 					+ JuyouData.User.USER_ID + " INTEGER, "
 					+ JuyouData.User.HEAD_ID + " INTEGER, "
-					+ JuyouData.User.HEAD_DATA + " BLOB, " + JuyouData.User.IP_ADDR
-					+ " TEXT, " + JuyouData.User.STATUS + " INTEGER);");
+					+ JuyouData.User.HEAD_DATA + " BLOB, "
+					+ JuyouData.User.IP_ADDR + " TEXT, "
+					+ JuyouData.User.STATUS + " INTEGER, "
+					+ JuyouData.User.TYPE + " INTEGER);");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			db.execSQL("DROP TABLE IF EXISTS " + JuyouData.History.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS "
+					+ JuyouData.TrafficStaticsRX.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS "
+					+ JuyouData.TrafficStaticsTX.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + JuyouData.User.TABLE_NAME);
 			onCreate(db);
 		}
 
