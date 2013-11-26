@@ -155,7 +155,7 @@ public class AppBaseFragment extends BaseFragment{
 		protected Void doInBackground(List<String>... params) {
 			startTime = System.currentTimeMillis();
 			size = params[0].size();
-			File file = new File(ZYConstant.BACKUP_FOLDER); 
+			File file = new File(ZYConstant.JUYOU_BACKUP_FOLDER); 
 			if (!file.exists()){
 				boolean ret = file.mkdirs();
 				if (!ret) {
@@ -182,7 +182,7 @@ public class AppBaseFragment extends BaseFragment{
 				currentProgress = i + 1;
 				
 				mMyDialog.updateName(label);
-				String desPath = ZYConstant.BACKUP_FOLDER + "/" + label + "_" + version + ".apk";
+				String desPath = ZYConstant.JUYOU_BACKUP_FOLDER + "/" + label + "_" + version + ".apk";
 				if (!new File(desPath).exists()) {
 					try {
 						ZYUtils.fileStreamCopy(sourceDir, desPath);

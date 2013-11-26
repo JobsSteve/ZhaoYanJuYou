@@ -1,5 +1,7 @@
 package com.zhaoyan.juyou.common;
 
+import java.io.File;
+
 import com.zhaoyan.communication.FileTransferService;
 
 import android.net.Uri;
@@ -107,7 +109,28 @@ public class ZYConstant {
 
 	public static final String DEFAULT_SDCARD = Environment.getExternalStorageDirectory().getAbsolutePath();
 	/** the default folder that save the receive files */
-	public static final String DREAMLINK_FOLDER = DEFAULT_SDCARD + "/JuYou";
-	public static final String BACKUP_FOLDER = DREAMLINK_FOLDER + "/backup_apps";
-	public static final String DEFAULT_RECEIVE_FILE_FOLDER = DEFAULT_SDCARD + "/JuYou";
+	public static final String JUYOU_FOLDER = DEFAULT_SDCARD + File.separator + "JuYou";
+	public static final String JUYOU_BACKUP_FOLDER = JUYOU_FOLDER + File.separator + "应用备份";
+	public static final String JUYOU_IMAGE_FOLDER = JUYOU_FOLDER + File.separator + "图片";
+	public static final String JUYOU_APP_FOLDER = JUYOU_FOLDER + File.separator + "应用";
+	public static final String JUYOU_MUSIC_FOLDER = JUYOU_FOLDER + File.separator + "音乐";
+	public static final String JUYOU_VIDEO_FOLDER = JUYOU_FOLDER + File.separator + "视频";
+	public static final String JUYOU_OTHER_FOLDER = JUYOU_FOLDER + File.separator + "其他";
+	
+	public static void initJuyouFolder(){
+		mkdirs(JUYOU_FOLDER);
+		mkdirs(JUYOU_APP_FOLDER);
+		mkdirs(JUYOU_IMAGE_FOLDER);
+		mkdirs(JUYOU_MUSIC_FOLDER);
+		mkdirs(JUYOU_VIDEO_FOLDER);
+		mkdirs(JUYOU_OTHER_FOLDER);
+		mkdirs(JUYOU_BACKUP_FOLDER);
+	}
+	
+	private static void mkdirs(String path) {
+		File file = new File(path);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+	}
 }

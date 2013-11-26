@@ -23,6 +23,7 @@ import com.zhaoyan.juyou.common.AppInfo;
 import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.HistoryManager;
 import com.zhaoyan.juyou.common.MountManager;
+import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.provider.AppData;
 
 public class WelcomeActivity extends Activity {
@@ -82,6 +83,8 @@ public class WelcomeActivity extends Activity {
 		getContentResolver().delete(AppData.App.CONTENT_URI, null, null);
 		LoadAppThread thread =  new LoadAppThread();
 		thread.start();
+		
+		ZYConstant.initJuyouFolder();
 	}
 	
 	private void startFileTransferService(){

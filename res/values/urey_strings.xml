@@ -105,7 +105,7 @@
     <string name="invite_bluetooth_second_step">第二步:</string>
     <string name="invite_bluetooth_send">搜索-发送</string>
     <string name="invite_bluetooth_first_step_tip">请身边好友打开蓝牙,保持对附近的蓝牙设备可见（如图所示）</string>
-    <string name="invite_bluetooth_second_step_tip">好友完成第一步后,请点击搜索-发送按钮，就可以搜索TA的手机并把朝颜无限发送过去</string>
+    <string name="invite_bluetooth_second_step_tip">好友完成第一步后,请点击搜索-发送按钮，就可以搜索TA的手机并把聚游发送过去</string>
     <string name="back">返回</string>
     
     <string name="connect_tip_msg">选择与朋友互连</string>
