@@ -1,6 +1,5 @@
 package com.zhaoyan.juyou.provider;
 
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -29,6 +28,9 @@ public class JuyouProvider extends ContentProvider {
 	public static final int TRAFFIC_STATICS_TX_COLLECTION = 22;
 	public static final int TRAFFIC_STATICS_TX_SINGLE = 23;
 
+	public static final int USER_COLLECTION = 30;
+	public static final int USER_SINGLE = 31;
+
 	public static final UriMatcher uriMatcher;
 
 	static {
@@ -47,6 +49,8 @@ public class JuyouProvider extends ContentProvider {
 		uriMatcher.addURI(JuyouData.AUTHORITY, "trafficstatics_tx/#",
 				TRAFFIC_STATICS_TX_SINGLE);
 
+		uriMatcher.addURI(JuyouData.AUTHORITY, "user", USER_COLLECTION);
+		uriMatcher.addURI(JuyouData.AUTHORITY, "user/#", USER_SINGLE);
 	}
 
 	@Override
@@ -91,6 +95,14 @@ public class JuyouProvider extends ContentProvider {
 		case TRAFFIC_STATICS_TX_COLLECTION:
 			table = JuyouData.TrafficStaticsTX.TABLE_NAME;
 			break;
+		case USER_SINGLE:
+			table = JuyouData.User.TABLE_NAME;
+			selection = "_id=" + uri.getPathSegments().get(1);
+			selectionArgs = null;
+			break;
+		case USER_COLLECTION:
+			table = JuyouData.User.TABLE_NAME;
+			break;
 		default:
 			throw new IllegalArgumentException("UnKnow Uri:" + uri);
 		}
@@ -115,6 +127,10 @@ public class JuyouProvider extends ContentProvider {
 			return JuyouData.TrafficStaticsRX.CONTENT_TYPE;
 		case TRAFFIC_STATICS_RX_SINGLE:
 			return JuyouData.TrafficStaticsRX.CONTENT_TYPE_ITEM;
+		case USER_COLLECTION:
+			return JuyouData.User.CONTENT_TYPE;
+		case USER_SINGLE:
+			return JuyouData.User.CONTENT_TYPE_ITEM;
 		default:
 			throw new IllegalArgumentException("Unkonw uri:" + uri);
 		}
@@ -144,6 +160,12 @@ public class JuyouProvider extends ContentProvider {
 		case TRAFFIC_STATICS_TX_COLLECTION:
 			table = JuyouData.TrafficStaticsTX.TABLE_NAME;
 			contentUri = JuyouData.TrafficStaticsTX.CONTENT_URI;
+			break;
+
+		case USER_SINGLE:
+		case USER_COLLECTION:
+			table = JuyouData.User.TABLE_NAME;
+			contentUri = JuyouData.User.CONTENT_URI;
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow uri:" + uri);
@@ -191,6 +213,13 @@ public class JuyouProvider extends ContentProvider {
 			break;
 		case TRAFFIC_STATICS_TX_COLLECTION:
 			qb.setTables(JuyouData.TrafficStaticsTX.TABLE_NAME);
+			break;
+		case USER_SINGLE:
+			qb.setTables(JuyouData.User.TABLE_NAME);
+			qb.appendWhere("_id=" + uri.getPathSegments().get(1));
+			break;
+		case USER_COLLECTION:
+			qb.setTables(JuyouData.User.TABLE_NAME);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow uri:" + uri);
@@ -240,6 +269,14 @@ public class JuyouProvider extends ContentProvider {
 		case TRAFFIC_STATICS_TX_COLLECTION:
 			table = JuyouData.TrafficStaticsTX.TABLE_NAME;
 			break;
+		case USER_SINGLE:
+			table = JuyouData.User.TABLE_NAME;
+			selection = "_id=" + uri.getPathSegments().get(1);
+			selectionArgs = null;
+			break;
+		case USER_COLLECTION:
+			table = JuyouData.User.TABLE_NAME;
+			break;
 
 		default:
 			throw new UnsupportedOperationException("Cannot update uri:" + uri);
@@ -287,6 +324,15 @@ public class JuyouProvider extends ContentProvider {
 					+ " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ JuyouData.TrafficStaticsTX.DATE + " TEXT UNIQUE, "
 					+ JuyouData.TrafficStaticsTX.TOTAL_TX_BYTES + " LONG);");
+
+			// create user table
+			db.execSQL("create table " + JuyouData.User.TABLE_NAME
+					+ " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, "
+					+ JuyouData.User.USER_NAME + " TEXT, "
+					+ JuyouData.User.USER_ID + " INTEGER, "
+					+ JuyouData.User.HEAD_ID + " INTEGER, "
+					+ JuyouData.User.HEAD_DATA + " BLOB, " + JuyouData.User.IP_ADDR
+					+ " TEXT, " + JuyouData.User.STATUS + " INTEGER);");
 		}
 
 		@Override

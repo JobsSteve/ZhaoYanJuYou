@@ -33,7 +33,7 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.guanjia_fragment, container, false);
-		
+		initTitle(rootView, R.string.guan_jia);
 		initView(rootView);
 		return rootView;
 	}

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,7 +20,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.ConnectFriendsActivity;
 import com.zhaoyan.juyou.activity.InviteActivity;
 
-public class JuYouFragment extends Fragment implements OnClickListener,
+public class JuYouFragment extends BaseFragment implements OnClickListener,
 		OnUserChangedListener {
 	private Context mContext;
 	private View mConnectView;
@@ -43,6 +42,7 @@ public class JuYouFragment extends Fragment implements OnClickListener,
 
 		View rootView = inflater.inflate(R.layout.juyou_fragment, container,
 				false);
+		initTitle(rootView, R.string.juyou);
 		initView(rootView);
 		updateConnectedUsers();
 		return rootView;

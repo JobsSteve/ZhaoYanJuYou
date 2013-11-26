@@ -21,12 +21,13 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 			Bundle savedInstanceState) {
 		View rootView = inflater
 				.inflate(R.layout.wo_fragment, container, false);
+		initTitle(rootView, R.string.wo);
 		initView(rootView);
 		return rootView;
 	}
 
 	private void initView(View rootView) {
-		mUserInfoSettingView = rootView.findViewById(R.id.rl_userinfo_setting);
+		mUserInfoSettingView = rootView.findViewById(R.id.rl_wo_head_name);
 		mUserInfoSettingView.setOnClickListener(this);
 		mQuitView = rootView.findViewById(R.id.ll_wo_quit);
 		mQuitView.setOnClickListener(this);
@@ -45,7 +46,7 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 		Intent intent = new Intent();
 		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		switch (v.getId()) {
-		case R.id.rl_userinfo_setting:
+		case R.id.rl_wo_head_name:
 			openActivity(AccountSettingActivity.class);
 			break;
 		case R.id.rl_wo_traffic_statistics:

@@ -4,298 +4,343 @@
     android:layout_height="match_parent"
     android:background="#f5f7fa" >
 
+    <include
+        android:id="@+id/title"
+        android:layout_alignParentTop="true"
+        layout="@layout/title" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/title"
         android:scrollbars="none" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin ="15dp"
             android:orientation="vertical" >
 
-            <include layout="@layout/wo_fragment_top" />
+            <!-- Head and name -->
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/rl_wo_head_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:orientation="vertical" >
+                android:background="@drawable/setting_item_bg"
+                android:clickable="true"
+                android:padding="10dp" >
 
-                <!-- Traffic statitics -->
+                <ImageView
+                    android:id="@+id/iv_wo_head_name"
+                    android:layout_width="68dp"
+                    android:layout_height="68dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/user_head_photo" />
 
-                <RelativeLayout
-                    android:id="@+id/rl_wo_traffic_statistics"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/iv_wo_head_name_arrow"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/setting_item_bg"
-                    android:clickable="true"
-                    android:padding="10dp" >
-
-                    <ImageView
-                        android:id="@+id/iv_wo_traffic_statistics"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/traffic_statistics" />
-
-                    <ImageView
-                        android:id="@+id/iv_wo_ts_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_wo_ts_arrow"
-                        android:layout_toRightOf="@id/iv_wo_traffic_statistics"
-                        android:text="@string/traffic_statistics"
-                        android:textSize="16sp" />
-                </RelativeLayout>
-                <!-- Newer help -->
-
-                <RelativeLayout
-                    android:id="@+id/rl_wo_newer_help"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/setting_item_bg_top"
-                    android:clickable="true"
-                    android:padding="10dp" >
-
-                    <ImageView
-                        android:id="@+id/iv_wo_newer_help"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/newer_help" />
-
-                    <ImageView
-                        android:id="@+id/iv_wo_nh_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_wo_nh_arrow"
-                        android:layout_toRightOf="@id/iv_wo_newer_help"
-                        android:orientation="vertical" >
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/help_introduction"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </RelativeLayout>
-
-                <!-- Suggest -->
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/setting_item_bg_bottom"
-                    android:clickable="true"
-                    android:padding="10dp" >
-
-                    <ImageView
-                        android:id="@+id/iv_wo_suggest"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/suggest" />
-
-                    <ImageView
-                        android:id="@+id/iv_wo_suggest_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_wo_suggest_arrow"
-                        android:layout_toRightOf="@id/iv_wo_suggest"
-                        android:orientation="vertical" >
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/help_suggestion"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </RelativeLayout>
-                <!-- Check update -->
-
-                <RelativeLayout
-                    android:id="@+id/rl_wo_check_update"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/setting_item_bg_top"
-                    android:clickable="true"
-                    android:padding="10dp" >
-
-                    <ImageView
-                        android:id="@+id/iv_wo_check_update"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/check_update" />
-
-                    <ImageView
-                        android:id="@+id/iv_wo_cu_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_wo_cu_arrow"
-                        android:layout_toRightOf="@id/iv_wo_check_update"
-                        android:orientation="vertical" >
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/help_check_update"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </RelativeLayout>
-                <!-- About -->
-
-                <RelativeLayout
-                    android:id="@+id/rl_wo_about"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/setting_item_bg_bottom"
-                    android:clickable="true"
-                    android:padding="10dp" >
-
-                    <ImageView
-                        android:id="@+id/iv_wo_about"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/about" />
-
-                    <ImageView
-                        android:id="@+id/iv_wo_about_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_wo_about_arrow"
-                        android:layout_toRightOf="@id/iv_wo_about"
-                        android:text="@string/help_about"
-                        android:textSize="16sp" />
-                </RelativeLayout>
-                <!-- Account management -->
-
-                <RelativeLayout
-                    android:id="@+id/rl_wo_account_management"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/setting_item_bg_top"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp" >
-
-                    <ImageView
-                        android:id="@+id/iv_wo_account_management"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/account_management" />
-
-                    <ImageView
-                        android:id="@+id/iv_wo_am_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_wo_am_arrow"
-                        android:layout_toRightOf="@id/iv_wo_account_management"
-                        android:orientation="vertical" >
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/account_management"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </RelativeLayout>
-                <!-- Quit -->
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
 
                 <LinearLayout
-                    android:id="@+id/ll_wo_quit"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/setting_item_bg_bottom"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_head_name_arrow"
+                    android:layout_toRightOf="@id/iv_wo_head_name"
+                    android:orientation="vertical" >
 
-                    <ImageView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/quit" />
+                        android:text="@string/settings_user_info"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/account"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Traffic statitics -->
+
+            <RelativeLayout
+                android:id="@+id/rl_wo_traffic_statistics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/setting_item_bg"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wo_traffic_statistics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/traffic_statistics" />
+
+                <ImageView
+                    android:id="@+id/iv_wo_ts_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_ts_arrow"
+                    android:layout_toRightOf="@id/iv_wo_traffic_statistics"
+                    android:text="@string/traffic_statistics"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+            <!-- Newer help -->
+
+            <RelativeLayout
+                android:id="@+id/rl_wo_newer_help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/setting_item_bg_top"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wo_newer_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/newer_help" />
+
+                <ImageView
+                    android:id="@+id/iv_wo_nh_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_nh_arrow"
+                    android:layout_toRightOf="@id/iv_wo_newer_help"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/help_introduction"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Suggest -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_item_bg_bottom"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wo_suggest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/suggest" />
+
+                <ImageView
+                    android:id="@+id/iv_wo_suggest_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_suggest_arrow"
+                    android:layout_toRightOf="@id/iv_wo_suggest"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/help_suggestion"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </RelativeLayout>
+            <!-- Check update -->
+
+            <RelativeLayout
+                android:id="@+id/rl_wo_check_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/setting_item_bg_top"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wo_check_update"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/check_update" />
+
+                <ImageView
+                    android:id="@+id/iv_wo_cu_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_cu_arrow"
+                    android:layout_toRightOf="@id/iv_wo_check_update"
+                    android:orientation="vertical" >
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/quit"
+                        android:text="@string/help_check_update"
                         android:textSize="16sp" />
                 </LinearLayout>
+            </RelativeLayout>
+            <!-- About -->
+
+            <RelativeLayout
+                android:id="@+id/rl_wo_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_item_bg_bottom"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wo_about"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/about" />
+
+                <ImageView
+                    android:id="@+id/iv_wo_about_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_about_arrow"
+                    android:layout_toRightOf="@id/iv_wo_about"
+                    android:text="@string/help_about"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+            <!-- Account management -->
+
+            <RelativeLayout
+                android:id="@+id/rl_wo_account_management"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/setting_item_bg_top"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wo_account_management"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/account_management" />
+
+                <ImageView
+                    android:id="@+id/iv_wo_am_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_am_arrow"
+                    android:layout_toRightOf="@id/iv_wo_account_management"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/account_management"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </RelativeLayout>
+            <!-- Quit -->
+
+            <LinearLayout
+                android:id="@+id/ll_wo_quit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_item_bg_bottom"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/quit" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/quit"
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

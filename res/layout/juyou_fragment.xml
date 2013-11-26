@@ -4,142 +4,133 @@
     android:layout_height="match_parent"
     android:background="#f5f7fa" >
 
+    <include
+        android:id="@+id/title"
+        android:layout_alignParentTop="true"
+        layout="@layout/title" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/title"
         android:scrollbars="none" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="15dp"
             android:orientation="vertical" >
 
-            <com.zhaoyan.common.view.AspectRatioImageView
-                android:id="@+id/iv_juyou_fragment_top_pic"
+            <!-- Conntect friends -->
+
+            <RelativeLayout
+                android:id="@+id/rl_juyou_connect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:src="@drawable/juyou_top" />
+                android:background="@drawable/setting_item_bg_top"
+                android:clickable="true"
+                android:padding="10dp" >
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:orientation="vertical" >
+                <ImageView
+                    android:id="@+id/iv_juyou_connect_friends"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/connect" />
 
-                <!-- Conntect friends -->
+                <ImageView
+                    android:id="@+id/iv_juyou_connect_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
 
-                <RelativeLayout
-                    android:id="@+id/rl_juyou_connect"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/setting_item_bg_top"
-                    android:clickable="true"
-                    android:padding="10dp" >
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_juyou_connect_arrow"
+                    android:layout_toRightOf="@id/iv_juyou_connect_friends"
+                    android:orientation="horizontal" >
 
-                    <ImageView
-                        android:id="@+id/iv_juyou_connect_friends"
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/connect" />
-
-                    <ImageView
-                        android:id="@+id/iv_juyou_connect_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/connect_friends"
+                        android:textSize="14sp" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:id="@+id/ll_juyou_connected_users"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@id/iv_juyou_connect_arrow"
-                        android:layout_toRightOf="@id/iv_juyou_connect_friends"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:orientation="horizontal" >
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="@string/connect_friends"
-                            android:textSize="14sp" />
-
-                        <LinearLayout
-                            android:id="@+id/ll_juyou_connected_users"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginRight="5dp"
-                            android:orientation="horizontal" >
-
-                        </LinearLayout>
                     </LinearLayout>
-                </RelativeLayout>
+                </LinearLayout>
+            </RelativeLayout>
 
-                <!-- Invitate friends to install -->
+            <!-- Invitate friends to install -->
 
-                <RelativeLayout
-                    android:id="@+id/rl_juyou_invite"
-                    android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/rl_juyou_invite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_item_bg_bottom"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_juyou_invite"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/setting_item_bg_bottom"
-                    android:clickable="true"
-                    android:padding="10dp" >
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/invite" />
 
-                    <ImageView
-                        android:id="@+id/iv_juyou_invite"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/iv_juyou_invite"
+                    android:orientation="vertical" >
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/invite" />
+                        android:text="@string/invite"
+                        android:textSize="14sp" />
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/iv_juyou_invite"
-                        android:orientation="vertical" >
+                        android:text="@string/invite_tips"
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/invite"
-                            android:textSize="14sp" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+            </RelativeLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/invite_tips"
-                            android:textColor="@color/gray"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/setting_item_arrow" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/setting_item_bg"
-                    android:clickable="false"
-                    android:padding="10dp" >
-                </RelativeLayout>
-            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/setting_item_bg"
+                android:clickable="false"
+                android:padding="10dp" >
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 

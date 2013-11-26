@@ -19,22 +19,44 @@ import com.zhaoyan.communication.search.SearchUtil;
 
 public class JuYouApplication extends Application {
 	private static final String TAG = "JuYouApplication";
+	private static boolean mIsInit = false;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		Log.d(TAG, "onCreate");
-		initImageLoader(getApplicationContext());
+		initApplication(getApplicationContext());
+	}
+
+	/**
+	 * Notice, call this not only in application's {@link #onCreate()}, but also
+	 * in the first activity's onCreate(). Because application's
+	 * {@link #onCreate()} will not be call every time when we launch first
+	 * activity.
+	 * 
+	 * @param context
+	 */
+	public static synchronized void initApplication(Context context) {
+		if (mIsInit) {
+			return;
+		}
+		Log.d(TAG, "initApplication");
+		mIsInit = true;
+		initImageLoader(context);
 		// Start save log to file.
 		Log.startSaveToFile();
 		// Initialize TrafficStatics
-		TrafficStatics.getInstance().init(getApplicationContext());
+		TrafficStatics.getInstance().init(context);
 		// Initialize SocketCommunicationManager
-		SocketCommunicationManager.getInstance().init(getApplicationContext());
+		SocketCommunicationManager.getInstance().init(context);
 	}
 
-	public static void quitApplication(Context context) {
+	public static synchronized void quitApplication(Context context) {
+		if (!mIsInit) {
+			return;
+		}
 		Log.d(TAG, "quitApplication");
+		mIsInit = false;
 		stopCommunication(context);
 		stopFileTransferService(context);
 		// Release SocketCommunicationManager

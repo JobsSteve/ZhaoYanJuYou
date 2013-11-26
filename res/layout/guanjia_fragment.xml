@@ -4,23 +4,10 @@
     android:layout_height="match_parent"
     android:background="#f5f7fa" >
 
-    <RelativeLayout
+    <include
         android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/title_bg" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/guan_jia"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" >
-        </TextView>
-    </RelativeLayout>
+        android:layout_alignParentTop="true"
+        layout="@layout/title" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -125,9 +112,8 @@
                     android:layout_weight="1"
                     android:background="@drawable/setting_item_bg"
                     android:clickable="true"
-                    android:padding="10dp" 
                     android:orientation="horizontal"
-                    >
+                    android:padding="10dp" >
 
                     <ImageView
                         android:id="@+id/iv_guanjia_history"
@@ -139,9 +125,8 @@
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" 
-                        android:layout_gravity="center"
-                        >
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" >
 
                         <ImageView
                             android:id="@+id/iv_guanjia_history_arrow"
@@ -160,7 +145,6 @@
                             android:text="@string/history"
                             android:textSize="14sp" />
                     </RelativeLayout>
-                    
                 </LinearLayout>
             </LinearLayout>
 
