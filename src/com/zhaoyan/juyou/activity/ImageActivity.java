@@ -76,6 +76,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	public static final String SORT_ORDER_DATE = MediaColumns.DATE_MODIFIED + " DESC"; 
 	private static final String CAMERA = "Camera";
 	private static final String GALLERY = "Gallery";
+	private static final String MIMETYPE_PNG = "image/png";
 	
 	private LinearLayout mMenuHolder;
 	private View mMenuBarView;
@@ -169,12 +170,15 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	
 	public void queryFolderItem(String bucketName){
 		String selection;
+		//do not load png image
 		if (GALLERY.equals(bucketName)) {
-			selection = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "!=?";
+			selection = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "!=?"
+					+ " and " + MediaStore.Images.Media.MIME_TYPE + "!=?";
 		}else {
-			selection = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "=?";
+			selection = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "=?"
+					+ " and " + MediaStore.Images.Media.MIME_TYPE + "!=?";
 		}
-		String selectionArgs[] = {CAMERA};
+		String selectionArgs[] = {CAMERA, MIMETYPE_PNG};
 		mPictureItemInfoList.clear();
 		query(QUERY_TOKEN_ITEM, selection, selectionArgs, SORT_ORDER_DATE);
 	}

@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.zhaoyan.common.util.LogFile;
 import com.zhaoyan.juyou.activity.FileCategoryActivity;
 
 import android.content.Context;
@@ -99,7 +100,10 @@ public class FileCategoryScanner {
 			if (files != null) {
 				for (File file : files) {
 					if (file.isDirectory()) {
-						scanDir(file);
+						//do not load juyou log file
+						if (!LogFile.LOG_FOLDER_NAME.equals(file.getAbsolutePath())) {
+							scanDir(file);
+						}
 					} else {
 						CategoryFile(file);
 					}

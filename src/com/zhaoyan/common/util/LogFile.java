@@ -28,7 +28,10 @@ public class LogFile {
 	private static final String TAG = "LogFile";
 	private File mFile;
 	private FileWriter mWriter;
-	private static final String LOG_FOLDER_NAME = "ZhaoYanLog";
+	public static final String LOG_FOLDER_NAME = Environment.getExternalStorageDirectory()
+			.getAbsolutePath()
+			+ File.separator
+			+ "ZhaoYanLog";
 
 	/**
 	 * Create log file use the file name.
@@ -51,10 +54,7 @@ public class LogFile {
 	}
 
 	private void createFile(String fileName) {
-		String path = Environment.getExternalStorageDirectory()
-				.getAbsolutePath()
-				+ File.separator
-				+ LOG_FOLDER_NAME
+		String path = LOG_FOLDER_NAME
 				+ File.separator + TimeUtil.getDate();
 		String filePath = path + File.separator + fileName;
 		mFile = new File(filePath);
