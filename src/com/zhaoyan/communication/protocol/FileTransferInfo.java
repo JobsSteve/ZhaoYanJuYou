@@ -14,7 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.zhaoyan.common.file.APKFile;
+import com.zhaoyan.common.file.APKUtil;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
 
@@ -60,11 +60,10 @@ public class FileTransferInfo implements Serializable, Parcelable {
 
 	private void getApkFileInfo(File apk, Context context) {
 		mFilePath = apk.getAbsolutePath();
-		mFileName = APKFile.getApkName(context, apk.getAbsolutePath())
-				+ ".apk";
+		mFileName = APKUtil.getApkLabel(context, apk.getAbsolutePath()) + ".apk";
 		mFileSize = apk.length();
 
-		Drawable icon = APKFile.getApkIcon(context,
+		Drawable icon = APKUtil.getApkIcon(context,
 				apk.getAbsolutePath());
 		mFileIcon = new FileIcon(icon);
 

@@ -96,11 +96,19 @@
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
-            android:name="com.zhaoyan.juyou.activity.ClassifyActivity"
+            android:name="com.zhaoyan.juyou.activity.FileCategoryActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.TrafficStatisticsActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.ImageActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.ImagePagerActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity

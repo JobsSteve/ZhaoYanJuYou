@@ -15,7 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore.Images.Thumbnails;
 
-import com.zhaoyan.common.file.APKFile;
+import com.zhaoyan.common.file.APKUtil;
 import com.zhaoyan.common.util.BitmapUtilities;
 
 public class AsyncImageLoader {
@@ -68,7 +68,7 @@ public class AsyncImageLoader {
 				@Override
 				public void run() {
 					Bitmap bitmap = null;
-					Drawable drawable = APKFile.getApkIcon(context, path);
+					Drawable drawable = APKUtil.getApkIcon2(context, path);
 					BitmapDrawable bd = (BitmapDrawable) drawable;
 					if (null != bd) {
 						bitmap = bd.getBitmap();

@@ -46,7 +46,7 @@
     <string name="create_ok">创建成功,等待加入&#8230;</string>
     <string name="close">关闭</string>
     
-    <string name="file_classify">文件分类</string>
+    <string name="file_Category">文件分类</string>
     <string name="all_file">全部文件</string>
     <string name="sdcard">SD卡</string>
     <string name="internal_sdcard">手机存储</string>
@@ -209,4 +209,15 @@
      
      <string name="clear_history">清空记录</string>
      <string name="clear_history_tip">该操作将删除所有传输记录</string>
+     <string name="clear_history_only">清空记录</string>
+     <string name="clear_history_file">清空记录及文件</string>
+     <string name="clear_history_file_tip">该操作将删除所有传输记录及接收自朋友的文件</string>
+     
+     <string name="dialog_select_type">选择文件类型</string>
+     <string name="dialog_type_text">文本</string>
+     <string name="dialog_type_audio">音频</string>
+     <string name="dialog_type_video">视频</string>
+     <string name="dialog_type_image">图像</string>
+     
+     <string name="deleting">正在删除...</string>
 </resources>

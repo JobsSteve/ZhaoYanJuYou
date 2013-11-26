@@ -12,10 +12,11 @@ import com.zhaoyan.common.view.BadgeView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.activity.AudioActivity;
-import com.zhaoyan.juyou.activity.ClassifyActivity;
+import com.zhaoyan.juyou.activity.FileCategoryActivity;
 import com.zhaoyan.juyou.activity.FileBrowserActivity;
 import com.zhaoyan.juyou.activity.GameActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
+import com.zhaoyan.juyou.activity.ImageActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
 import com.zhaoyan.juyou.common.HistoryManager;
 import com.zhaoyan.juyou.provider.JuyouData;
@@ -90,6 +91,12 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		
 		View apkView = view.findViewById(R.id.rl_guanjia_file_apk);
 		apkView.setOnClickListener(this);
+		
+		View photoView = view.findViewById(R.id.rl_guanjia_photo);
+		photoView.setOnClickListener(this);
+		
+		View galleryView = view.findViewById(R.id.rl_guanjia_picture);
+		galleryView.setOnClickListener(this);
 	}
 
 	@Override
@@ -115,18 +122,28 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			break;
 		case R.id.rl_guanjia_file_document:
 			Bundle docBundle = new Bundle();
-			docBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_DOC);
-			openActivity(ClassifyActivity.class, docBundle);
+			docBundle.putInt(FileCategoryActivity.CATEGORY_TYPE, FileCategoryActivity.TYPE_DOC);
+			openActivity(FileCategoryActivity.class, docBundle);
 			break;
 		case R.id.rl_guanjia_file_compressed:
 			Bundle archiveBundle = new Bundle();
-			archiveBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_ARCHIVE);
-			openActivity(ClassifyActivity.class, archiveBundle);
+			archiveBundle.putInt(FileCategoryActivity.CATEGORY_TYPE, FileCategoryActivity.TYPE_ARCHIVE);
+			openActivity(FileCategoryActivity.class, archiveBundle);
 			break;
 		case R.id.rl_guanjia_file_apk:
 			Bundle apkBundle = new Bundle();
-			apkBundle.putInt(ClassifyActivity.CLASSIFY_TYPE, ClassifyActivity.TYPE_APK);
-			openActivity(ClassifyActivity.class, apkBundle);
+			apkBundle.putInt(FileCategoryActivity.CATEGORY_TYPE, FileCategoryActivity.TYPE_APK);
+			openActivity(FileCategoryActivity.class, apkBundle);
+			break;
+		case R.id.rl_guanjia_photo:
+			Bundle photoBundle = new Bundle();
+			photoBundle.putInt(ImageActivity.IMAGE_TYPE, ImageActivity.TYPE_PHOTO);
+			openActivity(ImageActivity.class, photoBundle);
+			break;
+		case R.id.rl_guanjia_picture:
+			Bundle galleryBundle = new Bundle();
+			galleryBundle.putInt(ImageActivity.IMAGE_TYPE, ImageActivity.TYPE_GALLERY);
+			openActivity(ImageActivity.class, galleryBundle);
 			break;
 
 		default:

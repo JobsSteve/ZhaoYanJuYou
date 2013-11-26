@@ -7,12 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,7 +20,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
@@ -30,7 +27,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 
 public class FileInfoManager {
-	private static final String TAG = FileInfoManager.class.getName();
+	private static final String TAG = "FileInfoManager";
 	public static final int TEXT = 0x01;
 	public static final int HTML = 0x02;
 	public static final int WORD = 0x03;
@@ -58,154 +55,6 @@ public class FileInfoManager {
 	public static final String ARCHIVE_NUM = "archive_num";
 
 	public FileInfoManager() {
-	}
-
-	/**
-	 * android获取一个用于打开Audio文件的Intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getAudioFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra("oneshot", 0);
-		intent.putExtra("configchange", 0);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "audio/*");
-		return intent;
-	}
-
-	/**
-	 * 获取一个打开文本文件的Intent
-	 * 
-	 * @param param
-	 *            file path
-	 * */
-	public static Intent getTextFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "text/plain");
-		return intent;
-	}
-
-	/**
-	 * android获取一个用于打开PPT文件的intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getPptFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "application/vnd.ms-powerpoint");
-		return intent;
-	}
-
-	/**
-	 * android获取一个用于打开Excel文件的intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getExcelFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "application/vnd.ms-excel");
-		return intent;
-	}
-
-	/**
-	 * android获取一个用于打开Word文件的intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getWordFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "application/msword");
-		return intent;
-	}
-
-	/**
-	 * android获取一个用于打开PDF文件的intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getPdfFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "application/pdf");
-		return intent;
-	}
-
-	/**
-	 * android获取一个用于打开Image文件的Intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getImageFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "image/*");
-		return intent;
-	}
-
-	/**
-	 * android获取一个用于打开VIDEO文件的Intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getVIDEOFileIntent(String param) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra("oneshot", 0);
-		intent.putExtra("configchange", 0);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "video/*");
-		return intent;
-	}
-
-	/**
-	 * android获取一个用于打开apk文件的intent
-	 * 
-	 * @param param
-	 *            file path
-	 * @return
-	 */
-	public static Intent getApkFileIntent(String param) {
-		Intent intent = new Intent();
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.setAction(android.content.Intent.ACTION_VIEW);
-		Uri uri = Uri.fromFile(new File(param));
-		intent.setDataAndType(uri, "application/vnd.android.package-archive");
-		return intent;
 	}
 
 	// 判断文件类型，根据不同类型设置图标
@@ -404,68 +253,6 @@ public class FileInfoManager {
 		return false;
 	}
 
-	/**
-	 * open file
-	 * 
-	 * @param filePath
-	 *            file path
-	 */
-	public void openFile(Context context, String filePath) {
-		Intent intent = null;
-
-		// 根据不同的文件，执行不同的打开方式
-		// 根据文件名来判断文件类型，设置不同的图标
-		int result = fileFilter(context, filePath);
-		switch (result) {
-		case TEXT:
-			intent = getTextFileIntent(filePath);
-			break;
-		case IMAGE:
-			intent = getImageFileIntent(filePath);
-			break;
-		case AUDIO:
-			intent = getAudioFileIntent(filePath);
-			break;
-		case VIDEO:
-			intent = getVIDEOFileIntent(filePath);
-			break;
-		case WORD:
-			intent = getWordFileIntent(filePath);
-			break;
-		case PPT:
-			intent = getPptFileIntent(filePath);
-			break;
-		case EXCEL:
-			intent = getExcelFileIntent(filePath);
-			break;
-		case PDF:
-			intent = getPdfFileIntent(filePath);
-			break;
-		case ARCHIVE:
-			// 待实现
-			break;
-		case APK:
-			intent = getApkFileIntent(filePath);
-			break;
-		default:
-			// 默认
-			break;
-		}
-		// open
-		if (intent != null) {
-			try {
-				context.startActivity(intent);
-			} catch (ActivityNotFoundException e) {
-				Log.e(TAG, e.toString());
-				Toast.makeText(context, R.string.open_file_fail,
-						Toast.LENGTH_SHORT).show();
-			}
-		} else {
-			Toast.makeText(context, R.string.open_file_fail,
-					Toast.LENGTH_SHORT).show();
-		}
-	}
-
 	public boolean deleteFile(String filePath) {
 		File file = new File(filePath);
 		return deleteFile(file);
@@ -480,13 +267,12 @@ public class FileInfoManager {
 	public boolean deleteFileInMediaStore(Context context, Uri uri, String path) {
 		Log.d(TAG, "deleteFileInMediaStore:" + path);
 		if (TextUtils.isEmpty(path)) {
+			Log.e(TAG, "deleteFileInMediaStore path is empty");
 			return false;
 		}
 		
-		if (!deleteFile(path)) {
-			return false;
-		}
-
+		deleteFile(path);
+		
 		String where = MediaColumns.DATA + "=?";
 		String[] whereArgs = new String[] { path };
 		ContentResolver cr = context.getContentResolver();
@@ -531,6 +317,7 @@ public class FileInfoManager {
 
 	public boolean deleteFile(File file) {
 		if (!file.exists()) {
+			Log.e(TAG, "file:" + file.getAbsolutePath() + " is not exist");
 			return false;
 		}
 

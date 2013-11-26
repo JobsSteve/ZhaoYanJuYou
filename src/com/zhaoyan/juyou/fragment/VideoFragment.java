@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.VideoCursorAdapter;
@@ -199,7 +200,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			cursor.moveToPosition(position);
 			String url = cursor.getString(cursor
 					.getColumnIndex(MediaStore.Video.Media.DATA)); // 文件路径
-			mFileInfoManager.openFile(getActivity().getApplicationContext(), url);
+			IntentBuilder.viewFile(getActivity(), url);
 		}else {
 			mAdapter.setSelected(position);
 			mAdapter.notifyDataSetChanged();
@@ -274,7 +275,6 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			//start delete file from delete list
 			for (int i = 0; i < deleteList.size(); i++) {
 				File file = new File(deleteList.get(i));
-				mDeleteDialog.setProgress(i + 1, file.getName());
 				doDelete(deleteList.get(i));
 			}
 			return null;

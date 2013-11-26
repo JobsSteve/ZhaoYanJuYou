@@ -25,7 +25,7 @@ import android.os.IBinder;
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.AppUtil;
 import com.dreamlink.communication.lib.util.Notice;
-import com.zhaoyan.common.file.APKFile;
+import com.zhaoyan.common.file.APKUtil;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.file.SingleMediaScanner;
 import com.zhaoyan.common.util.Log;
@@ -215,7 +215,7 @@ public class FileTransferService extends Service implements
 					getApplicationContext(), file)) {
 				byte[] fileIcon = FileTransferInfo
 						.bitmapToByteArray(FileTransferInfo
-								.drawableToBitmap(APKFile.getApkIcon(
+								.drawableToBitmap(APKUtil.getApkIcon2(
 										getApplicationContext(),
 										file.getAbsolutePath())));
 				historyInfo.setIcon(fileIcon);

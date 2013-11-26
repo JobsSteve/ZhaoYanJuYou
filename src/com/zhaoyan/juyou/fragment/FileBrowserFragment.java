@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.juyou.R;
@@ -286,7 +287,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					browserTo(new File(selectedFileInfo.filePath));
 				} else {
 					// open file
-					mFileInfoManager.openFile(getActivity().getApplicationContext(), selectedFileInfo.filePath);
+//					mFileInfoManager.openFile(getActivity().getApplicationContext(), selectedFileInfo.filePath);
+					IntentBuilder.viewFile(getActivity(), selectedFileInfo.filePath);
 				}
 			}
 		}
@@ -455,7 +457,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			}
 
 			for (int i = 0; i < deleteList.size(); i++) {
-				mDeleteDialog.setProgress(i + 1, deleteList.get(i).getName());
 				doDelete(getActivity().getApplicationContext(), deleteList.get(i));
 				int position = positionList.get(i) - i;
 				Message message = mHandler.obtainMessage();

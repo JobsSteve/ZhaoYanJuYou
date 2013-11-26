@@ -6,7 +6,8 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.zhaoyan.juyou.activity.ClassifyActivity;
+import com.zhaoyan.common.util.LogFile;
+import com.zhaoyan.juyou.activity.FileCategoryActivity;
 
 import android.content.Context;
 
@@ -15,12 +16,12 @@ import android.content.Context;
  * multiple threads.
  * 
  */
-public class FileClassifyScanner {
+public class FileCategoryScanner {
 	private String[] mFilterType;
 	private int mType = -1;
 	private File mRootDir;
 	private Context mContext;
-	private FileClassifyScanListener mListener;
+	private FileCategoryScanListener mListener;
 	private FileInfoManager mFileInfoManager;
 	private Vector<FileInfo> mFileInfos;
 	private int mScanningDirCount = 0;
@@ -38,11 +39,11 @@ public class FileClassifyScanner {
 	 * @param filterType
 	 *            null means all type.
 	 */
-	public FileClassifyScanner(Context context, File rootDir,
+	public FileCategoryScanner(Context context, File rootDir,
 			String[] filterType, int type) {
 		if (!rootDir.isDirectory()) {
 			throw new IllegalArgumentException(
-					"FileClassifyScanner, rootDir must be a directory.");
+					"FileCategoryScanner, rootDir must be a directory.");
 		}
 		mContext = context.getApplicationContext();
 		mFileInfoManager = new FileInfoManager();
@@ -78,7 +79,7 @@ public class FileClassifyScanner {
 		}
 	}
 
-	public void setScanListener(FileClassifyScanListener listener) {
+	public void setScanListener(FileCategoryScanListener listener) {
 		mListener = listener;
 	}
 
@@ -99,9 +100,12 @@ public class FileClassifyScanner {
 			if (files != null) {
 				for (File file : files) {
 					if (file.isDirectory()) {
-						scanDir(file);
+						//do not load juyou log file
+						if (!LogFile.LOG_FOLDER_NAME.equals(file.getAbsolutePath())) {
+							scanDir(file);
+						}
 					} else {
-						classifyFile(file);
+						CategoryFile(file);
 					}
 				}
 			}
@@ -114,7 +118,7 @@ public class FileClassifyScanner {
 		mExecutorService.execute(new ScanRunnable(dir));
 	}
 
-	private void classifyFile(File file) {
+	private void CategoryFile(File file) {
 		String name = file.getName();
 		boolean isMatched = false;
 		if (mFilterType != null) {
@@ -144,7 +148,7 @@ public class FileClassifyScanner {
 	private void scanDirAllFinish() {
 		mIsScanning = false;
 		try {
-			if (ClassifyActivity.TYPE_APK == mType) {
+			if (FileCategoryActivity.TYPE_APK == mType) {
 				Collections.sort(mFileInfos, FileInfo.getNameComparator());
 			}else {
 				Collections.sort(mFileInfos, FileInfo.getDateComparator());
@@ -157,7 +161,7 @@ public class FileClassifyScanner {
 		mExecutorService.shutdown();
 	}
 
-	public interface FileClassifyScanListener {
+	public interface FileCategoryScanListener {
 		/**
 		 * Scan is started. Notice, this method runs in the same thread with the
 		 * invoker.
