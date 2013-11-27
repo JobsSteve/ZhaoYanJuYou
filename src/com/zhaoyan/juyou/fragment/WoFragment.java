@@ -1,8 +1,8 @@
 package com.zhaoyan.juyou.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +11,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AccountSettingActivity;
 import com.zhaoyan.juyou.activity.TrafficStatisticsActivity;
@@ -20,6 +20,7 @@ import com.zhaoyan.juyou.activity.TrafficStatisticsActivity;
 public class WoFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "WoFragment";
 	private View mUserInfoSettingView;
+	private Bitmap mHeadBitmap;
 	private ImageView mHeadImageView;
 	private TextView mNickNameTextView;
 	private TextView mAccountTextView;
@@ -54,22 +55,32 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 	}
 
 	private void updateUserInfo() {
-		User user = UserHelper.loadLocalUser(mContext);
-		int headId = user.getHeadId();
-		if (headId != User.ID_NOT_PRE_INSTALL_HEAD) {
+		UserInfo userInfo = UserHelper.loadLocalUser(mContext);
+		int headId = userInfo.getHeadId();
+		if (headId != UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
 			mHeadImageView.setImageResource(UserHelper
 					.getHeadImageResource(headId));
 		} else {
-			// TODO
-			mHeadImageView.setImageResource(UserHelper.getHeadImageResource(0));
+			releaseHeadBitmap();
+			mHeadBitmap = userInfo.getHeadBitmap();
+			mHeadImageView.setImageBitmap(mHeadBitmap);
 		}
 
-		mNickNameTextView.setText(user.getUserName());
+		mNickNameTextView.setText(userInfo.getUser().getUserName());
+	}
+
+	private void releaseHeadBitmap() {
+		if (mHeadBitmap != null) {
+			mHeadImageView.setImageDrawable(null);
+			mHeadBitmap.recycle();
+			mHeadBitmap = null;
+		}
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
+		releaseHeadBitmap();
 	}
 
 	@Override

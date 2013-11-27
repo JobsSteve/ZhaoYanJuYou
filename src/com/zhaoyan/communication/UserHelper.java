@@ -3,15 +3,13 @@ package com.zhaoyan.communication;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
-import android.text.TextUtils;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.dreamlink.communication.aidl.User;
-import com.zhaoyan.common.util.SharedPreferenceUtil;
+import com.zhaoyan.common.util.BitmapUtilities;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.provider.JuyouData;
 
@@ -42,9 +40,9 @@ public class UserHelper {
 	 */
 	public static String getUserName(Context context) {
 		String name = null;
-		User user = loadLocalUser(context);
-		if (user != null) {
-			name = user.getUserName();
+		UserInfo userInfo = loadLocalUser(context);
+		if (userInfo != null) {
+			name = userInfo.getUser().getUserName();
 		}
 		return name;
 	}
@@ -58,31 +56,41 @@ public class UserHelper {
 	 */
 	@Deprecated
 	public static User loadUser(Context context) {
-		User user = loadLocalUser(context);
-		if (user == null) {
-			user = new User();
+		UserInfo userInfo = loadLocalUser(context);
+		if (userInfo == null) {
+			User user = new User();
 			user.setUserName(KEY_NAME_DEFAULT);
 		}
-		return user;
+		return userInfo.getUser();
 	}
 
-	private static User getUserFromCursor(Cursor cursor) {
+	private static UserInfo getUserFromCursor(Cursor cursor) {
+		// get user.
 		User user = new User();
 		int id = cursor.getInt(cursor.getColumnIndex(JuyouData.User.USER_ID));
 		String name = cursor.getString(cursor
 				.getColumnIndex(JuyouData.User.USER_NAME));
-		int headID = cursor.getInt(cursor
-				.getColumnIndex(JuyouData.User.HEAD_ID));
-		int type = cursor.getInt(cursor.getColumnIndex(JuyouData.User.TYPE));
 		user.setUserID(id);
 		user.setUserName(name);
-		user.setHeadId(headID);
+
+		// get user info
+		UserInfo userInfo = new UserInfo();
+		userInfo.setUser(user);
+
+		int headID = cursor.getInt(cursor
+				.getColumnIndex(JuyouData.User.HEAD_ID));
+		byte[] headData = cursor.getBlob(cursor
+				.getColumnIndex(JuyouData.User.HEAD_DATA));
+		int type = cursor.getInt(cursor.getColumnIndex(JuyouData.User.TYPE));
+
+		userInfo.setHeadId(headID);
+		userInfo.setHeadBitmap(BitmapUtilities.byteArrayToBitmap(headData));
 		if (type == JuyouData.User.TYPE_LOCAL) {
-			user.setIsLocal(true);
+			userInfo.setIsLocal(true);
 		} else {
-			user.setIsLocal(false);
+			userInfo.setIsLocal(false);
 		}
-		return user;
+		return userInfo;
 	}
 
 	/**
@@ -91,8 +99,8 @@ public class UserHelper {
 	 * @param context
 	 * @return
 	 */
-	public static User loadLocalUser(Context context) {
-		User user = null;
+	public static UserInfo loadLocalUser(Context context) {
+		UserInfo userInfo = null;
 
 		ContentResolver contentResolver = context.getContentResolver();
 		String selection = JuyouData.User.TYPE + "="
@@ -106,7 +114,7 @@ public class UserHelper {
 					Log.d(TAG, "No Local user");
 				} else if (count == 1) {
 					if (cursor.moveToFirst()) {
-						user = getUserFromCursor(cursor);
+						userInfo = getUserFromCursor(cursor);
 					}
 				} else {
 					throw new IllegalStateException(TAG
@@ -119,15 +127,20 @@ public class UserHelper {
 			}
 		}
 
-		return user;
+		return userInfo;
 	}
 
 	/**
-	 * Save use info to database
+	 * Save the user as local user.
 	 * 
-	 * @param user
+	 * @param context
+	 * @param userInfo
 	 */
-	public static void saveUser(Context context, User user) {
+	public static void saveLocalUser(Context context, UserInfo userInfo) {
+		if (!userInfo.isLocal()) {
+			throw new IllegalArgumentException(
+					"saveLocalUser, this user is not local user.");
+		}
 		ContentResolver contentResolver = context.getContentResolver();
 		String selection = JuyouData.User.TYPE + "="
 				+ JuyouData.User.TYPE_LOCAL;
@@ -138,12 +151,12 @@ public class UserHelper {
 				int count = cursor.getCount();
 				if (count == 0) {
 					Log.d(TAG, "No Local user");
-					addUserToDatabase(context, user);
+					addUserToDatabase(context, userInfo);
 				} else if (count == 1) {
 					if (cursor.moveToFirst()) {
 						int id = cursor.getInt(cursor
 								.getColumnIndex(JuyouData.User._ID));
-						updateUserToDatabase(context, user, id);
+						updateUserToDatabase(context, userInfo, id);
 					} else {
 						throw new IllegalStateException(TAG
 								+ " saveUser moveToFirst() error.");
@@ -158,44 +171,43 @@ public class UserHelper {
 				cursor.close();
 			}
 		}
-
-		User originalUser = loadLocalUser(context);
-		if (originalUser == null) {
-
-		}
-		if (!TextUtils.isEmpty(user.getUserName())) {
-			SharedPreferences sharedPreferences = SharedPreferenceUtil
-					.getSharedPreference(context);
-			Editor editor = sharedPreferences.edit();
-			editor.putString(KEY_NAME, user.getUserName());
-			editor.commit();
-		} else {
-			Log.d(TAG, "saveUser: user name is empty, abort.");
-		}
 	}
 
-	private static void updateUserToDatabase(Context context, User user, int id) {
+	private static void updateUserToDatabase(Context context,
+			UserInfo userInfo, int id) {
 		ContentResolver contentResolver = context.getContentResolver();
 		String selection = JuyouData.User._ID + "=" + id;
 		contentResolver.update(JuyouData.User.CONTENT_URI,
-				getContentValuesFromUser(user), selection, null);
+				getContentValuesFromUserInfo(userInfo), selection, null);
+
 	}
 
-	private static ContentValues getContentValuesFromUser(User user) {
+	private static void addUserToDatabase(Context context, UserInfo userInfo) {
+		ContentResolver contentResolver = context.getContentResolver();
+		contentResolver.insert(JuyouData.User.CONTENT_URI,
+				getContentValuesFromUserInfo(userInfo));
+
+	}
+
+	private static ContentValues getContentValuesFromUserInfo(UserInfo userInfo) {
 		ContentValues values = new ContentValues();
-		values.put(JuyouData.User.USER_ID, user.getHeadId());
-		values.put(JuyouData.User.USER_NAME, user.getUserName());
-		values.put(JuyouData.User.HEAD_ID, user.getHeadId());
-		int type = user.isLocal() ? JuyouData.User.TYPE_LOCAL
+		values.put(JuyouData.User.USER_ID, userInfo.getUser().getUserID());
+		values.put(JuyouData.User.USER_NAME, userInfo.getUser().getUserName());
+		values.put(JuyouData.User.HEAD_ID, userInfo.getHeadId());
+
+		Bitmap headBitmap = userInfo.getHeadBitmap();
+		if (headBitmap == null) {
+			values.put(JuyouData.User.HEAD_DATA, new byte[] {});
+		} else {
+			values.put(JuyouData.User.HEAD_DATA, BitmapUtilities
+					.bitmapToByteArray(userInfo.getHeadBitmap(),
+							Bitmap.CompressFormat.JPEG));
+		}
+
+		int type = userInfo.isLocal() ? JuyouData.User.TYPE_LOCAL
 				: JuyouData.User.TYPE_REMOTE;
 		values.put(JuyouData.User.TYPE, type);
 		return values;
-	}
-
-	private static void addUserToDatabase(Context context, User user) {
-		ContentResolver contentResolver = context.getContentResolver();
-		contentResolver.insert(JuyouData.User.CONTENT_URI,
-				getContentValuesFromUser(user));
 	}
 
 	public static byte[] encodeUser(User user) {

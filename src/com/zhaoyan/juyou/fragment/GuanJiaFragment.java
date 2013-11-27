@@ -57,7 +57,6 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		IntentFilter filter = new IntentFilter(FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE);
 		mGuanjiaReceiver = new GuanjiaReceiver();
@@ -86,11 +85,6 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		}else {
 			badgeView.hide();
 		}
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
 	}
 	
 	public void initView(View view){
