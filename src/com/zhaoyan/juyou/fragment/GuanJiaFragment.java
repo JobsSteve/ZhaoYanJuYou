@@ -48,6 +48,14 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	}
 	
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		IntentFilter filter = new IntentFilter(FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE);
+		mGuanjiaReceiver = new GuanjiaReceiver();
+		getActivity().getApplicationContext().registerReceiver(mGuanjiaReceiver, filter);
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.guanjia_fragment, container, false);
@@ -60,14 +68,6 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		IntentFilter filter = new IntentFilter(FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE);
-		mGuanjiaReceiver = new GuanjiaReceiver();
-		getActivity().getApplicationContext().registerReceiver(mGuanjiaReceiver, filter);
 	}
 	
 	public void initView(View view){
