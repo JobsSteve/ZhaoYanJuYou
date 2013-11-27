@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.ImageActivity;
 import com.zhaoyan.juyou.activity.InviteActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
+import com.zhaoyan.juyou.common.ZYConstant.Extra;
 
 
 public class GuanJiaFragment extends BaseFragment implements OnClickListener {
@@ -32,19 +35,35 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	
 	//items
 	private BadgeView badgeView;
+	private SharedPreferences sp;
+	private static final String SHOW_BADGEVIEW = "show_badgeview";
 	
 	class GuanjiaReceiver extends BroadcastReceiver{
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			Log.d(TAG, "onReceive:action=" + action);
 			boolean show = intent.getBooleanExtra(FileTransferService.EXTRA_BADGEVIEW_SHOW, false);
+			Log.d(TAG, "onReceive:action=" + action);
 			if (show) {
 				badgeView.show();
 			}else {
 				badgeView.hide();
 			}
+			Editor editor = sp.edit();
+			editor.putBoolean(SHOW_BADGEVIEW, show);
+			editor.commit();
 		}
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		IntentFilter filter = new IntentFilter(FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE);
+		mGuanjiaReceiver = new GuanjiaReceiver();
+		getActivity().getApplicationContext().registerReceiver(mGuanjiaReceiver, filter);
+		
+		sp = getActivity().getApplicationContext().getSharedPreferences(Extra.SHARED_PERFERENCE_NAME, Context.MODE_PRIVATE);
 	}
 	
 	@Override
@@ -60,14 +79,18 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		//need update whether show badgeview at histroy view
+		boolean showBadgeView = sp.getBoolean(SHOW_BADGEVIEW, false);
+		if (showBadgeView) {
+			badgeView.show();
+		}else {
+			badgeView.hide();
+		}
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		IntentFilter filter = new IntentFilter(FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE);
-		mGuanjiaReceiver = new GuanjiaReceiver();
-		getActivity().getApplicationContext().registerReceiver(mGuanjiaReceiver, filter);
 	}
 	
 	public void initView(View view){
@@ -168,6 +191,10 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		}
 	}
 	
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+	}
 	
 	@Override
 	public void onDestroy() {
