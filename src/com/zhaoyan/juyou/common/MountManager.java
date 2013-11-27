@@ -106,8 +106,13 @@ public class MountManager {
 	 */
 	public static  boolean isSdcardMounted(){
 		String state = Environment.getExternalStorageState();
-		Log.d(TAG, "isSdcardMounted:" + state + "\n" + Environment.getExternalStorageDirectory().getAbsolutePath());
-		return Environment.MEDIA_MOUNTED.equals(state);
+		String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+		File file = new File(sdcardPath);
+		if (Environment.MEDIA_MOUNTED.equals(state) && file.listFiles().length < 0) {
+			return false;
+		}
+		Log.d(TAG, "isSdcardMounted:" + state + "\n" + sdcardPath);
+		return true;
 	}
 	
 	/**

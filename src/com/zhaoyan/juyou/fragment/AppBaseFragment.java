@@ -115,12 +115,20 @@ public class AppBaseFragment extends BaseFragment{
     @SuppressWarnings("unchecked")
 	protected void showBackupDialog(List<String> packageList){
     	Log.d(TAG, "Environment.getExternalStorageState():" + Environment.getExternalStorageState());
-    	if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-			mNotice.showToast(R.string.no_sdcard);
+    	String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+    	if (path.isEmpty()) {
+    		mNotice.showToast(R.string.no_sdcard);
 			return;
 		}
+    	
+    	File file = new File(path);
+    	if (null == file.listFiles() || file.listFiles().length < 0) {
+    		mNotice.showToast(R.string.no_sdcard);
+			return;
+		}
+    	
     	final BackupAsyncTask task = new BackupAsyncTask();
-    	task.execute(packageList);
+    	
     	mMyDialog = new MyDialog(getActivity(), packageList.size());
 		mMyDialog.setTitle(R.string.backuping);
 		mMyDialog.setOnCancelListener(new OnCancelListener() {
@@ -142,6 +150,7 @@ public class AppBaseFragment extends BaseFragment{
 			}
 		});
 		mMyDialog.show();
+		task.execute(packageList);
     }
     
     private class BackupAsyncTask extends AsyncTask<List<String>, Integer, Void>{

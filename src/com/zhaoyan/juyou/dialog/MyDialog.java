@@ -44,7 +44,7 @@ public class MyDialog extends Dialog implements android.view.View.OnClickListene
 	};
 	
 	public MyDialog(Context context, int size){
-		super(context);
+		super(context, R.style.Custom_Dialog);
 		max = size;
 	}
 	
