@@ -32,15 +32,24 @@
                 android:orientation="horizontal" >
 
                 <!-- 点击该按钮，选择SD卡或手机内部存储 -->
+				<LinearLayout 
+				    android:id="@+id/ll_home"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:paddingLeft="10dp"
+				    android:paddingRight="5dp"
+				    android:background="@drawable/file_home"
+				    >
+				    
+				    <ImageView
+                        android:id="@+id/iv_home"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/ic_home"
+                        android:scaleType="fitXY" />
 
-                <ImageView
-                    android:id="@+id/iv_home"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/file_browser_home"
-                    android:scaleType="fitXY" />
-
+				</LinearLayout>
                 <com.zhaoyan.common.view.SlowHorizontalScrollView
                     android:id="@+id/navigation_bar_view"
                     android:layout_width="0dp"

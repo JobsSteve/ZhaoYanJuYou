@@ -277,15 +277,11 @@ public class ImageItemAdapter extends BaseAdapter {
 	public void setIdleFlag(boolean flag){
 		this.mIdleFlag = flag;
 	}
-
-//	private void addToLists(int pos, View view, ){
-
-//	}
 	
 	public void updateViewBackground(View view, int position){
 		boolean isSelected = mSelectArray.get(position);
 		if (isSelected) {
-			view.setBackgroundColor(mResources.getColor(R.color.holo_blue1));
+			view.setBackgroundResource(R.drawable.photo_l_frame);
 		}else {
 			view.setBackgroundResource(R.drawable.photo_l);
 		}

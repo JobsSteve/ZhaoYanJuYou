@@ -65,7 +65,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private LinearLayout mNavBarLayout;
 
 	// 快速回到根目录
-	private ImageView mHomeBtn;
+	private View mHomeView;
 
 	private TabManager mTabManager;
 	private View rootView = null;
@@ -183,8 +183,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mNavigationBar.setHorizontalScrollBarEnabled(false);
 			mTabManager = new TabManager();
 		}
-		mHomeBtn = (ImageView) rootView.findViewById(R.id.iv_home);
-		mHomeBtn.setOnClickListener(this);
+		mHomeView = rootView.findViewById(R.id.ll_home);
+		mHomeView.setOnClickListener(this);
 
 		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
 		mMenuBarView = rootView.findViewById(R.id.menubar_bottom);
@@ -231,7 +231,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.iv_home:
+		case R.id.ll_home:
 			showMenuBar(false);
 			goToHome();
 			break;
