@@ -1,8 +1,19 @@
 package com.zhaoyan.juyou.activity;
 
+import java.io.File;
+
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -19,9 +30,12 @@ import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HeadChooseAdapter;
+import com.zhaoyan.juyou.common.ZYConstant;
 
 public class AccountSettingActivity extends BaseActivity implements
 		OnClickListener, OnItemClickListener {
+	private static final String TAG = "AccountSettingActivity";
+
 	public static final String EXTRA_IS_FISRT_LAUNCH = "fist_launch";
 	private boolean mIsFisrtLaunch = false;
 
@@ -37,10 +51,15 @@ public class AccountSettingActivity extends BaseActivity implements
 	private HeadChooseAdapter mHeadChooseAdapter;
 	private int[] mHeadImages = UserHelper.HEAD_IMAGES;
 	private int mCurrentHeadId = 0;
+	private Bitmap mHeadBitmap;
 
 	private Notice mNotice;
 
 	private final String DEFAULT_NAME = android.os.Build.MANUFACTURER;
+
+	private final static int REQUEST_IMAGE = 1;
+	private final static int REQUEST_CAPTURE = 2;
+	private final static int REQUEST_RESIZE = 3;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +139,9 @@ public class AccountSettingActivity extends BaseActivity implements
 				finishWithAnimation();
 			}
 			break;
+		case R.id.btn_capture_head:
+			showCaptureDialog();
+			break;
 		default:
 			break;
 		}
@@ -133,19 +155,15 @@ public class AccountSettingActivity extends BaseActivity implements
 	}
 
 	private void saveAccount() {
-		User user = new User();
+		User user = UserHelper.loadLocalUser(this);
 		// name
 		String name = mNickNameEditText.getText().toString();
 		if (TextUtils.isEmpty(name)) {
 			name = DEFAULT_NAME;
 		}
 		user.setUserName(name);
-		// id
-		user.setUserID(0);
 		// head id
 		user.setHeadId(mCurrentHeadId);
-		// user type
-		user.setIsLocal(true);
 		// Save to database
 		UserHelper.saveUser(this, user);
 
@@ -160,6 +178,124 @@ public class AccountSettingActivity extends BaseActivity implements
 			long id) {
 		mCurrentHeadId = position;
 		mHeadImageView.setImageResource(mHeadImages[mCurrentHeadId]);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != RESULT_OK) {
+			return;
+		}
+		switch (requestCode) {
+		case REQUEST_IMAGE:
+			resizeImage(data.getData());
+			break;
+		case REQUEST_RESIZE:
+			if (data != null) {
+				Bitmap bitmap = data.getExtras().getParcelable("data");
+				saveResizedImageToHead(bitmap);
+			} else {
+				Log.e(TAG, "REQUEST_RESIZE data is null.");
+			}
+			break;
+		case REQUEST_CAPTURE:
+			resizeImage(getHeadImageUri());
+			break;
+		default:
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void saveResizedImageToHead(Bitmap bitmap) {
+		releaseHeadBitmap();
+		mHeadBitmap = bitmap;
+		Drawable drawable = new BitmapDrawable(getResources(), mHeadBitmap);
+		mHeadImageView.setImageDrawable(drawable);
+		mCurrentHeadId = User.ID_NOT_PRE_INSTALL_HEAD;
+	}
+
+	private void releaseHeadBitmap() {
+		if (mHeadBitmap != null) {
+			mHeadImageView.setImageDrawable(null);
+			mHeadBitmap.recycle();
+			mHeadBitmap = null;
+		}
+	}
+
+	public void showCaptureDialog() {
+		AlertDialog dialog = new AlertDialog.Builder(this)
+				.setTitle(R.string.customize_head)
+				.setItems(R.array.customize_head_list,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+
+								switch (which) {
+								case 0:
+									// capture new picture.
+									captureHead();
+									break;
+								case 1:
+									// select from picture.
+									selectHead();
+									break;
+
+								default:
+									break;
+								}
+							}
+
+						}).create();
+		dialog.show();
+	}
+
+	private void selectHead() {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setType("image/*");
+		try {
+			startActivityForResult(intent, REQUEST_IMAGE);
+		} catch (ActivityNotFoundException e) {
+			Log.e(TAG, "selectHead error. " + e);
+			mNotice.showToast("ActivityNotFoundException");
+		}
+
+	}
+
+	private void resizeImage(Uri uri) {
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		intent.putExtra("crop", "true");
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		intent.putExtra("outputX", 150);
+		intent.putExtra("outputY", 150);
+		intent.putExtra("return-data", true);
+		try {
+			startActivityForResult(intent, REQUEST_RESIZE);
+		} catch (ActivityNotFoundException e) {
+			Log.e(TAG, "resizeImage error. " + e);
+			mNotice.showToast("ActivityNotFoundException");
+		}
+	}
+
+	private void captureHead() {
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, getHeadImageUri());
+		try {
+			startActivityForResult(intent, REQUEST_CAPTURE);
+		} catch (ActivityNotFoundException e) {
+			Log.e(TAG, "captureHead error. " + e);
+			mNotice.showToast("ActivityNotFoundException");
+		}
+	}
+
+	private Uri getHeadImageUri() {
+		File dir = new File(ZYConstant.JUYOU_FOLDER + "/head/");
+		dir.mkdirs();
+		File file = new File(dir, "juyou_head.jpg");
+		return Uri.fromFile(file);
 	}
 
 }

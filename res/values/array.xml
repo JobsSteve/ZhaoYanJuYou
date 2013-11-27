@@ -108,4 +108,9 @@
         <item>@string/delete_history_and_received_file</item>
     </string-array>
     
+    <string-array name="customize_head_list">
+        <item>@string/capture_picture</item>
+        <item>@string/choose_picture</item>
+    </string-array>
+    
 </resources>
