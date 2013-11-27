@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HeadChooseAdapter;
@@ -75,29 +76,37 @@ public class AccountSettingActivity extends BaseActivity implements
 
 		setUserInfo();
 	}
-
+	
 	private void setUserInfo() {
-		User user = UserHelper.loadLocalUser(this);
+		UserInfo userInfo = UserHelper.loadLocalUser(this);
 
-		if (user == null) {
+		if (userInfo == null) {
+			// There is no local user saved before.
 			mNickNameEditText.setText(DEFAULT_NAME);
 			mCurrentHeadId = 0;
 			mHeadImageView.setImageResource(mHeadImages[mCurrentHeadId]);
 		} else {
-			String name = user.getUserName();
+			// There is local user.
+			String name = userInfo.getUser().getUserName();
 			if (!TextUtils.isEmpty(name)) {
 				mNickNameEditText.setText(name);
 			} else {
 				mNickNameEditText.setText(DEFAULT_NAME);
 			}
 
-			int headId = user.getHeadId();
-			if (headId != User.ID_NOT_PRE_INSTALL_HEAD) {
-				mCurrentHeadId = headId;
-				mHeadImageView.setImageResource(mHeadImages[mCurrentHeadId]);
+			int headId = userInfo.getHeadId();
+			mCurrentHeadId = headId;
+			if (headId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
+				releaseHeadBitmap();
+				mHeadBitmap = userInfo.getHeadBitmap();
+				BitmapDrawable bitmapDrawable = new BitmapDrawable(
+						getResources(), mHeadBitmap);
+				mHeadImageView.setImageDrawable(bitmapDrawable);
+			} else {
+				mHeadImageView.setImageResource(UserHelper
+						.getHeadImageResource(headId));
 			}
 		}
-
 	}
 
 	private void initView() {
@@ -122,28 +131,36 @@ public class AccountSettingActivity extends BaseActivity implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_save:
-			saveAccount();
-			setResult(RESULT_OK);
-			if (mIsFisrtLaunch) {
-				launchMain();
-				finish();
-			} else {
-				finishWithAnimation();
-			}
+			saveAndQuit();
 			break;
 		case R.id.btn_cancel:
-			setResult(RESULT_CANCELED);
-			if (mIsFisrtLaunch) {
-				finish();
-			} else {
-				finishWithAnimation();
-			}
+			cancelAndQuit();
 			break;
 		case R.id.btn_capture_head:
 			showCaptureDialog();
 			break;
 		default:
 			break;
+		}
+	}
+
+	private void cancelAndQuit() {
+		setResult(RESULT_CANCELED);
+		if (mIsFisrtLaunch) {
+			finish();
+		} else {
+			finishWithAnimation();
+		}
+	}
+
+	private void saveAndQuit() {
+		saveAccount();
+		setResult(RESULT_OK);
+		if (mIsFisrtLaunch) {
+			launchMain();
+			finish();
+		} else {
+			finishWithAnimation();
 		}
 	}
 
@@ -155,21 +172,30 @@ public class AccountSettingActivity extends BaseActivity implements
 	}
 
 	private void saveAccount() {
-		User user = UserHelper.loadLocalUser(this);
+		UserInfo userInfo = UserHelper.loadLocalUser(this);
 		// name
 		String name = mNickNameEditText.getText().toString();
 		if (TextUtils.isEmpty(name)) {
 			name = DEFAULT_NAME;
 		}
-		user.setUserName(name);
+		userInfo.getUser().setUserName(name);
 		// head id
-		user.setHeadId(mCurrentHeadId);
+		userInfo.setHeadId(mCurrentHeadId);
+		if (mCurrentHeadId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			if(mHeadBitmap != null) {
+				userInfo.setHeadBitmap(mHeadBitmap);
+			} else {
+				Log.e(TAG, "saveAccount error. can not find head.");
+			}
+		} else {
+			userInfo.setHeadBitmap(null);
+		}
 		// Save to database
-		UserHelper.saveUser(this, user);
+		UserHelper.saveLocalUser(this, userInfo);
 
 		// Update UserManager.
 		UserManager userManager = UserManager.getInstance();
-		userManager.setLocalUser(user);
+		userManager.setLocalUser(userInfo.getUser());
 		mNotice.showToast(R.string.account_setting_saved_message);
 	}
 
@@ -211,7 +237,7 @@ public class AccountSettingActivity extends BaseActivity implements
 		mHeadBitmap = bitmap;
 		Drawable drawable = new BitmapDrawable(getResources(), mHeadBitmap);
 		mHeadImageView.setImageDrawable(drawable);
-		mCurrentHeadId = User.ID_NOT_PRE_INSTALL_HEAD;
+		mCurrentHeadId = UserInfo.HEAD_ID_NOT_PRE_INSTALL;
 	}
 
 	private void releaseHeadBitmap() {
@@ -296,6 +322,12 @@ public class AccountSettingActivity extends BaseActivity implements
 		dir.mkdirs();
 		File file = new File(dir, "juyou_head.jpg");
 		return Uri.fromFile(file);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		releaseHeadBitmap();
 	}
 
 }
