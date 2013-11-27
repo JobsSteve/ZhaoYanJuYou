@@ -21,6 +21,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.zhaoyan.common.view.CheckableImageView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncPictureLoader;
 import com.zhaoyan.juyou.common.ImageInfo;
@@ -191,7 +192,7 @@ public class ImageItemAdapter extends BaseAdapter {
 						lstLoadedBitmap.remove(0);
 						if (endPos + 1 < total) {
 							view = mInflater.inflate(R.layout.image_item, null);
-							ImageView imageView = (ImageView) view.findViewById(R.id.iv_picture_item);
+							ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
 							long addedId = mDataList.get(endPos+1).getImage_id();
 							pictureLoader.loadBitmap(addedId, imageView);
 							lstPosition.add(position);
@@ -203,7 +204,7 @@ public class ImageItemAdapter extends BaseAdapter {
 						lstPosition.remove(count-2);
 						if (startPos - 1 > 0) {
 							view = mInflater.inflate(R.layout.image_item, null);
-							ImageView imageView = (ImageView) view.findViewById(R.id.iv_picture_item);
+							ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
 							long addedId = mDataList.get(startPos-1).getImage_id();
 							pictureLoader.loadBitmap(addedId, imageView);
 							lstPosition.add(0,position);
@@ -219,14 +220,14 @@ public class ImageItemAdapter extends BaseAdapter {
 
 				if (lstPosition.contains(position) == false) {
 					view = mInflater.inflate(R.layout.image_item, null);
-					ImageView imageView = (ImageView) view.findViewById(R.id.iv_picture_item);
+					ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
 					pictureLoader.loadBitmap(id, imageView);
 					lstPosition.add(position);//���������	
 					lstView.add(view);//���������  
 				} else {
 					view = lstView.get(lstPosition.indexOf(position));
 					if (lstLoadedBitmap.get(lstPosition.indexOf(position))) {
-						ImageView imageView = (ImageView) view.findViewById(R.id.iv_picture_item);
+						ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
 						pictureLoader.loadBitmap(id, imageView);	
 					}
 				}
@@ -237,16 +238,17 @@ public class ImageItemAdapter extends BaseAdapter {
 				} else {
 					view = mInflater.inflate(R.layout.image_item, null);
 				}
-				ImageView imageView = (ImageView) view.findViewById(R.id.iv_picture_item);
+				CheckableImageView imageView = (CheckableImageView) view.findViewById(R.id.iv_image_item);
 				pictureLoader.loadBitmap(id, imageView);
-				updateViewBackground(view, position);
+//				updateViewBackground(view, position);
+				imageView.setChecked(mSelectArray.get(position));
 			}
 			
 		} else {
 			if (USE_VIEW_CACHE) {
 				if (lstPosition.contains(position) == false) {
 					view = mInflater.inflate(R.layout.image_item, null);		
-					ImageView imageView = (ImageView) view.findViewById(R.id.iv_picture_item);
+					ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
 					lstPosition.add(position);
 					lstView.add(view);
 					lstLoadedBitmap.add(false);
@@ -259,14 +261,15 @@ public class ImageItemAdapter extends BaseAdapter {
 				} else {
 					view = mInflater.inflate(R.layout.image_item, null);
 				}
-				ImageView imageView = (ImageView) view.findViewById(R.id.iv_picture_item);
+				CheckableImageView imageView = (CheckableImageView) view.findViewById(R.id.iv_image_item);
 				if (AsyncPictureLoader.bitmapCaches.size() >0 &&
 						AsyncPictureLoader.bitmapCaches.get(id) != null) {
 					imageView.setImageBitmap(AsyncPictureLoader.bitmapCaches.get(id).get());
 				}else {
 					imageView.setImageResource(R.drawable.photo_l);
 				}
-				updateViewBackground(view, position);
+//				updateViewBackground(view, position);
+				imageView.setChecked(mSelectArray.get(position));
 			}
 
 		}
