@@ -60,6 +60,7 @@ public class UserHelper {
 		if (userInfo == null) {
 			User user = new User();
 			user.setUserName(KEY_NAME_DEFAULT);
+			return user;
 		}
 		return userInfo.getUser();
 	}

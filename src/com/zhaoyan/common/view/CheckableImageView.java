@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.zhaoyan.juyou.R;
 
+/**模仿图库图片多项选择的效果*/
 public class CheckableImageView extends ImageView implements Checkable {
     private static final int[] CHECKED_STATE_SET = { android.R.attr.state_checked };
     private StateListDrawable stateList;
