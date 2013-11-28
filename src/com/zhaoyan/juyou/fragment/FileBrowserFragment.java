@@ -39,6 +39,7 @@ import com.zhaoyan.juyou.adapter.FileInfoAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter.ViewHolder;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.ZYConstant;
@@ -73,9 +74,11 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private FileInfo mSelectedFileInfo = null;
 	private int mTop = -1;
 
-	private FileInfoAdapter mItemAdapter = null;
 	private FileHomeAdapter mHomeAdapter = null;
 	private FileInfoManager mFileInfoManager = null;
+	
+	private FileInfoAdapter mAdapter;
+	private FileIconHelper mIconHelper;
 
 	// save all files
 	private List<FileInfo> mAllLists = new ArrayList<FileInfo>();
@@ -128,12 +131,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				updateTitleNum(-1);
 				break;
 			case MSG_UPDATE_FILE:
-				mItemAdapter.notifyDataSetChanged();
+				mAdapter.notifyDataSetChanged();
 				break;
 			case MSG_UPDATE_LIST:
-				List<FileInfo> fileList = mItemAdapter.getList();
+				List<FileInfo> fileList = mAdapter.getList();
 				fileList.remove(msg.arg1);
-				mItemAdapter.notifyDataSetChanged();
+				mAdapter.notifyDataSetChanged();
 				updateUI(fileList.size());
 				break;
 			case MSG_UPDATE_HOME:
@@ -217,7 +220,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 
 		mHomeAdapter = new FileHomeAdapter(mContext, mHomeList);
-		mItemAdapter = new FileInfoAdapter(mContext, mAllLists, mFileListView);
+		mIconHelper = new FileIconHelper(getActivity().getApplicationContext());
+		mAdapter = new FileInfoAdapter(getActivity().getApplicationContext(), mAllLists, mIconHelper);
 
 		if (mHomeList.size() <= 0) {
 			mNavBarLayout.setVisibility(View.GONE);
@@ -246,7 +250,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			Log.d(TAG, "restoreSelectedPosition.mSelectedFileInfo is null");
 			return -1;
 		} else {
-			int curSelectedItemPosition = mItemAdapter.getPosition(mSelectedFileInfo);
+			int curSelectedItemPosition = mAdapter.getPosition(mSelectedFileInfo);
 			Log.d(TAG, "restoreSelectedPosition.curSelectedItemPosition=" + curSelectedItemPosition);
 			mSelectedFileInfo = null;
 			return curSelectedItemPosition;
@@ -271,16 +275,16 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				break;
 			}
 		} else {
-			if (mItemAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
-				mItemAdapter.setSelected(position);
-				mItemAdapter.notifyDataSetChanged();
+			if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+				mAdapter.setSelected(position);
+				mAdapter.notifyDataSetChanged();
 
-				int selectedCount = mItemAdapter.getSelectedItems();
+				int selectedCount = mAdapter.getSelectedItems();
 				updateTitleNum(selectedCount);
 				updateMenuBar();
 				mMenuTabManager.refreshMenus(mActionMenu);
 			} else {
-				FileInfo selectedFileInfo = mItemAdapter.getItem(position);
+				FileInfo selectedFileInfo = mAdapter.getItem(position);
 				if (selectedFileInfo.isDir) {
 					int top = view.getTop();
 					addToNavigationList(mCurrentPath, top, selectedFileInfo);
@@ -296,8 +300,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	private void setAdapter(List<FileInfo> list) {
 		updateUI(list.size());
-		mItemAdapter.setList(list);
-		mFileListView.setAdapter(mItemAdapter);
+		mAdapter.setList(list);
+		mFileListView.setAdapter(mAdapter);
 	}
 
 	@Override
@@ -306,15 +310,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			return false;
 		}
 
-		if (mItemAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
 			doSelectAll();
 			return true;
 		} else {
-			mItemAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
 		}
-		boolean isSelected = mItemAdapter.isSelected(position);
-		mItemAdapter.setSelected(position, !isSelected);
-		mItemAdapter.notifyDataSetChanged();
+		boolean isSelected = mAdapter.isSelected(position);
+		mAdapter.setSelected(position, !isSelected);
+		mAdapter.notifyDataSetChanged();
 
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
@@ -350,13 +354,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mAllLists.addAll(mFolderLists);
 			mAllLists.addAll(mFileLists);
 
-			mItemAdapter.notifyDataSetChanged();
+			mAdapter.notifyDataSetChanged();
 			int seletedItemPosition = restoreSelectedPosition();
 			// Log.d(TAG, "seletedItemPosition:" + seletedItemPosition +
 			// ",mTop=" + mTop);
 			if (seletedItemPosition == -1) {
 				mFileListView.setSelectionAfterHeaderView();
-			} else if (seletedItemPosition >= 0 && seletedItemPosition < mItemAdapter.getCount()) {
+			} else if (seletedItemPosition >= 0 && seletedItemPosition < mAdapter.getCount()) {
 				if (mTop == -1) {
 					mFileListView.setSelection(seletedItemPosition);
 				} else {
@@ -365,7 +369,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				}
 			}
 
-			mItemAdapter.selectAll(false);
+			mAdapter.selectAll(false);
 			updateUI(mAllLists.size());
 			mTabManager.refreshTab(mCurrentPath, storge_type);
 		} else {
@@ -414,7 +418,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void showDeleteDialog(final List<Integer> posList) {
 		// get name list
 		List<String> nameList = new ArrayList<String>();
-		List<FileInfo> fileList = mItemAdapter.getList();
+		List<FileInfo> fileList = mAdapter.getList();
 		for (int position : posList) {
 			nameList.add(fileList.get(position).fileName);
 		}
@@ -444,7 +448,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 		@Override
 		protected String doInBackground(Void... params) {
-			List<FileInfo> fileList = mItemAdapter.getList();
+			List<FileInfo> fileList = mAdapter.getList();
 			List<File> deleteList = new ArrayList<File>();
 			// get delete path list
 			File file = null;
@@ -526,7 +530,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	 * do Tranfer files
 	 */
 	public void doTransfer() {
-		ArrayList<String> checkedList = (ArrayList<String>) mItemAdapter.getSelectedFilePaths();
+		ArrayList<String> checkedList = (ArrayList<String>) mAdapter.getSelectedFilePaths();
 
 		// send
 		FileTransferUtil fileTransferUtil = new FileTransferUtil(getActivity());
@@ -536,7 +540,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			public void onTransportSuccess() {
 				int first = mFileListView.getFirstVisiblePosition();
 				int last = mFileListView.getLastVisiblePosition();
-				List<Integer> checkedItems = mItemAdapter.getSelectedItemPositions();
+				List<Integer> checkedItems = mAdapter.getSelectedItemPositions();
 				ArrayList<ImageView> icons = new ArrayList<ImageView>();
 				for (int id : checkedItems) {
 					if (id >= first && id <= last) {
@@ -730,7 +734,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				FileInfo selectedFileInfo = null;
 				if (mFileListView.getCount() > 0) {
 					View view = mFileListView.getChildAt(0);
-					selectedFileInfo = mItemAdapter.getItem(mFileListView.getPositionForView(view));
+					selectedFileInfo = mAdapter.getItem(mFileListView.getPositionForView(view));
 					top = view.getTop();
 				}
 				addToNavigationList(mCurrentPath, top, selectedFileInfo);
@@ -773,16 +777,16 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		switch (scrollState) {
 		case OnScrollListener.SCROLL_STATE_FLING:
 			Log.d(TAG, "SCROLL_STATE_FLING");
-			mItemAdapter.setFlag(false);
+			mAdapter.setFlag(false);
 			break;
 		case OnScrollListener.SCROLL_STATE_IDLE:
 			Log.d(TAG, "SCROLL_STATE_IDLE");
-			mItemAdapter.setFlag(true);
-			mItemAdapter.notifyDataSetChanged();
+			mAdapter.setFlag(true);
+			mAdapter.notifyDataSetChanged();
 			break;
 		case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 			Log.d(TAG, "SCROLL_STATE_TOUCH_SCROLL");
-			mItemAdapter.setFlag(false);
+			mAdapter.setFlag(false);
 			break;
 		default:
 			break;
@@ -817,7 +821,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	@Override
 	public boolean onBackPressed() {
 		Log.d(TAG, "onBackPressed.mStatus=" + mStatus);
-		if (mItemAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		mIconHelper.stopLoader();
+		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}
@@ -863,11 +868,11 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
-			List<Integer> posList = mItemAdapter.getSelectedItemPositions();
+			List<Integer> posList = mAdapter.getSelectedItemPositions();
 			showDeleteDialog(posList);
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
-			List<FileInfo> list = mItemAdapter.getSelectedFileInfos();
+			List<FileInfo> list = mAdapter.getSelectedFileInfos();
 			mFileInfoManager.showInfoDialog(getActivity(), list);
 			showMenuBar(false);
 			break;
@@ -875,9 +880,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			doSelectAll();
 			break;
 		case ActionMenu.ACTION_MENU_RENAME:
-			List<FileInfo> renameList = mItemAdapter.getSelectedFileInfos();
+			List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
 			mFileInfoManager.showRenameDialog(getActivity(), renameList);
-			mItemAdapter.notifyDataSetChanged();
+			mAdapter.notifyDataSetChanged();
 			showMenuBar(false);
 			break;
 		default:
@@ -904,10 +909,10 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	 * update menu bar item icon and text color,enable or disable
 	 */
 	public void updateMenuBar() {
-		int selectCount = mItemAdapter.getSelectedItems();
+		int selectCount = mAdapter.getSelectedItems();
 		updateTitleNum(selectCount);
 
-		if (mItemAdapter.getCount() == selectCount) {
+		if (mAdapter.getCount() == selectCount) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.unselect_all);
 		} else {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.select_all);
@@ -918,7 +923,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
-		} else if (mItemAdapter.hasDirSelected()) {
+		} else if (mAdapter.hasDirSelected()) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
@@ -933,24 +938,24 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	// Cancle Action menu
 	public void onActionMenuDone() {
-		mItemAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
-		mItemAdapter.clearSelected();
-		mItemAdapter.notifyDataSetChanged();
+		mAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mAdapter.clearSelected();
+		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
 	 * do select all items or unselect all items
 	 */
 	public void doSelectAll() {
-		int selectedCount = mItemAdapter.getSelectedItems();
-		if (mItemAdapter.getCount() != selectedCount) {
-			mItemAdapter.selectAll(true);
+		int selectedCount = mAdapter.getSelectedItems();
+		if (mAdapter.getCount() != selectedCount) {
+			mAdapter.selectAll(true);
 		} else {
-			mItemAdapter.selectAll(false);
+			mAdapter.selectAll(false);
 		}
 		updateMenuBar();
 		mMenuTabManager.refreshMenus(mActionMenu);
-		mItemAdapter.notifyDataSetChanged();
+		mAdapter.notifyDataSetChanged();
 	}
 
 }
