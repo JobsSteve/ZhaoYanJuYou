@@ -21,36 +21,27 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.common.AsyncImageLoader;
 import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
-import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
-import com.zhaoyan.juyou.common.FileListItem;
 import com.zhaoyan.juyou.common.ZYConstant;
 
-public class FileInfoAdapter extends BaseAdapter {
+public class FileInfoAdapter2 extends BaseAdapter {
 	private static final String TAG = "FileInfoAdapter";
 	private List<FileInfo> mList = new ArrayList<FileInfo>();
 	private LayoutInflater mInflater = null;
 	private SparseBooleanArray mIsSelected = null;
 	private AsyncImageLoader bitmapLoader;
-	
-	private FileIconHelper iconHelper;
 
 	private boolean mIdleFlag = true;
 	public int mMode = ZYConstant.MENU_MODE_NORMAL;
 	private ListView mListView;
-	
-	private Context mContext;
 
-	public FileInfoAdapter(Context context, List<FileInfo> list, ListView listView) {
+	public FileInfoAdapter2(Context context, List<FileInfo> list, ListView listView) {
 		mInflater = LayoutInflater.from(context);
 		this.mList = list;
 		mIsSelected = new SparseBooleanArray();
 		bitmapLoader = new AsyncImageLoader(context);
 		mListView = listView;
-		
-		iconHelper = new FileIconHelper(context);
-		mContext = context;
 	}
 
 	/**
@@ -276,46 +267,44 @@ public class FileInfoAdapter extends BaseAdapter {
 		}
 
 		FileInfo fileInfo = mList.get(position);
-		
-		FileListItem.setupFileListItemInfo(mContext, view, fileInfo, iconHelper);
-//		holder.iconView.setTag(fileInfo.filePath);
-//		String size = ZYUtils.getFormatSize(fileInfo.fileSize);
-//		String date = ZYUtils.getFormatDate(fileInfo.fileDate);
-//		// use async thread loader bitmap
-//		if (!mIdleFlag) {
-//			if (AsyncImageLoader.bitmapCache.size() > 0
-//					&& AsyncImageLoader.bitmapCache.get(fileInfo.filePath) != null) {
-//				holder.iconView.setImageBitmap(AsyncImageLoader.bitmapCache
-//						.get(fileInfo.filePath).get());
-//			} else {
-//				setIconView(holder.iconView, fileInfo.type, fileInfo.icon);
-//			}
-//		} else {
-//			Bitmap bitmap = bitmapLoader.loadImage(fileInfo.filePath,
-//					fileInfo.type, new ILoadImageCallback() {
-//						@Override
-//						public void onObtainBitmap(Bitmap bitmap,
-//								String url) {
-//							ImageView imageView = (ImageView) mListView.findViewWithTag(url);
-//							if (null != imageView) {
-//								imageView.setImageBitmap(bitmap);
-//							}
-//						}
-//					});
-//			if (null != bitmap) {
-//				holder.iconView.setImageBitmap(bitmap);
-//			} else {
-//				setIconView(holder.iconView, fileInfo.type, fileInfo.icon);
-//			}
-//		}
-//
-//		holder.nameView.setText(fileInfo.fileName);
-//
-//		if (fileInfo.isDir) {
-//			holder.dateAndSizeView.setText(date);
-//		} else {
-//			holder.dateAndSizeView.setText(date + " | " + size);
-//		}
+		holder.iconView.setTag(fileInfo.filePath);
+		String size = ZYUtils.getFormatSize(fileInfo.fileSize);
+		String date = ZYUtils.getFormatDate(fileInfo.fileDate);
+		// use async thread loader bitmap
+		if (!mIdleFlag) {
+			if (AsyncImageLoader.bitmapCache.size() > 0
+					&& AsyncImageLoader.bitmapCache.get(fileInfo.filePath) != null) {
+				holder.iconView.setImageBitmap(AsyncImageLoader.bitmapCache
+						.get(fileInfo.filePath).get());
+			} else {
+				setIconView(holder.iconView, fileInfo.type, fileInfo.icon);
+			}
+		} else {
+			Bitmap bitmap = bitmapLoader.loadImage(fileInfo.filePath,
+					fileInfo.type, new ILoadImageCallback() {
+						@Override
+						public void onObtainBitmap(Bitmap bitmap,
+								String url) {
+							ImageView imageView = (ImageView) mListView.findViewWithTag(url);
+							if (null != imageView) {
+								imageView.setImageBitmap(bitmap);
+							}
+						}
+					});
+			if (null != bitmap) {
+				holder.iconView.setImageBitmap(bitmap);
+			} else {
+				setIconView(holder.iconView, fileInfo.type, fileInfo.icon);
+			}
+		}
+
+		holder.nameView.setText(fileInfo.fileName);
+
+		if (fileInfo.isDir) {
+			holder.dateAndSizeView.setText(date);
+		} else {
+			holder.dateAndSizeView.setText(date + " | " + size);
+		}
 
 		if (mMode == ZYConstant.MENU_MODE_EDIT) {
 			updateListViewBackground(position, view);
