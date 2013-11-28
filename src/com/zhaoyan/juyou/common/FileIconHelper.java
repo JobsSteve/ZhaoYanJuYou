@@ -46,7 +46,6 @@ public class FileIconHelper implements IconLoadFinishListener {
 
     public static int getFileIcon(String ext) {
         Integer i = fileExtToIcons.get(ext.toLowerCase());
-        Log.d(TAG, "getFileIcon:ext=" + ext + ",i=" + i);
         if (i != null) {
             return i.intValue();
         } else {
@@ -58,13 +57,10 @@ public class FileIconHelper implements IconLoadFinishListener {
     public void setIcon(FileInfo fileInfo, ImageView fileImage) {
         String filePath = fileInfo.filePath;
         String ext = FileManager.getExtFromFilename(fileInfo.fileName);
-        Log.d(TAG, "setIcon.ext:" + ext);
         FileCategory fc = FileCategoryHelper.getCategoryByName(fileInfo.fileName);
         boolean set = false;
         int id = getFileIcon(ext);
-        Log.d(TAG, "setIcon.id=" + id);
         fileImage.setImageResource(id);
-        Log.d(TAG, "setIcon.fc:" + fc);
         mIconLoader.cancelRequest(fileImage);
         switch (fc) {
             case Apk:
@@ -97,7 +93,7 @@ public class FileIconHelper implements IconLoadFinishListener {
     }
     
     public void stopLoader(){
-    	mIconLoader.stop();
+    	mIconLoader.cancelAllRequest();
     }
 
 }

@@ -197,6 +197,12 @@ public class FileIconLoader implements Callback {
     public void cancelRequest(ImageView view) {
         mPendingRequests.remove(view);
     }
+    
+    public void cancelAllRequest(){
+    	if (!mPendingRequests.isEmpty()) {
+    		mPendingRequests.clear();
+		}
+    }
 
     /**
      * Checks if the photo is present in cache. If so, sets the photo on the
