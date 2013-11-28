@@ -173,6 +173,10 @@ public class AccountSettingActivity extends BaseActivity implements
 
 	private void saveAccount() {
 		UserInfo userInfo = UserHelper.loadLocalUser(this);
+		if (null == userInfo) {
+			userInfo = new UserInfo();
+			userInfo.setUser(new User());
+		}
 		// name
 		String name = mNickNameEditText.getText().toString();
 		if (TextUtils.isEmpty(name)) {
@@ -190,6 +194,8 @@ public class AccountSettingActivity extends BaseActivity implements
 		} else {
 			userInfo.setHeadBitmap(null);
 		}
+		// user type
+		userInfo.setIsLocal(true);
 		// Save to database
 		UserHelper.saveLocalUser(this, userInfo);
 

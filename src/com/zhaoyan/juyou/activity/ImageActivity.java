@@ -353,7 +353,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 						if (id >= first && id <= last) {
 							View view = mGridView.getChildAt(id - first);
 							if (view != null) {
-								ImageView item = (ImageView) view.findViewById(R.id.iv_picture_item);
+								ImageView item = (ImageView) view.findViewById(R.id.iv_image_item);
 								icons.add(item);
 							}
 						}

@@ -31,11 +31,11 @@
             android:layout_below="@+id/title"
             android:layout_above="@+id/bottom"
             android:gravity="center"
-            android:horizontalSpacing="2dip"
+            android:horizontalSpacing="4dip"
             android:numColumns="3"
-            android:padding="2dip"
+            android:padding="4dip"
             android:stretchMode="columnWidth"
-            android:verticalSpacing="2dip"
+            android:verticalSpacing="4dip"
             android:fastScrollEnabled="true"
             android:visibility="visible" />
 

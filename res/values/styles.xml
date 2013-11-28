@@ -96,4 +96,11 @@
         <item name="android:windowEnterAnimation">@anim/activity_right_in</item>
         <item name="android:windowExitAnimation">@anim/activity_right_out</item>
     </style>
+    
+    <style name="MultiChoiceAdapter_DefaultSelectedItemStyle">
+        <item name="itemClickInActionMode">selectItem</item>
+    </style>
+    <style name="MultiChoiceAdapter_DefaultCheckableImageViewStyle">
+        <item name="android:foreground">@drawable/gallery_selector</item>
+    </style>
 </resources>

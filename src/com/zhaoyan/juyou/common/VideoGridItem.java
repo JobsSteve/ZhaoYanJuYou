@@ -42,7 +42,7 @@ public class VideoGridItem extends RelativeLayout implements Checkable {
 	@Override
 	public void setChecked(boolean checked) {
 		mChecked = checked;
-		setBackgroundDrawable(checked ? mContext.getResources().getDrawable(R.color.holo_blue2) : null);
+		setBackgroundDrawable(checked ? mContext.getResources().getDrawable(R.color.holo_blue_light) : null);
 	}
 
 	@Override
