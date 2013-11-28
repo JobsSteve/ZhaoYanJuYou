@@ -362,7 +362,6 @@ public class FileIconLoader implements Callback {
                     holder.state = ImageHolder.LOADING;
 					switch (id.mCategory) {
 					case Apk:
-						// Drawable icon = Util.getApkIcon(mContext, id.mPath);
 						Drawable icon = APKUtil.getApkIcon2(mContext, id.mPath);
 						holder.setImage(icon);
 						break;

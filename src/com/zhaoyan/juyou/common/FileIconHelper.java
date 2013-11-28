@@ -121,11 +121,12 @@ public class FileIconHelper implements IconLoadFinishListener {
     public void setIcon(FileInfo fileInfo, ImageView fileImage) {
         String filePath = fileInfo.filePath;
         String ext = FileManager.getExtFromFilename(fileInfo.fileName);
-        FileCategory fc = FileCategoryHelper.getCategoryFromPath(context, filePath);
+        Log.d(TAG, "setIcon.ext:" + ext);
+        FileCategory fc = FileCategoryHelper.getCategoryByName(context, fileInfo.fileName);
         boolean set = false;
         int id = getFileIcon(ext);
         fileImage.setImageResource(id);
-
+        Log.d(TAG, "setIcon.fc:" + fc);
         mIconLoader.cancelRequest(fileImage);
         switch (fc) {
             case Apk:

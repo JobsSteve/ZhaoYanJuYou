@@ -5,6 +5,7 @@ import java.io.File;
 import android.content.Context;
 
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 
 public class FileCategoryHelper {
@@ -22,6 +23,7 @@ public class FileCategoryHelper {
     
     public static FileCategory getCategoryByName(Context context, String fileName) {
     	String ext = FileManager.getExtFromFilename(fileName);
+    	Log.d(TAG, "getCategoryByName.ext:" + ext);
 		if (matchExts(ext, context.getResources()
 				.getStringArray(R.array.fileEndingEbook))) {
 			return FileCategory.Ebook;
@@ -55,7 +57,6 @@ public class FileCategoryHelper {
 		if (matchExts(ext, context.getResources()
 				.getStringArray(R.array.fileEndingPpt))) {
 			return  FileCategory.Ppt;
-				
 		} 
 		
 		if (matchExts(ext, context.getResources()
