@@ -18,89 +18,25 @@ public class FileIconHelper implements IconLoadFinishListener {
     private static HashMap<String, Integer> fileExtToIcons = new HashMap<String, Integer>();
 
     private FileIconLoader mIconLoader;
-    
-    private static String[] mImageExts;
-    private static String[] mAudioExts;
-    private static String[] mVideoExts;
-    private static String[] mApkExts;
-    private static String[] mEbookExts;
-    private static String[] mDocExts;
-    private static String[] mPptExts;
-    private static String[] mXlsExts;
-    private static String[] mPdfExts;
-    private static String[] mArchiveExts;
-    
-    private Context context;
 
     static {
-        addItem(FileCategory.Audio, R.drawable.icon_audio);
-        addItem(FileCategory.Video, R.drawable.icon_video);
-        addItem(FileCategory.Image, R.drawable.icon_image);
-        addItem(FileCategory.Ebook, R.drawable.icon_txt);
-        addItem(FileCategory.Doc, R.drawable.icon_doc);
-        addItem(FileCategory.Ppt, R.drawable.icon_ppt);
-        addItem(FileCategory.Xls, R.drawable.icon_xls);
-        addItem(FileCategory.Apk, R.drawable.icon_apk);
-        addItem(FileCategory.Archive, R.drawable.icon_rar);
-        addItem(FileCategory.Pdf, R.drawable.icon_pdf);
+        addItem(FileCategoryHelper.AUDIO_EXTS, R.drawable.icon_audio);
+        addItem(FileCategoryHelper.VIDEO_EXTS, R.drawable.icon_video);
+        addItem(FileCategoryHelper.IMAGE_EXTS, R.drawable.icon_image);
+        addItem(FileCategoryHelper.EBOOK_EXTS, R.drawable.icon_txt);
+        addItem(FileCategoryHelper.WORD_EXTS, R.drawable.icon_doc);
+        addItem(FileCategoryHelper.PPT_EXTS, R.drawable.icon_ppt);
+        addItem(FileCategoryHelper.EXCEL_EXTS, R.drawable.icon_xls);
+        addItem(FileCategoryHelper.APK_EXTS, R.drawable.icon_apk);
+        addItem(FileCategoryHelper.ARCHIVE_EXTS, R.drawable.icon_rar);
+        addItem(FileCategoryHelper.PDF_EXTS, R.drawable.icon_pdf);
     }
 
     public FileIconHelper(Context context) {
-    	this.context = context;
-    	
         mIconLoader = new FileIconLoader(context, this);
-        //init Exts
-        mImageExts = context.getResources().getStringArray(R.array.fileEndingImage);
-        mAudioExts = context.getResources().getStringArray(R.array.fileEndingAudio);
-        mVideoExts = context.getResources().getStringArray(R.array.fileEndingVideo);
-        mApkExts = context.getResources().getStringArray(R.array.fileEndingApk);
-        mEbookExts = context.getResources().getStringArray(R.array.fileEndingEbook);
-        mDocExts = context.getResources().getStringArray(R.array.fileEndingWord);
-        mPptExts = context.getResources().getStringArray(R.array.fileEndingPpt);
-        mXlsExts = context.getResources().getStringArray(R.array.fileEndingExcel);
-        mPdfExts = context.getResources().getStringArray(R.array.fileEndingPdf);
-        mArchiveExts = context.getResources().getStringArray(R.array.fileEndingArchive);
     }
 
-	private static void addItem(FileCategory cate, int resId) {
-		String[] exts = null;
-		switch (cate) {
-		case Image:
-			exts = mImageExts;
-			break;
-		case Audio:
-			exts = mAudioExts;
-			break;
-		case Video:
-			exts = mVideoExts;
-			break;
-		case Apk:
-			exts = mApkExts;
-			break;
-		case Ebook:
-			exts = mEbookExts;
-			break;
-		case Doc:
-			exts = mDocExts;
-			break;
-		case Ppt:
-			exts = mPptExts;
-			break;
-		case Xls:
-			exts = mXlsExts;
-			break;
-		case Pdf:
-			exts = mPdfExts;
-			break;
-		case Archive:
-			exts = mArchiveExts;
-			break;
-		case Other:
-			break;
-		default:
-			break;
-		}
-		
+	private static void addItem(String[] exts, int resId) {
 		if (exts != null) {
 			for (String ext : exts) {
 				fileExtToIcons.put(ext.toLowerCase(), resId);
@@ -110,6 +46,7 @@ public class FileIconHelper implements IconLoadFinishListener {
 
     public static int getFileIcon(String ext) {
         Integer i = fileExtToIcons.get(ext.toLowerCase());
+        Log.d(TAG, "getFileIcon:ext=" + ext + ",i=" + i);
         if (i != null) {
             return i.intValue();
         } else {
@@ -122,15 +59,20 @@ public class FileIconHelper implements IconLoadFinishListener {
         String filePath = fileInfo.filePath;
         String ext = FileManager.getExtFromFilename(fileInfo.fileName);
         Log.d(TAG, "setIcon.ext:" + ext);
-        FileCategory fc = FileCategoryHelper.getCategoryByName(context, fileInfo.fileName);
+        FileCategory fc = FileCategoryHelper.getCategoryByName(fileInfo.fileName);
         boolean set = false;
         int id = getFileIcon(ext);
+        Log.d(TAG, "setIcon.id=" + id);
         fileImage.setImageResource(id);
         Log.d(TAG, "setIcon.fc:" + fc);
         mIconLoader.cancelRequest(fileImage);
         switch (fc) {
             case Apk:
                 set = mIconLoader.loadIcon(fileImage, filePath, fc);
+                if (!set) {
+                	fileImage.setImageResource(R.drawable.icon_apk);
+                    set = true;
+				}
                 break;
             case Image:
             case Video:
@@ -145,7 +87,6 @@ public class FileIconHelper implements IconLoadFinishListener {
                 set = true;
                 break;
         }
-
         if (!set)
             fileImage.setImageResource(R.drawable.icon_file);
     }
@@ -153,6 +94,10 @@ public class FileIconHelper implements IconLoadFinishListener {
     @Override
     public void onIconLoadFinished(ImageView view) {
     	Log.d(TAG, "onIconLoadFinished");
+    }
+    
+    public void stopLoader(){
+    	mIconLoader.stop();
     }
 
 }

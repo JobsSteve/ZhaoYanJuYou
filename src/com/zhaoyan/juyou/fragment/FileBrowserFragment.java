@@ -37,9 +37,9 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileHomeAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter.ViewHolder;
-import com.zhaoyan.juyou.adapter.FileInfoAdapter2;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.ZYConstant;
@@ -74,11 +74,11 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private FileInfo mSelectedFileInfo = null;
 	private int mTop = -1;
 
-//	private FileInfoAdapter mItemAdapter = null;
 	private FileHomeAdapter mHomeAdapter = null;
 	private FileInfoManager mFileInfoManager = null;
 	
 	private FileInfoAdapter mAdapter;
+	private FileIconHelper mIconHelper;
 
 	// save all files
 	private List<FileInfo> mAllLists = new ArrayList<FileInfo>();
@@ -220,8 +220,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 
 		mHomeAdapter = new FileHomeAdapter(mContext, mHomeList);
-//		mItemAdapter = new FileInfoAdapter(mContext, mAllLists, mFileListView);
-		mAdapter = new FileInfoAdapter(getActivity().getApplicationContext(), mAllLists, mFileListView);
+		mIconHelper = new FileIconHelper(getActivity().getApplicationContext());
+		mAdapter = new FileInfoAdapter(getActivity().getApplicationContext(), mAllLists, mIconHelper);
 
 		if (mHomeList.size() <= 0) {
 			mNavBarLayout.setVisibility(View.GONE);
@@ -821,6 +821,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	@Override
 	public boolean onBackPressed() {
 		Log.d(TAG, "onBackPressed.mStatus=" + mStatus);
+		mIconHelper.stopLoader();
 		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
 			showMenuBar(false);
 			return false;

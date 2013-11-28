@@ -39,43 +39,43 @@ public class FileManager {
 		int ret;
 
 		if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingEbook))) {
+				.getStringArray(R.array.ext_ebook))) {
 			// text
 			ret = EBOOK;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingImage))) {
+				.getStringArray(R.array.ext_image))) {
 			// Images
 			ret = IMAGE;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingAudio))) {
+				.getStringArray(R.array.ext_audio))) {
 			// audios
 			ret = AUDIO;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingVideo))) {
+				.getStringArray(R.array.ext_video))) {
 			// videos
 			ret = VIDEO;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingApk))) {
+				.getStringArray(R.array.ext_apk))) {
 			// apk
 			ret = APK;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingWord))) {
+				.getStringArray(R.array.ext_word))) {
 			// word
 			ret = WORD;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingPpt))) {
+				.getStringArray(R.array.ext_ppt))) {
 			// ppt
 			ret = PPT;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingExcel))) {
+				.getStringArray(R.array.ext_excel))) {
 			// excel
 			ret = EXCEL;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingArchive))) {
+				.getStringArray(R.array.ext_archive))) {
 			// packages
 			ret = ARCHIVE;
 		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.fileEndingPdf))) {
+				.getStringArray(R.array.ext_pdf))) {
 			// pdf
 			ret = PDF;
 		} else {

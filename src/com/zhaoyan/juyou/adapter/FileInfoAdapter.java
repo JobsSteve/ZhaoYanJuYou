@@ -32,24 +32,18 @@ public class FileInfoAdapter extends BaseAdapter {
 	private List<FileInfo> mList = new ArrayList<FileInfo>();
 	private LayoutInflater mInflater = null;
 	private SparseBooleanArray mIsSelected = null;
-	private AsyncImageLoader bitmapLoader;
 	
 	private FileIconHelper iconHelper;
 
-	private boolean mIdleFlag = true;
 	public int mMode = ZYConstant.MENU_MODE_NORMAL;
-	private ListView mListView;
 	
 	private Context mContext;
 
-	public FileInfoAdapter(Context context, List<FileInfo> list, ListView listView) {
+	public FileInfoAdapter(Context context, List<FileInfo> list, FileIconHelper iconHelper) {
 		mInflater = LayoutInflater.from(context);
 		this.mList = list;
 		mIsSelected = new SparseBooleanArray();
-		bitmapLoader = new AsyncImageLoader(context);
-		mListView = listView;
-		
-		iconHelper = new FileIconHelper(context);
+		this.iconHelper = iconHelper;
 		mContext = context;
 	}
 
@@ -181,7 +175,7 @@ public class FileInfoAdapter extends BaseAdapter {
 	 * @param flag
 	 */
 	public void setFlag(boolean flag) {
-		this.mIdleFlag = flag;
+//		this.mIdleFlag = flag;
 	}
 
 	/**
