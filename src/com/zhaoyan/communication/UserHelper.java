@@ -182,7 +182,7 @@ public class UserHelper {
 
 	}
 
-	private static void addUserToDatabase(Context context, UserInfo userInfo) {
+	public static void addUserToDatabase(Context context, UserInfo userInfo) {
 		ContentResolver contentResolver = context.getContentResolver();
 		contentResolver.insert(JuyouData.User.CONTENT_URI,
 				getContentValuesFromUserInfo(userInfo));
