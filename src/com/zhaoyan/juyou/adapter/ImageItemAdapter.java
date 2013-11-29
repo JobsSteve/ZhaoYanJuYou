@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.R.integer;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
@@ -21,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.CheckableImageView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncPictureLoader;
@@ -30,7 +30,6 @@ import com.zhaoyan.juyou.common.ZYConstant;
 public class ImageItemAdapter extends BaseAdapter {
 	private static final String TAG = "PictureItemAdapter";
 	private LayoutInflater mInflater = null;
-	private Resources mResources = null;
 	private List<ImageInfo> mDataList;
 	private ContentResolver contentResolver;
 	private AsyncPictureLoader pictureLoader;
@@ -48,7 +47,6 @@ public class ImageItemAdapter extends BaseAdapter {
 
 	public ImageItemAdapter(Context context, List<ImageInfo> itemList){
 		mInflater = LayoutInflater.from(context);
-		mResources = context.getResources();
 		mDataList = itemList;
 		contentResolver = context.getContentResolver();
 		pictureLoader = new AsyncPictureLoader(context);
@@ -69,6 +67,7 @@ public class ImageItemAdapter extends BaseAdapter {
 	 * @param isSelected true or false
 	 */
 	public void selectAll(boolean isSelected){
+		Log.d(TAG, "selectAll.isSelected=" + isSelected);
 		int count = this.getCount();
 		for (int i = 0; i < count; i++) {
 			setSelected(i, isSelected);

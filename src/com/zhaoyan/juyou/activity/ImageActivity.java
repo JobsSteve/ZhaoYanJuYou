@@ -158,11 +158,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			projection = PROJECTION_ICS;
 		}
-		try {
-			throw new Exception("PictureFragment $$$$$ query $$$$$$ before startQuery");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 		new QueryHandler(getApplicationContext().getContentResolver()).startQuery(token, null, ZYConstant.IMAGE_URI,
 				projection, selection, selectionArgs, orderBy);		
@@ -425,7 +420,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			public void onClick(View view, String path) {
 				DeleteTask deleteTask = new DeleteTask();
 				deleteTask.execute();
-				showMenuBar(false);
 			}
 		});
     	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
@@ -439,12 +433,12 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		@Override
 		protected String doInBackground(Void... params) {
 			List<Integer> posList = mItemAdapter.getSelectedItemsPos();
+			List<String> selectedPathList = mItemAdapter.getSelectedItemsPathList();
 			int currentDelPos = -1;
-			String currentDelUrl = "";
-			for (int i = 0; i < posList.size(); i++) {
+			
+			for (int i = 0; i < selectedPathList.size(); i++) {
+				doDelete(selectedPathList.get(i));
 				currentDelPos = posList.get(i) - i;
-				currentDelUrl = mPictureItemInfoList.get(currentDelPos).getPath();
-				doDelete(currentDelUrl);
 				
 				Message message = mHandler.obtainMessage();
 				message.arg1 = currentDelPos;
@@ -458,6 +452,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
+			showMenuBar(false);
 			if (null != mDeleteDialog) {
 				mDeleteDialog.cancel();
 				mDeleteDialog = null;
