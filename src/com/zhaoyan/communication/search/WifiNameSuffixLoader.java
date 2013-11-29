@@ -28,13 +28,14 @@ public class WifiNameSuffixLoader {
 	 * 
 	 * @param context
 	 */
-	public static void createNewWifiSuffixName(Context context) {
+	public static String createNewWifiSuffixName(Context context) {
 		SharedPreferences preferences = SharedPreferenceUtil
 				.getSharedPreference(context);
 		Editor editor = preferences.edit();
 		String wifiNameSuffix = WiFiNameEncryption.generateWiFiNameSuffix();
 		editor.putString(WIFI_NAME_SUFFIX, wifiNameSuffix);
 		editor.commit();
+		return wifiNameSuffix;
 	}
 
 	/**

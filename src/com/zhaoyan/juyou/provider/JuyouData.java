@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class JuyouData {
 	public static final String DATABASE_NAME = "juyou.db";
-	public static final int DATABASE_VERSION = 3;
+	public static final int DATABASE_VERSION = 4;
 
 	public static final String AUTHORITY = "com.zhaoyan.juyou.provider.JuyouProvider";
 
@@ -155,6 +155,13 @@ public class JuyouData {
 		public static final String TYPE = "type";
 		public static final int TYPE_LOCAL = 0;
 		public static final int TYPE_REMOTE = 1;
+		public static final int TYPE_REMOTE_SEARCH_AP = 2;
+		public static final int TYPE_REMOTE_SEARCH_LAN = 3;
+		/**
+		 * User wifi SSID, this is only used in the situation that the use is an
+		 * Android AP Server, type:string
+		 */
+		public static final String SSID = "ssid";
 
 		/** order by DATE DESC */
 		public static final String SORT_ORDER_DEFAULT = USER_ID + " ASC";
