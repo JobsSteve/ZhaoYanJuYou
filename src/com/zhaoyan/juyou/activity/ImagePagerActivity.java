@@ -56,7 +56,6 @@ public class ImagePagerActivity extends Activity {
 		pager = (ViewPager) findViewById(R.id.image_viewpager);
 		pager.setAdapter(new ImagePagerAdapter(imageList));
 		pager.setCurrentItem(pagerPosition);
-		
 	}
 
 	@Override

@@ -50,6 +50,12 @@
                         android:scaleType="fitXY" />
 
 				</LinearLayout>
+				
+				<View
+                    android:layout_width="2dp"
+                    android:layout_height="fill_parent"
+                    android:background="@drawable/divider_iv" />
+
                 <com.zhaoyan.common.view.SlowHorizontalScrollView
                     android:id="@+id/navigation_bar_view"
                     android:layout_width="0dp"

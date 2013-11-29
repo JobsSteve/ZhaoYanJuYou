@@ -34,6 +34,7 @@ import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileCategoryScanner;
 import com.zhaoyan.juyou.common.FileCategoryScanner.FileCategoryScanListener;
+import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
@@ -69,6 +70,7 @@ public class FileCategoryActivity extends BaseActivity implements
 	private int mType = -1;
 	private String[] filterType = null;
 	private DeleteDialog mDeleteDialog = null;
+	private FileIconHelper mIconHelper;
 	
 	private Notice mNotice = null;
 
@@ -138,7 +140,8 @@ public class FileCategoryActivity extends BaseActivity implements
 		
 		mViewGroup = (ViewGroup) findViewById(R.id.rl_Category_main);
 		
-		mAdapter = new FileInfoAdapter(getApplicationContext(), mItemLists, mListView);
+		mIconHelper = new FileIconHelper(getApplicationContext());
+		mAdapter = new FileInfoAdapter(getApplicationContext(), mItemLists, mIconHelper);
 		mListView.setAdapter(mAdapter);
 
 		mFileInfoManager = new FileInfoManager();
