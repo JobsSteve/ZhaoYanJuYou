@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.R.integer;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,9 +41,11 @@ public class ZyPopupMenu implements OnItemClickListener, OnClickListener {
     private List<ActionMenuItem> mMenuItemList = new ArrayList<ActionMenu.ActionMenuItem>();
     
     public interface PopupViewClickListener{
+    	void onActionMenuItemClick(ActionMenuItem item);
     }
     
 	public ZyPopupMenu(Context context, ActionMenu actionMenu){
+		this.context= context;
 		inflater = LayoutInflater.from(context);
 		View view = inflater.inflate(R.layout.popupmenu, null);
 		listView = (ListView) view.findViewById(R.id.popup_view_listView);
@@ -59,8 +63,12 @@ public class ZyPopupMenu implements OnItemClickListener, OnClickListener {
 		
 		listView.setAdapter(new PopupMenuAdapter());
 		
-		popupWindow = new PopupWindow(view, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		popupWindow.setBackgroundDrawable(new BitmapDrawable());
+//		popupWindow = new PopupWindow(view, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		int width = context.getResources().getDisplayMetrics().widthPixels;
+		int height = LayoutParams.WRAP_CONTENT;
+		Log.d(TAG, "width=" + width+ ",heiht=" +height);
+		popupWindow = new PopupWindow(view, width / 3, height);
+		popupWindow.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.dialog_full_holo_light));
 		popupWindow.setTouchInterceptor(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -84,32 +92,40 @@ public class ZyPopupMenu implements OnItemClickListener, OnClickListener {
 	
 	//下拉式 弹出 pop菜单 parent 
 	public void showAsDropDown(View parent, int xOff, int yOff) {
-		// 保证尺寸是根据屏幕像素密度来的
 		popupWindow.showAsDropDown(parent, xOff, yOff);
-		// 使其聚集
+		//focus
 		popupWindow.setFocusable(true);
-		// 设置允许在外点击消失
+		//allow touchable outside
 		popupWindow.setOutsideTouchable(true);
-		// 刷新状态
+		//refresh state
+		popupWindow.update();
+	}
+	
+	/**
+	 * @param parent anchor
+	 * @param gravity loaction
+	 * @param x offset
+	 * @param y offset
+	 */
+	public void showAsLoaction(View parent, int gravity, int x, int y){
+		popupWindow.showAtLocation(parent, gravity, x , y);
+		
+		//focus
+		popupWindow.setFocusable(true);
+		//allow touchable outside
+		popupWindow.setOutsideTouchable(true);
+		//refresh state
 		popupWindow.update();
 	}
     
-    //隐藏菜单
-    public void dismiss() {
-            popupWindow.dismiss();
-    }
+	public void dismiss() {
+		popupWindow.dismiss();
+	}
 	
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		//menu item click 
-		if (position == 0) {
-//			mListener.doInternal();
-		}else if (position == 1) {
-//			mListener.doSdcard();
-		}else {
-			Log.e(TAG, "what's going on?");
-		}
+		mListener.onActionMenuItemClick(mMenuItemList.get(position));
 		popupWindow.dismiss();
 	}
 

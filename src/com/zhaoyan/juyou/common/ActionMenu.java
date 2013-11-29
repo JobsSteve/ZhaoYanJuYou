@@ -32,6 +32,7 @@ public class ActionMenu{
 	public static final int MODE_NORMAL = 0;
 	public static final int MODE_EDIT = 1;
 	public static final int MODE_COPY = 2;
+	public static final int MODE_CUT = 3;
 	
 	private List<ActionMenuItem> items = new ArrayList<ActionMenu.ActionMenuItem>();
 	

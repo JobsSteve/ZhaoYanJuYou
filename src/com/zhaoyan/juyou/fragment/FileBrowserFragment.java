@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -14,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,10 +26,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,6 +37,7 @@ import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.common.view.ZyPopupMenu;
+import com.zhaoyan.common.view.ZyPopupMenu.PopupViewClickListener;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileHomeAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
@@ -52,6 +55,8 @@ import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnCustomAlertDlgClickListener;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
@@ -92,6 +97,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	
 	//copy or cut file path list
 	private List<String> mCopyList = new ArrayList<String>();
+	//cut file position in allList,if do cut,need remove it from allList
+	private List<Integer> mPosList= new ArrayList<Integer>();
 
 	public static final int INTERNAL = MountManager.INTERNAL;
 	public static final int SDCARD = MountManager.SDCARD;
@@ -318,6 +325,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
+		} else if (mAdapter.isMode(ActionMenu.MODE_COPY)
+				|| mAdapter.isMode(ActionMenu.MODE_CUT)) {
+			return true;
 		} else {
 			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 		}
@@ -331,8 +341,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_COPY, R.drawable.ic_action_copy, R.string.copy);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_CUT, R.drawable.ic_action_cut, R.string.cut);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, R.drawable.ic_action_delete_enable, R.string.menu_delete);
-//		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME,R.drawable.ic_action_rename, R.string.rename);
-//		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_MORE, R.drawable.ic_action_overflow, R.string.menu_more);
 
@@ -549,7 +557,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			public void onTransportSuccess() {
 				int first = mFileListView.getFirstVisiblePosition();
 				int last = mFileListView.getLastVisiblePosition();
-				List<Integer> checkedItems = mAdapter.getSelectedItemPositions();
+				List<Integer> checkedItems = mAdapter.getSelectedItemsPos();
 				ArrayList<ImageView> icons = new ArrayList<ImageView>();
 				for (int id : checkedItems) {
 					if (id >= first && id <= last) {
@@ -877,30 +885,33 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
-			List<Integer> posList = mAdapter.getSelectedItemPositions();
+			List<Integer> posList = mAdapter.getSelectedItemsPos();
 			showDeleteDialog(posList);
-			break;
-		case ActionMenu.ACTION_MENU_INFO:
-			List<FileInfo> list = mAdapter.getSelectedFileInfos();
-			mFileInfoManager.showInfoDialog(getActivity(), list);
-			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
 			doSelectAll();
 			break;
-		case ActionMenu.ACTION_MENU_RENAME:
-			List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
-			mFileInfoManager.showRenameDialog(getActivity(), renameList);
-			mAdapter.notifyDataSetChanged();
-			showMenuBar(false);
-			break;
 		case ActionMenu.ACTION_MENU_COPY:
-			intoCopyMode();
+			mAdapter.changeMode(ActionMenu.MODE_COPY);
+			startPasteMenu();
 			break;
 		case ActionMenu.ACTION_MENU_CUT:
-			intoCopyMode();
+			//cut 有点复杂
+			mPosList = mAdapter.getSelectedItemsPos();
+			//for test
+			for (int i = 0; i < mPosList.size(); i++) {
+				Log.d(TAG, "cutPos[" + i +  "]=" + mPosList.get(i));
+			}
+			//for test
+			mAdapter.changeMode(ActionMenu.MODE_CUT);
+			mAdapter.notifyDataSetChanged();
+			startPasteMenu();
 			break;
 		case ActionMenu.ACTION_MENU_PASTE:
+			
+			if (mAdapter.isMode(ActionMenu.MODE_COPY)) {
+				
+			}
 			break;
 		case ActionMenu.ACTION_MENU_CANCEL:
 			showMenuBar(false);
@@ -910,7 +921,57 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			actionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename, R.string.rename);
 			actionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
 			ZyPopupMenu popupMenu = new ZyPopupMenu(getActivity(), actionMenu);
-			popupMenu.showAsDropDown(mHomeView, 0, 0);
+			popupMenu.showAsLoaction(mMenuBarView, Gravity.RIGHT | Gravity.BOTTOM, 5, (int) mContext.getResources().getDimension(R.dimen.menubar_height));
+			popupMenu.setOnPopupViewListener(new PopupViewClickListener() {
+				@Override
+				public void onActionMenuItemClick(ActionMenuItem item) {
+					switch (item.getItemId()) {
+					case ActionMenu.ACTION_MENU_RENAME:
+						List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
+						mFileInfoManager.showRenameDialog(getActivity(), renameList);
+						mAdapter.notifyDataSetChanged();
+						showMenuBar(false);
+						break;
+					case ActionMenu.ACTION_MENU_INFO:
+						List<FileInfo> list = mAdapter.getSelectedFileInfos();
+						mFileInfoManager.showInfoDialog(getActivity(), list);
+						showMenuBar(false);
+						break;
+
+					default:
+						break;
+					}
+				}
+			});
+			break;
+		case ActionMenu.ACTION_MENU_CREATE_FOLDER:
+			LayoutInflater inflater = LayoutInflater.from(mContext);
+			View view = inflater.inflate(R.layout.dialog_rename, null);
+			final EditText editText = (EditText) view.findViewById(R.id.et_rename);
+			ZyAlertDialog dialog = new ZyAlertDialog(mContext);
+			dialog.setTitle(R.string.create_folder);
+			dialog.setMessage(R.string.folder_input);
+			dialog.setContentView(view);
+			dialog.setNegativeButton(R.string.cancel, null);
+			dialog.setPositiveButton(R.string.ok, new OnCustomAlertDlgClickListener() {
+				@Override
+				public void onClick(Dialog dialog) {
+					String folderName = editText.getText().toString();
+					String newPath = mCurrentPath + File.separator + folderName;
+					File file = new File(newPath);
+					if (file.exists()) {
+						mNotice.showToast(R.string.folder_exist);
+					}else {
+						if (!file.mkdir()) {
+							mNotice.showToast(R.string.folder_create_failed);
+						}else {
+							browserTo(file);
+						}
+					}
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
 			break;
 		default:
 			break;
@@ -950,22 +1011,16 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(false);
-//			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(false);
-//			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
 		} else if (mAdapter.hasDirSelected()) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-//			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
-//			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
 		}else {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-//			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
-//			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
 		}
 	}
 
@@ -992,13 +1047,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mAdapter.notifyDataSetChanged();
 	}
 	
-	public void intoCopyMode(){
-		mAdapter.changeMode(ActionMenu.MODE_COPY);
-		 
+	public void startPasteMenu(){
 		mCopyList = mAdapter.getSelectedFilePaths();
-		mAdapter.clearSelected();
-		mAdapter.notifyDataSetChanged();
-		
 		//update new menu
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_CREATE_FOLDER, R.drawable.ic_action_createfolder, R.string.create_folder);

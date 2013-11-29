@@ -224,4 +224,8 @@
      <string name="dialog_type_image">图像</string>
      
      <string name="deleting">正在删除...</string>
+     
+     <string name="folder_exist">文件夹已存在</string>
+     <string name="folder_create_failed">创建文件夹失败</string>
+     <string name="folder_input">输入新文件夹名称：</string>
 </resources>

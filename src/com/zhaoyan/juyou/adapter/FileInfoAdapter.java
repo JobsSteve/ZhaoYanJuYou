@@ -138,7 +138,7 @@ public class FileInfoAdapter extends BaseAdapter {
 	 * get selected items position list
 	 * @return
 	 */
-	public List<Integer> getSelectedItemPositions() {
+	public List<Integer> getSelectedItemsPos() {
 		List<Integer> list = new ArrayList<Integer>();
 		for (int i = 0; i < mIsSelected.size(); i++) {
 			if (mIsSelected.valueAt(i)) {
@@ -268,18 +268,20 @@ public class FileInfoAdapter extends BaseAdapter {
 		//20131128 yuri:use new way to load file icon
 		FileListItem.setupFileListItemInfo(mContext, view, fileInfo, iconHelper);
 
-		if (mMode == ActionMenu.MODE_EDIT) {
-			updateListViewBackground(position, view);
-		} else {
+		if (isMode(ActionMenu.MODE_EDIT) || isMode(ActionMenu.MODE_COPY)) {
+			updateListViewBackground(position, view, R.color.holo_blue1);
+		} else if (isMode(ActionMenu.MODE_CUT)) {
+			updateListViewBackground(position, view, R.color.holo_blue_light_transparent);
+		}else {
 			view.setBackgroundResource(Color.TRANSPARENT);
 		}
 
 		return view;
 	}
 
-	private void updateListViewBackground(int position, View view) {
+	private void updateListViewBackground(int position, View view, int colorId) {
 		if (isSelected(position)) {
-			view.setBackgroundResource(R.color.holo_blue1);
+			view.setBackgroundResource(colorId);
 		} else {
 			view.setBackgroundResource(Color.TRANSPARENT);
 		}

@@ -198,7 +198,7 @@ public class ZYUtils {
 	}
 	
 	/**
-	 * io copy
+	 * copy single file
 	 * 
 	 * @param srcPath
 	 *           src file path
@@ -210,9 +210,13 @@ public class ZYUtils {
 	public static void fileStreamCopy(String srcPath, String desPath) throws IOException{
 		Log.d(TAG, "fileStreamCopy.src:" + srcPath);
 		Log.d(TAG, "fileStreamCopy.dec:" + desPath);
+		if (new File(srcPath).isDirectory()) {
+			Log.d(TAG, "copyFile error:" + srcPath + " is a directory.");
+			return;
+		}
 		File files = new File(desPath);// 创建文件
 		FileOutputStream fos = new FileOutputStream(files);
-		byte buf[] = new byte[128];
+		byte buf[] = new byte[1024];
 		InputStream fis = new BufferedInputStream(new FileInputStream(srcPath),
 				8192 * 4);
 		do {

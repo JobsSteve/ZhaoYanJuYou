@@ -249,7 +249,7 @@ public class FileCategoryActivity extends BaseActivity implements
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
-			List<Integer> posList = mAdapter.getSelectedItemPositions();
+			List<Integer> posList = mAdapter.getSelectedItemsPos();
 			showDeleteDialog(posList);
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
@@ -355,7 +355,7 @@ public class FileCategoryActivity extends BaseActivity implements
 				int first = mListView.getFirstVisiblePosition();
 				int last = mListView.getLastVisiblePosition();
 				List<Integer> checkedItems = mAdapter
-						.getSelectedItemPositions();
+						.getSelectedItemsPos();
 				ArrayList<ImageView> icons = new ArrayList<ImageView>();
 				for (int id : checkedItems) {
 					if (id >= first && id <= last) {
