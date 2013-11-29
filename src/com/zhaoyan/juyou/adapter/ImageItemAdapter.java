@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -23,9 +22,9 @@ import android.widget.TextView;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.CheckableImageView;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.AsyncPictureLoader;
 import com.zhaoyan.juyou.common.ImageInfo;
-import com.zhaoyan.juyou.common.ZYConstant;
 
 public class ImageItemAdapter extends BaseAdapter {
 	private static final String TAG = "PictureItemAdapter";
@@ -42,8 +41,8 @@ public class ImageItemAdapter extends BaseAdapter {
 	public static HashMap<Long, View> sViewCaches;
 	/**save status of item selected*/
 	private SparseBooleanArray mSelectArray;
-	/**current menu mode,ZYConstant.MENU_MODE_NORMAL,ZYConstant.MENU_MODE_EDIT*/
-	private int mMenuMode = ZYConstant.MENU_MODE_NORMAL;
+	/**current menu mode,ActionMenu.MODE_NORMAL,ActionMenu.MODE_EDIT*/
+	private int mMenuMode = ActionMenu.MODE_NORMAL;
 
 	public ImageItemAdapter(Context context, List<ImageInfo> itemList){
 		mInflater = LayoutInflater.from(context);

@@ -9,21 +9,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 public class ZYConstant {
-
-	// context action menu id
-	public static final int ACTION_MENU_OPEN = 0x01;
-	public static final int ACTION_MENU_SEND = 0x02;
-	public static final int ACTION_MENU_DELETE = 0x03;
-	public static final int ACTION_MENU_INFO = 0x04;
-	public static final int ACTION_MENU_MORE = 0x05;
-	public static final int ACTION_MENU_PLAY = 0x06;
-	public static final int ACTION_MENU_RENAME = 0x07;
-
 	public static final int REQUEST_FOR_MODIFY_NAME = 0x12;
-	
-	//action menu mode,edit is menu mode
-	public static final int MENU_MODE_NORMAL = 0;
-    public static final int MENU_MODE_EDIT = 1;
 
 	// context action menu id
 

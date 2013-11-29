@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileListItem;
@@ -28,7 +29,7 @@ public class FileInfoAdapter extends BaseAdapter {
 	
 	private FileIconHelper iconHelper;
 
-	public int mMode = ZYConstant.MENU_MODE_NORMAL;
+	public int mMode = ActionMenu.MODE_NORMAL;
 	
 	private Context mContext;
 
@@ -267,7 +268,7 @@ public class FileInfoAdapter extends BaseAdapter {
 		//20131128 yuri:use new way to load file icon
 		FileListItem.setupFileListItemInfo(mContext, view, fileInfo, iconHelper);
 
-		if (mMode == ZYConstant.MENU_MODE_EDIT) {
+		if (mMode == ActionMenu.MODE_EDIT) {
 			updateListViewBackground(position, view);
 		} else {
 			view.setBackgroundResource(Color.TRANSPARENT);

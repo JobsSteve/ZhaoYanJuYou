@@ -158,7 +158,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if (mAdapter.getMode() == ZYConstant.MENU_MODE_EDIT) {
+		if (mAdapter.getMode() == ActionMenu.MODE_EDIT) {
 			mAdapter.setSelected(position);
 			mAdapter.notifyDataSetChanged();
 			
@@ -190,11 +190,11 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			final int position, long id) {
 		int mode = mAdapter.getMode();
-		if (ZYConstant.MENU_MODE_EDIT == mode) {
+		if (ActionMenu.MODE_EDIT == mode) {
 			doSelectAll();
 			return true;
 		}else {
-			mAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
 		boolean isSelected = mAdapter.isSelected(position);
@@ -242,7 +242,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	}
 	
 	public boolean onBackPressed(){
-		if (null != mAdapter && mAdapter.getMode() == ZYConstant.MENU_MODE_EDIT) {
+		if (null != mAdapter && mAdapter.getMode() == ActionMenu.MODE_EDIT) {
 			showMenuBar(false);
 			return false;
 		}
@@ -429,7 +429,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	
 	
 	public void onActionMenuDone() {
-		mAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
 		mAdapter.selectAll(false);
 		mAdapter.notifyDataSetChanged();
 	}

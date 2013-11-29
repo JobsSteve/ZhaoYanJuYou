@@ -172,11 +172,11 @@ public class FileCategoryActivity extends BaseActivity implements
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
 		} else {
-			mAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1, mAdapter.getCount());
 		}
 		boolean isSelected = mAdapter.isSelected(position);
@@ -199,7 +199,7 @@ public class FileCategoryActivity extends BaseActivity implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			mAdapter.setSelected(position);
 			mAdapter.notifyDataSetChanged();
 
@@ -318,7 +318,7 @@ public class FileCategoryActivity extends BaseActivity implements
 
 	// Cancle Action menu
 	public void onActionMenuDone() {
-		mAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
 		mAdapter.clearSelected();
 		mAdapter.notifyDataSetChanged();
 	}
@@ -452,7 +452,7 @@ public class FileCategoryActivity extends BaseActivity implements
 	
 	@Override
 	public boolean onBackKeyPressed() {
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}

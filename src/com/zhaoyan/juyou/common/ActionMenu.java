@@ -23,6 +23,15 @@ public class ActionMenu{
 	public static final int ACTION_MENU_CANCEL = 0x13;
 	public static final int ACTION_MENU_CLEAR_HISTORY = 0x14;
 	public static final int ACTION_MENU_CLEAR_HISTORY_AND_FILE = 0x15;
+	public static final int ACTION_MENU_COPY = 0x16;
+	public static final int ACTION_MENU_PASTE = 0x17;
+	public static final int ACTION_MENU_CUT = 0x18;
+	public static final int ACTION_MENU_CREATE_FOLDER = 0x19;
+	
+	//action menu mode,edit is menu mode
+	public static final int MODE_NORMAL = 0;
+	public static final int MODE_EDIT = 1;
+	public static final int MODE_COPY = 2;
 	
 	private List<ActionMenuItem> items = new ArrayList<ActionMenu.ActionMenuItem>();
 	

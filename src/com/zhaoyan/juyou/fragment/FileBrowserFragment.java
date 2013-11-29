@@ -27,12 +27,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
+import com.zhaoyan.common.view.ZyPopupMenu;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileHomeAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
@@ -87,6 +89,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	// save files
 	private List<FileInfo> mFileLists = new ArrayList<FileInfo>();
 	private List<Integer> mHomeList = new ArrayList<Integer>();
+	
+	//copy or cut file path list
+	private List<String> mCopyList = new ArrayList<String>();
 
 	public static final int INTERNAL = MountManager.INTERNAL;
 	public static final int SDCARD = MountManager.SDCARD;
@@ -190,7 +195,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mHomeView.setOnClickListener(this);
 
 		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
-		mMenuBarView = rootView.findViewById(R.id.menubar_bottom);
+		mMenuBarView = rootView.findViewById(R.id.bottom);
 		mMenuBarView.setVisibility(View.GONE);
 
 		return rootView;
@@ -275,7 +280,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				break;
 			}
 		} else {
-			if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+			if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 				mAdapter.setSelected(position);
 				mAdapter.notifyDataSetChanged();
 
@@ -310,22 +315,26 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			return false;
 		}
 
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
 		} else {
-			mAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 		}
+		
 		boolean isSelected = mAdapter.isSelected(position);
 		mAdapter.setSelected(position, !isSelected);
 		mAdapter.notifyDataSetChanged();
 
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_COPY, R.drawable.ic_action_copy, R.string.copy);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CUT, R.drawable.ic_action_cut, R.string.cut);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, R.drawable.ic_action_delete_enable, R.string.menu_delete);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME,R.drawable.ic_action_rename, R.string.rename);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
+//		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME,R.drawable.ic_action_rename, R.string.rename);
+//		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_MORE, R.drawable.ic_action_overflow, R.string.menu_more);
 
 		mMenuTabManager = new MenuTabManager(getActivity().getApplicationContext(), mMenuHolder);
 		showMenuBar(true);
@@ -822,7 +831,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public boolean onBackPressed() {
 		Log.d(TAG, "onBackPressed.mStatus=" + mStatus);
 		mIconHelper.stopLoader();
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}
@@ -885,6 +894,24 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mAdapter.notifyDataSetChanged();
 			showMenuBar(false);
 			break;
+		case ActionMenu.ACTION_MENU_COPY:
+			intoCopyMode();
+			break;
+		case ActionMenu.ACTION_MENU_CUT:
+			intoCopyMode();
+			break;
+		case ActionMenu.ACTION_MENU_PASTE:
+			break;
+		case ActionMenu.ACTION_MENU_CANCEL:
+			showMenuBar(false);
+			break;
+		case ActionMenu.ACTION_MENU_MORE:
+			ActionMenu actionMenu = new ActionMenu(getActivity().getApplicationContext());
+			actionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename, R.string.rename);
+			actionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
+			ZyPopupMenu popupMenu = new ZyPopupMenu(getActivity(), actionMenu);
+			popupMenu.showAsDropDown(mHomeView, 0, 0);
+			break;
 		default:
 			break;
 		}
@@ -920,27 +947,34 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 		if (0 == selectCount) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(false);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(false);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(false);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
+//			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(false);
+//			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
 		} else if (mAdapter.hasDirSelected()) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
+//			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
+//			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
 		}else {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
+//			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
+//			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
 		}
 	}
 
 	// Cancle Action menu
 	public void onActionMenuDone() {
-		mAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
 		mAdapter.clearSelected();
 		mAdapter.notifyDataSetChanged();
+		mCopyList.clear();
 	}
 
 	/**
@@ -956,6 +990,21 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		updateMenuBar();
 		mMenuTabManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
+	}
+	
+	public void intoCopyMode(){
+		mAdapter.changeMode(ActionMenu.MODE_COPY);
+		 
+		mCopyList = mAdapter.getSelectedFilePaths();
+		mAdapter.clearSelected();
+		mAdapter.notifyDataSetChanged();
+		
+		//update new menu
+		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CREATE_FOLDER, R.drawable.ic_action_createfolder, R.string.create_folder);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_PASTE, R.drawable.ic_action_paste, R.string.paste);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, R.drawable.ic_action_cancel, R.string.cancel);
+		mMenuTabManager.refreshMenus(mActionMenu);
 	}
 
 }
