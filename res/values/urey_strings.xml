@@ -228,4 +228,9 @@
      <string name="folder_exist">文件夹已存在</string>
      <string name="folder_create_failed">创建文件夹失败</string>
      <string name="folder_input">输入新文件夹名称：</string>
+     <string name="copying">正在复制...</string>
+     <string name="cuting">正在移动...</string>
+     <string name="cut_fail">移动失败</string>
+     <string name="cut_fail_format">"%1s" 移动失败</string>
+     <string name="cut_fail_msg_one">不能移动，目标文件夹是源文件夹的子文件夹</string>
 </resources>

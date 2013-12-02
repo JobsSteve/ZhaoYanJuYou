@@ -63,8 +63,10 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 			mMessageView.setText(mMessage);
 		}
 		
-		mContentLayout = (LinearLayout) findViewById(R.id.ll_content);
-		mContentLayout.addView(mContentView);
+		if (null != mContentView) {
+			mContentLayout = (LinearLayout) findViewById(R.id.ll_content);
+			mContentLayout.addView(mContentView);
+		}
 		
 		mButtonLayout = (LinearLayout) findViewById(R.id.ll_button);
 		

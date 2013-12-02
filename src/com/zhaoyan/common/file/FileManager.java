@@ -127,28 +127,35 @@ public class FileManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean copyFile(String srcPath, String desPath) throws IOException{
-		Log.d(TAG, "fileStreamCopy.src:" + srcPath);
-		Log.d(TAG, "fileStreamCopy.dec:" + desPath);
+	public static boolean copyFile(String srcPath, String desPath){
+		Log.d(TAG, "copyFile.srcPath:" + srcPath);
+		Log.d(TAG, "copyFile.desPath:" + desPath);
 		if (new File(srcPath).isDirectory()) {
 			Log.d(TAG, "copyFile error:" + srcPath + " is a directory.");
 			return false;
 		}
-		
-		File files = new File(desPath);// 创建文件
-		FileOutputStream fos = new FileOutputStream(files);
-		byte buf[] = new byte[1024];
-		InputStream fis = new BufferedInputStream(new FileInputStream(srcPath),
-				8192 * 4);
-		do {
-			int read = fis.read(buf);
-			if (read <= 0) {
-				break;
+		FileInputStream inputStream = null;
+		FileOutputStream outputStream = null;
+		try {
+			File srcFile = new File(srcPath);
+			if (srcFile.exists()) {
+				inputStream = new FileInputStream(srcPath);
+				outputStream = new FileOutputStream(desPath);
+				byte[] buffer = new byte[1024 * 10];
+				int byteread = 0;
+				while ((byteread = inputStream.read(buffer)) != -1) {
+					outputStream.write(buffer, 0, byteread);
+				}
+				outputStream.flush();
+				outputStream.close();
+				inputStream.close();
+			}else {
+				Log.e(TAG, srcPath + " is not exist");
+				return false;
 			}
-			fos.write(buf, 0, read);
-		} while (true);
-		fis.close();
-		fos.close();
+		} catch (Exception e) {
+			return false;
+		}
 		
 		return true;
 	}
@@ -159,46 +166,38 @@ public class FileManager {
 	 * @param desPath destination folder path
 	 * @return
 	 */
-	public static boolean copyFolder(String srcPath, String desPath){
-		try {
-			//create desPath folder
-			if (!new File(desPath).mkdirs()) {
-				return false;
-			}
-			
-			File srcFile = new File(srcPath);
-			String[] srcFileNameList = srcFile.list();
-			File tempFile = null;
-			
-			FileInputStream inputStream = null;
-			FileOutputStream outputStream = null;
-			for(String name : srcFileNameList){
-				if (srcPath.endsWith(File.separator)) {
-					tempFile = new File(srcFile + name);
-				}else {
-					tempFile = new File(srcFile + File.separator + name);
-				}
-				
-				if (tempFile.isFile()) {
-					inputStream = new FileInputStream(tempFile);
-					outputStream = new FileOutputStream(desPath + File.separator + name);
-					byte[] buffer = new byte[1024 * 5];
-					int len;
-					while ( (len = inputStream.read(buffer)) != -1) {
-						outputStream.write(buffer, 0, len);
-					}
-					outputStream.flush();
-				}else if (tempFile.isDirectory()) {
-					//is a child folder
-					copyFolder(srcPath + File.separator + name, desPath + File.separator + name);
-				}
-			}
-			inputStream.close();
-			outputStream.close();
-		} catch (Exception e) {
-			Log.e(TAG, "copyFolder error:" + e.toString());
+	public static boolean copyFolder(String srcPath, String desPath) {
+		Log.d(TAG, "copyFolder.srcPath:" + srcPath);
+		Log.d(TAG, "copyFolder.desPath:" + desPath);
+		File srcFile = new File(srcPath);
+		String[] srcFileNameList = srcFile.list();
+		if (srcFileNameList.length == 0) {
+			//copy a empty folder
+			return new File(desPath).mkdirs();
+		}
+		
+		// create desPath folder
+		if (!new File(desPath).mkdirs()) {
 			return false;
-		} 
+		}
+		
+		File tempFile = null;
+		for (String name : srcFileNameList) {
+			if (srcPath.endsWith(File.separator)) {
+				tempFile = new File(srcFile + name);
+			} else {
+				tempFile = new File(srcFile + File.separator + name);
+			}
+
+			if (tempFile.isFile()) {
+				copyFile(tempFile.getAbsolutePath(), desPath + File.separator
+						+ name);
+			} else if (tempFile.isDirectory()) {
+				// is a child folder
+				copyFolder(srcPath + File.separator + name, desPath
+						+ File.separator + name);
+			}
+		}
 		
 		return true;
 	}
