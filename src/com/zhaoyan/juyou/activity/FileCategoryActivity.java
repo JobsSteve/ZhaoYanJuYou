@@ -255,7 +255,6 @@ public class FileCategoryActivity extends BaseActivity implements
 		case ActionMenu.ACTION_MENU_INFO:
 			List<FileInfo> list = mAdapter.getSelectedFileInfos();
 			 mFileInfoManager.showInfoDialog(this, list);
-			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
 			doSelectAll();

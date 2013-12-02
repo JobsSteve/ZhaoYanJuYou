@@ -393,8 +393,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			}
 			dialog.show();
 			dialog.invisbileLoadBar();
-			
-			showMenuBar(false);
 			//info
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:

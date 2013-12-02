@@ -149,7 +149,7 @@
      
      <string name="hide">隐藏</string>
      <string name="exit_app">退出程序</string>
-     <string name="confirm_exit">确定要退出朝颜无限？</string>
+     <string name="confirm_exit">确定要退出聚游？</string>
      <string name="running">正在运行&#8230;</string>
      <string name="unconnected">未连接局域网</string>
      <string name="connected">已连接局域网</string>
@@ -184,7 +184,7 @@
      <string name="select_msg">已选中%1$s</string>
      
      <string name="invite">邀请</string>
-     <string name="invite_install">邀请朋友安装朝颜无限</string>
+     <string name="invite_install">邀请朋友安装聚游</string>
      <string name="invite_weixin">微信邀请</string>
      <string name="invite_qq">QQ邀请</string>
      <string name="invite_bluetooth">蓝牙邀请</string>
@@ -193,11 +193,11 @@
      <string name="invite_weibo_tencent">腾讯微博邀请</string>
      <string name="invite_zero_gprs">零流量邀请</string>
      <string name="invite_tip">仅支持邀请安卓用户</string>
-     <string name="dimen_code_download">扫一扫二维码下载朝颜无限</string>
+     <string name="dimen_code_download">扫一扫二维码下载聚游</string>
      <string name="traffic_statistics">流量统计</string>
      <string name="traffic_send">发送流量：%s</string>
      <string name="traffic_receive">接收流量：%s</string>
-     <string name="traffic_notice">通过朝颜无限手机之间互传文件的时候不会消耗任何一部手机的移动网络流量，
+     <string name="traffic_notice">通过聚游手机之间互传文件的时候不会消耗任何一部手机的移动网络流量，
          某些流量统计软件会有计算错误的情况，请放心使用！</string>
      
      <string name="select_all">全选</string>

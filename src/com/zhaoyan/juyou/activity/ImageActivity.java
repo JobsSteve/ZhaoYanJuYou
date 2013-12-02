@@ -395,8 +395,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			}
 			dialog.show();
 			dialog.invisbileLoadBar();
-			
-			showMenuBar(false);
 			//info
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
