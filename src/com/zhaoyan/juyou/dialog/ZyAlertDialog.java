@@ -14,26 +14,30 @@ import com.zhaoyan.juyou.R;
 
 /**
  * Custom ALert dialog,make 2.3os, can have 4.0 dialog ui
- * but just have one or two button in dialog
  */
 public class ZyAlertDialog extends Dialog implements android.view.View.OnClickListener {
 	
 	private String mTitle;
 	private String mMessage;
 	
-	private TextView mTitleView, mMessageView;
+	private TextView mTitleTV, mMessageTV;
 	
-	private View mDivideView;
-	private Button mNegativeBtn, mPositiveBtn;
+	private View mTitleView;
+	
+	private View mDivideOneView, mDivideTwoView;
+	private Button mNegativeBtn, mPositiveBtn, mNeutralBtn;
 	
 	private boolean mHasMessage = false;
+	private boolean mShowTitle = false;
 	private boolean mShowNegativeBtn = false;
 	private boolean mShowPositiveBtn = false;
+	private boolean mShowNeutralBtn = false;
 	
-	private String mNegativeMessage,mPositiveMessage;
+	private String mNegativeMessage,mPositiveMessage,mNeutralMessage;
 	
-	private OnCustomAlertDlgClickListener mNegativeListener;
-	private OnCustomAlertDlgClickListener mPositiveListener;
+	private OnZyAlertDlgClickListener mNegativeListener;
+	private OnZyAlertDlgClickListener mPositiveListener;
+	private OnZyAlertDlgClickListener mNeutralListener;
 	
 	private LinearLayout mContentLayout;
 	private LinearLayout mButtonLayout;
@@ -53,14 +57,19 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.custom_alertdialog);
 		
-		mTitleView = (TextView) findViewById(R.id.tv_dialog_title);
-		mTitleView.setText(mTitle);
+		if (mShowTitle) {
+			mTitleView = findViewById(R.id.rl_dialog_title);
+			mTitleView.setVisibility(View.VISIBLE);
+			
+			mTitleTV = (TextView) findViewById(R.id.tv_dialog_title);
+			mTitleTV.setText(mTitle);
+		}
 		
 		if (mHasMessage) {
-			mMessageView = (TextView) findViewById(R.id.tv_dialog_msg);
-			mMessageView.setVisibility(View.VISIBLE);
-			mMessageView.setVisibility(View.VISIBLE);
-			mMessageView.setText(mMessage);
+			mMessageTV = (TextView) findViewById(R.id.tv_dialog_msg);
+			mMessageTV.setVisibility(View.VISIBLE);
+			mMessageTV.setVisibility(View.VISIBLE);
+			mMessageTV.setText(mMessage);
 		}
 		
 		if (null != mContentView) {
@@ -70,7 +79,7 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 		
 		mButtonLayout = (LinearLayout) findViewById(R.id.ll_button);
 		
-		if (!mShowNegativeBtn && !mShowPositiveBtn) {
+		if (!mShowNegativeBtn && !mShowPositiveBtn && !mShowNeutralBtn) {
 			mButtonLayout.setVisibility(View.GONE);
 		}else {
 			if (mShowNegativeBtn) {
@@ -80,6 +89,13 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 				mNegativeBtn.setVisibility(View.VISIBLE);
 			}
 			
+			if (mShowNeutralBtn) {
+				mNeutralBtn = (Button) findViewById(R.id.btn_neutral);
+				mNeutralBtn.setText(mNeutralMessage);
+				mNeutralBtn.setOnClickListener(this);
+				mNeutralBtn.setVisibility(View.VISIBLE);
+			}
+			
 			if (mShowPositiveBtn) {
 				mPositiveBtn = (Button) findViewById(R.id.btn_positive);
 				mPositiveBtn.setText(mPositiveMessage);
@@ -87,9 +103,19 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 				mPositiveBtn.setVisibility(View.VISIBLE);
 			}
 			
+			if (mShowNegativeBtn && mShowNeutralBtn) {
+				mDivideOneView = findViewById(R.id.divider_one);
+				mDivideOneView.setVisibility(View.VISIBLE);
+			}
+			
+			if (mShowNeutralBtn && mShowPositiveBtn) {
+				mDivideTwoView = findViewById(R.id.divider_two);
+				mDivideTwoView.setVisibility(View.VISIBLE);
+			}
+			
 			if (mShowNegativeBtn && mShowPositiveBtn) {
-				mDivideView = findViewById(R.id.divider_one);
-				mDivideView.setVisibility(View.VISIBLE);
+				mDivideOneView = findViewById(R.id.divider_one);
+				mDivideOneView.setVisibility(View.VISIBLE);
 			}
 		}
 	}
@@ -97,11 +123,13 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title.toString();
+		mShowTitle = true;
 	}
 	
 	@Override
 	public void setTitle(int titleId) {
-		mTitle = mContext.getString(titleId);
+		String title = mContext.getString(titleId);
+		setTitle(title);
 	}
 	
 	public void setMessage(String message) {
@@ -148,34 +176,52 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 				mPositiveListener.onClick(this);
 			}
 			break;
+		case R.id.btn_neutral:
+			if (null == mNeutralListener) {
+				dismiss();
+			}else {
+				mNeutralListener.onClick(this);
+			}
+			break;
 
 		default:
 			break;
 		}
 	}
 	
-	public interface OnCustomAlertDlgClickListener{
+	public interface OnZyAlertDlgClickListener{
 		void onClick(Dialog dialog);
 	}
 	
-	public void setNegativeButton(String text, OnCustomAlertDlgClickListener listener){
+	public void setNegativeButton(String text, OnZyAlertDlgClickListener listener){
 		mNegativeMessage = text;
 		mShowNegativeBtn = true;
 		mNegativeListener = listener;
 	}
 	
-	public void setNegativeButton(int textId, OnCustomAlertDlgClickListener listener){
+	public void setNegativeButton(int textId, OnZyAlertDlgClickListener listener){
 		String text = mContext.getString(textId);
 		setNegativeButton(text, listener);
 	}
 	
-	public void setPositiveButton(String text, OnCustomAlertDlgClickListener listener){
+	public void setPositiveButton(String text, OnZyAlertDlgClickListener listener){
 		mPositiveMessage = text;
 		mShowPositiveBtn = true;
 		mPositiveListener = listener;
 	}
 	
-	public void setPositiveButton(int textId, OnCustomAlertDlgClickListener listener){
+	public void setPositiveButton(int textId, OnZyAlertDlgClickListener listener){
+		String text = mContext.getString(textId);
+		setPositiveButton(text, listener);
+	}
+	
+	public void setNeutralButton(String text, OnZyAlertDlgClickListener listener){
+		mNeutralMessage = text;
+		mShowNeutralBtn = true;
+		mNeutralListener = listener;
+	}
+	
+	public void setNeutralButton(int textId, OnZyAlertDlgClickListener listener){
 		String text = mContext.getString(textId);
 		setPositiveButton(text, listener);
 	}

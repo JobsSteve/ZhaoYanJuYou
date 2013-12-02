@@ -58,7 +58,7 @@ import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
-import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnCustomAlertDlgClickListener;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
@@ -971,7 +971,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			dialog.setMessage(R.string.folder_input);
 			dialog.setContentView(view);
 			dialog.setNegativeButton(R.string.cancel, null);
-			dialog.setPositiveButton(R.string.ok, new OnCustomAlertDlgClickListener() {
+			dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 				@Override
 				public void onClick(Dialog dialog) {
 					String folderName = editText.getText().toString();
@@ -990,6 +990,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				}
 			});
 			dialog.show();
+			showMenuBar(false);
 			break;
 		default:
 			break;

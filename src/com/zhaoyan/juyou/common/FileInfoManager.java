@@ -30,7 +30,7 @@ import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
-import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnCustomAlertDlgClickListener;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileInfoManager {
 	private static final String TAG = "FileInfoManager";
@@ -348,7 +348,7 @@ public class FileInfoManager {
 		ZyAlertDialog dialog = new ZyAlertDialog(context);
 		dialog.setTitle(R.string.rename);
 		dialog.setContentView(view);
-		dialog.setPositiveButton(R.string.ok, new OnCustomAlertDlgClickListener() {
+		dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
 				String newName = editText.getText().toString()
@@ -368,7 +368,7 @@ public class FileInfoManager {
 				}
 			}
 		});		
-		dialog.setNegativeButton(R.string.cancel, new OnCustomAlertDlgClickListener() {
+		dialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
 				renameFlag++;

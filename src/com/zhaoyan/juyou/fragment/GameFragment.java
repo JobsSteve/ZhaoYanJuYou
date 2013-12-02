@@ -6,8 +6,6 @@ import java.util.List;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -39,7 +37,7 @@ import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
-import com.zhaoyan.juyou.dialog.MyDialog;
+import com.zhaoyan.juyou.dialog.AppDialog;
 import com.zhaoyan.juyou.provider.AppData;
 
 /**
@@ -287,19 +285,7 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 			break;
 		case ActionMenu.ACTION_MENU_UNINSTALL:
 			mUninstallList = mAdapter.getSelectedPkgList();
-			mMyDialog = new MyDialog(mContext, mUninstallList.size());
-			mMyDialog.setTitle(R.string.handling);
-			mMyDialog.setOnCancelListener(new OnCancelListener() {
-				
-				@Override
-				public void onCancel(DialogInterface dialog) {
-					if (null != mUninstallList) {
-						mUninstallList.clear();
-						mUninstallList = null;
-					}
-				}
-			});
-			mMyDialog.show();
+			showUninstallDialog();
 			uninstallApp();
 			showMenuBar(false);
 			break;
@@ -333,7 +319,7 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 	
 	private class MoveAsyncTask extends AsyncTask<Void, Void, Void>{
 		List<String> pkgList = new ArrayList<String>();
-		MyDialog dialog = null;
+		AppDialog dialog = null;
 		
 		MoveAsyncTask(List<String> list){
 			pkgList = list;
@@ -343,7 +329,7 @@ public class GameFragment extends AppBaseFragment implements OnItemClickListener
 		protected void onPreExecute() {
 			super.onPreExecute();
 			if (null == dialog) {
-				dialog = new MyDialog(mContext, pkgList.size());
+				dialog = new AppDialog(mContext, pkgList.size());
 				dialog.setTitle(R.string.handling);
 				dialog.show();
 			}

@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.zhaoyan.juyou.R;
 
@@ -24,7 +23,7 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 	private View mButtonView;
 	private ListView mDeleteListView;
 	
-	private TextView mTitleView;
+	private View mTitleView;
 	
 	private Button mButton1,mButton2, mButton3;
 	private View mDividerOne,mDividerTwo;
@@ -56,16 +55,15 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		mDeletingView = findViewById(R.id.rl_deleting);
 //		mPreDeleteView = findViewById(R.id.ll_pre_delete);
 		mButtonView = findViewById(R.id.button_layout);
-		mTitleView = (TextView) findViewById(R.id.title_veiw);
+		mTitleView = findViewById(R.id.rl_title);
 		
 		mDeleteListView = (ListView) findViewById(R.id.lv_delete);
 		
 		mDividerOne = findViewById(R.id.divider_one);
 		mDividerTwo = findViewById(R.id.divider_two);
 		
-		View buttonView = findViewById(R.id.button_layout);
 		if (mButtonList.size() > 0) {
-			buttonView.setVisibility(View.VISIBLE);
+			mButtonView.setVisibility(View.VISIBLE);
 			initButton();
 		}
 		
@@ -145,13 +143,9 @@ public class DeleteDialog extends Dialog implements android.view.View.OnClickLis
 		case R.id.button3:
 			if (null != mClickListener3) {
 				mClickListener3.onClick(v, mFilePath);
-//				mPreDeleteView.setVisibility(View.GONE);
 				mTitleView.setVisibility(View.GONE);
-//				mTitleView.setText(R.string.deleting);
 				mDeleteListView.setVisibility(View.GONE);
 				mDeletingView.setVisibility(View.VISIBLE);
-//				mButton3.setVisibility(View.GONE);
-//				mButton1.setVisibility(View.GONE);
 				mButtonView.setVisibility(View.GONE);
 			}else {
 				dismiss();

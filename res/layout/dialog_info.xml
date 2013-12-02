@@ -8,7 +8,8 @@
     
     <RelativeLayout 
         android:layout_width="fill_parent"
-        android:layout_height="48dp"
+        android:layout_height="50dp"
+         android:background="#f0f0f0f0"
         >
         
         <ProgressBar 
@@ -26,17 +27,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:background="#f0f0f0f0"
             android:text="@string/info1"
             android:textColor="@color/holo_blue1"
             android:textSize="15sp" />
+        
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/holo_blue1" />
 
     </RelativeLayout>
-    
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="@color/holo_blue1" />
     
     <TextView 
         android:id="@+id/tv_info_type"
@@ -75,19 +76,9 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"
         android:text="包含："
         />
     
-    <View 
-        android:id="@+id/info_divider"
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:background="#b2b2b2"
-        />
     
     <TextView 
         android:id="@+id/tv_info_date"
@@ -96,28 +87,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
         android:text="最后修改时间："
         />
     
-    <View 
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="#d1d1d1"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        />
-    
-    <TextView 
-        android:id="@+id/btn_info_ok"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/blue_bg"
-        android:gravity="center"
-        android:text="@string/ok"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:textSize="15sp"
-        android:visibility="gone"
-        />
 </LinearLayout>
