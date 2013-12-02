@@ -212,7 +212,6 @@ public class SearchConnectFragment extends Fragment implements
 		private void handleNetworkSate(NetworkInfo networkInfo) {
 			if (networkInfo.isConnected()) {
 				int serverNumber = mWifiFragment.getServerNumber();
-				String ssid = mWifiManager.getConnectionInfo().getSSID();
 				mTableTitleView.setTableTitle(POSTION_WIFI_FRAGMENT,
 						getWifiServerNumberTitle(serverNumber));
 			} else {
