@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileListItem;
@@ -28,7 +29,7 @@ public class FileInfoAdapter extends BaseAdapter {
 	
 	private FileIconHelper iconHelper;
 
-	public int mMode = ZYConstant.MENU_MODE_NORMAL;
+	public int mMode = ActionMenu.MODE_NORMAL;
 	
 	private Context mContext;
 
@@ -137,7 +138,7 @@ public class FileInfoAdapter extends BaseAdapter {
 	 * get selected items position list
 	 * @return
 	 */
-	public List<Integer> getSelectedItemPositions() {
+	public List<Integer> getSelectedItemsPos() {
 		List<Integer> list = new ArrayList<Integer>();
 		for (int i = 0; i < mIsSelected.size(); i++) {
 			if (mIsSelected.valueAt(i)) {
@@ -267,18 +268,20 @@ public class FileInfoAdapter extends BaseAdapter {
 		//20131128 yuri:use new way to load file icon
 		FileListItem.setupFileListItemInfo(mContext, view, fileInfo, iconHelper);
 
-		if (mMode == ZYConstant.MENU_MODE_EDIT) {
-			updateListViewBackground(position, view);
-		} else {
+		if (isMode(ActionMenu.MODE_EDIT) || isMode(ActionMenu.MODE_COPY)) {
+			updateListViewBackground(position, view, R.color.holo_blue1);
+		} else if (isMode(ActionMenu.MODE_CUT)) {
+			updateListViewBackground(position, view, R.color.holo_blue_light_transparent);
+		}else {
 			view.setBackgroundResource(Color.TRANSPARENT);
 		}
 
 		return view;
 	}
 
-	private void updateListViewBackground(int position, View view) {
+	private void updateListViewBackground(int position, View view, int colorId) {
 		if (isSelected(position)) {
-			view.setBackgroundResource(R.color.holo_blue1);
+			view.setBackgroundResource(colorId);
 		} else {
 			view.setBackgroundResource(Color.TRANSPARENT);
 		}

@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -14,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,15 +27,19 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
+import com.zhaoyan.common.view.ZyPopupMenu;
+import com.zhaoyan.common.view.ZyPopupMenu.PopupViewClickListener;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileHomeAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
@@ -50,6 +57,8 @@ import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnCustomAlertDlgClickListener;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
@@ -57,15 +66,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		OnItemLongClickListener, onMenuItemClickListener {
 	private static final String TAG = "FileBrowserFragment";
 
-	// 文件路径导航栏
+	// File path navigation bar
 	private SlowHorizontalScrollView mNavigationBar = null;
-	// 显示所有文件
-	private ListView mFileListView = null;
+
+	private ListView mListView = null;
 	private TextView mListViewTip;
 	private ProgressBar mLoadingBar;
 	private LinearLayout mNavBarLayout;
 
-	// 快速回到根目录
+	//fast to go to home view
 	private View mHomeView;
 
 	private TabManager mTabManager;
@@ -87,6 +96,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	// save files
 	private List<FileInfo> mFileLists = new ArrayList<FileInfo>();
 	private List<Integer> mHomeList = new ArrayList<Integer>();
+	
+	//copy or cut file path list
+	private List<FileInfo> mCopyList = new ArrayList<FileInfo>();
 
 	public static final int INTERNAL = MountManager.INTERNAL;
 	public static final int SDCARD = MountManager.SDCARD;
@@ -96,7 +108,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	private Context mContext;
 
+	/**
+	 * current dir path
+	 */
 	private String mCurrentPath;
+	/**
+	 * cut files'path
+	 * 剪切文件所在的目录
+	 */
+	private String mCutPath;
 
 	// context menu
 	// save current sdcard type
@@ -122,6 +142,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private static final int MSG_UPDATE_LIST = 2;
 	private static final int MSG_UPDATE_HOME = 3;
 	private static final int MSG_UPDATE_FILE = 4;
+	private static final int MSG_REFRESH = 5;
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -141,6 +162,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				break;
 			case MSG_UPDATE_HOME:
 				mHomeAdapter.notifyDataSetChanged();
+				break;
+			case MSG_REFRESH:
+				browserTo(new File(mCurrentPath));
 				break;
 			default:
 				break;
@@ -168,12 +192,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.file_main, container, false);
-		mContext = getActivity();
+		mContext = getActivity().getApplicationContext();
 
-		mFileListView = (ListView) rootView.findViewById(R.id.lv_file);
-		mFileListView.setOnItemClickListener(this);
-		mFileListView.setOnScrollListener(this);
-		mFileListView.setOnItemLongClickListener(this);
+		mListView = (ListView) rootView.findViewById(R.id.lv_file);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnScrollListener(this);
+		mListView.setOnItemLongClickListener(this);
 
 		initTitle(rootView.findViewById(R.id.rl_file_browser_main), R.string.all_file);
 
@@ -190,7 +214,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mHomeView.setOnClickListener(this);
 
 		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
-		mMenuBarView = rootView.findViewById(R.id.menubar_bottom);
+		mMenuBarView = rootView.findViewById(R.id.bottom);
 		mMenuBarView.setVisibility(View.GONE);
 
 		return rootView;
@@ -203,7 +227,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		sp = mContext.getSharedPreferences(Extra.SHARED_PERFERENCE_NAME, Context.MODE_PRIVATE);
 
 		mFileInfoManager = new FileInfoManager();
-		mountManager = new MountManager(getActivity());
+		mountManager = new MountManager(mContext);
 
 		sdcard_path = sp.getString(Extra.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
 		internal_path = sp.getString(Extra.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
@@ -220,8 +244,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 
 		mHomeAdapter = new FileHomeAdapter(mContext, mHomeList);
-		mIconHelper = new FileIconHelper(getActivity().getApplicationContext());
-		mAdapter = new FileInfoAdapter(getActivity().getApplicationContext(), mAllLists, mIconHelper);
+		mIconHelper = new FileIconHelper(mContext);
+		mAdapter = new FileInfoAdapter(mContext, mAllLists, mIconHelper);
 
 		if (mHomeList.size() <= 0) {
 			mNavBarLayout.setVisibility(View.GONE);
@@ -275,7 +299,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				break;
 			}
 		} else {
-			if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+			if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 				mAdapter.setSelected(position);
 				mAdapter.notifyDataSetChanged();
 
@@ -291,7 +315,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					browserTo(new File(selectedFileInfo.filePath));
 				} else {
 					// open file
-//					mFileInfoManager.openFile(getActivity().getApplicationContext(), selectedFileInfo.filePath);
 					IntentBuilder.viewFile(getActivity(), selectedFileInfo.filePath);
 				}
 			}
@@ -301,7 +324,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private void setAdapter(List<FileInfo> list) {
 		updateUI(list.size());
 		mAdapter.setList(list);
-		mFileListView.setAdapter(mAdapter);
+		mListView.setAdapter(mAdapter);
 	}
 
 	@Override
@@ -310,24 +333,29 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			return false;
 		}
 
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
+		} else if (mAdapter.isMode(ActionMenu.MODE_COPY)
+				|| mAdapter.isMode(ActionMenu.MODE_CUT)) {
+			return true;
 		} else {
-			mAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 		}
+		
 		boolean isSelected = mAdapter.isSelected(position);
 		mAdapter.setSelected(position, !isSelected);
 		mAdapter.notifyDataSetChanged();
 
-		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
+		mActionMenu = new ActionMenu(mContext);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_COPY, R.drawable.ic_action_copy, R.string.copy);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CUT, R.drawable.ic_action_cut, R.string.cut);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, R.drawable.ic_action_delete_enable, R.string.menu_delete);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME,R.drawable.ic_action_rename, R.string.rename);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_MORE, R.drawable.ic_action_overflow, R.string.menu_more);
 
-		mMenuTabManager = new MenuTabManager(getActivity().getApplicationContext(), mMenuHolder);
+		mMenuTabManager = new MenuTabManager(mContext, mMenuHolder);
 		showMenuBar(true);
 		if (mAllLists.get(position).isDir) {
 			//we do not support send folder
@@ -359,12 +387,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			// Log.d(TAG, "seletedItemPosition:" + seletedItemPosition +
 			// ",mTop=" + mTop);
 			if (seletedItemPosition == -1) {
-				mFileListView.setSelectionAfterHeaderView();
+				mListView.setSelectionAfterHeaderView();
 			} else if (seletedItemPosition >= 0 && seletedItemPosition < mAdapter.getCount()) {
 				if (mTop == -1) {
-					mFileListView.setSelection(seletedItemPosition);
+					mListView.setSelection(seletedItemPosition);
 				} else {
-					mFileListView.setSelectionFromTop(seletedItemPosition, mTop);
+					mListView.setSelectionFromTop(seletedItemPosition, mTop);
 					mTop = -1;
 				}
 			}
@@ -402,7 +430,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					mFolderLists.add(fileInfo);
 				}
 			} else {
-				fileInfo = mFileInfoManager.getFileInfo(getActivity().getApplicationContext(), currentFile);
+				fileInfo = mFileInfoManager.getFileInfo(mContext, currentFile);
 				if (currentFile.isHidden()) {
 					// do nothing
 				} else {
@@ -423,7 +451,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			nameList.add(fileList.get(position).fileName);
 		}
 
-		mDeleteDialog = new DeleteDialog(mContext, nameList);
+		mDeleteDialog = new DeleteDialog(getActivity(), nameList);
 		mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
 			@Override
 			public void onClick(View view, String path) {
@@ -461,7 +489,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			}
 
 			for (int i = 0; i < deleteList.size(); i++) {
-				doDelete(getActivity().getApplicationContext(), deleteList.get(i));
+				doDelete(mContext, deleteList.get(i));
 				int position = positionList.get(i) - i;
 				Message message = mHandler.obtainMessage();
 				message.arg1 = position;
@@ -538,13 +566,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 			@Override
 			public void onTransportSuccess() {
-				int first = mFileListView.getFirstVisiblePosition();
-				int last = mFileListView.getLastVisiblePosition();
-				List<Integer> checkedItems = mAdapter.getSelectedItemPositions();
+				int first = mListView.getFirstVisiblePosition();
+				int last = mListView.getLastVisiblePosition();
+				List<Integer> checkedItems = mAdapter.getSelectedItemsPos();
 				ArrayList<ImageView> icons = new ArrayList<ImageView>();
 				for (int id : checkedItems) {
 					if (id >= first && id <= last) {
-						View view = mFileListView.getChildAt(id - first);
+						View view = mListView.getChildAt(id - first);
 						if (view != null) {
 							ViewHolder viewHolder = (ViewHolder) view.getTag();
 							icons.add(viewHolder.iconView);
@@ -579,7 +607,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		public TabManager() {
 			mTabsHolder = (LinearLayout) rootView.findViewById(R.id.tabs_holder);
 			// 添加一个空的button，为了UI更美观
-			mBlankTab = new Button(mContext);
+			mBlankTab = new Button(getActivity());
 			mBlankTab.setBackgroundResource(R.drawable.fm_blank_tab);
 			LinearLayout.LayoutParams mlp = new LinearLayout.LayoutParams(new ViewGroup.MarginLayoutParams(
 					LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -708,7 +736,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			Log.d(TAG, "updateNavigationBar,id = " + id);
 			// click current button do not response
 			if (id < mTabNameList.size() - 1) {
-				showMenuBar(false);
+				if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
+					showMenuBar(false);
+				}
 				int count = mTabNameList.size() - id;
 				mTabsHolder.removeViews(id, count);
 
@@ -732,9 +762,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 				int top = -1;
 				FileInfo selectedFileInfo = null;
-				if (mFileListView.getCount() > 0) {
-					View view = mFileListView.getChildAt(0);
-					selectedFileInfo = mAdapter.getItem(mFileListView.getPositionForView(view));
+				if (mListView.getCount() > 0) {
+					View view = mListView.getChildAt(0);
+					selectedFileInfo = mAdapter.getItem(mListView.getPositionForView(view));
 					top = view.getTop();
 				}
 				addToNavigationList(mCurrentPath, top, selectedFileInfo);
@@ -811,7 +841,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 		mStatus = STATUS_HOME;
 		updateUI(mHomeList.size());
-		mFileListView.setAdapter(mHomeAdapter);
+		mListView.setAdapter(mHomeAdapter);
 		mHomeAdapter.notifyDataSetChanged();
 	}
 
@@ -822,7 +852,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public boolean onBackPressed() {
 		Log.d(TAG, "onBackPressed.mStatus=" + mStatus);
 		mIconHelper.stopLoader();
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}
@@ -868,22 +898,98 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
-			List<Integer> posList = mAdapter.getSelectedItemPositions();
+			List<Integer> posList = mAdapter.getSelectedItemsPos();
 			showDeleteDialog(posList);
-			break;
-		case ActionMenu.ACTION_MENU_INFO:
-			List<FileInfo> list = mAdapter.getSelectedFileInfos();
-			mFileInfoManager.showInfoDialog(getActivity(), list);
-			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
 			doSelectAll();
 			break;
-		case ActionMenu.ACTION_MENU_RENAME:
-			List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
-			mFileInfoManager.showRenameDialog(getActivity(), renameList);
+		case ActionMenu.ACTION_MENU_COPY:
+			mAdapter.changeMode(ActionMenu.MODE_COPY);
+			startPasteMenu();
+			break;
+		case ActionMenu.ACTION_MENU_CUT:
+			mCutPath = mCurrentPath;
+			mAdapter.changeMode(ActionMenu.MODE_CUT);
 			mAdapter.notifyDataSetChanged();
+			startPasteMenu();
+			break;
+		case ActionMenu.ACTION_MENU_PASTE:
+			Log.d(TAG, "ACTION_MENU_PASTE.mCutPath:" + mCutPath);
+//			if (null != mCutPath && !"".equals(mCutPath)) {
+//				if (mCurrentPath.equals(mCutPath)) {
+//					//do nothing
+//				} else if (mCurrentPath.contains(mCutPath)) {
+//					ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
+//					dialog.setTitle(R.string.cut_fail);
+//					dialog.setMessage(R.string.cut_fail_msg_one);
+//					dialog.setPositiveButton(R.string.ok, null);
+//					dialog.setCancelable(true);
+//					dialog.show();
+//					showMenuBar(false);
+//					break;
+//				}
+//			}
+			new CopyCutTask().execute();
+			break;
+		case ActionMenu.ACTION_MENU_CANCEL:
 			showMenuBar(false);
+			break;
+		case ActionMenu.ACTION_MENU_MORE:
+			ActionMenu actionMenu = new ActionMenu(mContext);
+			actionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename, R.string.rename);
+			actionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
+			ZyPopupMenu popupMenu = new ZyPopupMenu(getActivity(), actionMenu);
+			popupMenu.showAsLoaction(mMenuBarView, Gravity.RIGHT | Gravity.BOTTOM, 5, (int) mContext.getResources().getDimension(R.dimen.menubar_height));
+			popupMenu.setOnPopupViewListener(new PopupViewClickListener() {
+				@Override
+				public void onActionMenuItemClick(ActionMenuItem item) {
+					switch (item.getItemId()) {
+					case ActionMenu.ACTION_MENU_RENAME:
+						List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
+						mFileInfoManager.showRenameDialog(getActivity(), renameList);
+						mAdapter.notifyDataSetChanged();
+						showMenuBar(false);
+						break;
+					case ActionMenu.ACTION_MENU_INFO:
+						List<FileInfo> list = mAdapter.getSelectedFileInfos();
+						mFileInfoManager.showInfoDialog(getActivity(), list);
+						break;
+
+					default:
+						break;
+					}
+				}
+			});
+			break;
+		case ActionMenu.ACTION_MENU_CREATE_FOLDER:
+			LayoutInflater inflater = LayoutInflater.from(mContext);
+			View view = inflater.inflate(R.layout.dialog_rename, null);
+			final EditText editText = (EditText) view.findViewById(R.id.et_rename);
+			ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
+			dialog.setTitle(R.string.create_folder);
+			dialog.setMessage(R.string.folder_input);
+			dialog.setContentView(view);
+			dialog.setNegativeButton(R.string.cancel, null);
+			dialog.setPositiveButton(R.string.ok, new OnCustomAlertDlgClickListener() {
+				@Override
+				public void onClick(Dialog dialog) {
+					String folderName = editText.getText().toString();
+					String newPath = mCurrentPath + File.separator + folderName;
+					File file = new File(newPath);
+					if (file.exists()) {
+						mNotice.showToast(R.string.folder_exist);
+					}else {
+						if (!file.mkdir()) {
+							mNotice.showToast(R.string.folder_create_failed);
+						}else {
+							browserTo(file);
+						}
+					}
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
 			break;
 		default:
 			break;
@@ -920,27 +1026,29 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 		if (0 == selectCount) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(false);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(false);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(false);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
 		} else if (mAdapter.hasDirSelected()) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
 		}else {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
 		}
 	}
 
 	// Cancle Action menu
 	public void onActionMenuDone() {
-		mAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
 		mAdapter.clearSelected();
 		mAdapter.notifyDataSetChanged();
+		mCopyList.clear();
+		mCutPath = null;
 	}
 
 	/**
@@ -957,5 +1065,112 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mMenuTabManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
+	
+	public void startPasteMenu(){
+		mCopyList = mAdapter.getSelectedFileInfos();
+		//update new menu
+		mActionMenu = new ActionMenu(mContext);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CREATE_FOLDER, R.drawable.ic_action_createfolder, R.string.create_folder);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_PASTE, R.drawable.ic_action_paste, R.string.paste);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, R.drawable.ic_action_cancel, R.string.cancel);
+		mMenuTabManager.refreshMenus(mActionMenu);
+	}
+	
+	//Copy and Cut Task
+	class CopyCutTask extends AsyncTask<String, Object, Object>{
+		ProgressDialog dialog = null;
+		String cutFailFolder = "";
 
+		@Override
+		protected Object doInBackground(String... params) {
+			//copy
+			String srcPath = "";
+			String desPath = "";
+			String fileName = "";
+			if (mAdapter.isMode(ActionMenu.MODE_COPY)) {
+				for (FileInfo fileInfo : mCopyList) {
+					srcPath = fileInfo.filePath;
+					fileName = fileInfo.fileName;
+					desPath = mCurrentPath + File.separator + fileName;
+					//if desFile is exist,auto rename
+					if (new File(desPath).exists()) {
+						fileName = FileInfoManager.autoRename(fileName);
+						desPath = mCurrentPath + File.separator + fileName;
+					}
+					
+					if (fileInfo.isDir) {
+						FileManager.copyFolder(srcPath, desPath);
+					} else {
+						FileManager.copyFile(srcPath, desPath);
+					}
+				}
+			}else {
+				//cut
+				File file = null;
+				for(FileInfo fileInfo : mCopyList){
+					srcPath = fileInfo.filePath;
+					fileName = fileInfo.fileName;
+					desPath = mCurrentPath + File.separator + fileName;
+					
+					if (new File(desPath).exists()) {
+						//if desFile is exist,break
+						break;
+					}
+					
+					if (mCurrentPath.equals(srcPath)) {
+						cutFailFolder = fileName;
+					}else {
+						if (fileInfo.isDir) {
+							FileManager.copyFolder(srcPath, desPath);
+						}else {
+							FileManager.copyFile(srcPath, desPath);
+						}
+						
+						//cut over ,delete src file
+						file = new File(srcPath);
+						doDelete(mContext, file);
+					}
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			dialog = new ProgressDialog(getActivity());
+			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			dialog.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.loading));
+			if (mAdapter.isMode(ActionMenu.MODE_COPY)) {
+				dialog.setMessage(mContext.getResources().getString(R.string.copying));
+			}else {
+				dialog.setMessage(mContext.getResources().getString(R.string.cuting));
+			}
+			dialog.setCancelable(false);
+			dialog.show();
+		}
+		
+		@Override
+		protected void onPostExecute(Object result) {
+			super.onPostExecute(result);
+			Log.d(TAG, "CopyTask.onPostExecut");
+			showMenuBar(false);
+			if (null != dialog) {
+				dialog.cancel();
+				dialog = null;
+			}
+			mHandler.sendMessage(mHandler.obtainMessage(MSG_REFRESH));
+			//if have a folder cut fail,show a dialog to user
+			if (null != cutFailFolder && !"".equals(cutFailFolder)) {
+				ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
+				dialog.setTitle(mContext.getString(R.string.cut_fail_format, cutFailFolder));
+				dialog.setMessage(R.string.cut_fail_msg_one);
+				dialog.setPositiveButton(R.string.ok, null);
+				dialog.setCancelable(true);
+				dialog.show();
+			}
+		}
+		
+	}
+	//copy & cut
 }
