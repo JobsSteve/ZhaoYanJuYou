@@ -1,6 +1,9 @@
 package com.zhaoyan.juyou.fragment;
 
+import com.zhaoyan.communication.connect.ServerCreator;
+import com.zhaoyan.communication.search2.ServerSearcher;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,18 +24,18 @@ public class SearchConnectWifiFragment extends SearchConnectBaseFragment {
 	}
 
 	@Override
-	protected void startSearch() {
-		mConnectHelper.searchServer(this);
+	protected int getServerUserType() {
+		return JuyouData.User.TYPE_REMOTE_SEARCH_LAN;
 	}
 
 	@Override
-	protected void createServer() {
-		mConnectHelper.createServer("wifi", null);
+	protected int getServerSearchType() {
+		return ServerSearcher.SERVER_TYPE_LAN;
 	}
 
 	@Override
-	protected int getServerTypeFilter() {
-		return FILTER_SERVER_WIFI;
+	protected int getServerCreateType() {
+		return ServerCreator.TYPE_LAN;
 	}
 
 }

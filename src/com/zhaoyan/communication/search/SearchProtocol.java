@@ -2,13 +2,10 @@ package com.zhaoyan.communication.search;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-
-import android.annotation.TargetApi;
-import android.os.Build;
 
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.zhaoyan.common.net.NetWorkUtil;
+import com.zhaoyan.common.util.ArraysCompat;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.UserManager;
 
@@ -71,10 +68,8 @@ public class SearchProtocol {
 	 * @param data
 	 * @throws UnknownHostException
 	 */
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public static void decodeSearchLan(byte[] data, OnSearchListener listener)
 			throws UnknownHostException {
-
 		if (data.length < SearchProtocol.IP_ADDRESS_HEADER_SIZE
 				+ SearchProtocol.SERVER_NAME_HEADER_SIZE) {
 			// Data format error.
@@ -86,13 +81,13 @@ public class SearchProtocol {
 		// server ip.
 		int start = 0;
 		int end = SearchProtocol.IP_ADDRESS_HEADER_SIZE;
-		byte[] serverIpData = Arrays.copyOfRange(data, start, end);
-		String serverIP = "";
-		serverIP = InetAddress.getByAddress(serverIpData).getHostAddress();
+		byte[] serverIpData = ArraysCompat.copyOfRange(data, start, end);
+		String serverIP = InetAddress.getByAddress(serverIpData)
+				.getHostAddress();
 		// server name size.
 		start = end;
 		end += SearchProtocol.SERVER_NAME_HEADER_SIZE;
-		byte[] serveraNameSizeData = Arrays.copyOfRange(data, start, end);
+		byte[] serveraNameSizeData = ArraysCompat.copyOfRange(data, start, end);
 		int serverNameSize = ArrayUtil.byteArray2Int(serveraNameSizeData);
 
 		// server name.
@@ -107,13 +102,13 @@ public class SearchProtocol {
 							+ serverNameSize);
 			start = 0;
 			end = 16;
-			serverIpData = Arrays.copyOfRange(data, start, end);
+			serverIpData = ArraysCompat.copyOfRange(data, start, end);
 			serverIP = "";
 			serverIP = InetAddress.getByAddress(serverIpData).getHostAddress();
 			// server name size.
 			start = end;
 			end += SearchProtocol.SERVER_NAME_HEADER_SIZE;
-			serveraNameSizeData = Arrays.copyOfRange(data, start, end);
+			serveraNameSizeData = ArraysCompat.copyOfRange(data, start, end);
 			serverNameSize = ArrayUtil.byteArray2Int(serveraNameSizeData);
 			Log.e("ArbiterLiu", serverNameSize + "");
 			if (serverNameSize < 0
@@ -130,7 +125,7 @@ public class SearchProtocol {
 		}
 		start = end;
 		end += serverNameSize;
-		byte[] serverNameData = Arrays.copyOfRange(data, start, end);
+		byte[] serverNameData = ArraysCompat.copyOfRange(data, start, end);
 		String serverName = new String(serverNameData);
 		Log.d(TAG, "Found server ip = " + serverIP + ", name = " + serverName);
 		if (serverIP.equals(NetWorkUtil.getLocalIpAddress())) {

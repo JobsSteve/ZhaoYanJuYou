@@ -1,32 +1,34 @@
 package com.zhaoyan.juyou.fragment;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.SocketServer;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
-import com.zhaoyan.communication.search.ConnectHelper;
-import com.zhaoyan.communication.search.Search;
+import com.zhaoyan.communication.connect.ServerConnector;
+import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.communication.search.SearchUtil;
-import com.zhaoyan.communication.search.ServerInfo;
-import com.zhaoyan.communication.search.SearchProtocol.OnSearchListener;
+import com.zhaoyan.communication.search2.ServerSearcher;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.adapter.ServerAdapter;
+import com.zhaoyan.juyou.adapter.ServerCursorAdapter;
+import com.zhaoyan.juyou.provider.JuyouData;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,18 +37,24 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-@SuppressLint("NewApi")
 public abstract class SearchConnectBaseFragment extends ListFragment implements
-		OnClickListener, OnSearchListener, OnUserChangedListener {
+		OnClickListener, OnUserChangedListener, LoaderCallbacks<Cursor> {
 	private static final String TAG = "SearchConnectBaseFragment";
-	protected ConnectHelper mConnectHelper;
 	protected UserManager mUserManager;
+	protected ServerCreator mServerCreator;
+	protected ServerConnector mServerConnector;
+	protected ServerSearcher mServerSearcher;
+
+	protected static final String[] PROJECTION = { JuyouData.User._ID,
+			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
+			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
+			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE,
+			JuyouData.User.SSID };
 
 	protected static final int MSG_SEARCH_SUCCESS = 1;
 	protected static final int MSG_CONNECT_SERVER = 2;
 	protected static final int MSG_SEARCH_WIFI_DIRECT_FOUND = 3;
 	protected static final int MSG_SEARCH_STOP = 4;
-	protected static final int MSG_SEARCHING = 5;
 	protected static final int MSG_CONNECTED = 6;
 
 	protected static final int STATUS_INIT = 0;
@@ -73,28 +81,19 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 	protected Button mSearchResultSearchButton;
 	protected Button mSearchResultCreateServerButton;
 	protected ListView mListView;
-	protected ArrayList<ServerInfo> mServerData = new ArrayList<ServerInfo>();
-	protected ServerAdapter mServerAdapter;
+	protected ServerCursorAdapter mServerAdapter;
 
 	protected View mConnectingView;
-
 	protected View mCreatingServerView;
-
 	private OnServerChangeListener mOnServerChangeListener;
 
-	protected abstract void startSearch();
+	BroadcastReceiver mServerCreateBroadcastReceiver;
 
-	protected abstract void createServer();
+	protected abstract int getServerSearchType();
 
-	protected static final int FILTER_SERVER_AP = 0x1;
-	protected static final int FILTER_SERVER_WIFI = 0x2;
-	protected static final int FILTER_SERVER_WIFI_DIRECT = 0x4;
-	protected static final int FILTER_SERVER_ALL = FILTER_SERVER_AP
-			| FILTER_SERVER_WIFI | FILTER_SERVER_WIFI_DIRECT;
+	protected abstract int getServerCreateType();
 
-	protected int getServerTypeFilter() {
-		return FILTER_SERVER_ALL;
-	}
+	protected abstract int getServerUserType();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,17 +103,22 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		View rootView = inflater.inflate(R.layout.search_connect, container,
 				false);
 		initView(rootView);
-		mServerAdapter = new ServerAdapter(getActivity().getApplicationContext(), mServerData);
+		mServerAdapter = new ServerCursorAdapter(getActivity(), null, true);
 
-		mConnectHelper = ConnectHelper.getInstance(mContext
-				.getApplicationContext());
 		mUserManager = UserManager.getInstance();
 		mUserManager.registerOnUserChangedListener(this);
 
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(ConnectHelper.ACTION_SERVER_CREATED);
-		mContext.registerReceiver(mReceiver, filter);
+		mServerCreator = ServerCreator.getInstance(mContext);
+		mServerConnector = ServerConnector.getInstance(mContext);
+		mServerSearcher = ServerSearcher.getInstance(mContext);
 
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(ServerCreator.ACTION_SERVER_CREATED);
+		if (mServerCreateBroadcastReceiver == null) {
+			mServerCreateBroadcastReceiver = new ServerCreateBroadcastReceiver();
+			mContext.registerReceiver(mServerCreateBroadcastReceiver,
+					intentFilter);
+		}
 		return rootView;
 	}
 
@@ -128,20 +132,15 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 	@Override
 	public void onDestroyView() {
 		Log.d(TAG, "onDestroyView");
-		try {
-			mContext.unregisterReceiver(mReceiver);
-		} catch (Exception e) {
-			Log.e(TAG, "onDestroyView unregisterReceiver " + e);
-		}
 		mUserManager.unregisterOnUserChangedListener(this);
-		cancelStopSearchTimer();
-		if (!SocketCommunicationManager.getInstance(
-				mContext.getApplicationContext()).isServerAndCreated()) {
-			mConnectHelper.stopSearch();
+		try {
+			mContext.unregisterReceiver(mServerCreateBroadcastReceiver);
+		} catch (Exception e) {
+			Log.e(TAG, "onDestroyView " + e);
 		}
-		
-		mConnectHelper.setSearchClientListener(null);
-		mConnectHelper.setSearchServerListener(null);
+		cancelStopSearchTimer();
+		stopSearch();
+		clearSearchResult();
 		super.onDestroyView();
 	}
 
@@ -179,11 +178,12 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		mListView = getListView();
-		
+
 		mListView.setAdapter(mServerAdapter);
+		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override
@@ -197,30 +197,55 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		case R.id.btn_search_init_create_server:
 			preCreateServer();
 			break;
-
 		default:
 			break;
 		}
 	}
 
 	private void preStartSearch() {
+		// Restart search.
 		SearchUtil.clearWifiConnectHistory(mContext);
-		clearServerList();
 		if (SocketServer.getInstance().isServerStarted()) {
 			SocketServer.getInstance().stopServer();
 		}
+		stopSearch();
+		cancelStopSearchTimer();
+		clearSearchResult();
 
 		startSearch();
-
 		setStopSearchTimer();
-
 		updateUI(STATUS_SEARCHING);
 	}
 
 	private void preCreateServer() {
-		createServer();
+		// Recreate server.
+		stopSearch();
+		cancelStopSearchTimer();
+		clearSearchResult();
 
+		stopServer();
+		createServer();
 		updateUI(STATUS_CREATING_SERVER);
+	}
+
+	protected void startSearch() {
+		mServerSearcher.startSearch(getServerSearchType());
+	}
+
+	protected void stopSearch() {
+		mServerSearcher.stopSearch(getServerSearchType());
+	}
+
+	protected void clearSearchResult() {
+		mServerSearcher.clearServerInfo(getServerSearchType());
+	}
+
+	protected void createServer() {
+		mServerCreator.createServer(getServerCreateType());
+	}
+
+	protected void stopServer() {
+		mServerCreator.stopServer();
 	}
 
 	private void cancelStopSearchTimer() {
@@ -231,7 +256,6 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 			} catch (Exception e) {
 				Log.d(TAG, "cancelStopSearchTimer." + e);
 			}
-
 		}
 	}
 
@@ -243,150 +267,38 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 			@Override
 			public void run() {
 				mStopSearchTimer = null;
-				mConnectHelper.stopSearch(false);
+				stopSearch();
 				mHandler.obtainMessage(MSG_SEARCH_STOP).sendToTarget();
 			}
 		}, SEARCH_TIME_OUT);
 	}
 
-	private boolean mIsAPSelected = false;
-
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		ServerInfo serverInfo = mServerData.get(position);
-		if (serverInfo.getServerType().equals("wifi-ap"))
-			mIsAPSelected = true;
-		mHandler.obtainMessage(MSG_CONNECT_SERVER, serverInfo).sendToTarget();
-	}
-
-	private void clearServerList() {
-		mServerData.clear();
-		mServerAdapter.notifyDataSetChanged();
-
-		if (mOnServerChangeListener != null) {
-			mOnServerChangeListener.onServerChanged(this, mServerData.size());
+		Cursor cursor = (Cursor) mServerAdapter.getItem(position);
+		if (cursor != null) {
+			mServerConnector.connectServer(getUserInfoFromCursor(cursor));
+			updateUI(STATUS_CONNECTING);
 		}
 	}
 
-	@Override
-	public void onSearchSuccess(String serverIP, String name) {
-		Log.d(TAG, "onSearchSuccess");
-		Log.d(TAG, "mIsApSelected:" + mIsAPSelected + "\n" + "serverIP:"
-				+ serverIP + "\n" + "serverName:" + name);
-		if (mIsAPSelected && serverIP.equals(Search.ANDROID_AP_ADDRESS)) {
-			// Auto connect to the server.
-			Message message = mHandler.obtainMessage(MSG_CONNECT_SERVER);
-			ServerInfo info = new ServerInfo();
-			info.setServerType("wifi");
-			info.setServerIp(serverIP);
-			info.setServerName(name);
-			message.obj = info;
-			mHandler.sendMessage(message);
-			mIsAPSelected = false;
-		} else {
+	private UserInfo getUserInfoFromCursor(Cursor cursor) {
+		String name = cursor.getString(cursor
+				.getColumnIndex(JuyouData.User.USER_NAME));
+		String ip = cursor.getString(cursor
+				.getColumnIndex(JuyouData.User.IP_ADDR));
+		int type = cursor.getInt(cursor.getColumnIndex(JuyouData.User.TYPE));
+		String ssid = cursor.getString(cursor
+				.getColumnIndex(JuyouData.User.SSID));
 
-			Log.i(TAG, "serverIp:" + serverIP + "-->serverName:" + name);
-			// Add to server list and wait user for choose.
-			Message message = mHandler.obtainMessage(MSG_SEARCH_SUCCESS);
-			ServerInfo info = new ServerInfo();
-			info.setServerType("wifi");
-			info.setServerIp(serverIP);
-			info.setServerName(name);
-			message.obj = info;
-			mHandler.sendMessage(message);
-		}
-	}
-
-	@Override
-	public void onSearchSuccess(ServerInfo serverInfo) {
-		Log.d(TAG, "onSearchSuccess.serverInfo=" + serverInfo.getServerName());
-		Message message = mHandler.obtainMessage(MSG_SEARCH_SUCCESS);
-		message.obj = serverInfo;
-		message.sendToTarget();
-	}
-
-	private boolean isServerAlreadyAdded(ServerInfo info) {
-		boolean result = false;
-
-		for (ServerInfo serverInfo : mServerData) {
-			if (ConnectHelper.SERVER_TYPE_WIFI.equals(info.getServerType())
-					&& ConnectHelper.SERVER_TYPE_WIFI.equals(serverInfo
-							.getServerType())) {
-				if (info.getServerName().equals(serverInfo.getServerName())
-						&& info.getServerIp().equals(serverInfo.getServerIp())) {
-					// The server is already added to list.
-					result = true;
-					break;
-				}
-			} else if (ConnectHelper.SERVER_TYPE_WIFI_AP.equals(info
-					.getServerType())
-					&& ConnectHelper.SERVER_TYPE_WIFI_AP.equals(serverInfo
-							.getServerType())) {
-				if (info.getServerName().equals(serverInfo.getServerName())
-						&& info.getServerSsid().equals(
-								serverInfo.getServerSsid())) {
-					// The server is already added to list.
-					result = true;
-					break;
-				}
-			} else if (ConnectHelper.SERVER_TYPE_WIFI_DIRECT.equals(info
-					.getServerType())
-					&& ConnectHelper.SERVER_TYPE_WIFI_DIRECT.equals(serverInfo
-							.getServerType())) {
-				if (info.getServerName().equals(serverInfo.getServerName())
-						&& info.getServerDevice().deviceAddress
-								.equals(serverInfo.getServerDevice().deviceAddress)) {
-					// The server is already added to list.
-					result = true;
-					break;
-				}
-			}
-		}
-
-		return result;
-	}
-
-	@Override
-	public void onSearchStop() {
-		Log.d(TAG, "onSearchStop");
-	}
-
-	private boolean filterServer(ServerInfo info) {
-		int filter = getServerTypeFilter();
-		Log.d(TAG, "filterServer server = " + info + ", filter = " + filter);
-		String type = info.getServerType();
-		if (FILTER_SERVER_ALL == (filter & FILTER_SERVER_ALL)) {
-			return true;
-		}
-		if (ConnectHelper.SERVER_TYPE_WIFI.equals(type)
-				&& FILTER_SERVER_WIFI == (filter & FILTER_SERVER_WIFI)) {
-			Log.d(type, "filterServer SERVER_TYPE_WIFI");
-			return true;
-		} else if (ConnectHelper.SERVER_TYPE_WIFI_AP.equals(type)
-				&& FILTER_SERVER_AP == (filter & FILTER_SERVER_AP)) {
-			Log.d(type, "filterServer FILTER_SERVER_AP");
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private void addServer(ServerInfo info) {
-		if (!filterServer(info)) {
-			Log.d(TAG, "server dismatch filter." + info);
-			return;
-		}
-
-		if (isServerAlreadyAdded(info)) {
-			Log.d(TAG, "Server is already added. " + info);
-			return;
-		}
-		mServerData.add(info);
-		Log.i(TAG, "addServer:" + info);
-		mServerAdapter.notifyDataSetChanged();
-		if (mOnServerChangeListener != null) {
-			mOnServerChangeListener.onServerChanged(this, mServerData.size());
-		}
+		UserInfo userInfo = new UserInfo();
+		User user = new User();
+		user.setUserName(name);
+		userInfo.setUser(user);
+		userInfo.setType(type);
+		userInfo.setIpAddress(ip);
+		userInfo.setSsid(ssid);
+		return userInfo;
 	}
 
 	/**
@@ -419,7 +331,7 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 			mInitView.setVisibility(View.GONE);
 			mSearchResultView.setVisibility(View.VISIBLE);
 			mSearchResultProgressBar.setVisibility(View.GONE);
-			if (mServerData.size() == 0) {
+			if (getServerNumber() == 0) {
 				mSearchResultNone.setVisibility(View.VISIBLE);
 			} else {
 				mSearchResultNone.setVisibility(View.GONE);
@@ -446,25 +358,12 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		public void handleMessage(Message msg) {
 
 			switch (msg.what) {
-			case MSG_SEARCH_SUCCESS:
-				addServer((ServerInfo) msg.obj);
-				break;
 			case MSG_SEARCH_STOP:
 				updateUI(STATUS_SEARCH_OVER);
 				break;
-			case MSG_SEARCHING:
-				updateUI(STATUS_SEARCHING);
-				break;
-			case MSG_CONNECT_SERVER:
-				updateUI(STATUS_CONNECTING);
-				ServerInfo info = (ServerInfo) msg.obj;
-				mConnectHelper.connenctToServer(info);
-				break;
 			case MSG_CONNECTED:
-				if (!UserManager.isManagerServer(mUserManager.getLocalUser())) {
-					mConnectHelper.stopSearch();
-				}
-				clearServerList();
+				stopSearch();
+				clearSearchResult();
 				cancelStopSearchTimer();
 				updateUI(STATUS_INIT);
 				break;
@@ -481,20 +380,12 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		mOnServerChangeListener = listener;
 	}
 
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (ConnectHelper.ACTION_SERVER_CREATED.equals(action)) {
-				updateUI(STATUS_INIT);
-			}
+	public int getServerNumber() {
+		int n = 0;
+		if (mServerAdapter != null) {
+			n = mServerAdapter.getCount();
 		}
-	};
-
-	public interface OnServerChangeListener {
-		void onServerChanged(SearchConnectBaseFragment fragment,
-				int serverNumber);
+		return n;
 	}
 
 	@Override
@@ -507,7 +398,47 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 
 	}
 
-	public int getServerNumber() {
-		return mServerData.size();
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+		String selection = JuyouData.User.TYPE + "=" + getServerUserType();
+		return new CursorLoader(mContext, JuyouData.User.CONTENT_URI,
+				PROJECTION, selection, null, JuyouData.User.SORT_ORDER_DEFAULT);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		if (mOnServerChangeListener != null) {
+			if (cursor != null) {
+				mOnServerChangeListener
+						.onServerChanged(this, cursor.getCount());
+			} else {
+				mOnServerChangeListener.onServerChanged(this, 0);
+			}
+		}
+		mServerAdapter.swapCursor(cursor);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		if (mOnServerChangeListener != null) {
+			mOnServerChangeListener.onServerChanged(this, 0);
+		}
+		mServerAdapter.swapCursor(null);
+	}
+
+	public interface OnServerChangeListener {
+		void onServerChanged(SearchConnectBaseFragment fragment,
+				int serverNumber);
+	}
+
+	private class ServerCreateBroadcastReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (ServerCreator.ACTION_SERVER_CREATED.equals(action)) {
+				updateUI(STATUS_INIT);
+			}
+		}
 	}
 }

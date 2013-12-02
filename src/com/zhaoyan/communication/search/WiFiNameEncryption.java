@@ -2,6 +2,8 @@ package com.zhaoyan.communication.search;
 
 import java.util.Random;
 
+import com.zhaoyan.communication.UserInfo;
+
 /**
  * This class is used for generate encrypted WiFi name and check WiFi name</br>
  * 
@@ -14,8 +16,9 @@ import java.util.Random;
  */
 public class WiFiNameEncryption {
 	public static final String WIFI_NAME_SUFFIX_KEY = "WLAN";
-	public static final int WIFI_NAME_SUFFIX_LENGTH = 16;
-	public static final int WIFI_PASSWORD_LENGTH = 10;
+	public static final int WIFI_NAME_SUFFIX_LENGTH = 10;
+
+	public static final int USER_HEAD_ID_LENGHT = 2;
 
 	/**
 	 * Generate a encrypted name.
@@ -24,7 +27,18 @@ public class WiFiNameEncryption {
 	 * @return
 	 */
 	public static String generateWiFiName(String userName) {
-		return userName + "@" + generateWiFiNameSuffix();
+		int headId = UserInfo.HEAD_ID_NOT_PRE_INSTALL;
+		return generateWiFiName(userName, headId);
+	}
+
+	/**
+	 * Generate a encrypted name.
+	 * 
+	 * @param userName
+	 * @return
+	 */
+	public static String generateWiFiName(String userName, int headId) {
+		return generateWiFiName(userName, headId, generateWiFiNameSuffix());
 	}
 
 	/**
@@ -34,7 +48,7 @@ public class WiFiNameEncryption {
 	 */
 	public static String generateWiFiNameSuffix() {
 		Random random = new Random();
-		// Get a random position from 0 to 11.
+		// Get a random position for WIFI_NAME_SUFFIX_KEY.
 		int wifiNameKeyPosition = random.nextInt(WIFI_NAME_SUFFIX_LENGTH
 				- WIFI_NAME_SUFFIX_KEY.length() - 1);
 		// Get the WiFi name suffix.
@@ -55,7 +69,29 @@ public class WiFiNameEncryption {
 	 * @return
 	 */
 	public static String generateWiFiName(String userName, String suffix) {
-		return userName + "@" + suffix;
+		int headId = UserInfo.HEAD_ID_NOT_PRE_INSTALL;
+		return generateWiFiName(userName, headId, suffix);
+	}
+
+	/**
+	 * Generate WiFi name with user name and an exist suffix.
+	 * 
+	 * @param userName
+	 * @param suffix
+	 * @return
+	 */
+	public static String generateWiFiName(String userName, int headId,
+			String suffix) {
+		String headIdString = String.valueOf(headId);
+		if (headIdString.length() < USER_HEAD_ID_LENGHT) {
+			while (headIdString.length() < USER_HEAD_ID_LENGHT) {
+				headIdString = "0" + headIdString;
+			}
+		} else if (headIdString.length() > USER_HEAD_ID_LENGHT) {
+			throw new IllegalArgumentException(
+					"WiFiNameEncryption generateWiFiName() headId is too large");
+		}
+		return userName + headIdString + "@" + suffix;
 	}
 
 	/**
@@ -66,7 +102,23 @@ public class WiFiNameEncryption {
 	 */
 	public static String getUserName(String wifiName) {
 		return wifiName.substring(0, wifiName.length()
-				- WIFI_NAME_SUFFIX_LENGTH - 1);
+				- WIFI_NAME_SUFFIX_LENGTH - 1 - USER_HEAD_ID_LENGHT);
+	}
+
+	public static int getUserHeadId(String wifiName) {
+		int start = wifiName.length() - WIFI_NAME_SUFFIX_LENGTH - 1
+				- USER_HEAD_ID_LENGHT;
+		int end = wifiName.length() - WIFI_NAME_SUFFIX_LENGTH - 1;
+		int headId = UserInfo.HEAD_ID_NOT_PRE_INSTALL;
+		if (start >= 0) {
+			String headIdString = wifiName.substring(start, end);
+			try {
+				headId = Integer.valueOf(headIdString);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+		}
+		return headId;
 	}
 
 	/**
@@ -126,8 +178,8 @@ public class WiFiNameEncryption {
 	 *            {@link #checkWiFiName(String)}.
 	 * @return
 	 */
+	// Get the last WIFI_PASSWORD_LENGTH string.
 	public static String getWiFiPassword(String wifiName) {
-		// Get the last WIFI_PASSWORD_LENGTH string.
 		return Encryption.encrypt(getSuffix(wifiName));
 	}
 }

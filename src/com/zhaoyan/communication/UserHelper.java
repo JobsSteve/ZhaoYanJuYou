@@ -26,7 +26,8 @@ public class UserHelper {
 	private static final String[] PROJECTION = { JuyouData.User._ID,
 			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
 			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
-			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE };
+			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE,
+			JuyouData.User.SSID };
 
 	public static final int getHeadImageResource(int headId) {
 		return HEAD_IMAGES[headId];
@@ -83,14 +84,15 @@ public class UserHelper {
 		byte[] headData = cursor.getBlob(cursor
 				.getColumnIndex(JuyouData.User.HEAD_DATA));
 		int type = cursor.getInt(cursor.getColumnIndex(JuyouData.User.TYPE));
-
+		String ipAddress = cursor.getString(cursor
+				.getColumnIndex(JuyouData.User.IP_ADDR));
+		String ssid = cursor.getString(cursor
+				.getColumnIndex(JuyouData.User.SSID));
 		userInfo.setHeadId(headID);
 		userInfo.setHeadBitmap(BitmapUtilities.byteArrayToBitmap(headData));
-		if (type == JuyouData.User.TYPE_LOCAL) {
-			userInfo.setIsLocal(true);
-		} else {
-			userInfo.setIsLocal(false);
-		}
+		userInfo.setType(type);
+		userInfo.setIpAddress(ipAddress);
+		userInfo.setSsid(ssid);
 		return userInfo;
 	}
 
@@ -183,7 +185,7 @@ public class UserHelper {
 
 	}
 
-	private static void addUserToDatabase(Context context, UserInfo userInfo) {
+	public static void addUserToDatabase(Context context, UserInfo userInfo) {
 		ContentResolver contentResolver = context.getContentResolver();
 		contentResolver.insert(JuyouData.User.CONTENT_URI,
 				getContentValuesFromUserInfo(userInfo));
@@ -205,9 +207,9 @@ public class UserHelper {
 							Bitmap.CompressFormat.JPEG));
 		}
 
-		int type = userInfo.isLocal() ? JuyouData.User.TYPE_LOCAL
-				: JuyouData.User.TYPE_REMOTE;
-		values.put(JuyouData.User.TYPE, type);
+		values.put(JuyouData.User.TYPE, userInfo.getType());
+		values.put(JuyouData.User.IP_ADDR, userInfo.getIpAddress());
+		values.put(JuyouData.User.SSID, userInfo.getSsid());
 		return values;
 	}
 

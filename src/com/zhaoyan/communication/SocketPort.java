@@ -5,6 +5,7 @@ public class SocketPort {
 	public static final int MULTICAST_RECEIVE_PORT = 40007;
 	public static final int ANDROID_AP_SEND_PORT = 55556;
 	public static final int ANDROID_AP_RECEIVE_PORT = 55557;
+	public static final int SEARCH_SERVER_INFO_PORT = 55558;
 	/** Socket server port */
 	public static final int COMMUNICATION_SERVER_PORT = 55555;
 
