@@ -78,4 +78,12 @@ public class UserInfo {
 	public void setHeadBitmap(Bitmap bitmap) {
 		mHeadBitmap = bitmap;
 	}
+
+	@Override
+	public String toString() {
+		return "UserInfo [mUser=" + mUser + ", mHeadBitmap size ="
+				+ mHeadBitmap + ", mHeadId=" + mHeadId
+				+ ", mIpAddress=" + mIpAddress + ", mType=" + mType
+				+ ", mSsid=" + mSsid + "]";
+	}
 }

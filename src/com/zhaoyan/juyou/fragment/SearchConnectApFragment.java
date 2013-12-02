@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.zhaoyan.common.net.NetWorkUtil;
+import com.zhaoyan.communication.connect.ServerCreator;
+import com.zhaoyan.communication.search2.ServerSearcher;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 public class SearchConnectApFragment extends SearchConnectBaseFragment {
 	private Context mContext;
@@ -22,23 +24,18 @@ public class SearchConnectApFragment extends SearchConnectBaseFragment {
 	}
 
 	@Override
-	protected void startSearch() {
-		mConnectHelper.searchServer(this);
+	protected int getServerUserType() {
+		return JuyouData.User.TYPE_REMOTE_SEARCH_AP;
 	}
 
 	@Override
-	protected void createServer() {
-		// Disable wifi AP first to avoid wifi AP name is not the newest.
-		if (NetWorkUtil.isWifiApEnabled(mContext)) {
-			NetWorkUtil.setWifiAPEnabled(mContext, null, false);
-		}
-		mConnectHelper.createServer("wifi-ap", null);
+	protected int getServerSearchType() {
+		return ServerSearcher.SERVER_TYPE_AP;
+	}
 
-	}
-	
 	@Override
-	protected int getServerTypeFilter() {
-		return FILTER_SERVER_AP;
+	protected int getServerCreateType() {
+		return ServerCreator.TYPE_AP;
 	}
-	
+
 }

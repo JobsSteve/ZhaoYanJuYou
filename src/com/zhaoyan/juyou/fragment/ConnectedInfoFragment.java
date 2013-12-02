@@ -23,6 +23,7 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
+import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.communication.search.ConnectHelper;
 import com.zhaoyan.communication.search.SearchUtil;
 import com.zhaoyan.juyou.R;
@@ -37,6 +38,7 @@ public class ConnectedInfoFragment extends ListFragment implements
 	private UserManager mUserManager;
 	private SocketCommunicationManager mCommunicationManager;
 	private ConnectHelper mConnectHelper;
+	private ServerCreator mServerCreator;
 
 	private ListView mUserListView;
 	private UserListAdapter mUserListAdapter;
@@ -53,6 +55,8 @@ public class ConnectedInfoFragment extends ListFragment implements
 				.getInstance(mContext);
 		mConnectHelper = ConnectHelper.getInstance(mContext);
 		mUserManager.registerOnUserChangedListener(this);
+		mServerCreator = ServerCreator.getInstance(mContext);
+		
 		View rootView = inflater.inflate(R.layout.connected_info, container,
 				false);
 		initView(rootView);
@@ -101,6 +105,7 @@ public class ConnectedInfoFragment extends ListFragment implements
 	}
 
 	private void disconnect() {
+		mServerCreator.stopServer();
 		// 1. clear user list.
 		// mUserInfos.clear();
 		// mUserListAdapter.notifyDataSetChanged();

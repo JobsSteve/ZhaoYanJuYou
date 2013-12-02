@@ -15,7 +15,7 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
-import com.zhaoyan.communication.search.ConnectHelper;
+import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.fragment.ConnectedInfoFragment;
 import com.zhaoyan.juyou.fragment.SearchConnectFragment;
@@ -57,7 +57,7 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 
 		mReceiver = new CreateServerReceiver();
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(ConnectHelper.ACTION_SERVER_CREATED);
+		filter.addAction(ServerCreator.ACTION_SERVER_CREATED);
 		registerReceiver(mReceiver, filter);
 	}
 
@@ -177,7 +177,7 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (ConnectHelper.ACTION_SERVER_CREATED.equals(action)) {
+			if (ServerCreator.ACTION_SERVER_CREATED.equals(action)) {
 				updateFragment();
 			}
 		}
