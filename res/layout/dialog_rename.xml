@@ -8,6 +8,7 @@
         android:id="@+id/et_rename"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         />
 
 </LinearLayout>

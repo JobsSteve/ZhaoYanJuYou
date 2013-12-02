@@ -64,13 +64,13 @@
     <LinearLayout
         android:id="@+id/ll_button"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="49dp"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/btn_negative"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/blue_bg"
             android:text="Cancel"
@@ -90,7 +90,7 @@
         <Button
             android:id="@+id/btn_neutral"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/blue_bg"
             android:text="@string/hide"
@@ -102,7 +102,7 @@
         <View
             android:id="@+id/divider_two"
             android:layout_width="1dp"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:background="#d1d1d1" 
             android:visibility="gone"
             />
@@ -110,7 +110,7 @@
         <Button
             android:id="@+id/btn_positive"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/blue_bg"
             android:text="@string/hide"

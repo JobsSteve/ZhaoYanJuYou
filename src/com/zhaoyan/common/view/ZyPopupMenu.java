@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.R.integer;
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,7 +17,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.Log;
@@ -29,7 +24,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 
-public class ZyPopupMenu implements OnItemClickListener, OnClickListener {
+public class ZyPopupMenu implements OnItemClickListener {
 	private static final String TAG = "PopupView";
 	private ArrayList<HashMap<String, Object>> itemList = new ArrayList<HashMap<String,Object>>();
     private Context context;
@@ -56,7 +51,6 @@ public class ZyPopupMenu implements OnItemClickListener, OnClickListener {
 				Log.d(TAG, "title:" + actionMenu.getItem(i).getTitle());
 				mMenuItemList.add(actionMenu.getItem(i));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -67,7 +61,7 @@ public class ZyPopupMenu implements OnItemClickListener, OnClickListener {
 		int width = context.getResources().getDisplayMetrics().widthPixels;
 		int height = LayoutParams.WRAP_CONTENT;
 		Log.d(TAG, "width=" + width+ ",heiht=" +height);
-		popupWindow = new PopupWindow(view, width / 3, height);
+		popupWindow = new PopupWindow(view, width / 2, height);
 		popupWindow.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.dialog_full_holo_light));
 		popupWindow.setTouchInterceptor(new OnTouchListener() {
 			@Override
@@ -127,24 +121,6 @@ public class ZyPopupMenu implements OnItemClickListener, OnClickListener {
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		mListener.onActionMenuItemClick(mMenuItemList.get(position));
 		popupWindow.dismiss();
-	}
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-//		case R.id.menu_item_open:
-//			mListener.onOpenClickListener();
-//			break;
-//		case R.id.menu_item_send:
-//			mListener.onSendClickListener();
-//			break;
-//		case R.id.menu_item_delete:
-//			mListener.onDeleteClickListener();
-//			break;
-
-		default:
-			break;
-		}
 	}
 	
 	class PopupMenuAdapter extends BaseAdapter{

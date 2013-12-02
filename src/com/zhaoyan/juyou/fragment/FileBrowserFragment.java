@@ -112,11 +112,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	 * current dir path
 	 */
 	private String mCurrentPath;
-	/**
-	 * cut files'path
-	 * 剪切文件所在的目录
-	 */
-	private String mCutPath;
 
 	// context menu
 	// save current sdcard type
@@ -909,27 +904,11 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			startPasteMenu();
 			break;
 		case ActionMenu.ACTION_MENU_CUT:
-			mCutPath = mCurrentPath;
 			mAdapter.changeMode(ActionMenu.MODE_CUT);
 			mAdapter.notifyDataSetChanged();
 			startPasteMenu();
 			break;
 		case ActionMenu.ACTION_MENU_PASTE:
-			Log.d(TAG, "ACTION_MENU_PASTE.mCutPath:" + mCutPath);
-//			if (null != mCutPath && !"".equals(mCutPath)) {
-//				if (mCurrentPath.equals(mCutPath)) {
-//					//do nothing
-//				} else if (mCurrentPath.contains(mCutPath)) {
-//					ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
-//					dialog.setTitle(R.string.cut_fail);
-//					dialog.setMessage(R.string.cut_fail_msg_one);
-//					dialog.setPositiveButton(R.string.ok, null);
-//					dialog.setCancelable(true);
-//					dialog.show();
-//					showMenuBar(false);
-//					break;
-//				}
-//			}
 			new CopyCutTask().execute();
 			break;
 		case ActionMenu.ACTION_MENU_CANCEL:
@@ -966,6 +945,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			LayoutInflater inflater = LayoutInflater.from(mContext);
 			View view = inflater.inflate(R.layout.dialog_rename, null);
 			final EditText editText = (EditText) view.findViewById(R.id.et_rename);
+			editText.setText(ZYConstant.NEW_FOLDER);
+			editText.selectAll();
 			ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
 			dialog.setTitle(R.string.create_folder);
 			dialog.setMessage(R.string.folder_input);
@@ -983,14 +964,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 						if (!file.mkdir()) {
 							mNotice.showToast(R.string.folder_create_failed);
 						}else {
-							browserTo(file);
+							browserTo(new File(mCurrentPath));
 						}
 					}
 					dialog.dismiss();
 				}
 			});
 			dialog.show();
-			showMenuBar(false);
 			break;
 		default:
 			break;
@@ -1049,7 +1029,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mAdapter.clearSelected();
 		mAdapter.notifyDataSetChanged();
 		mCopyList.clear();
-		mCutPath = null;
 	}
 
 	/**

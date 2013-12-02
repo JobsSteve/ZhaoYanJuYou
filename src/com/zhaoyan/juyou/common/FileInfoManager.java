@@ -359,11 +359,10 @@ public class FileInfoManager {
 						newName);
 				renameFlag++;
 				if (renameFlag < list.size()) {
-					ZYUtils.setDialogDismiss(dialog, false);
 					editText.setText(list.get(renameFlag).fileName);
 					editText.selectAll();
 				} else {
-					ZYUtils.setDialogDismiss(dialog, true);
+					dialog.dismiss();
 					renameFlag = 0;
 				}
 			}
@@ -373,15 +372,15 @@ public class FileInfoManager {
 			public void onClick(Dialog dialog) {
 				renameFlag++;
 				if (renameFlag < list.size()) {
-					ZYUtils.setDialogDismiss(dialog, false);
 					editText.setText(list.get(renameFlag).fileName);
 					editText.selectAll();
 				} else {
-					ZYUtils.setDialogDismiss(dialog, true);
+					dialog.dismiss();
 					renameFlag = 0;
 				}
 			}
 		});
+		dialog.setCancelable(true);
 		dialog.show();
 	}
 	
