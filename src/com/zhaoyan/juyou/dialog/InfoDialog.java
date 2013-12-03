@@ -1,6 +1,5 @@
 package com.zhaoyan.juyou.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,13 +12,10 @@ import android.widget.TextView;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 
-public class InfoDialog extends Dialog implements android.view.View.OnClickListener {
-
-	private TextView mOkButton;
+public class InfoDialog extends ZyAlertDialog {
 	
 	private TextView mTitleView;
 	private TextView mTypeView,mLoacationView,mSizeView,mIncludeView,mDateView;
-	private View mDividerView;
 	
 	private ProgressBar mLoadingInfoBar;
 	
@@ -66,31 +62,29 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 	};
 	
 	public InfoDialog(Context context, int type) {
-		super(context, R.style.Custom_Dialog);
+		super(context);
 		mContext = context;
 		this.type = type;
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_info);
+//		setContentView(R.layout.dialog_info);
+		View view = getLayoutInflater().inflate(R.layout.dialog_info, null);
 		
-		mTitleView = (TextView) findViewById(R.id.tv_info_title);
-		mTypeView = (TextView) findViewById(R.id.tv_info_type);
-		mLoacationView = (TextView) findViewById(R.id.tv_info_location);
-		mSizeView = (TextView) findViewById(R.id.tv_info_size);
-		mIncludeView = (TextView) findViewById(R.id.tv_info_include);
-		mDateView = (TextView) findViewById(R.id.tv_info_date);
-		mDividerView = findViewById(R.id.info_divider);
+		mTitleView = (TextView) view.findViewById(R.id.tv_info_title);
+		mTypeView = (TextView) view.findViewById(R.id.tv_info_type);
+		mLoacationView = (TextView) view.findViewById(R.id.tv_info_location);
+		mSizeView = (TextView) view.findViewById(R.id.tv_info_size);
+		mIncludeView = (TextView) view.findViewById(R.id.tv_info_include);
+		mDateView = (TextView) view.findViewById(R.id.tv_info_date);
 		
-		mLoadingInfoBar = (ProgressBar) findViewById(R.id.bar_loading_info);
+		mLoadingInfoBar = (ProgressBar) view.findViewById(R.id.bar_loading_info);
 		
 		if (MULTI == type) {
 			mTypeView.setVisibility(View.GONE);
 			mLoacationView.setVisibility(View.GONE);
 			mDateView.setVisibility(View.GONE);
-			mDividerView.setVisibility(View.GONE);
 			mLoadingInfoBar.setVisibility(View.VISIBLE);
 		}else if (SINGLE_FILE == type) {
 			mIncludeView.setVisibility(View.GONE);
@@ -101,10 +95,12 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 		}
 		
 		setTitle(R.string.info1);
-		mOkButton = (TextView) findViewById(R.id.btn_info_ok);
-		mOkButton.setOnClickListener(this);
 		
 		setCanceledOnTouchOutside(true);
+		
+		setContentView(view);
+		
+		super.onCreate(savedInstanceState);
 	}
 	
 	
@@ -144,18 +140,6 @@ public class InfoDialog extends Dialog implements android.view.View.OnClickListe
 	@Override
 	public void setTitle(int titleId) {
 		mTitleView.setText(titleId);
-	}
-	
-	
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.btn_info_ok:
-			cancel();
-			break;
-		default:
-			break;
-		}
 	}
 
 }

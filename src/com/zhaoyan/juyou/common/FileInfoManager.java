@@ -3,10 +3,13 @@ package com.zhaoyan.juyou.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,10 +24,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.InfoDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileInfoManager {
 	private static final String TAG = "FileInfoManager";
@@ -339,49 +345,43 @@ public class FileInfoManager {
 		final EditText editText = (EditText) view.findViewById(R.id.et_rename);
 		editText.setText(list.get(renameFlag).fileName);
 		editText.selectAll();
-		new AlertDialog.Builder(context)
-				.setTitle(R.string.rename)
-				.setView(view)
-				.setPositiveButton(android.R.string.ok,
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								String newName = editText.getText().toString()
-										.trim();
-								list.get(renameFlag).fileName = newName;
-								list.get(renameFlag).filePath = rename(
-										new File(list.get(renameFlag).filePath),
-										newName);
-								renameFlag++;
-								if (renameFlag < list.size() - 1) {
-									ZYUtils.setDialogDismiss(dialog, false);
-									editText.setText(list.get(renameFlag).fileName);
-									editText.selectAll();
-								} else {
-									ZYUtils.setDialogDismiss(dialog, true);
-									renameFlag = 0;
-								}
-							}
-						})
-				.setNegativeButton(android.R.string.cancel,
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								renameFlag++;
-								if (renameFlag < list.size() - 1) {
-									ZYUtils.setDialogDismiss(dialog, false);
-									editText.setText(list.get(renameFlag).fileName);
-									editText.selectAll();
-								} else {
-									ZYUtils.setDialogDismiss(dialog, true);
-									renameFlag = 0;
-								}
-							}
-						}).create().show();
+		ZyAlertDialog dialog = new ZyAlertDialog(context);
+		dialog.setTitle(R.string.rename);
+		dialog.setContentView(view);
+		dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				String newName = editText.getText().toString()
+						.trim();
+				list.get(renameFlag).fileName = newName;
+				list.get(renameFlag).filePath = rename(
+						new File(list.get(renameFlag).filePath),
+						newName);
+				renameFlag++;
+				if (renameFlag < list.size()) {
+					editText.setText(list.get(renameFlag).fileName);
+					editText.selectAll();
+				} else {
+					dialog.dismiss();
+					renameFlag = 0;
+				}
+			}
+		});		
+		dialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				renameFlag++;
+				if (renameFlag < list.size()) {
+					editText.setText(list.get(renameFlag).fileName);
+					editText.selectAll();
+				} else {
+					dialog.dismiss();
+					renameFlag = 0;
+				}
+			}
+		});
+		dialog.setCancelable(true);
+		dialog.show();
 	}
 	
 	/**

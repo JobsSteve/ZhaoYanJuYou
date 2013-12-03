@@ -196,33 +196,4 @@ public class ZYUtils {
 		CharBuffer cb = cs.decode(bb);
 		return cb.array();
 	}
-	
-	/**
-	 * io copy
-	 * 
-	 * @param srcPath
-	 *           src file path
-	 * @param desPath
-	 *           des file path
-	 * @return
-	 * @throws Exception
-	 */
-	public static void fileStreamCopy(String srcPath, String desPath) throws IOException{
-		Log.d(TAG, "fileStreamCopy.src:" + srcPath);
-		Log.d(TAG, "fileStreamCopy.dec:" + desPath);
-		File files = new File(desPath);// 创建文件
-		FileOutputStream fos = new FileOutputStream(files);
-		byte buf[] = new byte[128];
-		InputStream fis = new BufferedInputStream(new FileInputStream(srcPath),
-				8192 * 4);
-		do {
-			int read = fis.read(buf);
-			if (read <= 0) {
-				break;
-			}
-			fos.write(buf, 0, read);
-		} while (true);
-		fis.close();
-		fos.close();
-	}
 }

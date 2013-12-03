@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/button_layout"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="50dp"
     android:layout_alignParentBottom="true"
     android:orientation="vertical" >
 
@@ -13,13 +13,13 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="49dp"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/button1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/blue_bg"
             android:text="BUTTON1"
@@ -31,7 +31,7 @@
         <View
             android:id="@+id/divider_one"
             android:layout_width="1dp"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:background="#d1d1d1" 
             android:visibility="gone"
             />
@@ -39,7 +39,7 @@
         <Button
             android:id="@+id/button2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/blue_bg"
             android:text="BUTTON2"
@@ -50,7 +50,7 @@
         <View
             android:id="@+id/divider_two"
             android:layout_width="1dp"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:background="#d1d1d1"
             android:visibility="gone"
              />
@@ -58,7 +58,7 @@
         <Button
             android:id="@+id/button3"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/blue_bg"
             android:text="BUTTON3"

@@ -274,7 +274,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (mItemAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mItemAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			mItemAdapter.setSelected(position);
 			mItemAdapter.notifyDataSetChanged();
 			
@@ -290,11 +290,11 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		if (mItemAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mItemAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
 		}else {
-			mItemAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mItemAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1, mItemAdapter.getCount());
 		}
 		
@@ -315,14 +315,14 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	}
 	
 	public void onActionMenuDone() {
-		mItemAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mItemAdapter.changeMode(ActionMenu.MODE_NORMAL);
 		mItemAdapter.selectAll(false);
 		mItemAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
 	public boolean onBackKeyPressed() {
-		if (mItemAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mItemAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}else {
@@ -395,8 +395,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			}
 			dialog.show();
 			dialog.invisbileLoadBar();
-			
-			showMenuBar(false);
 			//info
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:

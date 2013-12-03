@@ -1,11 +1,9 @@
 package com.zhaoyan.juyou.fragment;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -20,16 +18,16 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.AppCursorAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.ZYConstant;
-import com.zhaoyan.juyou.dialog.MyDialog;
-import com.zhaoyan.juyou.dialog.MyDialog.OnHideListener;
+import com.zhaoyan.juyou.dialog.AppDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.notification.NotificationMgr;
 
 public class AppBaseFragment extends BaseFragment{
@@ -48,7 +46,7 @@ public class AppBaseFragment extends BaseFragment{
 	protected View mMenuBottomView;
 	protected LinearLayout mMenuHolder;
 	
-	protected MyDialog mMyDialog = null;
+	protected AppDialog mAppDialog = null;
 	protected List<String> mUninstallList = null;
 	protected PackageManager pm = null;
 	protected Notice mNotice = null;
@@ -95,14 +93,15 @@ public class AppBaseFragment extends BaseFragment{
 	protected void uninstallApp(){
 		if (mUninstallList.size() <= 0) {
 			mUninstallList = null;
-			if (null != mMyDialog) {
-				mMyDialog.cancel();
-				mMyDialog = null;
+			
+			if (null != mAppDialog) {
+				mAppDialog.cancel();
+				mAppDialog = null;
 			}
 			return;
 		}
 		String uninstallPkg = mUninstallList.get(0);
-		mMyDialog.updateUI(mMyDialog.getMax() - mUninstallList.size() + 1, 
+		mAppDialog.updateUI(mAppDialog.getMax() - mUninstallList.size() + 1, 
 				AppManager.getAppLabel(uninstallPkg, pm));
 		Uri packageUri = Uri.parse("package:" + uninstallPkg);
 		Intent deleteIntent = new Intent();
@@ -129,27 +128,28 @@ public class AppBaseFragment extends BaseFragment{
     	
     	final BackupAsyncTask task = new BackupAsyncTask();
     	
-    	mMyDialog = new MyDialog(getActivity(), packageList.size());
-		mMyDialog.setTitle(R.string.backuping);
-		mMyDialog.setOnCancelListener(new OnCancelListener() {
+    	mAppDialog = new AppDialog(getActivity(), packageList.size());
+    	mAppDialog.setTitle(R.string.backup_app);
+    	mAppDialog.setPositiveButton(R.string.hide, new OnZyAlertDlgClickListener() {
 			@Override
-			public void onCancel(DialogInterface dialog) {
+			public void onClick(Dialog dialog) {
+				mIsBackupHide = true;
+				mNotificationMgr.startBackupNotification();
+				updateNotification(task.currentProgress, task.size, task.currentAppLabel);
+				dialog.dismiss();
+			}
+		});
+    	mAppDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
 				Log.d(TAG, "showBackupDialog.onCancel");
 				if (null != task) {
 					task.cancel(true);
 				}
+				dialog.dismiss();
 			}
 		});
-		mMyDialog.setOnHideListener(new OnHideListener() {
-			
-			@Override
-			public void onHide() {
-				mIsBackupHide = true;
-				mNotificationMgr.startBackupNotification();
-				updateNotification(task.currentProgress, task.size, task.currentAppLabel);
-			}
-		});
-		mMyDialog.show();
+    	mAppDialog.show();
 		task.execute(packageList);
     }
     
@@ -190,20 +190,18 @@ public class AppBaseFragment extends BaseFragment{
 				currentAppLabel = label;
 				currentProgress = i + 1;
 				
-				mMyDialog.updateName(label);
+				mAppDialog.updateName(label);
 				String desPath = ZYConstant.JUYOU_BACKUP_FOLDER + "/" + label + "_" + version + ".apk";
 				if (!new File(desPath).exists()) {
-					try {
-						ZYUtils.fileStreamCopy(sourceDir, desPath);
-					} catch (IOException e) {
-						Log.e(TAG, "doInBackground.Error:" + e.toString());
+					boolean ret = FileManager.copyFile(sourceDir, desPath);
+					if (!ret) {
 						Message message = mHandler.obtainMessage();
 						message.obj = getString(R.string.backup_fail, label);
 						message.what = MSG_TOAST;
 						message.sendToTarget();
 					}
 				}
-				mMyDialog.updateProgress(i + 1); 
+				mAppDialog.updateProgress(i + 1);
 				if (mIsBackupHide) {
 					updateNotification(currentProgress, size, currentAppLabel);
 				}
@@ -215,9 +213,10 @@ public class AppBaseFragment extends BaseFragment{
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			Log.d(TAG, "onPostExecute");
-			if (null != mMyDialog && mMyDialog.isShowing()) {
-				mMyDialog.cancel();
-				mMyDialog = null;
+			
+			if (null != mAppDialog && mAppDialog.isShowing()) {
+				mAppDialog.cancel();
+				mAppDialog = null;
 			}
 			mNotice.showToast(R.string.backup_over);
 			endTime = System.currentTimeMillis();
@@ -230,6 +229,22 @@ public class AppBaseFragment extends BaseFragment{
 				message.sendToTarget();
 			}
 		}
+    }
+    
+    protected void showUninstallDialog(){
+    	mAppDialog = new AppDialog(getActivity(), mUninstallList.size());
+		mAppDialog.setTitle(R.string.handling);
+		mAppDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				if (null != mUninstallList) {
+					mUninstallList.clear();
+					mUninstallList = null;
+				}
+				dialog.dismiss();
+			}
+		});
+		mAppDialog.show();
     }
     
     public void updateNotification(int progress, int max, String name){

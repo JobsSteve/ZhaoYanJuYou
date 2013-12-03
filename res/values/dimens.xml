@@ -10,4 +10,5 @@
     <dimen name="tab_margin_right">0px</dimen>
     <dimen name="home_btn_padding">20px</dimen>
     <integer name="name_max_length">255</integer>
+    <dimen name="menubar_height">55dp</dimen>
 </resources>

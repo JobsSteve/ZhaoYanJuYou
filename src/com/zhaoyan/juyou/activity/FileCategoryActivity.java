@@ -172,11 +172,11 @@ public class FileCategoryActivity extends BaseActivity implements
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
 		} else {
-			mAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1, mAdapter.getCount());
 		}
 		boolean isSelected = mAdapter.isSelected(position);
@@ -199,7 +199,7 @@ public class FileCategoryActivity extends BaseActivity implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			mAdapter.setSelected(position);
 			mAdapter.notifyDataSetChanged();
 
@@ -249,13 +249,12 @@ public class FileCategoryActivity extends BaseActivity implements
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
-			List<Integer> posList = mAdapter.getSelectedItemPositions();
+			List<Integer> posList = mAdapter.getSelectedItemsPos();
 			showDeleteDialog(posList);
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
 			List<FileInfo> list = mAdapter.getSelectedFileInfos();
 			 mFileInfoManager.showInfoDialog(this, list);
-			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
 			doSelectAll();
@@ -318,7 +317,7 @@ public class FileCategoryActivity extends BaseActivity implements
 
 	// Cancle Action menu
 	public void onActionMenuDone() {
-		mAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
 		mAdapter.clearSelected();
 		mAdapter.notifyDataSetChanged();
 	}
@@ -355,7 +354,7 @@ public class FileCategoryActivity extends BaseActivity implements
 				int first = mListView.getFirstVisiblePosition();
 				int last = mListView.getLastVisiblePosition();
 				List<Integer> checkedItems = mAdapter
-						.getSelectedItemPositions();
+						.getSelectedItemsPos();
 				ArrayList<ImageView> icons = new ArrayList<ImageView>();
 				for (int id : checkedItems) {
 					if (id >= first && id <= last) {
@@ -452,7 +451,7 @@ public class FileCategoryActivity extends BaseActivity implements
 	
 	@Override
 	public boolean onBackKeyPressed() {
-		if (mAdapter.isMode(ZYConstant.MENU_MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}

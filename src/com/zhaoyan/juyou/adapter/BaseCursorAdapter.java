@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.common.ActionMenu;
 
 public class BaseCursorAdapter extends CursorAdapter {
 	private static final String TAG = "BaseCursorAdapter";
-	protected int mMenuMode = ZYConstant.MENU_MODE_NORMAL;
+	protected int mMenuMode = ActionMenu.MODE_NORMAL;
 	protected SparseBooleanArray mIsSelected = null;
 
 	public BaseCursorAdapter(Context context, Cursor c, boolean autoRequery) {

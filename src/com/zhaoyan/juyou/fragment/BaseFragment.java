@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.common.ActionMenu;
 
 public class BaseFragment extends Fragment{
 	protected Notice mNotice = null;
@@ -78,7 +78,7 @@ public class BaseFragment extends Fragment{
 	}
 	
 	public int getMenuMode(){
-		return ZYConstant.MENU_MODE_NORMAL;
+		return ActionMenu.MODE_NORMAL;
 	}
 	
 	/**

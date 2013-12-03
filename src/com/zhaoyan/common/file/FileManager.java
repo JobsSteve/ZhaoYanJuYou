@@ -1,9 +1,16 @@
 package com.zhaoyan.common.file;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
+import android.R.integer;
 import android.content.Context;
 
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 
 public class FileManager {
@@ -109,4 +116,89 @@ public class FileManager {
         }
         return "";
     }
+	
+	/**
+	 * copy single file
+	 * 
+	 * @param srcPath
+	 *           src file path
+	 * @param desPath
+	 *           des file path
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean copyFile(String srcPath, String desPath){
+		Log.d(TAG, "copyFile.srcPath:" + srcPath);
+		Log.d(TAG, "copyFile.desPath:" + desPath);
+		if (new File(srcPath).isDirectory()) {
+			Log.d(TAG, "copyFile error:" + srcPath + " is a directory.");
+			return false;
+		}
+		FileInputStream inputStream = null;
+		FileOutputStream outputStream = null;
+		try {
+			File srcFile = new File(srcPath);
+			if (srcFile.exists()) {
+				inputStream = new FileInputStream(srcPath);
+				outputStream = new FileOutputStream(desPath);
+				byte[] buffer = new byte[1024 * 10];
+				int byteread = 0;
+				while ((byteread = inputStream.read(buffer)) != -1) {
+					outputStream.write(buffer, 0, byteread);
+				}
+				outputStream.flush();
+				outputStream.close();
+				inputStream.close();
+			}else {
+				Log.e(TAG, srcPath + " is not exist");
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * folder copy
+	 * @param srcPath source folder path
+	 * @param desPath destination folder path
+	 * @return
+	 */
+	public static boolean copyFolder(String srcPath, String desPath) {
+		Log.d(TAG, "copyFolder.srcPath:" + srcPath);
+		Log.d(TAG, "copyFolder.desPath:" + desPath);
+		File srcFile = new File(srcPath);
+		String[] srcFileNameList = srcFile.list();
+		if (srcFileNameList.length == 0) {
+			//copy a empty folder
+			return new File(desPath).mkdirs();
+		}
+		
+		// create desPath folder
+		if (!new File(desPath).mkdirs()) {
+			return false;
+		}
+		
+		File tempFile = null;
+		for (String name : srcFileNameList) {
+			if (srcPath.endsWith(File.separator)) {
+				tempFile = new File(srcFile + name);
+			} else {
+				tempFile = new File(srcFile + File.separator + name);
+			}
+
+			if (tempFile.isFile()) {
+				copyFile(tempFile.getAbsolutePath(), desPath + File.separator
+						+ name);
+			} else if (tempFile.isDirectory()) {
+				// is a child folder
+				copyFolder(srcPath + File.separator + name, desPath
+						+ File.separator + name);
+			}
+		}
+		
+		return true;
+	}
 }

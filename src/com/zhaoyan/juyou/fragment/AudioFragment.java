@@ -169,7 +169,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		int mode = mAdapter.getMode();
-		if (ZYConstant.MENU_MODE_NORMAL == mode) {
+		if (ActionMenu.MODE_NORMAL == mode) {
 			//open audio
 			Cursor cursor = mAdapter.getCursor();
 			cursor.moveToPosition(position);
@@ -190,11 +190,11 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
 		int mode = mAdapter.getMode();
-		if (ZYConstant.MENU_MODE_EDIT == mode) {
+		if (ActionMenu.MODE_EDIT == mode) {
 			doSelectAll();
 			return true;
 		}else {
-			mAdapter.changeMode(ZYConstant.MENU_MODE_EDIT);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
 		boolean isSelected = mAdapter.isSelected(position);
@@ -308,7 +308,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	}
 	
 	public void onActionMenuDone() {
-		mAdapter.changeMode(ZYConstant.MENU_MODE_NORMAL);
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
 		mAdapter.selectAll(false);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -317,7 +317,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	public boolean onBackPressed() {
 		int mode = mAdapter.getMode();
 		Log.d(TAG, "onBackPressed.mode="+ mode);
-		if (ZYConstant.MENU_MODE_EDIT == mode) {
+		if (ActionMenu.MODE_EDIT == mode) {
 			showMenuBar(false);
 			return false;
 		}else {
@@ -393,8 +393,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			}
 			dialog.show();
 			dialog.invisbileLoadBar();
-			
-			showMenuBar(false);
 			//info
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:

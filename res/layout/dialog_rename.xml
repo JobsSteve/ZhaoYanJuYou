@@ -6,8 +6,10 @@
     
     <EditText 
         android:id="@+id/et_rename"
+        style="@style/edit_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         />
 
 </LinearLayout>
