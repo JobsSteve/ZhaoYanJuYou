@@ -225,5 +225,19 @@ public class FileManager {
 
 		return path + File.separator + name;
 	}
+	
+	public static boolean containsPath(String path1, String path2) {
+	    String path = path2;
+	    while (path != null) {
+	        if (path.equalsIgnoreCase(path1))
+	            return true;
+
+	        if (path.equals("/mnt"))
+	            break;
+	        path = new File(path).getParent();
+	    }
+
+	    return false;
+	}
 
 }

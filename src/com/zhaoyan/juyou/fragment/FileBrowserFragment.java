@@ -49,6 +49,8 @@ import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
+import com.zhaoyan.juyou.common.FileOperationHelper;
+import com.zhaoyan.juyou.common.FileOperationHelper.OnOperationListener;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileInfoManager.NavigationRecord;
 import com.zhaoyan.juyou.common.FileTransferUtil;
@@ -57,13 +59,14 @@ import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
+import com.zhaoyan.juyou.dialog.CopyMoveDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
 public class FileBrowserFragment extends BaseFragment implements OnClickListener, OnItemClickListener, OnScrollListener,
-		OnItemLongClickListener, onMenuItemClickListener {
+		OnItemLongClickListener, onMenuItemClickListener, OnOperationListener {
 	private static final String TAG = "FileBrowserFragment";
 
 	// File path navigation bar
@@ -132,12 +135,18 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private Comparator<FileInfo> NAME_COMPARATOR = FileInfo.getNameComparator();
 
 	private DeleteDialog mDeleteDialog;
+	
+	//test
+	private FileOperationHelper mFileOperationHelper;
+	//test
 
 	private static final int MSG_UPDATE_UI = 0;
 	private static final int MSG_UPDATE_LIST = 2;
 	private static final int MSG_UPDATE_HOME = 3;
 	private static final int MSG_UPDATE_FILE = 4;
 	private static final int MSG_REFRESH = 5;
+	private static final int MSG_OPERATION_OVER = 6;
+	private static final int MSG_OPERATION_NOTIFY = 7;
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -161,6 +170,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			case MSG_REFRESH:
 				browserTo(new File(mCurrentPath));
 				break;
+			case MSG_OPERATION_OVER:
+				showMenuBar(false);
+				browserTo(new File(mCurrentPath));
+				break;
+			case MSG_OPERATION_NOTIFY:
+				mNotice.showToast(msg.obj.toString());
+				break;
 			default:
 				break;
 			}
@@ -169,6 +185,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mFileOperationHelper = new FileOperationHelper();
+		mFileOperationHelper.setOnOperationListener(this);
 		Log.d(TAG, "onCreate.mStatus=" + mStatus);
 	}
 
@@ -902,16 +920,25 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			doSelectAll();
 			break;
 		case ActionMenu.ACTION_MENU_COPY:
+			mFileOperationHelper.copy(mAdapter.getSelectedFileInfos());
 			mAdapter.changeMode(ActionMenu.MODE_COPY);
 			startPasteMenu();
 			break;
 		case ActionMenu.ACTION_MENU_CUT:
+			mFileOperationHelper.copy(mAdapter.getSelectedFileInfos());
+			
 			mAdapter.changeMode(ActionMenu.MODE_CUT);
 			mAdapter.notifyDataSetChanged();
 			startPasteMenu();
 			break;
 		case ActionMenu.ACTION_MENU_PASTE:
-			new CopyCutTask().execute();
+			if (mAdapter.isMode(ActionMenu.MODE_COPY)) {
+				onOperationPaste();
+			}else if (mAdapter.isMode(ActionMenu.MODE_CUT)) {
+				onOperationCut();
+			}else {
+				Log.e(TAG, "ACTION_MENU_PASTE.Error");
+			}
 			break;
 		case ActionMenu.ACTION_MENU_CANCEL:
 			showMenuBar(false);
@@ -947,7 +974,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			LayoutInflater inflater = LayoutInflater.from(mContext);
 			View view = inflater.inflate(R.layout.dialog_rename, null);
 			final EditText editText = (EditText) view.findViewById(R.id.et_rename);
-			editText.setText(ZYConstant.NEW_FOLDER);
+			editText.setText(R.string.new_folder);
 			editText.selectAll();
 			ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
 			dialog.setTitle(R.string.create_folder);
@@ -1058,103 +1085,93 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mMenuTabManager.refreshMenus(mActionMenu);
 	}
 	
-	//Copy and Cut Task
-	class CopyCutTask extends AsyncTask<String, Object, Object>{
-		ProgressDialog dialog = null;
-		String cutFailFolder = "";
-
-		@Override
-		protected Object doInBackground(String... params) {
-			//copy
-			String srcPath = "";
-			String desPath = "";
-			String fileName = "";
-			if (mAdapter.isMode(ActionMenu.MODE_COPY)) {
-				for (FileInfo fileInfo : mCopyList) {
-					srcPath = fileInfo.filePath;
-					fileName = fileInfo.fileName;
-					desPath = mCurrentPath + File.separator + fileName;
-					//if desFile is exist,auto rename
-					if (new File(desPath).exists()) {
-						fileName = FileInfoManager.autoRename(fileName);
-						desPath = mCurrentPath + File.separator + fileName;
-					}
-					
-					if (fileInfo.isDir) {
-						FileManager.copyFolder(srcPath, desPath);
-					} else {
-						FileManager.copyFile(srcPath, desPath);
-					}
-				}
-			}else {
-				//cut
-				File file = null;
-				for(FileInfo fileInfo : mCopyList){
-					srcPath = fileInfo.filePath;
-					fileName = fileInfo.fileName;
-					desPath = mCurrentPath + File.separator + fileName;
-					
-					if (new File(desPath).exists()) {
-						//if desFile is exist,break
-						break;
-					}
-					
-					if (mCurrentPath.equals(srcPath)) {
-						cutFailFolder = fileName;
-					}else {
-						//use this function to cut/move file is very fast
-						FileManager.moveFile(srcPath, desPath);
-//						if (fileInfo.isDir) {
-//							FileManager.copyFolder(srcPath, desPath);
-//						}else {
-//							FileManager.copyFile(srcPath, desPath);
-//						}
-//						
-//						//cut over ,delete src file
-//						file = new File(srcPath);
-//						doDelete(mContext, file);
-					}
-				}
-			}
-			return null;
+	private void onOperationPaste(){
+		showCopyDialog(mContext.getString(R.string.filecopy));
+		if (!mFileOperationHelper.doCopy(mCurrentPath)) {
+			onFinished();
 		}
-		
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			dialog = new ProgressDialog(getActivity());
-			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dialog.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.loading));
-			if (mAdapter.isMode(ActionMenu.MODE_COPY)) {
-				dialog.setMessage(mContext.getResources().getString(R.string.copying));
-			}else {
-				dialog.setMessage(mContext.getResources().getString(R.string.cuting));
-			}
-			dialog.setCancelable(false);
-			dialog.show();
-		}
-		
-		@Override
-		protected void onPostExecute(Object result) {
-			super.onPostExecute(result);
-			Log.d(TAG, "CopyTask.onPostExecut");
-			showMenuBar(false);
-			if (null != dialog) {
-				dialog.cancel();
-				dialog = null;
-			}
-			mHandler.sendMessage(mHandler.obtainMessage(MSG_REFRESH));
-			//if have a folder cut fail,show a dialog to user
-			if (null != cutFailFolder && !"".equals(cutFailFolder)) {
-				ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
-				dialog.setTitle(mContext.getString(R.string.cut_fail_format, cutFailFolder));
-				dialog.setMessage(R.string.cut_fail_msg_one);
-				dialog.setPositiveButton(R.string.ok, null);
-				dialog.setCancelable(true);
-				dialog.show();
-			}
-		}
-		
 	}
-	//copy & cut
+	
+	private void onOperationCut(){
+		showCopyDialog(mContext.getString(R.string.filecut));
+		if (!mFileOperationHelper.doCut(mCurrentPath)) {
+			onFinished();
+		}
+	}
+	
+	private ProgressDialog progressDialog = null;
+	public void showProgressDialog(String msg){
+		progressDialog = new ProgressDialog(getActivity());
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progressDialog.setCancelable(true);
+		progressDialog.setMessage(msg);
+		progressDialog.setIndeterminate(true);
+		progressDialog.show();
+	}
+	
+	private CopyMoveDialog mCopyDialog = null;
+	public void showCopyDialog(String title){
+		mCopyDialog = new CopyMoveDialog(getActivity());
+		mCopyDialog.setTitle(title);
+		mCopyDialog.setDesPath(mCurrentPath);
+		mCopyDialog.setCancelable(false);
+		mCopyDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				mFileOperationHelper.stopCopy();
+				dialog.dismiss();
+				mHandler.sendMessage(mHandler.obtainMessage(MSG_OPERATION_OVER));
+			}
+		});
+		mCopyDialog.show();
+	}
+
+	@Override
+	public void onFinished() {
+		Log.d(TAG, "onFinished");
+		if (null != progressDialog) {
+			progressDialog.dismiss();
+			progressDialog = null;
+		}
+		
+		if (null != mCopyDialog) {
+			mCopyDialog.dismiss();
+			mCopyDialog = null;
+		}
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_OPERATION_OVER));
+	}
+	
+	@Override
+	public void onNotify(int msg) {
+		switch (msg) {
+		case FileOperationHelper.MSG_COPY_CUT_TO_CHILD:
+			Message message = mHandler.obtainMessage();
+			message.obj = mContext.getString(R.string.copy_cut_fail);
+			message.what = MSG_OPERATION_NOTIFY;
+			message.sendToTarget();
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void onRefreshFiles(String fileName, int count, long filesize, long copysize) {
+		if (null == fileName && count != -1) {
+			mCopyDialog.setTotalCount(count);
+		}else if(null != fileName && copysize == -1){
+			mCopyDialog.updateCountProgress(fileName, count, filesize);
+		}else if (null == fileName && copysize != -1) {
+			mCopyDialog.updateSingleFileProgress(copysize);
+		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		if (null != mFileOperationHelper) {
+			mFileOperationHelper.cancelOperationListener();
+		}
+	}
 }
