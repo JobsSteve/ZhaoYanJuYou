@@ -411,13 +411,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		for (File currentFile : file) {
 			FileInfo fileInfo = null;
 
+			fileInfo = new FileInfo(currentFile.getName());
+			fileInfo.fileDate = currentFile.lastModified();
+			fileInfo.filePath = currentFile.getAbsolutePath();
 			if (currentFile.isDirectory()) {
-				fileInfo = new FileInfo(currentFile.getName());
-				fileInfo.fileDate = currentFile.lastModified();
-				fileInfo.filePath = currentFile.getAbsolutePath();
 				fileInfo.isDir = true;
 				fileInfo.fileSize = 0;
-				fileInfo.icon = getResources().getDrawable(R.drawable.icon_folder);
 				fileInfo.type = FileInfoManager.UNKNOW;
 				fileInfo.count = currentFile.listFiles().length;
 				if (currentFile.isHidden()) {
@@ -426,7 +425,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					mFolderLists.add(fileInfo);
 				}
 			} else {
-				fileInfo = mFileInfoManager.getFileInfo(mContext, currentFile);
+				fileInfo.isDir = false;
+				fileInfo.fileSize = currentFile.length();
+				fileInfo.type = FileManager.getFileType(mContext, currentFile);
 				if (currentFile.isHidden()) {
 					// do nothing
 				} else {

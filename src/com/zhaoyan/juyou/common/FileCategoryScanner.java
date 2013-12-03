@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.LogFile;
 import com.zhaoyan.juyou.activity.FileCategoryActivity;
 
@@ -22,7 +23,6 @@ public class FileCategoryScanner {
 	private File mRootDir;
 	private Context mContext;
 	private FileCategoryScanListener mListener;
-	private FileInfoManager mFileInfoManager;
 	private Vector<FileInfo> mFileInfos;
 	private int mScanningDirCount = 0;
 	private ExecutorService mExecutorService;
@@ -46,7 +46,6 @@ public class FileCategoryScanner {
 					"FileCategoryScanner, rootDir must be a directory.");
 		}
 		mContext = context.getApplicationContext();
-		mFileInfoManager = new FileInfoManager();
 		mFileInfos = new Vector<FileInfo>();
 		mRootDir = rootDir;
 		mFilterType = filterType;
@@ -105,7 +104,7 @@ public class FileCategoryScanner {
 							scanDir(file);
 						}
 					} else {
-						CategoryFile(file);
+						categoryFile(file);
 					}
 				}
 			}
@@ -118,7 +117,7 @@ public class FileCategoryScanner {
 		mExecutorService.execute(new ScanRunnable(dir));
 	}
 
-	private void CategoryFile(File file) {
+	private void categoryFile(File file) {
 		String name = file.getName();
 		boolean isMatched = false;
 		if (mFilterType != null) {
@@ -133,7 +132,12 @@ public class FileCategoryScanner {
 		}
 
 		if (isMatched) {
-			FileInfo fileInfo = mFileInfoManager.getFileInfo(mContext, file);
+			FileInfo fileInfo = new FileInfo(file.getName());
+			fileInfo.fileDate = file.lastModified();
+			fileInfo.filePath = file.getAbsolutePath();
+			fileInfo.fileSize = file.length();
+			fileInfo.isDir = false;
+			fileInfo.type = FileManager.getFileType(mContext, file);
 			mFileInfos.add(fileInfo);
 		}
 	}
