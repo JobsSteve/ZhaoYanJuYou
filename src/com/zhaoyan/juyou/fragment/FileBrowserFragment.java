@@ -419,6 +419,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				fileInfo.fileSize = 0;
 				fileInfo.icon = getResources().getDrawable(R.drawable.icon_folder);
 				fileInfo.type = FileInfoManager.UNKNOW;
+				fileInfo.count = currentFile.listFiles().length;
 				if (currentFile.isHidden()) {
 					// do nothing
 				} else {
@@ -1100,15 +1101,17 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					if (mCurrentPath.equals(srcPath)) {
 						cutFailFolder = fileName;
 					}else {
-						if (fileInfo.isDir) {
-							FileManager.copyFolder(srcPath, desPath);
-						}else {
-							FileManager.copyFile(srcPath, desPath);
-						}
-						
-						//cut over ,delete src file
-						file = new File(srcPath);
-						doDelete(mContext, file);
+						//use this function to cut/move file is very fast
+						FileManager.moveFile(srcPath, desPath);
+//						if (fileInfo.isDir) {
+//							FileManager.copyFolder(srcPath, desPath);
+//						}else {
+//							FileManager.copyFile(srcPath, desPath);
+//						}
+//						
+//						//cut over ,delete src file
+//						file = new File(srcPath);
+//						doDelete(mContext, file);
 					}
 				}
 			}
