@@ -5,8 +5,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import android.content.Context;
+
 import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 /**
  * Management user and user's communication.
@@ -42,6 +45,7 @@ public class UserManager {
 	private int mLastUserId = 0;
 	private static UserManager mInstance;
 	private Vector<OnUserChangedListener> mOnUserChangedListeners = new Vector<OnUserChangedListener>();
+	private Context mContext;
 
 	private User mLocalUser = new User();
 
@@ -53,12 +57,14 @@ public class UserManager {
 		mLocalUser = localUser;
 	}
 
-	public void resetLocalUserID() {
-		if (mLocalUser == null) {
-			mLocalUser = new User();
-		}
-		mLocalUser.setUserID(DEFAULT_USER_ID);
-		clear();
+	/**
+	 * set local user info and save into database.
+	 * 
+	 * @param userInfo
+	 */
+	public void setLocalUserInfo(UserInfo userInfo) {
+		mLocalUser = userInfo.getUser();
+		UserHelper.saveLocalUser(mContext, userInfo);
 	}
 
 	private UserManager() {
@@ -72,6 +78,26 @@ public class UserManager {
 		return mInstance;
 	}
 
+	public void init(Context context) {
+		mContext = context;
+		// Reset local user.
+		resetLocalUser();
+	}
+
+	public void resetLocalUser() {
+		UserInfo userInfo = UserHelper.loadLocalUser(mContext);
+		if (userInfo != null) {
+			userInfo.getUser().setUserID(DEFAULT_USER_ID);
+			userInfo.setStatus(JuyouData.User.STATUS_DISCONNECT);
+			UserHelper.saveLocalUser(mContext, userInfo);
+
+			mLocalUser = userInfo.getUser();
+			clear();
+		} else {
+			mLocalUser = new User();
+		}
+	}
+
 	public void registerOnUserChangedListener(OnUserChangedListener listener) {
 		if (!mOnUserChangedListeners.contains(listener)) {
 			mOnUserChangedListeners.add(listener);
@@ -83,20 +109,31 @@ public class UserManager {
 	}
 
 	/**
-	 * Add a user.
+	 * A Remote user has login success. Add the remote user and communication
+	 * into map.
 	 * 
-	 * @param user
+	 * @param useInfo
 	 * @param communication
 	 * @return
 	 */
-	public synchronized boolean addUser(User user,
+	public synchronized boolean addNewLoginedUser(UserInfo userInfo,
 			SocketCommunication communication) {
-		if (isUserExist(user)) {
-			Log.d(TAG, "addUser ignore, user is already exist. " + user);
+		Log.d(TAG, "addNewLoginedUser ");
+		User user = userInfo.getUser();
+		if (mLocalUser.getUserID() != SERVER_USER_ID) {
+			Log.e(TAG, "addNewLoginedUser error, this is not server.");
+			return false;
+		}
+		if (isUserExistInMap(user)) {
+			Log.d(TAG,
+					"addNewLoginedUser ignore, user is already exist in map. "
+							+ user);
 			return false;
 		}
 
+		// Assign user id.
 		if (user.getUserID() != 0) {
+			// This is for login forward but it is not in use anymore.
 			// This is a client, The user is already assigned a id by server.
 		} else {
 			// This is the server, and here a client connected. So assign it a
@@ -104,32 +141,91 @@ public class UserManager {
 			mLastUserId++;
 			user.setUserID(mLastUserId);
 		}
-		if (mLocalUser.getUserID() == -1) {
-			if (!mCommunications.contains(communication)) {
-				UserTree.getInstance().addUser(mLocalUser, user);
-			} else {
-				int n = 65535;
-				for (Map.Entry<Integer, SocketCommunication> entry : mCommunications
-						.entrySet()) {
-					if (entry.getValue().equals(communication)
-							&& n > entry.getKey()) {
-						n = entry.getKey();
-					}
+
+		// Add user into user tree
+		if (!mCommunications.contains(communication)) {
+			UserTree.getInstance().addUser(mLocalUser, user);
+		} else {
+			int n = 65535;
+			for (Map.Entry<Integer, SocketCommunication> entry : mCommunications
+					.entrySet()) {
+				if (entry.getValue().equals(communication)
+						&& n > entry.getKey()) {
+					n = entry.getKey();
 				}
-				UserTree.getInstance().addUser(mUsers.get(n), user);
 			}
+			UserTree.getInstance().addUser(mUsers.get(n), user);
 		}
+
+		addUser(userInfo, communication);
+		return true;
+	}
+
+	/**
+	 * When server send update all user message, add the update user into map.
+	 * 
+	 * @param userInfo
+	 * @param communication
+	 * @return
+	 */
+	public synchronized boolean addUpdateUser(UserInfo userInfo,
+			SocketCommunication communication) {
+		Log.d(TAG, "addUpdateUser " + userInfo);
+		User user = userInfo.getUser();
+		if (isUserExistInMap(user)) {
+			Log.d(TAG, "addUpdateUser ignore, user is already exist in map. "
+					+ user);
+			return false;
+		}
+
+		addUser(userInfo, communication);
+		return true;
+	}
+
+	/**
+	 * Add a remote user and communication into map and database.
+	 * 
+	 * @param useInfo
+	 * @param communication
+	 * @return
+	 */
+	private void addUser(UserInfo userInfo, SocketCommunication communication) {
+		Log.d(TAG, "addUser " + userInfo);
+		User user = userInfo.getUser();
+		// Add user into map.
 		mUsers.put(user.getUserID(), user);
 		if (isLocalUser(user.getUserID())) {
+			// TODO This is for login forward.
 			mCommunications.put(user.getUserID(),
 					mLocalCommunications.get(user.getUserID()));
 		} else {
 			mCommunications.put(user.getUserID(), communication);
 		}
+
+		// If the user is not exist in database, add it.
+		if (UserHelper.getUserInfo(mContext, user) == null) {
+			// The user is not exist in database
+			userInfo.setStatus(JuyouData.User.STATUS_CONNECTED);
+			UserHelper.addRemoteUserToDatabase(mContext, userInfo);
+		}
+
 		for (OnUserChangedListener listener : mOnUserChangedListeners) {
 			listener.onUserConnected(user);
 		}
-		Log.d(TAG, "addUser " + user);
+	}
+
+	/**
+	 * Add a user.
+	 * 
+	 * @param user
+	 * @param communication
+	 * @return
+	 * 
+	 * @deprecated
+	 */
+	public synchronized boolean addUser(User user,
+			SocketCommunication communication) {
+		Log.e(TAG, "addUser is not used already.");
 		return true;
 	}
 
@@ -139,24 +235,36 @@ public class UserManager {
 	 * @param user
 	 * @return
 	 */
-	public synchronized boolean isUserExist(User user) {
-		for (Map.Entry<Integer, User> entry : mUsers.entrySet()) {
-			if (user.getUserID() == (int) entry.getKey()) {
-				return true;
-			}
-		}
-		return false;
+	public synchronized boolean isUserExistInMap(User user) {
+		return mUsers.containsKey(user.getUserID());
 	}
 
+	/**
+	 * When create server, add local user into communication and user map, and
+	 * update database.
+	 * 
+	 * @return
+	 */
 	public synchronized boolean addLocalServerUser() {
 		mLocalUser.setUserID(SERVER_USER_ID);
 		UserTree.getInstance().setHead(mLocalUser);
-		// Create new network, clear old users.
+
+		// Create new network, clear old users, add this user to user map and
+		// user database.
 		mUsers.clear();
 		mUsers.put(mLocalUser.getUserID(), mLocalUser);
+		UserInfo userInfo = UserHelper.loadLocalUser(mContext);
+		userInfo.getUser().setUserID(SERVER_USER_ID);
+		userInfo.setStatus(JuyouData.User.STATUS_SERVER_CREATED);
+		UserHelper.saveLocalUser(mContext, userInfo);
+
+		// Add communication.
+		mCommunications.clear();
 		SocketCommunication communication = new SocketCommunication(null, null);
 		mCommunications.put(mLocalUser.getUserID(), communication);
-		for(OnUserChangedListener listener : mOnUserChangedListeners) {
+
+		// Notify changes.
+		for (OnUserChangedListener listener : mOnUserChangedListeners) {
 			listener.onUserConnected(mLocalUser);
 		}
 		return true;
@@ -170,6 +278,7 @@ public class UserManager {
 	}
 
 	public synchronized void removeUser(int id) {
+		UserHelper.removeRemoteConnectedUser(mContext, id);
 		User tempUser = mUsers.get(id);
 		mUsers.remove(id);
 		mCommunications.remove(id);
@@ -244,9 +353,10 @@ public class UserManager {
 	}
 
 	public void clear() {
+		UserHelper.removeAllRemoteConnectedUser(mContext);
 		mUsers.clear();
 		mCommunications.clear();
-		for(OnUserChangedListener listener : mOnUserChangedListeners) {
+		for (OnUserChangedListener listener : mOnUserChangedListeners) {
 			listener.onUserDisconnected(mLocalUser);
 		}
 	}
@@ -319,12 +429,24 @@ public class UserManager {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Release resource.
 	 */
-	public void release(){
+	public void release() {
 		mInstance = null;
+	}
+
+	public void setLocalUserConnected(SocketCommunication communication) {
+		mUsers.clear();
+		mCommunications.clear();
+		mUsers.put(mLocalUser.getUserID(), mLocalUser);
+		mCommunications.put(mLocalUser.getUserID(), communication);
+		if (mOnUserChangedListeners != null) {
+			for (OnUserChangedListener listener : mOnUserChangedListeners) {
+				listener.onUserConnected(mLocalUser);
+			}
+		}
 	}
 
 }

@@ -153,7 +153,7 @@ public class SearchProtocol {
 			}
 			userInfo.setType(JuyouData.User.TYPE_REMOTE_SEARCH_LAN);
 			userInfo.setIpAddress(serverIp);
-			UserHelper.addUserToDatabase(context, userInfo);
+			UserHelper.addRemoteUserToDatabase(context, userInfo);
 			Log.d(TAG, "decodeLanServerInfo add into database userInfo = " + userInfo);
 		} catch (Exception e) {
 			Log.e(TAG, "decodeLanServerInfo " + e);

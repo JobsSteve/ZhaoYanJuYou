@@ -29,6 +29,7 @@ import com.zhaoyan.communication.SocketCommunication.OnReceiveMessageListener;
 import com.zhaoyan.communication.SocketServerTask.OnClientConnectedListener;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.communication.protocol.FileTransferInfo;
+import com.zhaoyan.communication.protocol.LoginProtocol;
 import com.zhaoyan.communication.protocol.ProtocolDecoder;
 import com.zhaoyan.communication.protocol.ProtocolEncoder;
 
@@ -176,13 +177,13 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mNotice = new Notice(context);
 		mCommunications = new Vector<SocketCommunication>();
 
-		mUserManager.setLocalUser(UserHelper.loadUser(context));
+		mUserManager.init(context);
 		mUserManager.registerOnUserChangedListener(this);
-		mProtocolDecoder = new ProtocolDecoder(this);
+		mProtocolDecoder = new ProtocolDecoder(context);
 		mProtocolDecoder.setLoginRequestCallBack(this);
 		mProtocolDecoder.setLoginRespondCallback(this);
 	}
-	
+
 	/**
 	 * Release resource.
 	 */
@@ -373,7 +374,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			}
 			mCommunications.clear();
 		}
-		
+
 		if (SocketServer.getInstance() != null) {
 			SocketServer.getInstance().stopServer();
 		}
@@ -444,7 +445,10 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		}
 		mUserManager.removeUser(communication);
 		mUserManager.removeLocalCommunication(communication);
-		sendMessageToUpdateAllUser();
+
+		if (!mCommunications.isEmpty()) {
+			sendMessageToUpdateAllUser();
+		}
 
 		if (mCommunications.isEmpty()) {
 			stopScreenMonitor();
@@ -521,9 +525,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 * client login server directly.
 	 */
 	public void sendLoginRequest() {
-		mUserManager.setLocalUser(UserHelper.loadUser(mContext));
-		byte[] loginRequest = ProtocolEncoder.encodeLoginRequest(mUserManager
-				.getLocalUser());
+		byte[] loginRequest = ProtocolEncoder.encodeLoginRequest(mContext);
 		sendMessageToAllWithoutEncode(loginRequest);
 	}
 
@@ -633,6 +635,10 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mContext.startService(intent);
 	}
 
+	public boolean isServerSocketStarted() {
+		return SocketServer.getInstance().isServerStarted();
+	}
+
 	/**
 	 * Stop server.
 	 */
@@ -649,8 +655,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 * Update user when user connect and disconnect.
 	 */
 	private void sendMessageToUpdateAllUser() {
-		byte[] allUserData = ProtocolEncoder.encodeUpdateAllUser(mUserManager);
-		sendMessageToAllWithoutEncode(allUserData);
+		ProtocolEncoder.encodeUpdateAllUser(mContext);
 	}
 
 	/**
@@ -787,7 +792,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	}
 
 	@Override
-	public void onLoginRequest(User user, SocketCommunication communication) {
+	public void onLoginRequest(UserInfo user, SocketCommunication communication) {
 		Log.d(TAG, "onLoginRequest()");
 		if (mLoginRequestCallBack != null) {
 			mLoginRequestCallBack.onLoginRequest(user, communication);
@@ -796,15 +801,38 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	}
 
 	/**
-	 * Respond to the login request.
+	 * Respond to the login request. If login is allowed, send message to update
+	 * user list.
 	 * 
-	 * @param user
+	 * @param userInfo
 	 * @param communication
 	 * @param isAllow
 	 */
-	public void respondLoginRequest(User user,
+	public void respondLoginRequest(UserInfo userInfo,
 			SocketCommunication communication, boolean isAllow) {
-		mProtocolDecoder.respondLoginRequest(user, communication, isAllow);
+		// TODO If the server disallow the login request, may be stop the socket
+		// communication. But we should check the login request is from the WiFi
+		// direct server or a client. Let this be done in the future.
+		boolean loginResult = false;
+		if (isAllow) {
+			loginResult = mUserManager.addNewLoginedUser(userInfo,
+					communication);
+
+			byte[] respond = LoginProtocol.encodeLoginRespond(loginResult,
+					userInfo.getUser().getUserID());
+			sendMessage(communication, respond);
+		} else {
+			loginResult = false;
+			byte[] respond = LoginProtocol.encodeLoginRespond(loginResult,
+					userInfo.getUser().getUserID());
+			sendMessage(communication, respond);
+		}
+		Log.d(TAG, "longin result = " + loginResult + ", userInfo = "
+				+ userInfo);
+
+		if (loginResult) {
+			sendMessageToUpdateAllUser();
+		}
 	}
 
 	@Override

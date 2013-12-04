@@ -141,6 +141,7 @@ public abstract class SearchConnectBaseFragment extends ListFragment implements
 		cancelStopSearchTimer();
 		stopSearch();
 		clearSearchResult();
+		mServerAdapter.swapCursor(null);
 		super.onDestroyView();
 	}
 

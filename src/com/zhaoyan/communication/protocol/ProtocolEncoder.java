@@ -1,7 +1,7 @@
 package com.zhaoyan.communication.protocol;
 
-import com.dreamlink.communication.aidl.User;
-import com.zhaoyan.communication.UserManager;
+import android.content.Context;
+
 
 /**
  * This class is used for encode the message based on protocol.
@@ -9,8 +9,8 @@ import com.zhaoyan.communication.UserManager;
  */
 public class ProtocolEncoder {
 
-	public static byte[] encodeLoginRequest(User localUser) {
-		return LoginProtocol.encodeLoginRequest(localUser);
+	public static byte[] encodeLoginRequest(Context context) {
+		return LoginProtocol.encodeLoginRequest(context);
 	}
 
 	public static byte[] encodeSendMessageToSingle(byte[] msg, int sendUserID,
@@ -24,12 +24,13 @@ public class ProtocolEncoder {
 		return SendProtocol.encodeSendMessageToAll(msg, sendUserID, appID);
 	}
 
-	public static byte[] encodeUpdateAllUser(UserManager userManager) {
-		return LoginProtocol.encodeUpdateAllUser(userManager);
+	public static void encodeUpdateAllUser(Context context) {
+		LoginProtocol.encodeUpdateAllUser(context);
 	}
 
 	public static byte[] encodeSendFile(int sendUserID, int receiveUserID,
-			int appID, byte[] inetAddressData, int serverPort, FileTransferInfo fileInfo) {
+			int appID, byte[] inetAddressData, int serverPort,
+			FileTransferInfo fileInfo) {
 		return FileTransportProtocol.encodeSendFile(sendUserID, receiveUserID,
 				appID, inetAddressData, serverPort, fileInfo);
 

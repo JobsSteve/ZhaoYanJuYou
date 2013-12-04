@@ -148,15 +148,21 @@ public class JuyouData {
 		 * user status, type:int
 		 */
 		public static final String STATUS = "status";
+		public static final int STATUS_UNKOWN = 0;
+		public static final int STATUS_SERVER_CREATED = 1;
+		public static final int STATUS_CONNECTED = 2;
+		public static final int STATUS_DISCONNECT = 3;
+		
+
 		/**
 		 * Local user or remote user, type:int. {@link #TYPE_LOCAL},
 		 * {@link #TYPE_REMOTE}.
 		 */
 		public static final String TYPE = "type";
-		public static final int TYPE_LOCAL = 0;
-		public static final int TYPE_REMOTE = 1;
-		public static final int TYPE_REMOTE_SEARCH_AP = 2;
-		public static final int TYPE_REMOTE_SEARCH_LAN = 3;
+		public static final int TYPE_LOCAL = 1;
+		public static final int TYPE_REMOTE = 2;
+		public static final int TYPE_REMOTE_SEARCH_AP = 3;
+		public static final int TYPE_REMOTE_SEARCH_LAN = 4;
 		/**
 		 * User wifi SSID, this is only used in the situation that the use is an
 		 * Android AP Server, type:string

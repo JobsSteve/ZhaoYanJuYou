@@ -59,7 +59,7 @@ public class ServerInfoProcesor implements OnSearchListenerLan,
 		userInfo.setHeadId(userHeadId);
 		userInfo.setSsid(ssid);
 		userInfo.setType(JuyouData.User.TYPE_REMOTE_SEARCH_AP);
-		UserHelper.addUserToDatabase(mContext, userInfo);
+		UserHelper.addRemoteUserToDatabase(mContext, userInfo);
 	}
 
 	private boolean isApServerAlreadyAdded(String ssid) {

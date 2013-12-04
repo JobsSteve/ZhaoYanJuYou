@@ -1,21 +1,37 @@
 package com.zhaoyan.communication;
 
+import java.io.Serializable;
+
 import android.graphics.Bitmap;
 
 import com.dreamlink.communication.aidl.User;
+import com.zhaoyan.common.util.BitmapUtilities;
 import com.zhaoyan.juyou.provider.JuyouData;
 
-public class UserInfo {
+public class UserInfo implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2266214532436896251L;
 	public final static int HEAD_ID_NOT_PRE_INSTALL = -1;
 	private User mUser;
-	private Bitmap mHeadBitmap;
+	private byte[] mHeadBitmapData;
 	private int mHeadId = 0;
 	private String mIpAddress;
 	private int mType;
 	private String mSsid;
+	private int mStatus;
 
 	public UserInfo() {
 
+	}
+
+	public int getStatus() {
+		return mStatus;
+	}
+
+	public void setStatus(int Status) {
+		mStatus = Status;
 	}
 
 	public String getSsid() {
@@ -72,18 +88,33 @@ public class UserInfo {
 	}
 
 	public Bitmap getHeadBitmap() {
-		return mHeadBitmap;
+		Bitmap headBitmap = null;
+		if (mHeadBitmapData != null && mHeadBitmapData.length > 0) {
+			headBitmap = BitmapUtilities.byteArrayToBitmap(mHeadBitmapData);
+		}
+		return headBitmap;
 	}
 
 	public void setHeadBitmap(Bitmap bitmap) {
-		mHeadBitmap = bitmap;
+		if (bitmap != null) {
+			mHeadBitmapData = BitmapUtilities.bitmapToByteArray(bitmap);
+		} else {
+			mHeadBitmapData = null;
+		}
+	}
+
+	public void setHeadBitmapData(byte[] data) {
+		mHeadBitmapData = data;
+	}
+
+	public byte[] getHeadBitmapData() {
+		return mHeadBitmapData;
 	}
 
 	@Override
 	public String toString() {
-		return "UserInfo [mUser=" + mUser + ", mHeadBitmap size ="
-				+ mHeadBitmap + ", mHeadId=" + mHeadId
-				+ ", mIpAddress=" + mIpAddress + ", mType=" + mType
-				+ ", mSsid=" + mSsid + "]";
+		return "UserInfo [mUser=" + mUser + ", mHeadBitmap=" + mHeadBitmapData
+				+ ", mHeadId=" + mHeadId + ", mIpAddress=" + mIpAddress
+				+ ", mType=" + mType + ", mSsid=" + mSsid + "]";
 	}
 }

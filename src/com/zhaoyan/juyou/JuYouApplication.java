@@ -14,8 +14,10 @@ import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.TrafficStatics;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.search.ConnectHelper;
+import com.zhaoyan.communication.connect.ServerConnector;
+import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.communication.search.SearchUtil;
+import com.zhaoyan.communication.search2.ServerSearcher;
 
 public class JuYouApplication extends Application {
 	private static final String TAG = "JuYouApplication";
@@ -57,6 +59,8 @@ public class JuYouApplication extends Application {
 		}
 		Log.d(TAG, "quitApplication");
 		mIsInit = false;
+		stopServerSearch(context);
+		stopServerCreator(context);
 		stopCommunication(context);
 		stopFileTransferService(context);
 		// Release SocketCommunicationManager
@@ -65,6 +69,24 @@ public class JuYouApplication extends Application {
 		TrafficStatics.getInstance().quit();
 		// Stop record log and close log file.
 		Log.stopAndSave();
+		releaseStaticInstance(context);
+	}
+
+	private static void releaseStaticInstance(Context context) {
+		ServerConnector serverConnector = ServerConnector.getInstance(context);
+		serverConnector.release();
+	}
+
+	private static void stopServerCreator(Context context) {
+		ServerCreator serverCreator = ServerCreator.getInstance(context);
+		serverCreator.stopServer();
+		serverCreator.release();
+	}
+
+	private static void stopServerSearch(Context context) {
+		ServerSearcher serverSearcher = ServerSearcher.getInstance(context);
+		serverSearcher.stopSearch(ServerSearcher.SERVER_TYPE_ALL);
+		serverSearcher.release();
 	}
 
 	private static void stopFileTransferService(Context context) {
@@ -74,11 +96,7 @@ public class JuYouApplication extends Application {
 	}
 
 	private static void stopCommunication(Context context) {
-		ConnectHelper connectHelper = ConnectHelper.getInstance(context);
-		connectHelper.stopSearch();
-		connectHelper.release();
-
-		UserManager.getInstance().resetLocalUserID();
+		UserManager.getInstance().resetLocalUser();
 		SocketCommunicationManager manager = SocketCommunicationManager
 				.getInstance();
 		manager.closeAllCommunication();
@@ -89,14 +107,14 @@ public class JuYouApplication extends Application {
 		// Clear wifi connect history.
 		SearchUtil.clearWifiConnectHistory(context);
 	}
-	
+
 	public static void initImageLoader(Context context) {
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-				.threadPriority(Thread.NORM_PRIORITY - 2)
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+				context).threadPriority(Thread.NORM_PRIORITY - 2)
 				.denyCacheImageMultipleSizesInMemory()
 				.discCacheFileNameGenerator(new Md5FileNameGenerator())
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
-				.writeDebugLogs() //remove it when release app
+				.writeDebugLogs() // remove it when release app
 				.build();
 		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config);

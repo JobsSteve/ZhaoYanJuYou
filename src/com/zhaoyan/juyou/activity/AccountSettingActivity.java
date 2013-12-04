@@ -32,6 +32,7 @@ import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HeadChooseAdapter;
 import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 public class AccountSettingActivity extends BaseActivity implements
 		OnClickListener, OnItemClickListener {
@@ -76,7 +77,7 @@ public class AccountSettingActivity extends BaseActivity implements
 
 		setUserInfo();
 	}
-	
+
 	private void setUserInfo() {
 		UserInfo userInfo = UserHelper.loadLocalUser(this);
 
@@ -186,7 +187,7 @@ public class AccountSettingActivity extends BaseActivity implements
 		// head id
 		userInfo.setHeadId(mCurrentHeadId);
 		if (mCurrentHeadId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
-			if(mHeadBitmap != null) {
+			if (mHeadBitmap != null) {
 				userInfo.setHeadBitmap(mHeadBitmap);
 			} else {
 				Log.e(TAG, "saveAccount error. can not find head.");
@@ -195,7 +196,7 @@ public class AccountSettingActivity extends BaseActivity implements
 			userInfo.setHeadBitmap(null);
 		}
 		// user type
-		userInfo.setIsLocal(true);
+		userInfo.setType(JuyouData.User.TYPE_LOCAL);
 		// Save to database
 		UserHelper.saveLocalUser(this, userInfo);
 

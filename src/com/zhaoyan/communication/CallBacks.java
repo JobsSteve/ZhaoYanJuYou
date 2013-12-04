@@ -11,10 +11,10 @@ public interface CallBacks {
 		/**
 		 * When a client requests login, this method will notify the server.
 		 * 
-		 * @param user
+		 * @param userInfo
 		 * @param communication
 		 */
-		void onLoginRequest(User user, SocketCommunication communication);
+		void onLoginRequest(UserInfo userInfo, SocketCommunication communication);
 	}
 
 	/**

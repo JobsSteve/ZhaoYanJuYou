@@ -47,4 +47,8 @@ public class ServerConnector {
 		serverConnectorAp.connectServer(ssidAp);
 	}
 
+	public void release() {
+		mInstance = null;
+	}
+
 }

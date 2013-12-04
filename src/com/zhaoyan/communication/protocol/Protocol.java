@@ -8,6 +8,8 @@ public class Protocol {
 
 	public static final int DATA_SIZE_HEADER_SIZE = 4;
 	public static final int DATA_TYPE_HEADER_SIZE = 4;
+	
+	public static final int LENGTH_INT = 4; 
 
 	// Login.
 	public static final int DATA_TYPE_HEADER_LOGIN_REQUEST = 100;

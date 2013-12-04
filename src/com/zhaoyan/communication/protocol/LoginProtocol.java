@@ -1,18 +1,20 @@
 package com.zhaoyan.communication.protocol;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
+
+import android.content.Context;
 
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.ArrayUtil;
+import com.zhaoyan.common.util.ArraysCompat;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.CallBacks.ILoginRespondCallback;
 import com.zhaoyan.communication.SocketCommunication;
+import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 /**
  * This class is used for encode and decode login message.
@@ -22,29 +24,83 @@ public class LoginProtocol {
 	private static final String TAG = "LoginProtocol";
 
 	/**
-	 * login request Protocol: [DATA_TYPE_HEADER_LOGIN_REQUEST][user data]
+	 * login request Protocol:
+	 * [DATA_TYPE_HEADER_LOGIN_REQUEST][nameLength][name]
+	 * [headImageId][headImage]
 	 * 
 	 * @param user
 	 * @return
 	 */
-	public static byte[] encodeLoginRequest(User user) {
+	public static byte[] encodeLoginRequest(Context context) {
 		byte[] loginMsg;
 		byte[] loginHeader = ArrayUtil
 				.int2ByteArray(Protocol.DATA_TYPE_HEADER_LOGIN_REQUEST);
-		byte[] userData = UserHelper.encodeUser(user);
-		loginMsg = ArrayUtil.join(loginHeader, userData);
+		UserInfo userInfo = UserHelper.loadLocalUser(context);
+		byte[] name = userInfo.getUser().getUserName().getBytes();
+		byte[] nameLength = ArrayUtil.int2ByteArray(name.length);
+		byte[] headImageId = ArrayUtil.int2ByteArray(userInfo.getHeadId());
+
+		// If head is user customized, send head image.
+		if (userInfo.getHeadId() == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			byte[] headImage = userInfo.getHeadBitmapData();
+			byte[] headImageLength = ArrayUtil.int2ByteArray(headImage.length);
+			loginMsg = ArrayUtil.join(loginHeader, nameLength, name,
+					headImageId, headImageLength, headImage);
+		} else {
+			loginMsg = ArrayUtil.join(loginHeader, nameLength, name,
+					headImageId);
+		}
 		return loginMsg;
 	}
 
 	/**
-	 * login request Protocol: [DATA_TYPE_HEADER_LOGIN_REQUEST][user data]
+	 * see {@link #encodeLoginRequest(Context)}.
 	 * 
 	 * @param data
 	 * @return
 	 */
-	public static User decodeLoginRequest(byte[] data) {
-		User user = UserHelper.decodeUser(data);
-		return user;
+	public static UserInfo decodeLoginRequest(byte[] data) {
+		int start = 0;
+		int end = Protocol.LENGTH_INT;
+		// name
+		byte[] nameLengthData = ArraysCompat.copyOfRange(data, start, end);
+		int nameLength = ArrayUtil.byteArray2Int(nameLengthData);
+		start = end;
+		end += nameLength;
+		byte[] nameData = ArraysCompat.copyOfRange(data, start, end);
+		String name = new String(nameData);
+
+		// head image id
+		start = end;
+		end += Protocol.LENGTH_INT;
+		byte[] headImageIdData = ArraysCompat.copyOfRange(data, start, end);
+		int headImageId = ArrayUtil.byteArray2Int(headImageIdData);
+
+		// head image
+		byte[] headImageData = null;
+		if (headImageId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			start = end;
+			end += Protocol.LENGTH_INT;
+			byte[] headImageLengthData = ArraysCompat.copyOfRange(data, start,
+					end);
+			int headImageLength = ArrayUtil.byteArray2Int(headImageLengthData);
+			start = end;
+			end += headImageLength;
+			headImageData = ArraysCompat.copyOfRange(data, start, end);
+		}
+
+		// Get user info
+		UserInfo userInfo = new UserInfo();
+		User user = new User();
+		user.setUserName(name);
+		userInfo.setUser(user);
+		userInfo.setHeadId(headImageId);
+		if (headImageId == UserInfo.HEAD_ID_NOT_PRE_INSTALL
+				&& headImageData != null) {
+			userInfo.setHeadBitmapData(headImageData);
+		}
+		userInfo.setType(JuyouData.User.TYPE_REMOTE);
+		return userInfo;
 	}
 
 	/**
@@ -91,9 +147,8 @@ public class LoginProtocol {
 	 * @param communication
 	 * @return
 	 */
-	public static boolean decodeLoginRespond(byte[] data,
-			UserManager userManager, SocketCommunication communication,
-			ILoginRespondCallback callback) {
+	public static boolean decodeLoginRespond(byte[] data, Context context,
+			SocketCommunication communication, ILoginRespondCallback callback) {
 		boolean loginResult = false;
 		int start = 0;
 		int end = Protocol.LOGIN_RESPOND_RESULT_HEADER_SIZE;
@@ -106,21 +161,25 @@ public class LoginProtocol {
 			// user id.
 			start = end;
 			end += Protocol.LOGIN_RESPOND_USERID_HEADER_SIZE;
-			byte[] userIDData = Arrays.copyOfRange(data, start, end);
+			byte[] userIDData = ArraysCompat.copyOfRange(data, start, end);
 			int userId = ArrayUtil.byteArray2Int(userIDData);
 			Log.d(TAG, "login success, user id = " + userId);
-			User localUser = userManager.getLocalUser();
-			localUser.setUserID(userId);
-			userManager.setLocalUser(localUser);
 
-			callback.onLoginSuccess(localUser, communication);
+			// Update local user.
+			UserInfo userInfo = UserHelper.loadLocalUser(context);
+			userInfo.getUser().setUserID(userId);
+			userInfo.setStatus(JuyouData.User.STATUS_CONNECTED);
+			UserManager.getInstance().setLocalUserInfo(userInfo);
+			UserManager.getInstance().setLocalUserConnected(communication);
+
+			callback.onLoginSuccess(userInfo.getUser(), communication);
 			break;
 		case Protocol.LOGIN_RESPOND_RESULT_FAIL:
 			loginResult = false;
 			// fail reason.
 			start = end;
 			end += Protocol.LOGIN_RESPOND_RESULT_FAIL_REASON_HEADER_SIZE;
-			byte[] failReasonData = Arrays.copyOfRange(data, start, end);
+			byte[] failReasonData = ArraysCompat.copyOfRange(data, start, end);
 			int failReason = ArrayUtil.byteArray2Int(failReasonData);
 			callback.onLoginFail(failReason, communication);
 			break;
@@ -161,12 +220,12 @@ public class LoginProtocol {
 			byte[] data) {
 		int start = 0;
 		int end = Protocol.LOGIN_FORWARD_USER_ID_SIZE;
-		byte[] userIDData = Arrays.copyOfRange(data, start, end);
+		byte[] userIDData = ArraysCompat.copyOfRange(data, start, end);
 		int userID = ArrayUtil.byteArray2Int(userIDData);
 
 		start = end;
 		end = data.length;
-		byte[] userData = Arrays.copyOfRange(data, start, end);
+		byte[] userData = ArraysCompat.copyOfRange(data, start, end);
 		User user = UserHelper.decodeUser(userData);
 
 		DecodeLoginRequestForwardResult result = new DecodeLoginRequestForwardResult();
@@ -224,7 +283,7 @@ public class LoginProtocol {
 			byte[] data) {
 		int start = 0;
 		int end = Protocol.LOGIN_FORWARD_USER_ID_SIZE;
-		byte[] userLocalIDData = Arrays.copyOfRange(data, start, end);
+		byte[] userLocalIDData = ArraysCompat.copyOfRange(data, start, end);
 		int userLocalID = ArrayUtil.byteArray2Int(userLocalIDData);
 
 		// Login result.
@@ -241,7 +300,7 @@ public class LoginProtocol {
 			// user id.
 			start = end;
 			end += Protocol.LOGIN_RESPOND_USERID_HEADER_SIZE;
-			byte[] userIDData = Arrays.copyOfRange(data, start, end);
+			byte[] userIDData = ArraysCompat.copyOfRange(data, start, end);
 			int userId = ArrayUtil.byteArray2Int(userIDData);
 			Log.d(TAG, "login success, user id = " + userId);
 			result.setLoginResult(true);
@@ -262,42 +321,88 @@ public class LoginProtocol {
 	/**
 	 * Update all user protocol:</br>
 	 * 
-	 * [DATA_TYPE_HEADER_UPDATE_ALL_USER][userTotalNumber][all user data]
+	 * 1. Server send all user to all users.</br>
+	 * 
+	 * 2. Send one use in one time.</br>
+	 * 
+	 * 3. When receive the first user, clear all original users.</br>
+	 * 
+	 * [DATA_TYPE_HEADER_UPDATE_ALL_USER][currentUserNumber][userTotalNumber][
+	 * user data]</br>
+	 * 
+	 * [DATA_TYPE_HEADER_UPDATE_ALL_USER][currentUserNumber][userTotalNumber][
+	 * user data]</br>
+	 * 
+	 * [DATA_TYPE_HEADER_UPDATE_ALL_USER][currentUserNumber][userTotalNumber
+	 * ][user data]
 	 * 
 	 * @param userManager
 	 * @return
 	 */
-	public static byte[] encodeUpdateAllUser(UserManager userManager) {
-		byte[] result = null;
+	public static void encodeUpdateAllUser(Context context) {
+		UserManager userManager = UserManager.getInstance();
+		SocketCommunicationManager communicationManager = SocketCommunicationManager
+				.getInstance();
 		// All user total number;
 		byte[] updateAllUserHeader = ArrayUtil
 				.int2ByteArray(Protocol.DATA_TYPE_HEADER_UPDATE_ALL_USER);
-		byte[] userTotalNumber = ArrayUtil.int2ByteArray(userManager
-				.getAllUser().size());
-		result = ArrayUtil.join(updateAllUserHeader, userTotalNumber,
-				getAllUser(userManager));
-		return result;
+		Map<Integer, User> users = userManager.getAllUser();
+		int userTotalNumber = users.size();
+		if (userTotalNumber == 0) {
+			return;
+		}
+		// 0 / total
+		byte[] allUserIdData = null;
+		int currentNumber = 0;
+		for (int id : users.keySet()) {
+			if (allUserIdData == null) {
+				allUserIdData = ArrayUtil.int2ByteArray(id);
+			} else {
+				allUserIdData = ArrayUtil.join(allUserIdData,
+						ArrayUtil.int2ByteArray(id));
+			}
+		}
+		byte[] updateAllUserIdData = ArrayUtil.join(updateAllUserHeader,
+				ArrayUtil.int2ByteArray(currentNumber),
+				ArrayUtil.int2ByteArray(userTotalNumber), allUserIdData);
+		communicationManager.sendMessageToAllWithoutEncode(updateAllUserIdData);
+
+		// 1 / total - total / total.
+		currentNumber = 1;
+		for (Map.Entry<Integer, User> entry : users.entrySet()) {
+			User user = entry.getValue();
+			UserInfo userInfo = UserHelper.getUserInfo(context, user);
+			if (userInfo != null) {
+				byte[] data = encodeUpdateOneUser(updateAllUserHeader,
+						userInfo, currentNumber, userTotalNumber);
+				communicationManager.sendMessageToAllWithoutEncode(data);
+			} else {
+				Log.e(TAG, "encodeUpdateAllUser getUserInfo fail. user = "
+						+ user);
+			}
+			currentNumber++;
+		}
 	}
 
 	/**
-	 * get all user byte data.
+	 * [DATA_TYPE_HEADER_UPDATE_ALL_USER][currentNumber][totalNumber][userInfo]
 	 * 
-	 * @param userManager
+	 * @param header
+	 * @param userInfo
+	 * @param currentNumber
+	 * @param totalNumber
 	 * @return
 	 */
-	private static byte[] getAllUser(UserManager userManager) {
-		byte[] result = null;
-		Map<Integer, User> users = userManager.getAllUser();
-		User[] users3 = new User[users.size()];
-		int i = 0;
-		for (Map.Entry<Integer, User> entry : users.entrySet()) {
-			users3[i] = entry.getValue();
-			i++;
-		}
-		result = ArrayUtil.objectToByteArray(users3);
-		Log.d(TAG, "getAllUser, user data length = " + result.length);
-
-		return result;
+	private static byte[] encodeUpdateOneUser(byte[] header, UserInfo userInfo,
+			int currentNumber, int totalNumber) {
+		byte[] currentNumberData = ArrayUtil.int2ByteArray(currentNumber);
+		byte[] totalNumberData = ArrayUtil.int2ByteArray(totalNumber);
+		// Set type as TYPE_REMOTE.
+		userInfo.setType(JuyouData.User.TYPE_REMOTE);
+		byte[] userInfoData = ArrayUtil.objectToByteArray(userInfo);
+		byte[] data = ArrayUtil.join(header, currentNumberData,
+				totalNumberData, userInfoData);
+		return data;
 	}
 
 	/**
@@ -306,64 +411,53 @@ public class LoginProtocol {
 	 * Protocol see {@link #encodeUpdateAllUser(UserManager)}
 	 * 
 	 * @param data
-	 * @param userManager
 	 * @param communication
 	 */
 	public static void decodeUpdateAllUser(byte[] data,
-			UserManager userManager, SocketCommunication communication) {
+			SocketCommunication communication) {
+		UserManager userManager = UserManager.getInstance();
+		// User current number.
 		int start = 0;
-		int end = Protocol.UPDATE_ALL_USER_USER_TOTAL_NUMBER_HEADER_SIZE;
+		int end = Protocol.LENGTH_INT;
+		byte[] userCurrentNumberData = ArraysCompat.copyOfRange(data, start,
+				end);
+		int userCurrentNumber = ArrayUtil.byteArray2Int(userCurrentNumberData);
 		// User total number.
-		byte[] userTotalNumberData = Arrays.copyOfRange(data, start, end);
+		start = end;
+		end += Protocol.LENGTH_INT;
+		byte[] userTotalNumberData = ArraysCompat.copyOfRange(data, start, end);
 		int userTotalNumber = ArrayUtil.byteArray2Int(userTotalNumberData);
 
-		// Update all user data.
-		start = end;
-		end = data.length;
-		byte[] allUserData = Arrays.copyOfRange(data, start, end);
-		// userManager.clear();
-		addAllUser(userTotalNumber, allUserData, userManager, communication);
-	}
-
-	private static User[] decodeAllUser(int userTotalNumber, byte[] allUserData) {
-		User[] result = new User[userTotalNumber];
-		try {
-			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-					allUserData);
-			ObjectInputStream objectInputStream = new ObjectInputStream(
-					byteArrayInputStream);
-			for (int i = 0; i < result.length; i++) {
-				result[i] = (User) objectInputStream.readObject();
+		// User info.
+		if (userCurrentNumber == 0) {
+			// Clear the user not exist.
+			int[] allUserId = new int[userTotalNumber];
+			for (int i = 0; i < userTotalNumber; i++) {
+				start = end;
+				end += Protocol.LENGTH_INT;
+				byte[] userIdData = ArraysCompat.copyOfRange(data, start, end);
+				int userId = ArrayUtil.byteArray2Int(userIdData);
+				allUserId[i] = userId;
 			}
-			byteArrayInputStream.close();
-			objectInputStream.close();
-		} catch (Exception e) {
-			Log.e(TAG, "decodeAllUser error." + e);
-		}
-		return result;
-	}
-
-	private static User[] addAllUser(int userCount, byte[] data,
-			UserManager userManager, SocketCommunication communication) {
-		User[] result = decodeAllUser(userCount, data);
-		for (User user : result) {
-			Log.d(TAG, "addAllUser : " + user);
-			userManager.addUser(user, communication);
-		}
-		Map<Integer, User> userMap = userManager.getAllUser();
-		for (Entry<Integer, User> entry : userMap.entrySet()) {
-			boolean flag = false;
-			User tem = entry.getValue();
-			for (User user : result) {
-				if (tem.getUserID() == user.getUserID()) {
-					flag = true;
+			for (int originalId : userManager.getAllUser().keySet()) {
+				boolean originalUserDisconnect = true;
+				for (int updateId : allUserId) {
+					if (updateId == originalId) {
+						originalUserDisconnect = false;
+					}
+				}
+				if (originalUserDisconnect) {
+					userManager.removeUser(originalId);
 				}
 			}
-			if (!flag) {
-				userManager.removeUser(tem.getUserID());
-			}
+		} else {
+			start = end;
+			end = data.length;
+			byte[] userInfoData = ArraysCompat.copyOfRange(data, start, end);
+			UserInfo userInfo = (UserInfo) ArrayUtil
+					.byteArrayToObject(userInfoData);
+			userManager.addUpdateUser(userInfo, communication);
 		}
-		return result;
 	}
 
 	public static class DecodeLoginRequestForwardResult {
