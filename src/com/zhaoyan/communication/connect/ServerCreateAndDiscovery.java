@@ -5,9 +5,7 @@ import android.content.Intent;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunicationManager;
-import com.zhaoyan.communication.SocketServer;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.search.ConnectHelper;
 import com.zhaoyan.communication.search2.DiscoveryService;
 
 public class ServerCreateAndDiscovery extends Thread {
@@ -32,7 +30,7 @@ public class ServerCreateAndDiscovery extends Thread {
 		// Let server thread start first.
 		int waitTime = 0;
 		try {
-			while (!mStop && !SocketServer.getInstance().isServerStarted()
+			while (!mStop && !communicationManager.isServerSocketStarted()
 					&& waitTime < 5000) {
 				Thread.sleep(200);
 			}
@@ -41,7 +39,7 @@ public class ServerCreateAndDiscovery extends Thread {
 		}
 
 		// If every thing is OK, the server is started.
-		if (SocketServer.getInstance().isServerStarted()) {
+		if (communicationManager.isServerSocketStarted()) {
 			UserManager.getInstance().addLocalServerUser();
 			mContext.sendBroadcast(new Intent(
 					ServerCreator.ACTION_SERVER_CREATED));
@@ -54,7 +52,9 @@ public class ServerCreateAndDiscovery extends Thread {
 		mStop = true;
 		SocketCommunicationManager communicationManager = SocketCommunicationManager
 				.getInstance();
+		communicationManager.closeAllCommunication();
 		communicationManager.stopServer();
+		UserManager.getInstance().resetLocalUser();
 
 		if (mDiscoveryService != null) {
 			mDiscoveryService.stopSearch();

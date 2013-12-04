@@ -1,5 +1,7 @@
 package com.zhaoyan.communication.connect;
 
+import com.zhaoyan.common.util.Log;
+
 import android.content.Context;
 
 public class ServerCreator {
@@ -10,6 +12,7 @@ public class ServerCreator {
 	private ServerCreatorAp mServerCreatorAp;
 	private ServerCreatorLan mServerCreatorLan;
 	private Context mContext;
+	private boolean mIsCreated = false;
 
 	private static ServerCreator mInstance;
 
@@ -23,8 +26,19 @@ public class ServerCreator {
 	private ServerCreator(Context context) {
 		mContext = context.getApplicationContext();
 	}
+	
+	public boolean isCreated(){
+		return mIsCreated;
+	}
 
 	public void createServer(int type) {
+		if (mIsCreated) {
+			Log.d(TAG, "createServer igonre, already created.");
+			return;
+		}
+		Log.d(TAG, "createServer type = " + type);
+		mIsCreated = true;
+
 		switch (type) {
 		case TYPE_AP:
 			mServerCreatorAp = new ServerCreatorAp(mContext);
@@ -41,6 +55,12 @@ public class ServerCreator {
 	}
 
 	public void stopServer() {
+		if (!mIsCreated) {
+			Log.d(TAG, "stopServer igonre, not created yet.");
+			return;
+		}
+		Log.d(TAG, "stopServer");
+		mIsCreated = false;
 		if (mServerCreatorAp != null) {
 			mServerCreatorAp.stopServer();
 			mServerCreatorAp = null;
@@ -49,5 +69,9 @@ public class ServerCreator {
 			mServerCreatorLan.stopServer();
 			mServerCreatorLan = null;
 		}
+	}
+	
+	public void release(){
+		mInstance = null;
 	}
 }

@@ -10,7 +10,8 @@ import android.view.View.OnClickListener;
 
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.search.ConnectHelper;
+import com.zhaoyan.communication.connect.ServerCreator;
+import com.zhaoyan.communication.search2.ServerSearcher;
 import com.zhaoyan.juyou.R;
 
 public class InviteActivity extends BaseActivity implements OnClickListener {
@@ -67,7 +68,7 @@ public class InviteActivity extends BaseActivity implements OnClickListener {
 
 	private void zeroGprsInviteCheck() {
 		final SocketCommunicationManager manager = SocketCommunicationManager
-				.getInstance(getApplicationContext());
+				.getInstance();
 
 		if (manager.isConnected() || manager.isServerAndCreated()) {
 			showDisconnectDialog();
@@ -103,15 +104,19 @@ public class InviteActivity extends BaseActivity implements OnClickListener {
 	}
 
 	private void disconnectCurrentNetwork() {
-		ConnectHelper connectHelper = ConnectHelper
+		ServerSearcher serverSearcher = ServerSearcher
 				.getInstance(getApplicationContext());
-		connectHelper.stopSearch();
+		serverSearcher.stopSearch(ServerSearcher.SERVER_TYPE_ALL);
+
+		ServerCreator serverCreator = ServerCreator
+				.getInstance(getApplicationContext());
+		serverCreator.stopServer();
 
 		SocketCommunicationManager manager = SocketCommunicationManager
-				.getInstance(getApplicationContext());
+				.getInstance();
 		manager.closeAllCommunication();
 		manager.stopServer();
-		UserManager.getInstance().resetLocalUserID();
+		UserManager.getInstance().resetLocalUser();
 	}
 
 }

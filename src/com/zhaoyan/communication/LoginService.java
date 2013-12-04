@@ -47,11 +47,11 @@ public class LoginService extends Service implements ILoginRequestCallBack,
 	}
 
 	@Override
-	public void onLoginRequest(User user, SocketCommunication communication) {
+	public void onLoginRequest(UserInfo userInfo, SocketCommunication communication) {
 		// TODO auto respond.
-		Log.d(TAG, "onLoginRequest user = " + user + ", communication = "
+		Log.d(TAG, "onLoginRequest user = " + userInfo + ", communication = "
 				+ communication);
-		mCommunicationManager.respondLoginRequest(user, communication, true);
+		mCommunicationManager.respondLoginRequest(userInfo, communication, true);
 	}
 
 	@Override

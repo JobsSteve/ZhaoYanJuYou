@@ -3,6 +3,8 @@ package com.zhaoyan.communication.protocol;
 import java.util.Arrays;
 import java.util.Map;
 
+import android.content.Context;
+
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.zhaoyan.common.util.Log;
@@ -10,6 +12,7 @@ import com.zhaoyan.communication.CallBacks.ILoginRequestCallBack;
 import com.zhaoyan.communication.CallBacks.ILoginRespondCallback;
 import com.zhaoyan.communication.SocketCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.protocol.FileTransportProtocol.OnReceiveFileCallback;
 import com.zhaoyan.communication.protocol.LoginProtocol.DecodeLoginRequestForwardResult;
@@ -37,10 +40,12 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 	 * Call back for SocketCommunicationManager
 	 */
 	private ILoginRespondCallback mLoginRespondCallback;
+	private Context mContext;
 
-	public ProtocolDecoder(SocketCommunicationManager manager) {
+	public ProtocolDecoder(Context context) {
+		mContext = context;
 		mUserManager = UserManager.getInstance();
-		mCommunicationManager = manager;
+		mCommunicationManager = SocketCommunicationManager.getInstance();
 	}
 
 	public void setLoginRequestCallBack(ILoginRequestCallBack callback) {
@@ -134,6 +139,7 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 	 */
 	private void handleLoginRespondForward(byte[] data,
 			SocketCommunication communication) {
+		// TODO Because of wifi direct is not used, this is not used already.
 		DecodeLoginRespondForwardResult decodeRespondResult = LoginProtocol
 				.decodeLoginRespondForward(data);
 		int userLocalIDRespond = decodeRespondResult.getUserLocalID();
@@ -163,6 +169,7 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 	 */
 	private void handleLoginRequestForward(byte[] data,
 			SocketCommunication communication) {
+		// TODO Because of wifi direct is not used, this is not used already.
 		User localUser = mUserManager.getLocalUser();
 		if (UserManager.isManagerServer(localUser)) {
 			DecodeLoginRequestForwardResult decodeRequestResult = LoginProtocol
@@ -181,7 +188,7 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 			mCommunicationManager.sendMessage(communication, respond);
 
 			if (isAdded) {
-				sendMessageToUpdateAllUser();
+				// sendMessageToUpdateAllUser();
 			}
 		} else {
 			// TODO This condition is not supported yet.
@@ -198,7 +205,9 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 	 */
 	private void handleLoginUpdateAllUser(byte[] data, byte[] originMessage,
 			SocketCommunication communication) {
-		LoginProtocol.decodeUpdateAllUser(data, mUserManager, communication);
+		LoginProtocol.decodeUpdateAllUser(data, communication);
+		// TODO Because of wifi direct is not used, code below is not used
+		// already.
 		// send all user data to other user in my local network.
 		for (SocketCommunication communication2 : mCommunicationManager
 				.getCommunications()) {
@@ -217,8 +226,7 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 	 */
 	private void handleLoginRespond(byte[] data,
 			SocketCommunication communication) {
-		LoginProtocol.decodeLoginRespond(data, mUserManager, communication,
-				this);
+		LoginProtocol.decodeLoginRespond(data, mContext, communication, this);
 	}
 
 	/**
@@ -232,34 +240,32 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 		User localUser = mUserManager.getLocalUser();
 		if (UserManager.isManagerServer(localUser)) {
 			Log.d(TAG, "This is manager server, process login request.");
-			User user = LoginProtocol.decodeLoginRequest(data);
+			UserInfo userInfo = LoginProtocol.decodeLoginRequest(data);
 
 			// Let call back to handle the request.
 			if (mLoginRequestCallBack != null) {
-				mLoginRequestCallBack.onLoginRequest(user, communication);
+				mLoginRequestCallBack.onLoginRequest(userInfo, communication);
 			}
 		} else {
-			Log.d(TAG, "This is not manager server, need forward.");
+			// TODO Because of wifi direct is not used, this is not used
+			// already.
+			// Log.d(TAG, "This is not manager server, need forward.");
 			// This login request need forward.
-			int id = mCommunicationManager.addLocalCommunicaiton(communication);
-			User user = LoginProtocol.decodeLoginRequest(data);
-			byte[] loginReqestData = LoginProtocol.encodeLoginRequestForward(
-					user, id);
-			// Send the message to other user except the login requester.
-			for (SocketCommunication communication2 : mCommunicationManager
-					.getCommunications()) {
-				if (communication2 != communication) {
-					mCommunicationManager.sendMessage(communication2,
-							loginReqestData);
-					Log.d(TAG, "login forward success.");
-				}
-			}
+			// int id =
+			// mCommunicationManager.addLocalCommunicaiton(communication);
+			// User user = LoginProtocol.decodeLoginRequest(data);
+			// byte[] loginReqestData = LoginProtocol.encodeLoginRequestForward(
+			// user, id);
+			// // Send the message to other user except the login requester.
+			// for (SocketCommunication communication2 : mCommunicationManager
+			// .getCommunications()) {
+			// if (communication2 != communication) {
+			// mCommunicationManager.sendMessage(communication2,
+			// loginReqestData);
+			// Log.d(TAG, "login forward success.");
+			// }
+			// }
 		}
-	}
-
-	private void sendMessageToUpdateAllUser() {
-		byte[] allUserData = LoginProtocol.encodeUpdateAllUser(mUserManager);
-		mCommunicationManager.sendMessageToAllWithoutEncode(allUserData);
 	}
 
 	@Override
@@ -332,39 +338,6 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 			mLoginRespondCallback.onLoginFail(failReason, communication);
 		} else {
 			Log.d(TAG, "mLoginReusltCallback is null");
-		}
-	}
-
-	/**
-	 * Respond to the login request.
-	 * 
-	 * @param user
-	 * @param communication
-	 * @param isAllow
-	 */
-	public void respondLoginRequest(User user,
-			SocketCommunication communication, boolean isAllow) {
-		// TODO If the server disallow the login request, may be stop the socket
-		// communication. But we should check the login request is from the WiFi
-		// direct server or a client. Let this be done in the future.
-		boolean loginResult = false;
-		if (isAllow) {
-			loginResult = mUserManager.addUser(user, communication);
-
-			byte[] respond = LoginProtocol.encodeLoginRespond(loginResult,
-					user.getUserID());
-			mCommunicationManager.sendMessage(communication, respond);
-		} else {
-			loginResult = false;
-			byte[] respond = LoginProtocol.encodeLoginRespond(loginResult,
-					user.getUserID());
-			mCommunicationManager.sendMessage(communication, respond);
-		}
-		Log.d(TAG,
-				"longin result = " + loginResult + ", user = "
-						+ user.getUserName());
-		if (loginResult) {
-			sendMessageToUpdateAllUser();
 		}
 	}
 
