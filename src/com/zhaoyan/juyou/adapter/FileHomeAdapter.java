@@ -57,9 +57,9 @@ public class FileHomeAdapter extends BaseAdapter {
 			holder.iconView = (ImageView) view
 					.findViewById(R.id.file_icon_imageview);
 			holder.nameView = (TextView) view
-					.findViewById(R.id.file_name_textview);
+					.findViewById(R.id.tv_filename);
 			holder.dateAndSizeView = (TextView) view
-					.findViewById(R.id.file_info_textview);
+					.findViewById(R.id.tv_fileinfo);
 			holder.dateAndSizeView.setVisibility(View.GONE);
 			view.setTag(holder);
 		} else {

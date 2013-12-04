@@ -31,6 +31,8 @@ public class FileInfo implements Parcelable {
 	public Object obj;
 	// media file's play total time
 	public long time;
+	//how many files that in the folder
+	public int count;
 
 	public FileInfo(String filename) {
 		this.fileName = filename;

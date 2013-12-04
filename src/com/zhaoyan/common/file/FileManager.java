@@ -201,4 +201,43 @@ public class FileManager {
 		
 		return true;
 	}
+	
+	public static boolean moveFile(String srcPath, String destPath) {
+		Log.d(TAG, "moveFile >>> " + srcPath + "," + destPath);
+
+		if (srcPath == null || destPath == null) {
+			Log.e(TAG, "MoveFile: null parameter");
+			return false;
+		}
+
+		File file = new File(srcPath);
+		try {
+			return file.renameTo(new File(destPath));
+		} catch (SecurityException e) {
+			Log.e(TAG, "Fail to move file," + e.toString());
+		}
+		return false;
+	}
+	 
+	public static String makePath(String path, String name) {
+		if (path.endsWith(File.separator))
+			return path + name;
+
+		return path + File.separator + name;
+	}
+	
+	public static boolean containsPath(String path1, String path2) {
+	    String path = path2;
+	    while (path != null) {
+	        if (path.equalsIgnoreCase(path1))
+	            return true;
+
+	        if (path.equals("/mnt"))
+	            break;
+	        path = new File(path).getParent();
+	    }
+
+	    return false;
+	}
+
 }

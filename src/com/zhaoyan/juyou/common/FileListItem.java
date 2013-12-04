@@ -12,11 +12,11 @@ public class FileListItem {
     public static void setupFileListItemInfo(Context context, View view,
             FileInfo fileInfo, FileIconHelper fileIcon) {
 
-        setText(view, R.id.file_name_textview, fileInfo.fileName);
-        
+        setText(view, R.id.tv_filename, fileInfo.fileName);
+        setText(view, R.id.tv_filecount, fileInfo.isDir ? "(" + fileInfo.count + ")" : "");
     	String size = ZYUtils.getFormatSize(fileInfo.fileSize);
 		String date = ZYUtils.getFormatDate(fileInfo.fileDate);
-        setText(view, R.id.file_info_textview, fileInfo.isDir ? date : date + " | " + size);
+        setText(view, R.id.tv_fileinfo, fileInfo.isDir ? date : date + " | " + size);
 
         ImageView lFileImage = (ImageView) view.findViewById(R.id.file_icon_imageview);
 
