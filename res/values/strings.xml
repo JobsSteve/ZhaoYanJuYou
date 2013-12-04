@@ -29,8 +29,9 @@
     <string name="http_share_second_step_tip1">打开浏览器，输入网址：\n%s</string>
     <string name="http_share_second_step_tip2">或者扫描二维码直接下载</string>
     <string name="quit">退出</string>
-    <string name="btn_login">登录</string>
-    <string name="btn_register">注册</string>
+    <string name="btn_login">会员登录</string>
+    <string name="btn_register">快速注册</string>
+    <string name="btn_login_direct">游客登录</string>
     <string name="label_psw">密码：</string>
     <string name="label_account">账号：</string>
     <string name="input_hint_account">邮箱/手机号</string>

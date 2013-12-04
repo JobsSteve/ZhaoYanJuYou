@@ -17,6 +17,7 @@ import com.zhaoyan.juyou.R;
 public class LoginActivity extends Activity implements View.OnClickListener {
 	private Button mLoginButton;
 	private Button mRegisterAccountButton;
+	private Button mLoginDirectButton;
 	private ImageView mTopLogoImageView;
 	private Bitmap mTopLogoBitmap;
 
@@ -35,6 +36,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 		mTopLogoImageView.setImageBitmap(mTopLogoBitmap);
 		mLoginButton = (Button) findViewById(R.id.btn_login);
 		mLoginButton.setOnClickListener(this);
+		mLoginDirectButton = (Button) findViewById(R.id.btn_login_direct);
+		mLoginDirectButton.setOnClickListener(this);
 
 		mRegisterAccountButton = (Button) findViewById(R.id.btn_register);
 		mRegisterAccountButton.setOnClickListener(this);
@@ -44,6 +47,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_login:
+		case R.id.btn_login_direct:
 			if (UserHelper.loadLocalUser(this) == null) {
 				launchAccountSetting();
 			} else {
