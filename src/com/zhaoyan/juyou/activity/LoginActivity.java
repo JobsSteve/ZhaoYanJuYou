@@ -97,18 +97,18 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 		String account = mAccountEditText.getText().toString();
 		if (TextUtils.isEmpty(account)) {
 			Toast.makeText(mContext, R.string.account_empty_please_input,
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 			return;
 		}
 		String password = mPasswordEditText.getText().toString();
 		if (TextUtils.isEmpty(password)) {
 			Toast.makeText(mContext, R.string.password_empty_please_input,
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 			return;
 		}
 		if (NetWorkUtil.isNetworkConnected(getApplicationContext())) {
 			Toast.makeText(this, R.string.login_message_no_network,
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 			return;
 		}
 
@@ -232,7 +232,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 				break;
 			case LOGIN_RESULT_FAIL_ACCOUNT_ERROR:
 				Toast.makeText(mContext, R.string.login_fail_account_error,
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				break;
@@ -246,7 +246,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 			}
 			if (mIsTimeout) {
 				Toast.makeText(mContext, R.string.login_fail_timeout,
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 
