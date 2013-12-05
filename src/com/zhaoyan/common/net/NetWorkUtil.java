@@ -29,17 +29,17 @@ public class NetWorkUtil {
 		ConnectivityManager cm = (ConnectivityManager) context
 				.getApplicationContext().getSystemService(
 						Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-
-		boolean isWifiApEnabled = isWifiApEnabled(context);
-
-		boolean isWifiDirectEnabled = isWifiDirectEnabled(context);
-
-		if (networkInfo == null && isWifiApEnabled == false
-				&& isWifiDirectEnabled == false) {
+		if (cm == null) {
 			return false;
-		} else {
+		}
+		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+		if (networkInfo == null) {
+			return false;
+		}
+		if (networkInfo.isConnected()) {
 			return true;
+		}else {
+			return false;
 		}
 	}
 

@@ -11,65 +11,70 @@
         android:layout_alignParentTop="true"
         android:adjustViewBounds="true" />
 
-    <RadioGroup
-        android:id="@+id/rg_login"
+    <HorizontalScrollView
+        android:id="@+id/hsv_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/iv_login_top"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:checkedButton="@+id/rb_login_zhaoyan"
-        android:orientation="horizontal" >
+        android:scrollbars="none" >
 
-        <RadioButton
-            android:id="@id/rb_login_zhaoyan"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/login_zhaoyan_btn_selector"
-            android:button="@null" />
+            android:orientation="horizontal" >
 
-        <RadioButton
-            android:id="@+id/rb_login_weixin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/login_weixin_btn_selector"
-            android:button="@null" />
+            <Button
+                android:id="@+id/btn_login_weixin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_weixin_btn_selector" >
+            </Button>
 
-        <RadioButton
-            android:id="@+id/rb_login_weibo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/login_sina_weibo_btn_selector"
-            android:button="@null" />
+            <Button
+                android:id="@+id/btn_login_tencent_weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_tencent_weibo_btn_selector" >
+            </Button>
 
-        <RadioButton
-            android:id="@+id/rb_login_qq"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/login_qq_btn_selector"
-            android:button="@null" />
+            <Button
+                android:id="@+id/btn_login_sina_weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_sina_weibo_btn_selector" >
+            </Button>
 
-        <RadioButton
-            android:id="@+id/rb_login_direct"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/login_direct_btn_selector"
-            android:button="@null" />
-    </RadioGroup>
+            <Button
+                android:id="@+id/btn_login_qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_qq_btn_selector" >
+            </Button>
+
+            <Button
+                android:id="@+id/btn_login_renren"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_renren_btn_selector" >
+            </Button>
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/rg_login"
-        android:layout_marginBottom="5dp"
+        android:layout_below="@id/hsv_login"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:background="#40000000" />
 
     <LinearLayout
