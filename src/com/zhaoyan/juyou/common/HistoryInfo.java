@@ -26,6 +26,11 @@ public class HistoryInfo implements Parcelable{
 	/**send user name*/
 	private String sendUserName;
 	
+	/**send user head icon id*/
+	private int sendUserHeadId;
+	/**send user head icon*/
+	private byte[] sendUserIcon;
+	
 	/**send or receive file info*/
 	private File file;
 	/**send or recive file name*/
@@ -39,8 +44,8 @@ public class HistoryInfo implements Parcelable{
 	/**this file's status:sending,receiving,send ok,send fail and so on*/
 	private int status;
 	
-	/**icon*/
-	private byte[] icon;
+	/**transfer file icon*/
+	private byte[] fileIcon;
 	/**file type,image,apk,video and so on*/
 	private int fileType;
 	
@@ -96,6 +101,22 @@ public class HistoryInfo implements Parcelable{
 		this.sendUserName = name;
 	}
 	
+	public int getSendUserHeadId(){
+		return sendUserHeadId;
+	}
+	
+	public void setSendUserHeadId(int headId){
+		this.sendUserHeadId = headId;
+	}
+	
+	public byte[] getSendUserIcon(){
+		return sendUserIcon;
+	}
+	
+	public void setSendUserIcon(byte[] headIcon){
+		this.sendUserIcon = headIcon;
+	}
+	
 	public File getFile(){
 		return file;
 	}
@@ -141,11 +162,11 @@ public class HistoryInfo implements Parcelable{
 	}
 	
 	public byte[] getIcon(){
-		return icon;
+		return fileIcon;
 	}
 	
 	public void setIcon(byte[] icon){
-		this.icon = icon;
+		this.fileIcon = icon;
 	}
 	
 	public int getFileType(){

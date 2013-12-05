@@ -60,7 +60,8 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 			JuyouData.History.RECEIVE_USERNAME, JuyouData.History.PROGRESS,
 			JuyouData.History.DATE, JuyouData.History.STATUS,
 			JuyouData.History.MSG_TYPE, JuyouData.History.FILE_TYPE,
-			JuyouData.History.FILE_ICON };
+			JuyouData.History.FILE_ICON, JuyouData.History.SEND_USER_HEADID,
+			JuyouData.History.SEND_USER_ICON};
 
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {

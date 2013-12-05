@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:clickable="false"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:divider="@android:color/transparent"
         android:visibility="visible" >
     </ListView>

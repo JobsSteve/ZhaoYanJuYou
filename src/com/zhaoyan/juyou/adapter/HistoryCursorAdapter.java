@@ -27,6 +27,8 @@ import com.zhaoyan.common.file.SingleMediaScanner;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
+import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncImageLoader;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
@@ -49,6 +51,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	private MsgOnClickListener mClickListener = new MsgOnClickListener();
 	private DeleteOnClick mDeleteOnClick = new DeleteOnClick(0);
 	private ListView mListView; 
+	private UserInfo mLocalUserInfo = null;
 	
 	public HistoryCursorAdapter(Context context, ListView listView) {
 		super(context, null, true);
@@ -57,6 +60,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		mNotice = new Notice(context);
 		mLayoutInflater = LayoutInflater.from(context);
 		bitmapLoader = new AsyncImageLoader(context);
+		mLocalUserInfo = UserHelper.loadLocalUser(context);
 	}
 
 	@Override
@@ -112,11 +116,38 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				.getColumnIndex(JuyouData.History.STATUS));
 		int fileType = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.History.FILE_TYPE));
+		int headId;
+		byte[] headIcon;
 		
 		if (HistoryManager.TYPE_SEND == type) {
 			reveiveUserName = cursor.getString(cursor
 					.getColumnIndex(JuyouData.History.RECEIVE_USERNAME));
 			holder.contentTitleView.setText(mContext.getString(R.string.sending, reveiveUserName));
+			headId = mLocalUserInfo.getHeadId();
+			if (UserInfo.HEAD_ID_NOT_PRE_INSTALL != headId) {
+				holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[headId]);
+			}else {
+				headIcon = mLocalUserInfo.getHeadBitmapData();
+				Bitmap headIconBitmap = BitmapFactory.decodeByteArray(headIcon, 0, headIcon.length);
+				if (headIconBitmap != null) {
+					holder.userHeadView.setImageBitmap(headIconBitmap);
+				}else {
+					holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[0]);
+				}
+			}
+		} else {
+			headId = cursor.getInt(cursor.getColumnIndex(JuyouData.History.SEND_USER_HEADID));
+			if (UserInfo.HEAD_ID_NOT_PRE_INSTALL != headId) {
+				holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[headId]);
+			}else {
+				headIcon = cursor.getBlob(cursor.getColumnIndex(JuyouData.History.SEND_USER_ICON));
+				Bitmap headIconBitmap = BitmapFactory.decodeByteArray(headIcon, 0, headIcon.length);
+				if (headIconBitmap != null) {
+					holder.userHeadView.setImageBitmap(headIconBitmap);
+				}else {
+					holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[0]);
+				}
+			}
 		}
 		
 		holder.userNameView.setText(sendUserName);
@@ -254,6 +285,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		holder.fileIconView = (ImageView) view.findViewById(R.id.iv_send_file_icon);
 		holder.dateView = (TextView) view.findViewById(R.id.tv_sendtime);
 		holder.userNameView = (TextView) view.findViewById(R.id.tv_username);
+		holder.userHeadView = (ImageView) view.findViewById(R.id.iv_userhead);
 		holder.fileNameView = (TextView) view
 				.findViewById(R.id.tv_send_file_name);
 		holder.fileSizeView = (TextView) view
@@ -306,6 +338,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		ProgressBar transferBar;
 		TextView dateView;
 		TextView userNameView;
+		ImageView userHeadView;
 		TextView fileNameView;
 		TextView fileSizeView;
 		TextView contentTitleView;
