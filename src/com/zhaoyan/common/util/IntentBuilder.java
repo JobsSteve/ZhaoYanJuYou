@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.zhaoyan.juyou.R;
 
 public class IntentBuilder {
+	private static final String TAG = "IntentBuilder";
 
     public static void viewFile(final Context context, final String filePath) {
         String type = MimeUtils.getMimeType(filePath);
@@ -23,7 +24,12 @@ public class IntentBuilder {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(android.content.Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(new File(filePath)), type);
-            context.startActivity(intent);
+            try {
+            	context.startActivity(intent);
+			} catch (Exception e) {
+				Log.e(TAG, "viewFile&&&&:" + e.toString());
+				Toast.makeText(context, R.string.open_file_fail, Toast.LENGTH_SHORT).show();
+			}
         } else {
             // unknown MimeType
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
@@ -60,8 +66,7 @@ public class IntentBuilder {
                             try {
                             	context.startActivity(intent);
 							} catch (Exception e) {
-								// TODO: handle exception
-								e.printStackTrace();
+								Log.e(TAG, "viewFile########:" + e.toString());
 								Toast.makeText(context, R.string.open_file_fail, Toast.LENGTH_SHORT).show();
 							}
                            
