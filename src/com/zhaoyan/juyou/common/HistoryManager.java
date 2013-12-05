@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class HistoryManager {
@@ -103,6 +104,8 @@ public class HistoryManager {
     		values.put(JuyouData.History.MSG_TYPE, historyInfo.getMsgType());
     		values.put(JuyouData.History.FILE_TYPE, historyInfo.getFileType());
     		values.put(JuyouData.History.FILE_ICON, historyInfo.getIcon());
+    		values.put(JuyouData.History.SEND_USER_HEADID, historyInfo.getSendUserHeadId());
+    		values.put(JuyouData.History.SEND_USER_ICON, historyInfo.getSendUserIcon());
     		
     		return values;
 	    }

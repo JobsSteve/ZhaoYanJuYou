@@ -1,6 +1,7 @@
 package com.zhaoyan.juyou.fragment;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -436,7 +438,20 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				fileInfo.isDir = true;
 				fileInfo.fileSize = 0;
 				fileInfo.type = FileInfoManager.UNKNOW;
-				fileInfo.count = currentFile.listFiles().length;
+				//do not count hidden files
+				File[] files = currentFile.listFiles();
+				if (null == files) {
+					fileInfo.count = 0;
+				}else {
+					int count = files.length;
+					for(File f : files){
+						if (f.isHidden()) {
+							count --;
+						}
+					}
+					fileInfo.count = count;
+				}
+				
 				if (currentFile.isHidden()) {
 					// do nothing
 				} else {
@@ -643,6 +658,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			homeBtn.setBackgroundResource(R.drawable.custom_home_ninepatch_tab);
 			homeBtn.setPadding((int) resources.getDimension(R.dimen.home_btn_padding), 0,
 					(int) resources.getDimension(R.dimen.home_btn_padding), 0);
+			homeBtn.setTextColor(Color.BLACK);
 			switch (type) {
 			case INTERNAL:
 				homeBtn.setText(R.string.internal_sdcard);
@@ -1039,16 +1055,19 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(false);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_MORE).setEnable(false);
 		} else if (mAdapter.hasDirSelected()) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_MORE).setEnable(true);
 		}else {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_COPY).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_CUT).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
+			mActionMenu.findItem(ActionMenu.ACTION_MENU_MORE).setEnable(true);
 		}
 	}
 

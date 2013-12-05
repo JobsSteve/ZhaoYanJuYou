@@ -210,6 +210,10 @@ public class FileTransferService extends Service implements
 			historyInfo.setFileSize(file.length());
 			historyInfo.setReceiveUser(receiveUser);
 			historyInfo.setSendUserName(getResources().getString(R.string.me));
+			//set user head 
+			historyInfo.setSendUserHeadId(0);
+			historyInfo.setSendUserIcon(null);
+			//
 			historyInfo.setMsgType(HistoryManager.TYPE_SEND);
 			historyInfo.setDate(System.currentTimeMillis());
 			historyInfo.setStatus(HistoryManager.STATUS_PRE_SEND);
@@ -262,17 +266,25 @@ public class FileTransferService extends Service implements
 	@Override
 	public void onReceiveFile(FileReceiver fileReceiver) {
 		String currentRevFolder = "";
+		UserInfo userInfo = null;
 		String fileName = fileReceiver.getFileTransferInfo().getFileName();
 		String sendUserName = fileReceiver.getSendUser().getUserName();
 		File file = null;
 		long fileSize = fileReceiver.getFileTransferInfo().getFileSize();
 		byte[] fileIcon = fileReceiver.getFileTransferInfo().getFileIcon();
-
+		userInfo = UserHelper.getUserInfo(getApplicationContext(), fileReceiver.getSendUser());
+		int sendUserHeadId = userInfo.getHeadId();
+		byte[] sendUserIcon = null;
 		Log.d(TAG, "onReceiveFile:" + fileName + "," + sendUserName + ",size="
-				+ fileSize);
+				+ fileSize + ",sendUserHeadId=" + sendUserHeadId);
 		HistoryInfo historyInfo = new HistoryInfo();
 		historyInfo.setFileSize(fileSize);
 		historyInfo.setSendUserName(sendUserName);
+		historyInfo.setSendUserHeadId(sendUserHeadId);
+		if (UserInfo.HEAD_ID_NOT_PRE_INSTALL == sendUserHeadId) {
+			sendUserIcon = userInfo.getHeadBitmapData();
+		}
+		historyInfo.setSendUserIcon(sendUserIcon);
 		historyInfo.setReceiveUser(mUserManager.getLocalUser());
 		historyInfo.setMsgType(HistoryManager.TYPE_RECEIVE);
 		historyInfo.setDate(System.currentTimeMillis());

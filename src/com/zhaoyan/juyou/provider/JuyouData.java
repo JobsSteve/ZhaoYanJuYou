@@ -39,6 +39,14 @@ public class JuyouData {
 		 */
 		public static final String SEND_USERNAME = "send_username";
 		/**
+		 * send user head icon id,type:int
+		 */
+		public static final String SEND_USER_HEADID = "send_user_headid";
+		/**
+		 * send user head icon,type:blob
+		 */
+		public static final String SEND_USER_ICON = "send_user_icon";
+		/**
 		 * receive user name,type:String
 		 */
 		public static final String RECEIVE_USERNAME = "receive_username";

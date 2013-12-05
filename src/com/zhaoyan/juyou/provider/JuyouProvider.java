@@ -311,7 +311,9 @@ public class JuyouProvider extends ContentProvider {
 					+ JuyouData.History.STATUS + " INTEGER, "
 					+ JuyouData.History.MSG_TYPE + " INTEGER, "
 					+ JuyouData.History.FILE_TYPE + " INTEGER, "
-					+ JuyouData.History.FILE_ICON + " BLOB);");
+					+ JuyouData.History.FILE_ICON + " BLOB, "
+					+ JuyouData.History.SEND_USER_HEADID + " INTEGER, "
+					+ JuyouData.History.SEND_USER_ICON + " BLOB);");
 
 			// create traffic statics rx table.
 			db.execSQL("create table " + JuyouData.TrafficStaticsRX.TABLE_NAME
