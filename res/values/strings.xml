@@ -82,5 +82,6 @@
     <string name="customize_head">自定义头像</string>
     <string name="capture_picture">拍摄新照片</string>
     <string name="choose_picture">选择照片</string>
+    <string name="user_name_local">我</string>
 
 </resources>

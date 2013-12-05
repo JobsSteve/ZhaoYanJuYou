@@ -49,6 +49,7 @@
                     android:src="@drawable/setting_item_arrow" />
 
                 <LinearLayout
+                    android:id="@+id/ll_juyou_connect_friends"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -62,16 +63,17 @@
                         android:layout_gravity="center_vertical"
                         android:text="@string/connect_friends"
                         android:textSize="14sp" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/ll_juyou_connected_users"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:orientation="horizontal" >
-                    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_juyou_connected_users"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@id/iv_juyou_connect_arrow"
+                    android:orientation="horizontal" >
                 </LinearLayout>
             </RelativeLayout>
 

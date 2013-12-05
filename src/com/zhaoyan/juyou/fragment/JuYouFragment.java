@@ -11,9 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
 import com.dreamlink.communication.aidl.User;
+import com.zhaoyan.common.view.ViewUtil;
+import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.juyou.R;
@@ -24,8 +30,10 @@ public class JuYouFragment extends BaseFragment implements OnClickListener,
 		OnUserChangedListener {
 	private Context mContext;
 	private View mConnectView;
+	private LinearLayout mConnectedUserViewLinearLayout;
+	private View mConnectViewIcon;
+	private View mConnectViewText;
 	private View mInviteView;
-	private LinearLayout mConnectedUserPhotoView;
 
 	private static final int MSG_UPDATE_CONNECTED_USERS = 1;
 	private Handler mHandler;
@@ -58,28 +66,62 @@ public class JuYouFragment extends BaseFragment implements OnClickListener,
 	private void initView(View rootView) {
 		mConnectView = rootView.findViewById(R.id.rl_juyou_connect);
 		mConnectView.setOnClickListener(this);
+		mConnectedUserViewLinearLayout = (LinearLayout) rootView
+				.findViewById(R.id.ll_juyou_connected_users);
+		mConnectViewIcon = rootView.findViewById(R.id.iv_juyou_connect_friends);
+		mConnectViewText = rootView.findViewById(R.id.ll_juyou_connect_friends);
+
 		mInviteView = rootView.findViewById(R.id.rl_juyou_invite);
 		mInviteView.setOnClickListener(this);
-		mConnectedUserPhotoView = (LinearLayout) rootView
-				.findViewById(R.id.ll_juyou_connected_users);
 	}
 
 	private void updateConnectedUsers() {
 		// Clear all user.
-		mConnectedUserPhotoView.removeAllViews();
+		mConnectedUserViewLinearLayout.removeAllViews();
 		// Add connected user.
 		UserManager userManager = UserManager.getInstance();
 		Map<Integer, User> users = userManager.getAllUser();
-		for (Map.Entry<Integer, User> entry : users.entrySet()) {
-			addUser(entry.getValue());
+		if (users.isEmpty()) {
+			mConnectedUserViewLinearLayout.setVisibility(View.INVISIBLE);
+			mConnectViewIcon.setVisibility(View.VISIBLE);
+			mConnectViewText.setVisibility(View.VISIBLE);
+		} else {
+			mConnectedUserViewLinearLayout.setVisibility(View.VISIBLE);
+			mConnectViewIcon.setVisibility(View.INVISIBLE);
+			mConnectViewText.setVisibility(View.INVISIBLE);
+			User[] usersSorted = UserHelper.sortUsersById(users);
+			for (User user : usersSorted) {
+				UserInfo userInfo = UserHelper.getUserInfo(mContext, user);
+				addUser(userInfo);
+			}
 		}
 	}
 
-	private void addUser(User user) {
+	private void addUser(UserInfo userInfo) {
 		LayoutInflater inflater = LayoutInflater.from(mContext);
 		View view = inflater.inflate(R.layout.juyou_fragment_user_icon, null,
 				false);
-		mConnectedUserPhotoView.addView(view);
+		ImageView headImageView = (ImageView) view
+				.findViewById(R.id.iv_connected_user_head);
+		int headId = userInfo.getHeadId();
+		if (headId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			headImageView.setImageBitmap(userInfo.getHeadBitmap());
+		} else {
+			headImageView.setImageResource(UserHelper
+					.getHeadImageResource(headId));
+		}
+		TextView nameTextView = (TextView) view
+				.findViewById(R.id.tv_connected_user_name);
+		if (userInfo.isLocal()) {
+			nameTextView.setText(R.string.user_name_local);
+		} else {
+			nameTextView.setText(userInfo.getUser().getUserName());
+		}
+		LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
+		layoutParams.rightMargin = ViewUtil.dp2px(mContext, 5);
+
+		mConnectedUserViewLinearLayout.addView(view, layoutParams);
 	}
 
 	@Override
@@ -126,5 +168,5 @@ public class JuYouFragment extends BaseFragment implements OnClickListener,
 				break;
 			}
 		}
-	};
+	}
 }

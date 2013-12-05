@@ -1,5 +1,8 @@
 package com.zhaoyan.communication;
 
+import java.util.Arrays;
+import java.util.Map;
+
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -270,6 +273,26 @@ public class UserHelper {
 				+ JuyouData.User.TYPE + "!=" + JuyouData.User.TYPE_LOCAL
 				+ " and " + JuyouData.User.USER_ID + "=" + userId;
 		contentResolver.delete(JuyouData.User.CONTENT_URI, selection, null);
+	}
+
+	public static User[] sortUsersById(Map<Integer, User> users) {
+		if (users.isEmpty()) {
+			throw new IllegalArgumentException(
+					"sortUsersById(), users is empty.");
+		}
+		int i = 0;
+		int[] userIdSorted = new int[users.size()];
+		for (Map.Entry<Integer, User> entry : users.entrySet()) {
+			userIdSorted[i] = entry.getKey();
+			i++;
+		}
+		Arrays.sort(userIdSorted);
+
+		User[] userSorted = new User[users.size()];
+		for (int j = 0; j < userIdSorted.length; j++) {
+			userSorted[j] = users.get(userIdSorted[j]);
+		}
+		return userSorted;
 	}
 
 	public static byte[] encodeUser(User user) {
