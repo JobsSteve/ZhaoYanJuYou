@@ -20,6 +20,7 @@ import com.zhaoyan.common.net.http.HttpShareServer;
 import com.zhaoyan.common.util.QRCodeEncoder;
 import com.zhaoyan.communication.SocketPort;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.dialog.ZyProgressDialog;
 
 public class InviteHttpActivity extends BaseActivity {
 	private static final String TAG = "InviteHttpActivity";
@@ -35,6 +36,7 @@ public class InviteHttpActivity extends BaseActivity {
 	private HttpShareServer mHttpShareServer;
 
 	private Bitmap mQRCodeBitmap;
+	private ZyProgressDialog mZyProgressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +49,16 @@ public class InviteHttpActivity extends BaseActivity {
 		initTitle(R.string.http_share_title);
 		initView();
 
+		mZyProgressDialog = new ZyProgressDialog(mContext);
+		mZyProgressDialog.setMessage(R.string.invite_http_opening);
+		mZyProgressDialog.show();
+
 		mHttpShareServer = new HttpShareServer();
 
+		disableWiFiAP();
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(WiFiAP.ACTION_WIFI_AP_STATE_CHANGED);
 		registerReceiver(mWiFiAPBroadcastReceiver, intentFilter);
-
 		enableWiFiAP();
 	}
 
@@ -71,6 +77,9 @@ public class InviteHttpActivity extends BaseActivity {
 		if (result) {
 			Log.d(TAG, "createHttpShare port: " + HTTP_SHARE_SERVER_PORT
 					+ " successs.");
+			if (mZyProgressDialog.isShowing()) {
+				mZyProgressDialog.dismiss();
+			}
 		} else {
 			Log.e(TAG, "createHttpShare port: " + HTTP_SHARE_SERVER_PORT
 					+ " fail.");
@@ -79,8 +88,9 @@ public class InviteHttpActivity extends BaseActivity {
 	}
 
 	private boolean enableWiFiAP() {
-		disableWiFiAP();
-
+		if (NetWorkUtil.isWifiApEnabled(mContext)) {
+			return true;
+		}
 		boolean result = NetWorkUtil.setWifiAPEnabled(getApplicationContext(),
 				WIFI_AP_NAME, true);
 		if (result) {
@@ -164,7 +174,9 @@ public class InviteHttpActivity extends BaseActivity {
 			case WiFiAP.WIFI_AP_STATE_ENABLED:
 				createHttpShareServer();
 				break;
-
+			case WiFiAP.WIFI_AP_STATE_DISABLED:
+				enableWiFiAP();
+				break;
 			default:
 				break;
 			}
