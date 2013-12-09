@@ -38,7 +38,6 @@ import android.widget.TextView;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.common.view.ZyPopupMenu;
 import com.zhaoyan.common.view.ZyPopupMenu.PopupViewClickListener;
@@ -992,10 +991,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
 			editText.setText(R.string.new_folder);
 			editText.selectAll();
-			ZYUtils.showInputMethod(mContext, editText);
 			ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
-			dialog.setTitle("新建文件夹");
-//			dialog.setMessage(R.string.folder_input);
+			dialog.setTitle(R.string.create_folder);
+			dialog.setMessage(R.string.folder_input);
 			dialog.setCustomView(view);
 			dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 				@Override

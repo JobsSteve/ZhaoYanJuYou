@@ -47,11 +47,14 @@ public class MountManager {
 	private DevInfo devInfo;
 	private SharedPreferences sp = null;
 	
+	private Context context;
+	
 	public MountManager(Context context) {
-		sp = context.getSharedPreferences(Extra.SHARED_PERFERENCE_NAME, Context.MODE_PRIVATE);
+		this.context = context;
 	}
 	
 	public void init() {
+		sp = context.getSharedPreferences(Extra.SHARED_PERFERENCE_NAME, Context.MODE_PRIVATE);
 		mDevMountInfo = DevMountInfo.getInstance();
 
 		if (mDevMountInfo.isExistExternal()) {
