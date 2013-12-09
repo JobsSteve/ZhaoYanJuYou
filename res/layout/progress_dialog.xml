@@ -13,9 +13,9 @@
 
     <TextView
         android:layout_width="wrap_content"
+        android:id="@+id/tv_pd_message"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="@string/login_dialog_message"
         android:textColor="#ff59616b" />
 
 </LinearLayout>
