@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -207,5 +208,25 @@ public class ZYUtils {
 	public static void showInputMethod(Context context, View view){
 		InputMethodManager im = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		im.showSoftInput(view, 0);
+	}
+	
+	/**
+	 * show the input method mannual
+	 * @param v the view that need show input method,like edittext
+	 * @param hasFocus
+	 */
+	public static void onFocusChange(final View v, boolean hasFocus) {
+		final boolean isFocus = hasFocus;
+		(new Handler()).postDelayed(new Runnable() {
+			public void run() {
+				InputMethodManager imm = (InputMethodManager) v.getContext()
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				if (isFocus) {
+					imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+				} else {
+					imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+				}
+			}
+		}, 500);
 	}
 }

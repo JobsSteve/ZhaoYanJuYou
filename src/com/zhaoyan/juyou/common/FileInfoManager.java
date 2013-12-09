@@ -279,6 +279,7 @@ public class FileInfoManager {
 		final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
 		editText.setText(list.get(renameFlag).fileName);
 		editText.selectAll();
+		ZYUtils.onFocusChange(editText, true);
 		ZyAlertDialog dialog = new ZyAlertDialog(context);
 		dialog.setTitle(R.string.rename);
 		dialog.setCustomView(view);
