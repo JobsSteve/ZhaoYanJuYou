@@ -238,7 +238,6 @@ public class ImageItemAdapter extends BaseAdapter {
 				}
 				CheckableImageView imageView = (CheckableImageView) view.findViewById(R.id.iv_image_item);
 				pictureLoader.loadBitmap(id, imageView);
-//				updateViewBackground(view, position);
 				imageView.setChecked(mSelectArray.get(position));
 			}
 			
@@ -266,7 +265,6 @@ public class ImageItemAdapter extends BaseAdapter {
 				}else {
 					imageView.setImageResource(R.drawable.photo_l);
 				}
-//				updateViewBackground(view, position);
 				imageView.setChecked(mSelectArray.get(position));
 			}
 
@@ -277,15 +275,6 @@ public class ImageItemAdapter extends BaseAdapter {
 
 	public void setIdleFlag(boolean flag){
 		this.mIdleFlag = flag;
-	}
-	
-	public void updateViewBackground(View view, int position){
-		boolean isSelected = mSelectArray.get(position);
-		if (isSelected) {
-			view.setBackgroundResource(R.drawable.photo_l_frame);
-		}else {
-			view.setBackgroundResource(R.drawable.photo_l);
-		}
 	}
 	
 	private void removeLists(int pos){

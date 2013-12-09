@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.Log;
@@ -174,7 +176,8 @@ public class VideoCursorAdapter extends BaseCursorAdapter {
 //		view.setTag(holder);
 		
 		VideoGridItem item = new VideoGridItem(arg0);
-		item.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		//do not set layoutParams here,because 2.3 will force close by Java.lang.ClassCastException
+//		item.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		return item;
 	}
 	

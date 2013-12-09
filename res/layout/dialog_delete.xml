@@ -18,7 +18,12 @@
             android:layout_centerInParent="true"
             android:text="@string/delete_confirm_msg"
             android:textColor="@color/holo_blue1"
-            android:textSize="15sp" />
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+             />
 
         <View
             android:layout_width="fill_parent"

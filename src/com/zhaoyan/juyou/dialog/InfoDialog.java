@@ -98,7 +98,7 @@ public class InfoDialog extends ZyAlertDialog {
 		
 		setCanceledOnTouchOutside(true);
 		
-		setContentView(view);
+		setCustomView(view);
 		
 		super.onCreate(savedInstanceState);
 	}

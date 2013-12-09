@@ -24,6 +24,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
@@ -195,5 +197,15 @@ public class ZYUtils {
 		bb.flip();
 		CharBuffer cb = cs.decode(bb);
 		return cb.array();
+	}
+	
+	/**
+	 * show input method in view
+	 * @param context
+	 * @param view
+	 */
+	public static void showInputMethod(Context context, View view){
+		InputMethodManager im = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		im.showSoftInput(view, 0);
 	}
 }

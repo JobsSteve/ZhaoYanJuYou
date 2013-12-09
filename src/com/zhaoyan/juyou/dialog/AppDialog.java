@@ -49,7 +49,7 @@ public class AppDialog extends ZyAlertDialog implements android.view.View.OnClic
 		mNameView = (TextView) view.findViewById(R.id.name_view);
 		mNumView = (TextView) view.findViewById(R.id.num_view);
 		
-		setContentView(view);
+		setCustomView(view);
 		
 		super.onCreate(savedInstanceState);
 		

@@ -1,7 +1,6 @@
 package com.zhaoyan.juyou.fragment;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +38,7 @@ import android.widget.TextView;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.common.view.ZyPopupMenu;
 import com.zhaoyan.common.view.ZyPopupMenu.PopupViewClickListener;
@@ -988,15 +988,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			break;
 		case ActionMenu.ACTION_MENU_CREATE_FOLDER:
 			LayoutInflater inflater = LayoutInflater.from(mContext);
-			View view = inflater.inflate(R.layout.dialog_rename, null);
-			final EditText editText = (EditText) view.findViewById(R.id.et_rename);
+			View view = inflater.inflate(R.layout.dialog_edit, null);
+			final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
 			editText.setText(R.string.new_folder);
 			editText.selectAll();
+			ZYUtils.showInputMethod(mContext, editText);
 			ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
-			dialog.setTitle(R.string.create_folder);
-			dialog.setMessage(R.string.folder_input);
-			dialog.setContentView(view);
-			dialog.setNegativeButton(R.string.cancel, null);
+			dialog.setTitle("新建文件夹");
+//			dialog.setMessage(R.string.folder_input);
+			dialog.setCustomView(view);
 			dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 				@Override
 				public void onClick(Dialog dialog) {
@@ -1015,6 +1015,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					dialog.dismiss();
 				}
 			});
+			dialog.setNegativeButton(R.string.cancel, null);
 			dialog.show();
 			break;
 		default:

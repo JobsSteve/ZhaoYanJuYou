@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhaoyan.juyou"
     android:versionCode="1"
-    android:versionName="1.0.7_20131202" >
+    android:versionName="1.0.7_20131209" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -93,6 +93,7 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.FileBrowserActivity"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity

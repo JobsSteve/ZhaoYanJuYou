@@ -3,13 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <EditText 
-        android:id="@+id/et_rename"
-        style="@style/edit_text"
+
+    <ListView
+        android:id="@+id/lv_contextmenu"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        />
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </LinearLayout>
