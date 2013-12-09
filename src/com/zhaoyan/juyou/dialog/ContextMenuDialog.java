@@ -50,9 +50,10 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 				android.R.layout.simple_list_item_1, android.R.id.text1, list);
 		mListView.setAdapter(adapter);
 		
-		setCancelable(true);
+		setCanceledOnTouchOutside(true);
 		setCustomView(view);
 		setCustomViewMargins(0, 0, 0, 0);
+		
 		super.onCreate(savedInstanceState);
 	}
 	

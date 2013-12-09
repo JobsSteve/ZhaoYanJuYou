@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.wifi.WifiManager;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.file.SingleMediaScanner;
+import com.zhaoyan.common.net.WiFiAP;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
@@ -624,6 +626,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						dialog.dismiss();
 					}
 				});
+		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}
 
@@ -641,6 +644,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						dialog.dismiss();
 					}
 				});
+		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}
 
@@ -679,6 +683,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						dialog.dismiss();
 					}
 				});
+		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}
 }

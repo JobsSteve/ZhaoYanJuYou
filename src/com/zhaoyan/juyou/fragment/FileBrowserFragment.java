@@ -1016,6 +1016,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				}
 			});
 			dialog.setNegativeButton(R.string.cancel, null);
+			dialog.setCanceledOnTouchOutside(true);
 			dialog.show();
 			break;
 		default:

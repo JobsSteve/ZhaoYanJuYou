@@ -315,7 +315,7 @@ public class FileInfoManager {
 				}
 			}
 		});
-		dialog.setCancelable(true);
+		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}
 	
