@@ -512,6 +512,9 @@ public class RightSlideLayout extends ViewGroup {
 		final View child = getChildAt(0);
 
 		// Set the size and position of Main Child
+		// Fix bug that when set activity on title, there will be a blank area
+		// on the top(it is title bar). So set the top = 0;
+		t = 0;
 		if (child != null) {
 			child.layout(l, t, l + child.getMeasuredWidth(),
 					t + child.getMeasuredHeight());
