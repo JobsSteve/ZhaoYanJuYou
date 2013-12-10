@@ -57,11 +57,11 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 	@Override
 	public void show() {
 		super.show();
-		WindowManager windowManager = getWindow().getWindowManager();
-		Display display = windowManager.getDefaultDisplay();
-		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth() - 110;
-		getWindow().setAttributes(lp);
+//		WindowManager windowManager = getWindow().getWindowManager();
+//		Display display = windowManager.getDefaultDisplay();
+//		WindowManager.LayoutParams lp = getWindow().getAttributes();
+//		lp.width = (int)display.getWidth() - 40;
+//		getWindow().setAttributes(lp);
 	}
 
 	@Override

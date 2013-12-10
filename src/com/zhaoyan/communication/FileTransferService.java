@@ -39,6 +39,7 @@ import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.HistoryInfo;
 import com.zhaoyan.juyou.common.HistoryManager;
+import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.provider.AppData;
@@ -115,6 +116,14 @@ public class FileTransferService extends Service implements
 				Uri uri = Uri
 						.parse(AppData.App.CONTENT_URI + "/" + packageName);
 				getContentResolver().delete(uri, null, null);
+			}else if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
+				Log.d(TAG, "onReceive:ACTION_MEDIA_MOUNTED");
+				mNotice.showToast("SD卡可用");
+				new MountManager(getApplicationContext()).init();
+			}else if (Intent.ACTION_MEDIA_UNMOUNTED.equals(action)) {
+				Log.d(TAG, "onReceive:ACTION_MEDIA_UNMOUNTED");
+				mNotice.showToast("SD卡已拔出");
+				new MountManager(getApplicationContext()).init();
 			}
 		}
 	};
@@ -125,6 +134,10 @@ public class FileTransferService extends Service implements
 		super.onCreate();
 		// register broadcast
 		IntentFilter filter = new IntentFilter(ACTION_SEND_FILE);
+		filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+		filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+		filter.addAction(Intent.ACTION_MEDIA_REMOVED);
+		filter.addAction(Intent.ACTION_MEDIA_EJECT);
 		registerReceiver(transferReceiver, filter);
 		
 		//register appliaction install/remove
