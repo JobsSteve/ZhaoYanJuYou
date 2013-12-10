@@ -415,17 +415,22 @@ public class FileInfoManager {
 			if (isCancelled()) {
 				return;
 			}else {
-				if (file.isDirectory()) {
-					folderNum ++ ;
-					File[] files = file.listFiles();
-					for(File file2 : files){
-						getFileSize(file2);
-					}
+				if (file.isHidden()) {
+					//do not shwo hidden file size
+					//do nothing
 				}else {
-					fileNum ++;
-					size += file.length();
+					if (file.isDirectory()) {
+						folderNum ++ ;
+						File[] files = file.listFiles();
+						for(File file2 : files){
+							getFileSize(file2);
+						}
+					}else {
+						fileNum ++;
+						size += file.length();
+					}
+					onProgressUpdate();
 				}
-				onProgressUpdate();
 			}
 		}
 	}
