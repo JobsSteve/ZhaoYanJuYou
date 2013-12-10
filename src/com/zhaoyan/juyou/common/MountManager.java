@@ -36,28 +36,21 @@ dev_mount sdcard2 /storage/sdcard1 auto /devices/platform/goldfish_mmc.1 /device
  */
 public class MountManager {
 	private static final String TAG = "MountManager";
-	private  String sdcard_path;
-	private  String internal_path;
 	public static final String SEPERATOR = "/";
 	public static final String NO_EXTERNAL_SDCARD = "no_external_sdcard | no_mounted";
 	public static final String NO_INTERNAL_SDCARD = "no_internal_sdcard";
 	
 	public static final int INTERNAL = 0;
 	public static final int SDCARD = 1;
-	private DevMountInfo mDevMountInfo;
 	private DevInfo devInfo;
-	private SharedPreferences sp = null;
 	
-	private Context context;
-	
-	public MountManager(Context context) {
-		this.context = context;
-	}
-	
-	public void init() {
-		sp = SharedPreferenceUtil.getSharedPreference(context);
-		mDevMountInfo = DevMountInfo.getInstance();
+	public static void init(Context context) {
+		SharedPreferences sp = SharedPreferenceUtil.getSharedPreference(context);
+		DevMountInfo mDevMountInfo = DevMountInfo.getInstance();
 
+		String sdcard_path;
+		String internal_path;
+		
 		if (mDevMountInfo.isExistExternal()) {
 			Log.d(TAG, "isExistExternal");
 			if (isSdcardMounted()) {
@@ -65,7 +58,6 @@ public class MountManager {
 				DevInfo exDevInfo = mDevMountInfo.getExternalInfo();
 				DevInfo interDevInfo = mDevMountInfo.getInternalInfo();
 				DevInfo devInfo = mDevMountInfo.getDevInfo();
-//				SDCARD_PATH = exDevInfo.getPath();
 				sdcard_path = devInfo.getExterPath();
 				internal_path = devInfo.getInterPath();
 				Log.i(TAG, "SDCARD_PATH:" +  sdcard_path);
@@ -127,7 +119,7 @@ public class MountManager {
 	 * @param path  current path  like: /mnt/sdcard/JuYou
 	 * @return  /JuYou
 	 */
-	public String getShowPath(String rootPath, String path){
+	public static String getShowPath(String rootPath, String path){
 		int len = rootPath.length();
 		String result = path.substring(len);
 		Log.d(TAG, "getShowPath=" + result);

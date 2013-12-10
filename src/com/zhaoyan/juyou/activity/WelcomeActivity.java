@@ -42,16 +42,9 @@ public class WelcomeActivity extends Activity {
 		mBackgroundImageView = (ImageView) findViewById(R.id.iv_welcome);
 		mBackgroundImageView.setImageBitmap(mBackgroundBitmap);
 		
-		initMountManager();
 
 		LoadAsyncTask loadAsyncTask = new LoadAsyncTask();
 		loadAsyncTask.execute();
-	}
-	
-	private void initMountManager() {
-		// Get sdcards
-		MountManager mountManager = new MountManager(getApplicationContext());
-		mountManager.init();
 	}
 
 	@Override

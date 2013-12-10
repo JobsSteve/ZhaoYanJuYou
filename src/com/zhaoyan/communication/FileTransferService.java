@@ -119,11 +119,13 @@ public class FileTransferService extends Service implements
 			}else if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
 				Log.d(TAG, "onReceive:ACTION_MEDIA_MOUNTED");
 				mNotice.showToast("SD卡可用");
-				new MountManager(getApplicationContext()).init();
-			}else if (Intent.ACTION_MEDIA_UNMOUNTED.equals(action)) {
+				MountManager.init(getApplicationContext());
+			}else if (Intent.ACTION_MEDIA_UNMOUNTED.equals(action) ||
+					Intent.ACTION_MEDIA_REMOVED.equals(action) ||
+					Intent.ACTION_MEDIA_SHARED.equals(action)) {
 				Log.d(TAG, "onReceive:ACTION_MEDIA_UNMOUNTED");
 				mNotice.showToast("SD卡已拔出");
-				new MountManager(getApplicationContext()).init();
+				MountManager.init(getApplicationContext());
 			}
 		}
 	};
@@ -138,6 +140,7 @@ public class FileTransferService extends Service implements
 		filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
 		filter.addAction(Intent.ACTION_MEDIA_REMOVED);
 		filter.addAction(Intent.ACTION_MEDIA_EJECT);
+		filter.addAction(Intent.ACTION_MEDIA_SHARED);
 		registerReceiver(transferReceiver, filter);
 		
 		//register appliaction install/remove

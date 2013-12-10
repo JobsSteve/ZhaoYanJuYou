@@ -61,7 +61,6 @@ import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
-import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.CopyMoveDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
@@ -85,7 +84,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	private TabManager mTabManager;
 	private View rootView = null;
-	private MountManager mountManager;
 	private FileInfo mSelectedFileInfo = null;
 	private int mTop = -1;
 
@@ -243,7 +241,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		sp = SharedPreferenceUtil.getSharedPreference(mContext);
 
 		mFileInfoManager = new FileInfoManager();
-		mountManager = new MountManager(mContext);
 
 		sdcard_path = sp.getString(SharedPreferenceUtil.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
 		internal_path = sp.getString(SharedPreferenceUtil.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
@@ -681,7 +678,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			curFilePath = initFileInfo;
 
 			if (curFilePath != null) {
-				String[] result = mountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
+				String[] result = MountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
 				for (String string : result) {
 					// add string to tab
 					addTab(string);
@@ -783,7 +780,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				if (id == 0) {
 					curFilePath = mCurrent_root_path;
 				} else {
-					String[] result = mountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
+					String[] result = MountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
 					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i <= id; i++) {
 						sb.append(MountManager.SEPERATOR);
