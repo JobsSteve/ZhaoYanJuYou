@@ -1,8 +1,5 @@
 package com.zhaoyan.juyou.dialog;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
@@ -11,11 +8,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListener {
 
@@ -23,6 +23,8 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 	private ListView mListView;
 	private Context mContext;
 	private OnMenuItemClickListener mListener;
+	
+	private boolean mShowIcon = false;
 	
 	public ContextMenuDialog(Context context, ActionMenu actionMenu) {
 		super(context);
@@ -32,22 +34,17 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		View view  = getLayoutInflater().inflate(R.layout.dialog_contextmenu, null);
 		mListView = (ListView) view.findViewById(R.id.lv_contextmenu);
 		mListView.setOnItemClickListener(this);
 		
-		List<String> list = new ArrayList<String>();
-		for (int i = 0; i < mActionMenu.size(); i++) {
-			try {
-				list.add(mActionMenu.getItem(i).getTitle());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (mActionMenu.getItem(0).getIcon() == 0) {
+			mShowIcon = false;
+		}else {
+			mShowIcon = true;
 		}
 		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, 
-				android.R.layout.simple_list_item_1, android.R.id.text1, list);
+		ContextMenuAdapter adapter = new ContextMenuAdapter();
 		mListView.setAdapter(adapter);
 		
 		setCanceledOnTouchOutside(true);
@@ -70,14 +67,9 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		// TODO Auto-generated method stub
-		try {
-			ActionMenuItem item = mActionMenu.getItem(position);
-			mListener.onMenuItemClick(item);
-			dismiss();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		ActionMenuItem item = mActionMenu.getItem(position);
+		mListener.onMenuItemClick(item);
+		dismiss();
 	}
 	
 	public interface OnMenuItemClickListener{
@@ -86,6 +78,40 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 	
 	public void setOnMenuItemClickListener(OnMenuItemClickListener listener){
 		mListener = listener;
+	}
+	
+	class ContextMenuAdapter extends BaseAdapter{
+
+		@Override
+		public int getCount() {
+			return mActionMenu.size();
+		}
+
+		@Override
+		public ActionMenuItem getItem(int position) {
+			return mActionMenu.getItem(position);
+		}
+
+		@Override
+		public long getItemId(int position) {			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = getLayoutInflater().inflate(R.layout.dialog_contextmenu_item, null);
+			if (mShowIcon) {
+				ImageView imageView = (ImageView) view.findViewById(R.id.iv_menu_icon);
+				imageView.setVisibility(View.VISIBLE);
+				imageView.setImageResource(mActionMenu.getItem(position).getIcon());
+			}
+			
+			TextView textView = (TextView) view.findViewById(R.id.tv_menu_title);
+			textView.setText(mActionMenu.getItem(position).getTitle());
+			
+			return view;
+		}
+		
 	}
 
 }

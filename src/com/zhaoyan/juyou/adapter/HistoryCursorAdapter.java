@@ -618,7 +618,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		dialog.setTitle("该文件不存在或已被删除");
 		dialog.setMessage("是否删除记录?");
 		dialog.setNeutralButton(R.string.cancel, null);
-		dialog.setPositiveButton(R.string.delete_history,
+		dialog.setPositiveButton(R.string.menu_delete,
 				new OnZyAlertDlgClickListener() {
 					@Override
 					public void onClick(Dialog dialog) {
@@ -635,7 +635,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		dialog.setTitle(R.string.clear_history_only);
 		dialog.setMessage(R.string.clear_history_tip);
 		dialog.setNeutralButton(R.string.cancel, null);
-		dialog.setPositiveButton(R.string.delete_history,
+		dialog.setPositiveButton(R.string.menu_delete,
 				new OnZyAlertDlgClickListener() {
 					@Override
 					public void onClick(Dialog dialog) {
@@ -653,7 +653,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		dialog.setTitle(R.string.clear_history_file);
 		dialog.setMessage(R.string.clear_history_file_tip);
 		dialog.setNeutralButton(R.string.cancel, null);
-		dialog.setPositiveButton(R.string.delete_history,
+		dialog.setPositiveButton(R.string.menu_delete,
 				new OnZyAlertDlgClickListener() {
 					@Override
 					public void onClick(Dialog dialog) {

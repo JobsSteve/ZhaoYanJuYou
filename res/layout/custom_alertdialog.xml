@@ -45,8 +45,6 @@
             android:id="@+id/tv_dialog_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
             android:text="此处显示消息"
             android:textColor="@color/black"
             android:textIsSelectable="false" 
@@ -54,6 +52,7 @@
         	android:layout_marginTop="10dp"
         	android:layout_marginRight="10dp"
         	android:layout_marginBottom="10dp"
+        	android:textSize="16sp"
         	android:visibility="gone"
             />
 
