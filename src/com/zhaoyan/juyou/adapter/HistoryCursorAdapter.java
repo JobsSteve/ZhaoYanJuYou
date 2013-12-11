@@ -97,6 +97,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	@Override
 	public int getViewTypeCount() {
 		// 如果你的list中有不同的视图类型，就一定要重写这个方法，并配合getItemViewType一起使用
+		//if you ui have two type views,you must overrid this function,add relize in getItemViewType
 		return 2;
 	}
 
@@ -111,7 +112,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		holder.position = cursor.getPosition();
 
 		int id = cursor.getInt(cursor.getColumnIndex(JuyouData.History._ID));
-		Log.d(TAG, "bindView: pos = " + holder.position + ", id = " + id);
+//		Log.d(TAG, "bindView: pos = " + holder.position + ", id = " + id);
 		int type = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.History.MSG_TYPE));
 		long time = cursor.getLong(cursor
