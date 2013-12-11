@@ -21,6 +21,7 @@ public class FileCategoryScanner {
 	private String[] mFilterType;
 	private int mType = -1;
 	private File mRootDir;
+	private File[] mRootDirs;
 	private Context mContext;
 	private FileCategoryScanListener mListener;
 	private Vector<FileInfo> mFileInfos;
@@ -51,6 +52,21 @@ public class FileCategoryScanner {
 		mFilterType = filterType;
 		mType = type;
 	}
+	
+	public FileCategoryScanner(Context context, File[] rootDirs,
+			String[] filterType, int type){
+		for(File file : rootDirs){
+			if (!file.isDirectory()) {
+				throw new IllegalArgumentException(
+						"FileCategoryScanner, rootDir must be a directory.");
+			}
+		}
+		mContext = context.getApplicationContext();
+		mFileInfos = new Vector<FileInfo>();
+		mRootDirs = rootDirs;
+		mFilterType = filterType;
+		mType = type;
+	}
 
 	public void startScan() {
 		if (mIsScanning) {
@@ -61,7 +77,11 @@ public class FileCategoryScanner {
 		}
 		mScanningDirCount = 0;
 		mExecutorService = Executors.newCachedThreadPool();
-		scanDir(mRootDir);
+		if (null == mRootDir) {
+			scanDirs(mRootDirs);
+		}else {
+			scanDir(mRootDir);
+		}
 	}
 
 	public boolean isScanning() {
@@ -111,10 +131,37 @@ public class FileCategoryScanner {
 			scanDirFinish();
 		}
 	}
+	
+	private class ScansRunnable implements Runnable {
+		private File[] mDirs;
+
+		public ScansRunnable(File[] dirs) {
+			for(File file : dirs){
+				if (!file.isDirectory()) {
+					throw new IllegalArgumentException(
+							"FileCategoryScanner, rootDir must be a directory.");
+				}
+			}
+			mDirs = dirs;
+		}
+
+		@Override
+		public void run() {
+			for(File file : mDirs){
+				scanDir(file);
+			}
+			scanDirFinish();
+		}
+	}
 
 	private synchronized void scanDir(File dir) {
 		mScanningDirCount++;
 		mExecutorService.execute(new ScanRunnable(dir));
+	}
+	
+	private synchronized void scanDirs(File[] dirs){
+		mScanningDirCount++;
+		mExecutorService.execute(new ScansRunnable(dirs));
 	}
 
 	private void categoryFile(File file) {

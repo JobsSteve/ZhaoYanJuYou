@@ -112,6 +112,13 @@ public class ServerCreatorAp {
 				break;
 			default:
 				Log.d(TAG, "handleWifiApchanged, unkown state: " + wifiApState);
+				if (NetWorkUtil.isWifiApEnabled(mContext)) {
+					Log.d(TAG, "Wifi AP is enabled.");
+					createServerAndStartDiscoveryService();
+				} else {
+					Log.d(TAG, "Wifi AP is disabled.");
+					stopServerAndStopDiscoveryService();
+				}
 				break;
 			}
 		}

@@ -4,14 +4,17 @@ import java.io.File;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -255,6 +258,21 @@ public class AppBaseFragment extends BaseFragment{
     	message.what = MSG_BACKUPING;
     	message.sendToTarget();
     }
+    
+    public void showInstalledAppDetails(String packageName){
+		Intent intent = new Intent();
+		final int apiLevel = Build.VERSION.SDK_INT;
+		if (apiLevel >= Build.VERSION_CODES.GINGERBREAD) {
+			intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+			Uri uri = Uri.fromParts("package", packageName, null);
+			intent.setData(uri);
+		}else {
+			intent.setAction(Intent.ACTION_VIEW);
+			intent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
+			intent.putExtra("pkg", packageName);
+		}
+		startActivity(intent);
+	}
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

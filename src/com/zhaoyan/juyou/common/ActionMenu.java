@@ -3,6 +3,8 @@ package com.zhaoyan.juyou.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zhaoyan.common.util.Log;
+
 import android.content.Context;
 
 public class ActionMenu{
@@ -56,11 +58,13 @@ public class ActionMenu{
 		return items.size();
 	}
 	
-	public ActionMenuItem getItem(int index) throws Exception{
-		if (index >= size()) {
-			throw new Exception("Out of bound,the size is " + size() + ",index is " + index);
-		}else {
+	public ActionMenuItem getItem(int index){
+		try {
 			return items.get(index);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e(TAG, "Out of bound,the size is " + size() + ",index is " + index);
+			return null;
 		}
 	}
 	

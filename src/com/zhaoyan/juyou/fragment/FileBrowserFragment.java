@@ -1,7 +1,6 @@
 package com.zhaoyan.juyou.fragment;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +38,8 @@ import android.widget.TextView;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.SharedPreferenceUtil;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.common.view.ZyPopupMenu;
 import com.zhaoyan.common.view.ZyPopupMenu.PopupViewClickListener;
@@ -60,7 +61,6 @@ import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
-import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.CopyMoveDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
@@ -84,7 +84,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	private TabManager mTabManager;
 	private View rootView = null;
-	private MountManager mountManager;
 	private FileInfo mSelectedFileInfo = null;
 	private int mTop = -1;
 
@@ -239,13 +238,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		sp = mContext.getSharedPreferences(Extra.SHARED_PERFERENCE_NAME, Context.MODE_PRIVATE);
+		sp = SharedPreferenceUtil.getSharedPreference(mContext);
 
 		mFileInfoManager = new FileInfoManager();
-		mountManager = new MountManager(mContext);
 
-		sdcard_path = sp.getString(Extra.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
-		internal_path = sp.getString(Extra.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
+		sdcard_path = sp.getString(SharedPreferenceUtil.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
+		internal_path = sp.getString(SharedPreferenceUtil.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
 		Log.d(TAG, "sdcard_path:" + sdcard_path + "\n," + "internal_path:" + internal_path);
 
 		mHomeList.clear();
@@ -680,7 +678,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			curFilePath = initFileInfo;
 
 			if (curFilePath != null) {
-				String[] result = mountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
+				String[] result = MountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
 				for (String string : result) {
 					// add string to tab
 					addTab(string);
@@ -782,7 +780,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				if (id == 0) {
 					curFilePath = mCurrent_root_path;
 				} else {
-					String[] result = mountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
+					String[] result = MountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
 					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i <= id; i++) {
 						sb.append(MountManager.SEPERATOR);
@@ -988,15 +986,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			break;
 		case ActionMenu.ACTION_MENU_CREATE_FOLDER:
 			LayoutInflater inflater = LayoutInflater.from(mContext);
-			View view = inflater.inflate(R.layout.dialog_rename, null);
-			final EditText editText = (EditText) view.findViewById(R.id.et_rename);
+			View view = inflater.inflate(R.layout.dialog_edit, null);
+			final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
 			editText.setText(R.string.new_folder);
 			editText.selectAll();
+			ZYUtils.onFocusChange(editText, true);
 			ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
 			dialog.setTitle(R.string.create_folder);
 			dialog.setMessage(R.string.folder_input);
-			dialog.setContentView(view);
-			dialog.setNegativeButton(R.string.cancel, null);
+			dialog.setCustomView(view);
 			dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 				@Override
 				public void onClick(Dialog dialog) {
@@ -1015,6 +1013,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					dialog.dismiss();
 				}
 			});
+			dialog.setNegativeButton(R.string.cancel, null);
+			dialog.setCanceledOnTouchOutside(true);
 			dialog.show();
 			break;
 		default:

@@ -275,13 +275,14 @@ public class FileInfoManager {
 	 */
 	public void showRenameDialog(Context context, final List<FileInfo> list) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.dialog_rename, null);
-		final EditText editText = (EditText) view.findViewById(R.id.et_rename);
+		View view = inflater.inflate(R.layout.dialog_edit, null);
+		final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
 		editText.setText(list.get(renameFlag).fileName);
 		editText.selectAll();
+		ZYUtils.onFocusChange(editText, true);
 		ZyAlertDialog dialog = new ZyAlertDialog(context);
 		dialog.setTitle(R.string.rename);
-		dialog.setContentView(view);
+		dialog.setCustomView(view);
 		dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
@@ -314,7 +315,7 @@ public class FileInfoManager {
 				}
 			}
 		});
-		dialog.setCancelable(true);
+		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}
 	
@@ -414,17 +415,22 @@ public class FileInfoManager {
 			if (isCancelled()) {
 				return;
 			}else {
-				if (file.isDirectory()) {
-					folderNum ++ ;
-					File[] files = file.listFiles();
-					for(File file2 : files){
-						getFileSize(file2);
-					}
+				if (file.isHidden()) {
+					//do not shwo hidden file size
+					//do nothing
 				}else {
-					fileNum ++;
-					size += file.length();
+					if (file.isDirectory()) {
+						folderNum ++ ;
+						File[] files = file.listFiles();
+						for(File file2 : files){
+							getFileSize(file2);
+						}
+					}else {
+						fileNum ++;
+						size += file.length();
+					}
+					onProgressUpdate();
 				}
-				onProgressUpdate();
 			}
 		}
 	}

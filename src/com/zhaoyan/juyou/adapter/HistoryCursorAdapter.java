@@ -2,7 +2,9 @@ package com.zhaoyan.juyou.adapter;
 
 import java.io.File;
 
+import android.R.integer;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.wifi.WifiManager;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +32,7 @@ import android.widget.Button;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.file.SingleMediaScanner;
+import com.zhaoyan.common.net.WiFiAP;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
@@ -41,8 +45,10 @@ import com.zhaoyan.juyou.common.AsyncImageLoader.ILoadImageCallback;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.HistoryManager;
-import com.zhaoyan.juyou.dialog.HistoryMenuDialog;
-import com.zhaoyan.juyou.dialog.HistoryMenuDialog.OnMenuItemClickListener;
+import com.zhaoyan.juyou.dialog.ContextMenuDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ContextMenuDialog.OnMenuItemClickListener;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.provider.JuyouData;
 import com.zhaoyan.juyou.provider.JuyouData.History;
 import com.zhaoyan.communication.FileTransferService;
@@ -58,9 +64,9 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	private MsgOnClickListener mClickListener = new MsgOnClickListener();
 	private CancelOnClickListener mCancelClickListener = new CancelOnClickListener();
 	private DeleteOnClick mDeleteOnClick = new DeleteOnClick(0);
-	private ListView mListView; 
+	private ListView mListView;
 	private UserInfo mLocalUserInfo = null;
-	
+
 	public HistoryCursorAdapter(Context context, ListView listView) {
 		super(context, null, true);
 		this.mContext = context;
@@ -100,7 +106,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context arg1, Cursor cursor) {
-//		Log.d(TAG, "bindView.count=" + cursor.getCount());
+		// Log.d(TAG, "bindView.count=" + cursor.getCount());
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.position = cursor.getPosition();
 
@@ -108,14 +114,15 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		Log.d(TAG, "bindView: pos = " + holder.position + ", id = " + id);
 		int type = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.History.MSG_TYPE));
-		long time = cursor
-				.getLong(cursor.getColumnIndex(JuyouData.History.DATE));
+		long time = cursor.getLong(cursor
+				.getColumnIndex(JuyouData.History.DATE));
 		String filePath = cursor.getString(cursor
 				.getColumnIndex(JuyouData.History.FILE_PATH));
 		String fileName = cursor.getString(cursor
 				.getColumnIndex(JuyouData.History.FILE_NAME));
 		String sendUserName = cursor.getString(cursor
-				.getColumnIndex(JuyouData.History.SEND_USERNAME));;
+				.getColumnIndex(JuyouData.History.SEND_USERNAME));
+		;
 		String reveiveUserName;
 		long fileSize = cursor.getLong(cursor
 				.getColumnIndex(JuyouData.History.FILE_SIZE));
@@ -127,38 +134,47 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				.getColumnIndex(JuyouData.History.FILE_TYPE));
 		int headId;
 		byte[] headIcon;
-		
+
 		if (HistoryManager.TYPE_SEND == type) {
 			reveiveUserName = cursor.getString(cursor
 					.getColumnIndex(JuyouData.History.RECEIVE_USERNAME));
-			holder.contentTitleView.setText(mContext.getString(R.string.sending, reveiveUserName));
+			holder.contentTitleView.setText(mContext.getString(
+					R.string.sending, reveiveUserName));
 			headId = mLocalUserInfo.getHeadId();
 			if (UserInfo.HEAD_ID_NOT_PRE_INSTALL != headId) {
-				holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[headId]);
-			}else {
+				holder.userHeadView
+						.setImageResource(UserHelper.HEAD_IMAGES[headId]);
+			} else {
 				headIcon = mLocalUserInfo.getHeadBitmapData();
-				Bitmap headIconBitmap = BitmapFactory.decodeByteArray(headIcon, 0, headIcon.length);
+				Bitmap headIconBitmap = BitmapFactory.decodeByteArray(headIcon,
+						0, headIcon.length);
 				if (headIconBitmap != null) {
 					holder.userHeadView.setImageBitmap(headIconBitmap);
-				}else {
-					holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[0]);
+				} else {
+					holder.userHeadView
+							.setImageResource(UserHelper.HEAD_IMAGES[0]);
 				}
 			}
 		} else {
-			headId = cursor.getInt(cursor.getColumnIndex(JuyouData.History.SEND_USER_HEADID));
+			headId = cursor.getInt(cursor
+					.getColumnIndex(JuyouData.History.SEND_USER_HEADID));
 			if (UserInfo.HEAD_ID_NOT_PRE_INSTALL != headId) {
-				holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[headId]);
-			}else {
-				headIcon = cursor.getBlob(cursor.getColumnIndex(JuyouData.History.SEND_USER_ICON));
-				Bitmap headIconBitmap = BitmapFactory.decodeByteArray(headIcon, 0, headIcon.length);
+				holder.userHeadView
+						.setImageResource(UserHelper.HEAD_IMAGES[headId]);
+			} else {
+				headIcon = cursor.getBlob(cursor
+						.getColumnIndex(JuyouData.History.SEND_USER_ICON));
+				Bitmap headIconBitmap = BitmapFactory.decodeByteArray(headIcon,
+						0, headIcon.length);
 				if (headIconBitmap != null) {
 					holder.userHeadView.setImageBitmap(headIconBitmap);
-				}else {
-					holder.userHeadView.setImageResource(UserHelper.HEAD_IMAGES[0]);
+				} else {
+					holder.userHeadView
+							.setImageResource(UserHelper.HEAD_IMAGES[0]);
 				}
 			}
 		}
-		
+
 		holder.userNameView.setText(sendUserName);
 		holder.fileIconView.setTag(filePath);
 		holder.dateView.setText(ZYUtils.getFormatDate(time));
@@ -174,22 +190,23 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			// There is no file icon, use default
 			setIconView(holder, holder.fileIconView, filePath, fileType);
 		} else {
-			Bitmap fileIconBitmap = BitmapFactory.decodeByteArray(fileIcon, 0, fileIcon.length);
+			Bitmap fileIconBitmap = BitmapFactory.decodeByteArray(fileIcon, 0,
+					fileIcon.length);
 			if (fileIconBitmap != null) {
 				holder.fileIconView.setImageBitmap(fileIconBitmap);
 			}
 		}
-		setSendReceiveStatus(holder, status, fileSize,
-				progress);
+		setSendReceiveStatus(holder, status, fileSize, progress);
 	}
 
-	private void setSendReceiveStatus(ViewHolder holder, int status, long fileSize, double progress) {
+	private void setSendReceiveStatus(ViewHolder holder, int status,
+			long fileSize, double progress) {
 		Log.d(TAG, "setSendReceiveStatus.status=" + status);
-		String statusStr= "";
+		String statusStr = "";
 		int color = Color.BLACK;
 		String fileSizeStr = ZYUtils.getFormatSize(fileSize);
-		String percentStr = HistoryManager.nf.format(progress/ fileSize);
-		int bar_progress = (int)((progress / fileSize) * 100);
+		String percentStr = HistoryManager.nf.format(progress / fileSize);
+		int bar_progress = (int) ((progress / fileSize) * 100);
 		boolean showBar = false;
 		switch (status) {
 		case HistoryManager.STATUS_PRE_SEND:
@@ -221,8 +238,10 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			Log.e(TAG, "setSendReceiveStatus.Error.status=" + status);
 			break;
 		}
+
 		holder.transferBar.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
 		holder.cancelView.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+		
 		if (showBar) {
 			holder.transferBar.setProgress(bar_progress);
 		}
@@ -238,7 +257,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	 * @param filePath
 	 * @param fileType
 	 */
-	private void setIconView(ViewHolder holder, final ImageView iconView, final String filePath, int fileType) {
+	private void setIconView(ViewHolder holder, final ImageView iconView,
+			final String filePath, int fileType) {
 		Log.d(TAG, "scroll flag=" + mIdleFlag);
 		switch (fileType) {
 		case FileManager.IMAGE:
@@ -294,10 +314,12 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		
 		holder.cancelView = (Button)view.findViewById(R.id.cancel_transfer);
 		holder.cancelView.setOnClickListener(mCancelClickListener);
+		
 		holder.transferBar = (ProgressBar) view
 				.findViewById(R.id.bar_progressing);
 		holder.transferBar.setMax(100);
-		holder.fileIconView = (ImageView) view.findViewById(R.id.iv_send_file_icon);
+		holder.fileIconView = (ImageView) view
+				.findViewById(R.id.iv_send_file_icon);
 		holder.dateView = (TextView) view.findViewById(R.id.tv_sendtime);
 		holder.userNameView = (TextView) view.findViewById(R.id.tv_username);
 		holder.userHeadView = (ImageView) view.findViewById(R.id.iv_userhead);
@@ -305,7 +327,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				.findViewById(R.id.tv_send_file_name);
 		holder.fileSizeView = (TextView) view
 				.findViewById(R.id.tv_send_file_size);
-		holder.sendStatusView = (TextView) view.findViewById(R.id.tv_send_status);
+		holder.sendStatusView = (TextView) view
+				.findViewById(R.id.tv_send_status);
 		holder.msgLayout = (LinearLayout) view
 				.findViewById(R.id.layout_chatcontent);
 		holder.msgLayout.setOnClickListener(mClickListener);
@@ -313,8 +336,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 
 		return view;
 	}
-	
-	private void setImageViewIcon(ImageView imageView, int type){
+
+	private void setImageViewIcon(ImageView imageView, int type) {
 		switch (type) {
 		case FileManager.IMAGE:
 			imageView.setImageResource(R.drawable.icon_image);
@@ -372,7 +395,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		int type;
 		int status;
 
-		public MsgData(int itemID, String fileName, String filePath, int type, int status) {
+		public MsgData(int itemID, String fileName, String filePath, int type,
+				int status) {
 			this.itemID = itemID;
 			this.fileName = fileName;
 			this.filePath = filePath;
@@ -449,153 +473,116 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			switch (status) {
 			case HistoryManager.STATUS_PRE_SEND:
 			case HistoryManager.STATUS_SENDING:
-				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0,
+						R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0,
+						R.string.menu_open);
 				break;
 			case HistoryManager.STATUS_SEND_SUCCESS:
 			case HistoryManager.STATUS_RECEIVE_SUCCESS:
-				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0, R.string.menu_delete);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0, R.string.clear_history_only);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0, R.string.clear_history_file);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0,
+						R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0,
+						R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, 0,
+						R.string.menu_delete);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0,
+						R.string.clear_history_only);
+				actionMenu.addItem(
+						ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0,
+						R.string.clear_history_file);
 				break;
 			case HistoryManager.STATUS_SEND_FAIL:
-				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0, R.string.menu_send);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0, R.string.menu_open);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0, R.string.cancel);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0, R.string.clear_history_only);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0, R.string.clear_history_file);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0,
+						R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0,
+						R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0,
+						R.string.cancel);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0,
+						R.string.clear_history_only);
+				actionMenu.addItem(
+						ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0,
+						R.string.clear_history_file);
 				break;
 			case HistoryManager.STATUS_PRE_RECEIVE:
 			case HistoryManager.STATUS_RECEIVING:
-				//cancel menu wait for work
+				// cancel menu wait for work
 				return;
 			case HistoryManager.STATUS_RECEIVE_FAIL:
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0, R.string.cancel);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0, R.string.clear_history_only);
-				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0, R.string.clear_history_file);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0,
+						R.string.cancel);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0,
+						R.string.clear_history_only);
+				actionMenu.addItem(
+						ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE, 0,
+						R.string.clear_history_file);
 				break;
 			default:
 				Log.e(TAG, "MsgOnClickListener.STATUS_ERROR:" + status);
 				break;
 			}
 
-			HistoryMenuDialog dialog = new HistoryMenuDialog(mContext, fileName, actionMenu);
-			dialog.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-				@Override
-				public void onMenuClick(ActionMenuItem menuItem) {
-					File file = new File(filePath);
-					switch (menuItem.getItemId()) {
-					case ActionMenu.ACTION_MENU_SEND:
-						if (!file.exists()) {
-							Builder dialog = new AlertDialog.Builder(mContext);
-							dialog.setMessage("该文件不存在或已被删除，是否删除记录");
-							dialog.setNeutralButton(R.string.cancel, null);
-							dialog.setPositiveButton(R.string.delete_history, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									deleteHistory(id);
+			ContextMenuDialog contextdialog = new ContextMenuDialog(mContext,
+					actionMenu);
+			contextdialog.setTitle(fileName);
+			contextdialog
+					.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+						@Override
+						public void onMenuItemClick(
+								ActionMenuItem actionMenuItem) {
+							File file = new File(filePath);
+							switch (actionMenuItem.getItemId()) {
+							case ActionMenu.ACTION_MENU_SEND:
+								if (!file.exists()) {
+									showFileNoExistDialog(id);
+									break;
+								} else {
+									FileTransferUtil fileSendUtil = new FileTransferUtil(
+											mContext);
+									fileSendUtil.sendFile(filePath);
 								}
-							});
-							dialog.create().show();
-							break;
-						} else {
-							FileTransferUtil fileSendUtil = new FileTransferUtil(
-									mContext);
-							fileSendUtil.sendFile(filePath);
-						}
-						break;
-					case ActionMenu.ACTION_MENU_DELETE:
-						showDeleteDialog(file, id, type);
-						break;
-					case ActionMenu.ACTION_MENU_OPEN:
-						if (!file.exists()) {
-							Builder dialog = new AlertDialog.Builder(mContext);
-							dialog.setMessage("该文件不存在或已被删除，是否删除记录");
-							dialog.setNeutralButton(R.string.cancel, null);
-							dialog.setPositiveButton(R.string.delete_history, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									deleteHistory(id);
+								break;
+							case ActionMenu.ACTION_MENU_DELETE:
+								showDeleteDialog(file, id, type);
+								break;
+							case ActionMenu.ACTION_MENU_OPEN:
+								if (!file.exists()) {
+									showFileNoExistDialog(id);
+									break;
+								} else {
+									IntentBuilder.viewFile(mContext, filePath);
 								}
-							});
-							dialog.create().show();
-							break;
-						} else {
-							IntentBuilder.viewFile(mContext, filePath);
-						}
-						break;
-					case ActionMenu.ACTION_MENU_CANCEL:
-						String selection = JuyouData.History._ID + "=" + id;
-						mContext.getContentResolver().delete(
-								JuyouData.History.CONTENT_URI, selection, null);
-						break;
-					case ActionMenu.ACTION_MENU_CLEAR_HISTORY:
-						//delete history
-						//delete history table
-						new AlertDialog.Builder(mContext)
-							.setTitle(R.string.clear_history_only)
-							.setIcon(android.R.drawable.ic_dialog_alert)
-							.setMessage(R.string.clear_history_tip)
-							.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									mContext.getContentResolver().delete(History.CONTENT_URI, null, null);
-								}
-							})
-							.setNegativeButton(R.string.cancel, null)
-							.create().show();
-						break;
-					case ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE:
-						//delete history and received file
-						new AlertDialog.Builder(mContext)
-						.setTitle(R.string.clear_history_file)
-						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setMessage(R.string.clear_history_file_tip)
-						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								Cursor cursor = getCursor();
-								if (cursor.moveToFirst()) {
-									String filePath;
-									int type;
-									File file = null;
-									do {
-										type = cursor.getInt(cursor.getColumnIndex(History.MSG_TYPE));
-										//just delete the file that received from friends
-										if (HistoryManager.TYPE_RECEIVE == type) {
-											filePath = cursor.getString(cursor.getColumnIndex(History.FILE_PATH));
-											file = new File(filePath);
-											if (file.delete()) {
-												//if delete file success,update mediaProvider
-												new SingleMediaScanner(mContext, file);
-											}
-										}
-									} while (cursor.moveToNext());
-								}
-								cursor.close();
-								mContext.getContentResolver().delete(History.CONTENT_URI, null, null);
+								break;
+							case ActionMenu.ACTION_MENU_CANCEL:
+								String selection = JuyouData.History._ID + "="
+										+ id;
+								mContext.getContentResolver().delete(
+										JuyouData.History.CONTENT_URI,
+										selection, null);
+								break;
+							case ActionMenu.ACTION_MENU_CLEAR_HISTORY:
+								// delete history
+								// delete history table
+								showClearHistoryDialog();
+								break;
+							case ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE:
+								// delete history and received file
+								showClearHistoryAndFileDialog();
+								break;
 							}
-						})
-						.setNegativeButton(R.string.cancel, null)
-						.create().show();
-						break;
-
-					default:
-						break;
-					}
-				}
-			});
-			dialog.setCancelable(true);
-			dialog.show();
+						}
+					});
+			contextdialog.show();
 		}
 
 	}
 
 	/**
 	 * Delete the transfer record in DB.
-	 * @param id the transfer record id id db
+	 * 
+	 * @param id
+	 *            the transfer record id id db
 	 */
 	private void deleteHistory(int id) {
 		// Do not delete file current.
@@ -609,15 +596,18 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			mNotice.showToast("刪除记录失败");
 		}
 	}
-	
+
 	/**
 	 * Delete the tranfser record in DB and delelte the file
-	 * @param file the file that need to delete
-	 * @param id the transfer record id id db
+	 * 
+	 * @param file
+	 *            the file that need to delete
+	 * @param id
+	 *            the transfer record id id db
 	 */
-	private void deleteFileAndHistory(File file, int id){
+	private void deleteFileAndHistory(File file, int id) {
 		deleteHistory(id);
-		
+
 		boolean ret = false;
 		if (file.exists()) {
 			ret = file.delete();
@@ -625,73 +615,146 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				mNotice.showToast("删除文件失败：" + file.getAbsolutePath());
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * show delete transfer record dialog</br>
-	 * if the record is send to others,user only can delete record</br>
-	 * if the record is receive from others,user can delete record and delete file in system
+	 * show delete transfer record dialog</br> if the record is send to
+	 * others,user only can delete record</br> if the record is receive from
+	 * others,user can delete record and delete file in system
+	 * 
 	 * @param file
 	 * @param id
-	 * @param type send or receive
+	 * @param type
+	 *            send or receive
 	 */
-	public void showDeleteDialog(File file, int id, int type){
+	public void showDeleteDialog(File file, int id, int type) {
 		int resId = -1;
 		if (HistoryManager.TYPE_SEND == type) {
 			resId = R.array.send_history_delete_menu;
-		}else {
+		} else {
 			resId = R.array.receive_history_delete_menu;
 		}
 		int defaultSelectItem = 0;
 		mDeleteOnClick.setId(id);
 		mDeleteOnClick.setFile(file);
-		new AlertDialog.Builder(mContext)
-        .setTitle(R.string.delete_history_msg)
-        .setSingleChoiceItems(resId, defaultSelectItem, mDeleteOnClick)
-        .setPositiveButton(R.string.ok, mDeleteOnClick)
-        .setNegativeButton(R.string.cancel, null)
-        .create().show();
+		new AlertDialog.Builder(mContext).setTitle(R.string.delete_history_msg)
+				.setSingleChoiceItems(resId, defaultSelectItem, mDeleteOnClick)
+				.setPositiveButton(R.string.ok, mDeleteOnClick)
+				.setNegativeButton(R.string.cancel, null).create().show();
 	}
-	
-	private class DeleteOnClick implements DialogInterface.OnClickListener{
+
+	private class DeleteOnClick implements DialogInterface.OnClickListener {
 
 		private int index;
 		private int id;
 		private File file;
-		
-		public DeleteOnClick(int index){
+
+		public DeleteOnClick(int index) {
 			this.index = index;
 		}
-		
-		public void setId(int id){
+
+		public void setId(int id) {
 			this.id = id;
 		}
-		
-		public void setFile(File file){
+
+		public void setFile(File file) {
 			this.file = file;
 		}
-		
+
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
-			//which表示单击的按钮索引，所有的列表选项的索引都是大于0的，按钮的索引都是小于0的
+			// which表示单击的按钮索引，所有的列表选项的索引都是大于0的，按钮的索引都是小于0的
 			if (which >= 0) {
-				//如果单击的是列表项，保存索引
+				// 如果单击的是列表项，保存索引
 				index = which;
-			}else {
-				//单击的是按钮，这里只可能是确定按钮
+			} else {
+				// 单击的是按钮，这里只可能是确定按钮
 				switch (index) {
 				case 0:
 					deleteHistory(id);
 					break;
 				case 1:
 					deleteFileAndHistory(file, id);
-					//init the index to 0,because default select is 0
+					// init the index to 0,because default select is 0
 					index = 0;
 					break;
 				}
 			}
 		}
-		
+	}
+
+	public void showFileNoExistDialog(final int id) {
+		ZyAlertDialog dialog = new ZyAlertDialog(mContext);
+		dialog.setTitle("该文件不存在或已被删除");
+		dialog.setMessage("是否删除记录?");
+		dialog.setNeutralButton(R.string.cancel, null);
+		dialog.setPositiveButton(R.string.menu_delete,
+				new OnZyAlertDlgClickListener() {
+					@Override
+					public void onClick(Dialog dialog) {
+						deleteHistory(id);
+						dialog.dismiss();
+					}
+				});
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.show();
+	}
+
+	public void showClearHistoryDialog() {
+		ZyAlertDialog dialog = new ZyAlertDialog(mContext);
+		dialog.setTitle(R.string.clear_history_only);
+		dialog.setMessage(R.string.clear_history_tip);
+		dialog.setNeutralButton(R.string.cancel, null);
+		dialog.setPositiveButton(R.string.menu_delete,
+				new OnZyAlertDlgClickListener() {
+					@Override
+					public void onClick(Dialog dialog) {
+						mContext.getContentResolver().delete(
+								History.CONTENT_URI, null, null);
+						dialog.dismiss();
+					}
+				});
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.show();
+	}
+
+	public void showClearHistoryAndFileDialog() {
+		ZyAlertDialog dialog = new ZyAlertDialog(mContext);
+		dialog.setTitle(R.string.clear_history_file);
+		dialog.setMessage(R.string.clear_history_file_tip);
+		dialog.setNeutralButton(R.string.cancel, null);
+		dialog.setPositiveButton(R.string.menu_delete,
+				new OnZyAlertDlgClickListener() {
+					@Override
+					public void onClick(Dialog dialog) {
+						Cursor cursor = getCursor();
+						if (cursor.moveToFirst()) {
+							String filePath;
+							int type;
+							File file = null;
+							do {
+								type = cursor.getInt(cursor
+										.getColumnIndex(History.MSG_TYPE));
+								// just delete the file that received from friends
+								if (HistoryManager.TYPE_RECEIVE == type) {
+									filePath = cursor.getString(cursor
+											.getColumnIndex(History.FILE_PATH));
+									file = new File(filePath);
+									if (file.delete()) {
+										// if delete file success,update mediaProvider
+										new SingleMediaScanner(mContext, file);
+									}
+								}
+							} while (cursor.moveToNext());
+						}
+						cursor.close();
+						mContext.getContentResolver().delete(
+								History.CONTENT_URI, null, null);
+						dialog.dismiss();
+					}
+				});
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.show();
 	}
 }

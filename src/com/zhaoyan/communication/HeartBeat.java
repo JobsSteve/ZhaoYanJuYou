@@ -28,11 +28,11 @@ public class HeartBeat {
 	/**
 	 * Time interval of send heart beat message.
 	 */
-	private static final int INTERVAL_TIME = 10 * 1000;
+	private static final int INTERVAL_TIME = 8 * 1000;
 	/**
 	 * The time of not receiving heart beat to decide connection lost.
 	 */
-	private static final int LOST_CONNECTION_TIME = INTERVAL_TIME * 6;
+	private static final int LOST_CONNECTION_TIME = INTERVAL_TIME * 3;
 	private static final byte[] HEART_BEAT_MESSAGE = ArrayUtil
 			.int2ByteArray(Protocol.DATA_TYPE_HEADER_HEART_BEAT);
 	private static final byte MODE_SCREEN_ON = 0;

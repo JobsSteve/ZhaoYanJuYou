@@ -27,39 +27,39 @@
 
             <Button
                 android:id="@+id/btn_login_weixin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:background="@drawable/login_weixin_btn_selector" >
             </Button>
 
             <Button
                 android:id="@+id/btn_login_tencent_weibo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/login_tencent_weibo_btn_selector" >
             </Button>
 
             <Button
                 android:id="@+id/btn_login_sina_weibo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/login_sina_weibo_btn_selector" >
             </Button>
 
             <Button
                 android:id="@+id/btn_login_qq"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/login_qq_btn_selector" >
             </Button>
 
             <Button
                 android:id="@+id/btn_login_renren"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/login_renren_btn_selector" >
             </Button>

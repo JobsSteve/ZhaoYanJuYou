@@ -44,5 +44,4 @@
                 layout="@layout/menubar_bottom" />
         </RelativeLayout>
     </RelativeLayout>
-
 </com.zhaoyan.common.view.RightSlideLayout>

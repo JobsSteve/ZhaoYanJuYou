@@ -36,24 +36,17 @@
     <string name="label_account">账号：</string>
     <string name="input_hint_account">邮箱/手机号</string>
     <string name="connect_friends">连朋友</string>
-    <string name="invite">邀请</string>
-    <string name="invite_tips">邀请好友安装聚游</string>
-    <string name="menu_info">属性</string>
     <string name="juyou">聚游</string>
     <string name="guan_jia">管家</string>
     <string name="wo">我</string>
-    <string name="game">游戏</string>
     <string name="application">应用</string>
     <string name="photo">相册</string>
     <string name="picture">图库</string>
     <string name="music">音乐</string>
-    <string name="video">视频</string>
     <string name="file_document">文档</string>
     <string name="file_compressed">压缩包</string>
     <string name="file_apk">安装包</string>
     <string name="file_all">所有文件</string>
-    <string name="history">历史</string>
-    <string name="guang_chang">广场</string>
     <string name="copyright_zhaoyan_tech_eng">Copyright © zhaoyan tech</string>
     <string name="copyright_zhaoyan_tech_cn">朝颜信息科技(上海)有限公司·版权所有</string>
     <string name="create_server">创建连接</string>
@@ -89,5 +82,8 @@
     <string name="login_fail_account_error">登录失败，用户名或密码错误</string>
     <string name="account_empty_please_input">请输入用户名</string>
     <string name="password_empty_please_input">请输入密码</string>
+    <string name="invite_http_opening">正在开启零流量邀请。。。</string>
+    <string name="invite_tips">邀请好友安装聚游</string>
+    <string name="guang_chang">广场</string>
 
 </resources>

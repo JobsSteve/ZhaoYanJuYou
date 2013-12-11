@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.zhaoyan.juyou.R;
@@ -42,10 +43,14 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 	private LinearLayout mContentLayout;
 	private LinearLayout mButtonLayout;
 	
-	private View mContentView;
+	private View mCustomeView;
 	
 	private Context mContext;
 	
+	private int padding_left = 0;
+	private int padding_right = 0;
+	private int padding_top = 10;
+	private int padding_bottom = 10;
 	
 	public ZyAlertDialog(Context context){
 		super(context, R.style.Custom_Dialog);
@@ -72,9 +77,12 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 			mMessageTV.setText(mMessage);
 		}
 		
-		if (null != mContentView) {
-			mContentLayout = (LinearLayout) findViewById(R.id.ll_content);
-			mContentLayout.addView(mContentView);
+		mContentLayout = (LinearLayout) findViewById(R.id.ll_content);
+		LayoutParams lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		lp.setMargins(padding_left, padding_top, padding_right, padding_bottom);
+		mContentLayout.setLayoutParams(lp);
+		if (null != mCustomeView) {
+			mContentLayout.addView(mCustomeView);
 		}
 		
 		mButtonLayout = (LinearLayout) findViewById(R.id.ll_button);
@@ -142,9 +150,16 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 		setMessage(msg);
 	}
 	
-	@Override
-	public void setContentView(View view) {
-		mContentView = view;
+	
+	public void setCustomView(View view) {
+		mCustomeView = view;
+	}
+	
+	public void setCustomViewMargins(int left, int top, int right, int bottom){
+		this.padding_left = left;
+		this.padding_top = top;
+		this.padding_right = right;
+		this.padding_bottom = bottom;
 	}
 	
 	@Override
@@ -153,7 +168,7 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth() - 60;
+		lp.width = (int)display.getWidth() - 40;
 		getWindow().setAttributes(lp);
 	}
 	

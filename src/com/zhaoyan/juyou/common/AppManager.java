@@ -208,20 +208,4 @@ public class AppManager {
 		}
 		return applicationInfo.sourceDir;
 	}
-	
-	
-	public static void showInstalledAppDetails(Context context, String packageName){
-		Intent intent = new Intent();
-		final int apiLevel = Build.VERSION.SDK_INT;
-		if (apiLevel >= Build.VERSION_CODES.GINGERBREAD) {
-			intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-			Uri uri = Uri.fromParts("package", packageName, null);
-			intent.setData(uri);
-		}else {
-			intent.setAction(Intent.ACTION_VIEW);
-			intent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
-			intent.putExtra("pkg", packageName);
-		}
-		context.startActivity(intent);
-	}
 }
