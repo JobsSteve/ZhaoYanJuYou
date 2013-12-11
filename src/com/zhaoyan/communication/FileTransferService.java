@@ -43,6 +43,8 @@ import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.provider.AppData;
 import com.zhaoyan.juyou.provider.JuyouData;
+import com.zhaoyan.communication.FileSender;
+import com.zhaoyan.communication.FileReceiver;
 
 /**
  * 2013年9月16日 该service目前做以下几件事情 1.接受发送文件的广播
@@ -54,6 +56,8 @@ public class FileTransferService extends Service implements
 
 	public static final String ACTION_SEND_FILE = "com.zhaoyan.communication.FileTransferService.ACTION_SEND_FILE";
 	public static final String ACTION_NOTIFY_SEND_OR_RECEIVE = "com.zhaoyan.communication.FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE";
+	public static final String ACTION_CANCEL_SEND = "com.zhaoyan.communication.FileTransferService.ACTION_CANCEL_SEND";
+	public static final String ACTION_CANCEL_RECEIVE = "com.zhaoyan.communication.FileTransferService.ACTION_CANCEL_RECEIVE";
 	
 	//show badgeview or not
 	public static final String EXTRA_BADGEVIEW_SHOW = "badgeview_show";
@@ -62,6 +66,11 @@ public class FileTransferService extends Service implements
 	private SocketCommunicationManager mSocketMgr;
 	private HistoryManager mHistoryManager = null;
 	private UserManager mUserManager = null;
+	
+	// uri string <==> key object
+	private Map<String, Object> mUriMap = new ConcurrentHashMap<String, Object>();
+	// key object <==> FileReceiver
+	private Map<Object, FileReceiver> mFileReceiverMap = new ConcurrentHashMap<Object, FileReceiver>();
 
 	private Map<Object, Uri> mTransferMap = new ConcurrentHashMap<Object, Uri>();
 	private int mAppId = -1;
@@ -71,6 +80,8 @@ public class FileTransferService extends Service implements
 
 	/** Thread pool */
 	private ExecutorService mExecutorService = Executors.newCachedThreadPool();
+	
+	FileSender mFileSender = null;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -146,8 +157,80 @@ public class FileTransferService extends Service implements
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(TAG, "onStartCommand");
+		String action = intent.getAction();
+		Log.d(TAG, "onStartCommand: action = " + action);
+		
+		if (ACTION_CANCEL_SEND.equals(action)){
+			handleCancelSendRequest(intent);
+		} else if (ACTION_CANCEL_RECEIVE.equals(action)){
+			handleCancelReceiveRequest(intent);
+		}
+	
 		return super.onStartCommand(intent, flags, startId);
+	}
+
+	/**
+	 * Cancel receiving data.
+	 * 
+	 * @param intent Include the storage identifier.
+	 *
+	 * @return void
+	 */
+	private void handleCancelReceiveRequest(Intent intent) {
+		Bundle bundle = intent.getExtras();
+		String uri = bundle.getString("history.uri");
+		Log.d(TAG, "handleCancelReceiveRequest: uri = " + uri);
+		
+		// 由于系统调用延迟，调用到这里时，数据传输可能刚好完成，此时的key就为null
+		Object key = mUriMap.get(uri);
+		if (key == null) {
+			Log.d(TAG, "handleCancelReceiveRequest: key is null!");
+			return;
+		}
+		FileReceiver currFileReceiver = mFileReceiverMap.get(key);
+		
+		if (currFileReceiver != null) {
+			// Send Message to Client
+		    User sendUser = currFileReceiver.getSendUser();
+		    mSocketMgr.cancelReceiveFile(sendUser, mAppId);
+		    
+		    // Close receive thread
+		    currFileReceiver.cancelReceiveFile();
+		} else {
+			Log.d(TAG, "currFileReceiver is null!");
+		}
+
+	}
+
+	/**
+	 * Cancel sending data.
+	 * 
+	 * @param intent Include the storage identifier.
+	 *
+	 * @return void
+	 */
+	private void handleCancelSendRequest(Intent intent) {
+		Bundle bundle = intent.getExtras();
+		String uri = bundle.getString("history.uri");
+		Log.d(TAG, "handleCancelSendRequest: uri = " + uri);
+		
+		// 由于系统调用延迟，调用到这里时，数据传输可能刚好完成，此时的key就为null
+		Object key = mUriMap.get(uri);
+		if (key == null) {
+			Log.d(TAG, "handleCancelSendRequest: key is null!");
+			return;
+		}
+		SendFileThread currExeSendThread = mSendingFileThreadMap.get(key);
+		if (currExeSendThread != null) {
+			// Send Message to Client
+		    User receiverUser = currExeSendThread.getReceiveUser();
+		    mSocketMgr.cancelSendFile(receiverUser, mAppId);
+		    
+		    // Close send thread
+		    mFileSender.cancelSendFile();
+		} else {
+			Log.d(TAG, "currExeSendThread is null!"); 
+		}
 	}
 
 	public void handleSendFileRequest(Intent intent) {
@@ -235,6 +318,10 @@ public class FileTransferService extends Service implements
 			key = new Object();
 			// save file & uri map
 			mTransferMap.put(key, uri);
+			// save uri string & key
+			mUriMap.put(uri.toString(), key);
+			
+			Log.d(TAG, "addToSendQueue: URI = " + uri.toString());
 		}
 
 		private void startSendFile() {
@@ -242,10 +329,14 @@ public class FileTransferService extends Service implements
 			ContentValues values = new ContentValues();
 			values.put(JuyouData.History.STATUS, HistoryManager.STATUS_PRE_SEND);
 			getContentResolver().update(getFileUri(key), values, null, null);
-			mSocketMgr.sendFile(file, FileTransferService.this, receiveUser,
+			mFileSender = mSocketMgr.sendFile(file, FileTransferService.this, receiveUser,
 					mAppId, key);
 			//when send a file,notify othes that need to know
 			sendBroadcastForNotify(true);
+		}
+		
+		public User getReceiveUser() {
+			return receiveUser;
 		}
 
 		public boolean isSendSending() {
@@ -356,7 +447,10 @@ public class FileTransferService extends Service implements
 				values);
 		Object key = new Object();
 		mTransferMap.put(key, uri);
+		mUriMap.put(uri.toString(), key);
+		mFileReceiverMap.put(key, fileReceiver);
 		Log.d(TAG, "onReceiveFile.mTransferMap.size=" + mTransferMap.size());
+		Log.d(TAG, "onReceiveFile: URI = " + uri.toString());
 
 		fileReceiver.receiveFile(file, FileTransferService.this, key);
 		//when receive a file,notify othes that need to know
@@ -432,7 +526,9 @@ public class FileTransferService extends Service implements
 		values.put(JuyouData.History.STATUS, status);
 		getContentResolver().update(getFileUri(key), values, null, null);
 
+		mUriMap.remove(getFileUri(key).toString());
 		mTransferMap.remove(key);
+		mFileReceiverMap.remove(key);
 	}
 
 	@Override

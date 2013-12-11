@@ -33,6 +33,10 @@ import com.zhaoyan.communication.protocol.LoginProtocol;
 import com.zhaoyan.communication.protocol.ProtocolDecoder;
 import com.zhaoyan.communication.protocol.ProtocolEncoder;
 
+import java.util.Arrays;
+import com.dreamlink.communication.lib.util.ArrayUtil;
+import com.zhaoyan.communication.protocol.Protocol;
+
 /**
  * This class is used for providing communication operations for activity.</br>
  * 
@@ -284,8 +288,42 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			User receiveUser, int appID) {
 		sendFile(file, listener, receiveUser, appID, null);
 	}
+	
+	// @Snow.Tian, Cancel Send File
+	public void cancelSendFile(User receiveUser, int appID) {
+		Log.d(TAG, "cancelSendFile: " + receiveUser.getUserName() + ", appID = " + appID);
+		
+		int userID = receiveUser.getUserID();
+		SocketCommunication communication = mUserManager.getSocketCommunication(userID);
+		byte[] headData = ArrayUtil.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_SEND_FILE);
+		byte[] userData = ArrayUtil.int2ByteArray(userID);
+		if (communication != null) {
+			mNotice.showToast("Cancel Send!");
+			communication.sendMessage(ArrayUtil.join(headData, userData));
+		} else {
+			Log.e(TAG, "cancelSendFile fail. can not connect with the receiver: " + receiveUser);
+			mNotice.showToast("cancelSendFile: Communcation Null!");
+		}
+	}
+	
+	// @Snow.Tian, Cancel Receive File
+	public void cancelReceiveFile(User sendUser, int appID) {
+		Log.d(TAG, "cancelReceiveFile: " + sendUser.getUserName() + ", appID = " + appID);
+		
+		int userID = sendUser.getUserID();
+		SocketCommunication communication = mUserManager.getSocketCommunication(userID);
+		byte[] headData = ArrayUtil.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_RECEIVE_FILE);
+		byte[] userData = ArrayUtil.int2ByteArray(userID);
+		if (communication != null) {
+			mNotice.showToast("Cancel Receive!");
+			communication.sendMessage(ArrayUtil.join(headData, userData));
+		} else {
+			Log.e(TAG, "cancelReceiveFile fail. can not connect with the sender: " + sendUser);
+			mNotice.showToast("cancelReceiveFile: Communcation Null!");
+		}
+	}
 
-	public void sendFile(File file, OnFileSendListener listener,
+	public FileSender sendFile(File file, OnFileSendListener listener,
 			User receiveUser, int appID, Object key) {
 		Log.d(TAG, "sendFile() file = " + file.getName() + ", receive user = "
 				+ receiveUser.getUserName() + ", appID = " + appID);
@@ -300,14 +338,14 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		if (serverPort == -1) {
 			Log.e(TAG, "sendFile error, create socket server fail. file = "
 					+ file.getName());
-			return;
+			return fileSender;
 		}
 		InetAddress inetAddress = NetWorkUtil.getLocalInetAddress();
 		if (inetAddress == null) {
 			Log.e(TAG,
 					"sendFile error, get inet address fail. file = "
 							+ file.getName());
-			return;
+			return fileSender;
 		}
 		int userID = receiveUser.getUserID();
 		byte[] inetAddressData = inetAddress.getAddress();
@@ -323,6 +361,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			Log.e(TAG, "sendFile fail. can not connect with the receiver: "
 					+ receiveUser);
 		}
+		
+		return fileSender;
 	}
 
 	/**

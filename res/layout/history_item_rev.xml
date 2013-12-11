@@ -37,6 +37,17 @@
             android:layout_marginRight="5dp"
             android:background="@drawable/head1"
             android:focusable="false" />
+        
+        <Button
+            android:id="@+id/cancel_transfer"
+            android:layout_width="55.0dip"
+            android:layout_height="30.0dip"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/btn_selector"
+            android:text="@string/cancel"
+            android:textColor="@color/button_text_selector"
+            android:textSize="16.0sp" />
 
         <LinearLayout
             android:id="@+id/layout_chatcontent"

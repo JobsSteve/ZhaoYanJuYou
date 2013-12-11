@@ -70,6 +70,8 @@ public class ZYConstant {
 	public static final String MEDIA_VIDEO_ACTION = "intent.media.video.action";
 	public static final String SEND_FILE_ACTION = FileTransferService.ACTION_SEND_FILE;
 	public static final String RECEIVE_FILE_ACTION = "com.zhaoyan.juyou.receivefile";
+	public static final String CANCEL_SEND_ACTION = FileTransferService.ACTION_CANCEL_SEND;
+	public static final String CANCEL_RECEIVE_ACTION = FileTransferService.ACTION_CANCEL_RECEIVE;
 
 	public static final String FILE_EX = "file://";
 	public static final String ENTER = "\n";

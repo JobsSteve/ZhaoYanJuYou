@@ -56,6 +56,8 @@ public class FileReceiver {
 	private Socket mSocket;
 	
 	private TrafficStaticsRxListener mRxListener = TrafficStatics.getInstance();
+	
+	private boolean mCancelReceiveFlag = false;
 
 	public FileReceiver(User sendUser, byte[] serverAddress, int serverPort,
 			FileTransferInfo fileTransferInfo) {
@@ -108,6 +110,10 @@ public class FileReceiver {
 		mHandlerThread.start();
 
 		mHandler = new Handler(mHandlerThread.getLooper(), mHandlerThread);
+	}
+	
+	public void cancelReceiveFile() {
+		mCancelReceiveFlag = true;
 	}
 
 	/**
@@ -168,9 +174,10 @@ public class FileReceiver {
 		long start = System.currentTimeMillis();
 		long lastCallbackTime = start;
 		long currentTime = start;
+		mCancelReceiveFlag = false;
 		
 		try {
-			while ((len = inputStream.read(buf)) != -1) {
+			while ((len = inputStream.read(buf)) != -1 && mCancelReceiveFlag == false) {
 				out.write(buf, 0, len);
 				receiveBytes += len;
 				
@@ -182,7 +189,14 @@ public class FileReceiver {
 				
 				mRxListener.addRxBytes(len);
 			}
-			notifyFinish(true);
+			
+			if (mCancelReceiveFlag == true) {
+				notifyFinish(false);
+			} else if (receiveBytes != totalBytes) {
+				notifyFinish(false);
+			} else {
+			    notifyFinish(true);
+			}
 			out.close();
 			inputStream.close();
 		} catch (IOException e) {
