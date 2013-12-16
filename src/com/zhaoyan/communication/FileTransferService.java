@@ -173,13 +173,15 @@ public class FileTransferService extends Service implements
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		String action = intent.getAction();
-		Log.d(TAG, "onStartCommand: action = " + action);
-		
-		if (ACTION_CANCEL_SEND.equals(action)){
-			handleCancelSendRequest(intent);
-		} else if (ACTION_CANCEL_RECEIVE.equals(action)){
-			handleCancelReceiveRequest(intent);
+		if (null != intent) {
+			String action = intent.getAction();
+			Log.d(TAG, "onStartCommand: action = " + action);
+			
+			if (ACTION_CANCEL_SEND.equals(action)){
+				handleCancelSendRequest(intent);
+			} else if (ACTION_CANCEL_RECEIVE.equals(action)){
+				handleCancelReceiveRequest(intent);
+			}
 		}
 	
 		return super.onStartCommand(intent, flags, startId);
