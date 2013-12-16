@@ -23,6 +23,8 @@ public class HistoryManager {
 		public static final int STATUS_RECEIVE_SUCCESS = 23;
 		public static final int STATUS_RECEIVE_FAIL = 24;
 		
+		public static final String HISTORY_URI = "history_uri";
+		
 		public static final NumberFormat nf = NumberFormat.getPercentInstance();
 		
 		public static final int TYPE_SEND = 0;

@@ -36,6 +36,7 @@ import com.zhaoyan.communication.protocol.ProtocolEncoder;
 import java.util.Arrays;
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.zhaoyan.communication.protocol.Protocol;
+import com.zhaoyan.juyou.R;
 
 /**
  * This class is used for providing communication operations for activity.</br>
@@ -298,7 +299,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		byte[] headData = ArrayUtil.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_SEND_FILE);
 		byte[] userData = ArrayUtil.int2ByteArray(userID);
 		if (communication != null) {
-			mNotice.showToast("Cancel Send!");
+			mNotice.showToast(R.string.cancel_send);
 			communication.sendMessage(ArrayUtil.join(headData, userData));
 		} else {
 			Log.e(TAG, "cancelSendFile fail. can not connect with the receiver: " + receiveUser);
@@ -315,7 +316,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		byte[] headData = ArrayUtil.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_RECEIVE_FILE);
 		byte[] userData = ArrayUtil.int2ByteArray(userID);
 		if (communication != null) {
-			mNotice.showToast("Cancel Receive!");
+			mNotice.showToast(R.string.cancel_receive);
 			communication.sendMessage(ArrayUtil.join(headData, userData));
 		} else {
 			Log.e(TAG, "cancelReceiveFile fail. can not connect with the sender: " + sendUser);

@@ -248,6 +248,8 @@
      <string name="receive_fail">接收失败</string>
      <string name="open_file_fail">找不到打开该文件的应用</string>
      <string name="me">我</string>
+     <string name="cancel_send">取消发送</string>
+     <string name="cancel_receive">取消接收</string>
      
      <string name="num_format">(<xliff:g id="num">%1$d</xliff:g>)</string>
      <string name="num_format2">( %1$d/%2$d )</string>

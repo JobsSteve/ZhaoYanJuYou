@@ -241,7 +241,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		}
 
 		holder.transferBar.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
-		holder.cancelView.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+//		holder.cancelView.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+		holder.cancelView.setVisibility(View.INVISIBLE);
 		
 		if (showBar) {
 			holder.transferBar.setProgress(bar_progress);
@@ -315,6 +316,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		
 		holder.cancelView = (Button)view.findViewById(R.id.cancel_transfer);
 		holder.cancelView.setOnClickListener(mCancelClickListener);
+		holder.cancelView.setVisibility(View.INVISIBLE);
 		
 		holder.transferBar = (ProgressBar) view
 				.findViewById(R.id.bar_progressing);
@@ -420,7 +422,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
         Intent intent = new Intent(mContext, FileTransferService.class);
         intent.setAction(ZYConstant.CANCEL_SEND_ACTION);
         Bundle bundle = new Bundle();
-        bundle.putString("history.uri", uri);
+        bundle.putString(HistoryManager.HISTORY_URI, uri);
         intent.putExtras(bundle);
         mContext.startService(intent);  
 	}
@@ -439,7 +441,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
         Intent intent = new Intent(mContext, FileTransferService.class);
         intent.setAction(ZYConstant.CANCEL_RECEIVE_ACTION);
         Bundle bundle = new Bundle();
-        bundle.putString("history.uri", uri);
+        bundle.putString(HistoryManager.HISTORY_URI, uri);
         intent.putExtras(bundle);
         mContext.startService(intent); 
 	}
@@ -473,11 +475,17 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			ActionMenu actionMenu = new ActionMenu(mContext);
 			switch (status) {
 			case HistoryManager.STATUS_PRE_SEND:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0,
+						R.string.menu_send);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0,
+						R.string.menu_open);
+				break;
 			case HistoryManager.STATUS_SENDING:
 				actionMenu.addItem(ActionMenu.ACTION_MENU_SEND, 0,
 						R.string.menu_send);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0,
 						R.string.menu_open);
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL_SEND, 0, R.string.cancel_send);
 				break;
 			case HistoryManager.STATUS_SEND_SUCCESS:
 			case HistoryManager.STATUS_RECEIVE_SUCCESS:
@@ -499,7 +507,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				actionMenu.addItem(ActionMenu.ACTION_MENU_OPEN, 0,
 						R.string.menu_open);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0,
-						R.string.cancel);
+						R.string.menu_delete);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0,
 						R.string.clear_history_only);
 				actionMenu.addItem(
@@ -507,12 +515,14 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						R.string.clear_history_file);
 				break;
 			case HistoryManager.STATUS_PRE_RECEIVE:
-			case HistoryManager.STATUS_RECEIVING:
-				// cancel menu wait for work
+				//do nothing
 				return;
+			case HistoryManager.STATUS_RECEIVING:
+				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL_RECEIVE, 0, R.string.cancel_receive);
+				break;
 			case HistoryManager.STATUS_RECEIVE_FAIL:
 				actionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, 0,
-						R.string.cancel);
+						R.string.menu_delete);
 				actionMenu.addItem(ActionMenu.ACTION_MENU_CLEAR_HISTORY, 0,
 						R.string.clear_history_only);
 				actionMenu.addItem(
@@ -570,6 +580,12 @@ public class HistoryCursorAdapter extends CursorAdapter {
 							case ActionMenu.ACTION_MENU_CLEAR_HISTORY_AND_FILE:
 								// delete history and received file
 								showClearHistoryAndFileDialog();
+								break;
+							case ActionMenu.ACTION_MENU_CANCEL_SEND:
+								cancelSending(id);
+								break;
+							case ActionMenu.ACTION_MENU_CANCEL_RECEIVE:
+								cancelReceiving(id);
 								break;
 							}
 						}

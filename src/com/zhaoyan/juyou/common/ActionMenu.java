@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.zhaoyan.common.util.Log;
 
+import android.R.integer;
 import android.content.Context;
 
 public class ActionMenu{
@@ -29,6 +30,9 @@ public class ActionMenu{
 	public static final int ACTION_MENU_PASTE = 0x17;
 	public static final int ACTION_MENU_CUT = 0x18;
 	public static final int ACTION_MENU_CREATE_FOLDER = 0x19;
+	public static final int ACTION_MENU_CANCEL_TRANSFER = 0x20;
+	public static final int ACTION_MENU_CANCEL_SEND = 0x21;
+	public static final int ACTION_MENU_CANCEL_RECEIVE = 0x22;
 	
 	//action menu mode,edit is menu mode
 	public static final int MODE_NORMAL = 0;
