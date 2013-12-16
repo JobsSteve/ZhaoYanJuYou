@@ -30,6 +30,7 @@ import com.zhaoyan.communication.SocketServerTask.OnClientConnectedListener;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.communication.protocol.FileTransferInfo;
 import com.zhaoyan.communication.protocol2.LoginProtocol;
+import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
 import com.zhaoyan.communication.protocol.ProtocolDecoder;
 import com.zhaoyan.communication.protocol.ProtocolEncoder;
 
@@ -711,7 +712,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 * Update user when user connect and disconnect.
 	 */
 	private void sendMessageToUpdateAllUser() {
-		ProtocolEncoder.encodeUpdateAllUser(mContext);
+		UserUpdateProtocol.encodeUpdateAllUser(mContext);
 	}
 
 	/**
