@@ -4,8 +4,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunication;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBBase;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
 
 public class BaseProtocol extends MessageDispatcher {
 	private static final String TAG = "BaseProtocol";

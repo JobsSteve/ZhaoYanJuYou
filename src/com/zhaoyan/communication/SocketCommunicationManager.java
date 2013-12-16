@@ -30,6 +30,7 @@ import com.zhaoyan.communication.SocketServerTask.OnClientConnectedListener;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.communication.protocol.FileTransferInfo;
 import com.zhaoyan.communication.protocol2.LoginProtocol;
+import com.zhaoyan.communication.protocol2.MessageSendProtocol;
 import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
 import com.zhaoyan.communication.protocol.ProtocolDecoder;
 import com.zhaoyan.communication.protocol.ProtocolEncoder;
@@ -597,9 +598,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	public void sendMessageToSingle(byte[] msg, User receiveUser, int appID) {
 		int localUserID = mUserManager.getLocalUser().getUserID();
 		int receiveUserID = receiveUser.getUserID();
-		byte[] data = ProtocolEncoder.encodeSendMessageToSingle(msg,
-				localUserID, receiveUserID, appID);
-		sendMessageToAllWithoutEncode(data);
+		MessageSendProtocol.encodeSendMessageToSingle(msg, localUserID,
+				receiveUserID, appID);
 	}
 
 	/**
@@ -610,9 +610,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	public void sendMessageToAll(byte[] msg, int appID) {
 		Log.d(TAG, "sendMessageToAll.msg.=" + new String(msg));
 		int localUserID = mUserManager.getLocalUser().getUserID();
-		byte[] data = ProtocolEncoder.encodeSendMessageToAll(msg, localUserID,
-				appID);
-		sendMessageToAllWithoutEncode(data);
+		MessageSendProtocol.encodeSendMessageToAll(msg, localUserID, appID);
 	}
 
 	/**

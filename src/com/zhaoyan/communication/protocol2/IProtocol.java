@@ -1,7 +1,7 @@
 package com.zhaoyan.communication.protocol2;
 
 import com.zhaoyan.communication.SocketCommunication;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
 
 public interface IProtocol {
 	/**

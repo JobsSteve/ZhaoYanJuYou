@@ -14,9 +14,9 @@ import com.zhaoyan.communication.SocketCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.protocol.FileTransferInfo;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBBase;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBType;
-import com.zhaoyan.communication.protocol.gen.PBFileTransportProtos.PBSendFile;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBSendFile;
 
 public class FileTransportProtocol implements IProtocol {
 	private static final String TAG = "FileTransportProtocol";

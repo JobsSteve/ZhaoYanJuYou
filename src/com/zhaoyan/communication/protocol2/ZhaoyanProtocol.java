@@ -18,6 +18,7 @@ public class ZhaoyanProtocol {
 		mBaseProtocol.addProtocol(new LoginProtocol(mContext));
 		mBaseProtocol.addProtocol(new UserUpdateProtocol(mContext));
 		mBaseProtocol.addProtocol(new FileTransportProtocol(mContext));
+		mBaseProtocol.addProtocol(new MessageSendProtocol(mContext));
 	}
 
 	public void decode(byte[] msgData, SocketCommunication communication) {

@@ -3,7 +3,7 @@ package com.zhaoyan.communication.protocol2;
 import java.util.HashMap;
 
 import com.zhaoyan.communication.SocketCommunication;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
 
 /**
  * Dispatch messages.

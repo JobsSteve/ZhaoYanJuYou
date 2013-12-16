@@ -11,12 +11,12 @@ import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBBase;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBType;
-import com.zhaoyan.communication.protocol.gen.PBLoginProtos.PBLoginFailReason;
-import com.zhaoyan.communication.protocol.gen.PBLoginProtos.PBLoginRequest;
-import com.zhaoyan.communication.protocol.gen.PBLoginProtos.PBLoginRespond;
-import com.zhaoyan.communication.protocol.gen.PBLoginProtos.PBLoginResult;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginFailReason;
+import com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRequest;
+import com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRespond;
+import com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginResult;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 /**
