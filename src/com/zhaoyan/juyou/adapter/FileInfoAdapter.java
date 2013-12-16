@@ -246,22 +246,22 @@ public class FileInfoAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View view = null;
-//		ViewHolder holder = null;
+		ViewHolder holder = null;
 
 		if (null == convertView || null == convertView.getTag()) {
-//			holder = new ViewHolder();
+			holder = new ViewHolder();
 			view = mInflater.inflate(R.layout.file_item, parent, false);
-//			holder.iconView = (ImageView) view
-//					.findViewById(R.id.file_icon_imageview);
+			holder.iconView = (ImageView) view
+					.findViewById(R.id.file_icon_imageview);
 //			holder.nameView = (TextView) view
 //					.findViewById(R.id.tv_filename);
 //			holder.countView = (TextView) view.findViewById(R.id.tv_filecount);
 //			holder.dateAndSizeView = (TextView) view
 //					.findViewById(R.id.tv_fileinfo);
-//			view.setTag(holder);
+			view.setTag(holder);
 		} else {
 			view = convertView;
-//			holder = (ViewHolder) view.getTag();
+			holder = (ViewHolder) view.getTag();
 		}
 
 		FileInfo fileInfo = mList.get(position);

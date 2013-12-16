@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.SharedPreferenceUtil;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter.ViewHolder;
@@ -38,6 +40,7 @@ import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
+import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
@@ -153,20 +156,58 @@ public class FileCategoryActivity extends BaseActivity implements
 		mMenuTabManager = new MenuTabManager(getApplicationContext(),
 				mMenuHolder);
 
-		long start = System.currentTimeMillis();
-		mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
-				Environment.getExternalStorageDirectory().getAbsoluteFile(),
-				filterType, mType);
-		mFileCategoryScanner.setScanListener(this);
-		mFileCategoryScanner.startScan();
-		Log.d(TAG, "mFileCategoryScanner cost time = " + (System.currentTimeMillis() - start));
+		SharedPreferences sp = SharedPreferenceUtil.getSharedPreference(getApplicationContext());
+		String sdcard_path = sp.getString(SharedPreferenceUtil.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
+		String internal_path = sp.getString(SharedPreferenceUtil.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
+		Log.d(TAG, "sdcard_path:" + sdcard_path + "\n," + "internal_path:" + internal_path);
+
+		// init
+		//get storage status
+		int status = MountManager.getStorageStatus(internal_path, sdcard_path);
+		switch (status) {
+		case 0:
+			File[] rootDirs = new File[2];
+			rootDirs[0] = new File(sdcard_path);
+			rootDirs[1] = new File(internal_path);
+			
+			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
+					rootDirs,filterType, mType);
+			break;
+		case 1:
+			File internalFileRoot = new File(internal_path);
+			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
+					internalFileRoot,filterType, mType);
+			break;
+		case 2:
+			File sdcardFileRoot = new File(sdcard_path);
+			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
+					sdcardFileRoot,filterType, mType);
+			break;
+		case 3:
+			//no storage
+			mTipView.setVisibility(View.VISIBLE);
+			mTipView.setText(R.string.no_sdcard);
+			mListView.setEmptyView(mTipView);
+			break;
+		default:
+			break;
+		}
+		
+		if (null != mFileCategoryScanner) {
+			long start = System.currentTimeMillis();
+			mFileCategoryScanner.setScanListener(this);
+			mFileCategoryScanner.startScan();
+			Log.d(TAG, "mFileCategoryScanner cost time = " + (System.currentTimeMillis() - start));
+		}
 	};
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mFileCategoryScanner.cancelScan();
-		mFileCategoryScanner.setScanListener(null);
+		if (null != mFileCategoryScanner) {
+			mFileCategoryScanner.cancelScan();
+			mFileCategoryScanner.setScanListener(null);
+		}
 	}
 
 	@Override

@@ -47,6 +47,8 @@ public class FileSender {
 	private Object mKey;
 
 	private TrafficStaticsTxListener mTxListener = TrafficStatics.getInstance();
+	
+	private boolean mCancelSendFlag = false;
 
 	public FileSender() {
 	};
@@ -82,6 +84,10 @@ public class FileSender {
 
 		mHandler = new Handler(mHandlerThread.getLooper(), mHandlerThread);
 		return mServerSocket.getLocalPort();
+	}
+	
+	public void cancelSendFile() {
+		mCancelSendFlag = true;
 	}
 
 	/**
@@ -175,8 +181,10 @@ public class FileSender {
 		long totalBytes = mSendFile.length();
 		long lastCallbackTime = start;
 		long currentTime = start;
+		mCancelSendFlag = false;
+
 		try {
-			while ((len = inputStream.read(buf)) != -1) {
+			while ((len = inputStream.read(buf)) != -1 && mCancelSendFlag == false) {
 				out.write(buf, 0, len);
 				sendBytes += len;
 
@@ -189,7 +197,12 @@ public class FileSender {
 
 				mTxListener.addTxBytes(len);
 			}
-			notifyFinish(true);
+
+			if (mCancelSendFlag == true) {
+				notifyFinish(false);
+			} else {
+			    notifyFinish(true);
+			}
 			out.close();
 			inputStream.close();
 		} catch (IOException e) {

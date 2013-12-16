@@ -42,4 +42,9 @@ public class Protocol {
 	public static final int DATA_TYPE_HEADER_SEND_FILE = 300;
 	public static final int SEND_FILE_SERVER_PORT_HEAD_SIZE = 4;
 	public static final int SEND_FILE_SERVER_ADDRESS_HEAD_SIZE = 4;
+	
+	// Cancel Send File
+	public static final int DATA_TYPE_HEADER_CANCEL_SEND_FILE = 400;
+	// Cancel Receive File
+	public static final int DATA_TYPE_HEADER_CANCEL_RECEIVE_FILE = 500;
 }

@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.SharedPreferenceUtil;
 import com.zhaoyan.common.view.BadgeView;
 import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
@@ -62,7 +63,7 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		mGuanjiaReceiver = new GuanjiaReceiver();
 		getActivity().getApplicationContext().registerReceiver(mGuanjiaReceiver, filter);
 		
-		sp = getActivity().getApplicationContext().getSharedPreferences(Extra.SHARED_PERFERENCE_NAME, Context.MODE_PRIVATE);
+		sp = SharedPreferenceUtil.getSharedPreference(getActivity().getApplicationContext());
 	}
 	
 	@Override

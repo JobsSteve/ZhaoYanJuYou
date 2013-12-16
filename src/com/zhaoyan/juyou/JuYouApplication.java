@@ -18,6 +18,7 @@ import com.zhaoyan.communication.connect.ServerConnector;
 import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.communication.search.SearchUtil;
 import com.zhaoyan.communication.search2.ServerSearcher;
+import com.zhaoyan.juyou.common.MountManager;
 
 public class JuYouApplication extends Application {
 	private static final String TAG = "JuYouApplication";
@@ -44,6 +45,9 @@ public class JuYouApplication extends Application {
 		}
 		Log.d(TAG, "initApplication");
 		mIsInit = true;
+		//init mount
+		MountManager.init(context);
+		
 		initImageLoader(context);
 		// Start save log to file.
 		Log.startSaveToFile();

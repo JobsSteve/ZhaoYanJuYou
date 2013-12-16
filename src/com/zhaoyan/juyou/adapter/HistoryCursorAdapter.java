@@ -23,6 +23,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.content.ContentUris;
+import android.net.Uri;
+import android.os.Bundle;
+import android.content.Intent;
+import android.widget.Button;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.FileManager;
@@ -46,6 +51,8 @@ import com.zhaoyan.juyou.dialog.ContextMenuDialog.OnMenuItemClickListener;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.provider.JuyouData;
 import com.zhaoyan.juyou.provider.JuyouData.History;
+import com.zhaoyan.communication.FileTransferService;
+import com.zhaoyan.juyou.common.ZYConstant;
 
 public class HistoryCursorAdapter extends CursorAdapter {
 	private static final String TAG = "HistoryCursorAdapter";
@@ -55,6 +62,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	private AsyncImageLoader bitmapLoader = null;
 	private boolean mIdleFlag = true;
 	private MsgOnClickListener mClickListener = new MsgOnClickListener();
+	private CancelOnClickListener mCancelClickListener = new CancelOnClickListener();
 	private DeleteOnClick mDeleteOnClick = new DeleteOnClick(0);
 	private ListView mListView;
 	private UserInfo mLocalUserInfo = null;
@@ -103,6 +111,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		holder.position = cursor.getPosition();
 
 		int id = cursor.getInt(cursor.getColumnIndex(JuyouData.History._ID));
+		Log.d(TAG, "bindView: pos = " + holder.position + ", id = " + id);
 		int type = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.History.MSG_TYPE));
 		long time = cursor.getLong(cursor
@@ -171,12 +180,13 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		holder.dateView.setText(ZYUtils.getFormatDate(time));
 		holder.fileNameView.setText(fileName);
 		holder.fileSizeView.setTextColor(Color.BLACK);
-		holder.msgLayout.setTag(new MsgData(id, fileName, filePath, type,
-				status));
-
-		byte[] fileIcon = cursor.getBlob(cursor
-				.getColumnIndex(JuyouData.History.FILE_ICON));
-		if (fileIcon == null || fileIcon.length == 0) {
+		
+		MsgData msgData = new MsgData(id, fileName, filePath, type, status);
+		holder.msgLayout.setTag(msgData);
+		holder.cancelView.setTag(msgData);
+		
+		byte[] fileIcon = cursor.getBlob(cursor.getColumnIndex(JuyouData.History.FILE_ICON));
+		if(fileIcon == null || fileIcon.length == 0) {
 			// There is no file icon, use default
 			setIconView(holder, holder.fileIconView, filePath, fileType);
 		} else {
@@ -228,8 +238,10 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			Log.e(TAG, "setSendReceiveStatus.Error.status=" + status);
 			break;
 		}
-		holder.transferBar.setVisibility(showBar ? View.VISIBLE
-				: View.INVISIBLE);
+
+		holder.transferBar.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+		holder.cancelView.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
+		
 		if (showBar) {
 			holder.transferBar.setProgress(bar_progress);
 		}
@@ -299,7 +311,10 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			holder.contentTitleView = (TextView) view
 					.findViewById(R.id.tv_send_title_msg);
 		}
-
+		
+		holder.cancelView = (Button)view.findViewById(R.id.cancel_transfer);
+		holder.cancelView.setOnClickListener(mCancelClickListener);
+		
 		holder.transferBar = (ProgressBar) view
 				.findViewById(R.id.bar_progressing);
 		holder.transferBar.setMax(100);
@@ -358,6 +373,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	}
 
 	class ViewHolder {
+		Button cancelView;
 		ProgressBar transferBar;
 		TextView dateView;
 		TextView userNameView;
@@ -386,6 +402,60 @@ public class HistoryCursorAdapter extends CursorAdapter {
 			this.filePath = filePath;
 			this.type = type;
 			this.status = status;
+		}
+	}
+	
+	/**
+	 * Cancel sending data.
+	 * 
+	 * @param id The storage identifier.
+	 *
+	 * @return void
+	 */
+	private void cancelSending(int id) {
+		String uri = ContentUris.withAppendedId(JuyouData.History.CONTENT_URI, id).toString();
+		Log.d(TAG, "cancelSending: uri = " + uri);
+		
+        Intent intent = new Intent(mContext, FileTransferService.class);
+        intent.setAction(ZYConstant.CANCEL_SEND_ACTION);
+        Bundle bundle = new Bundle();
+        bundle.putString("history.uri", uri);
+        intent.putExtras(bundle);
+        mContext.startService(intent);  
+	}
+	
+	/**
+	 * Cancel receiving data.
+	 * 
+	 * @param id The storage identifier.
+	 *
+	 * @return void
+	 */
+	private void cancelReceiving(int id) {
+		String uri = ContentUris.withAppendedId(JuyouData.History.CONTENT_URI, id).toString();
+		Log.d(TAG, "cancelReceiving: uri = " + uri);
+		
+        Intent intent = new Intent(mContext, FileTransferService.class);
+        intent.setAction(ZYConstant.CANCEL_RECEIVE_ACTION);
+        Bundle bundle = new Bundle();
+        bundle.putString("history.uri", uri);
+        intent.putExtras(bundle);
+        mContext.startService(intent); 
+	}
+	
+	class CancelOnClickListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			MsgData data = (MsgData) v.getTag();
+			final int id = data.itemID;
+			int status = data.status;
+			
+			Log.d(TAG, "CancelOnClickListener: status = " + status + ", id = " + id);
+			if (status == HistoryManager.STATUS_SENDING) {
+				cancelSending(id);
+			} else if (status == HistoryManager.STATUS_RECEIVING) {
+				cancelReceiving(id);
+			}
 		}
 	}
 
@@ -516,6 +586,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	 */
 	private void deleteHistory(int id) {
 		// Do not delete file current.
+		Log.d(TAG, "deleteHistory: id = " + id);
 		String selection = JuyouData.History._ID + "=" + id;
 		int result = mContext.getContentResolver().delete(
 				JuyouData.History.CONTENT_URI, selection, null);

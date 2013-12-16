@@ -6,7 +6,6 @@
     >
     
     <string name="ok">确定</string>
-    <string name="cancel">取消</string>
     <string name="delete_confirm">删除确认</string>
     <string name="info">属性: <xliff:g id="info">%1$s</xliff:g></string>
     <string name="info1">属性</string>
@@ -116,19 +115,16 @@
     <string name="search_sever">搜索连接</string>
     <string name="searching_sever">正在搜索&#8230;</string><!-- &#8230; ... -->
     <string name="server_not_found">未发现周围可用连接</string>
-    <string name="create_server">创建连接</string>
     <string name="connectable">可用连接</string>
     <string name="connect_access">已连接,开始远程访问</string>
     
     <string name="name_setting">设置名称</string>
-    <string name="save">保存</string>
     <string name="user_name">名称:</string>
     <string name="click_to_set">点我设置名称</string>
     <string name="name_set_tip">名称最大长度为8个字符</string>
     <string name="save_setting">保存设置</string>
     
     <string name="copy_ready">准备下载:<xliff:g id="copy">%1$s</xliff:g></string>
-    <string name="copying">正在下载:<xliff:g id="copy">%1$s</xliff:g></string>
     <string name="copy_ok">下载完成:<xliff:g id="copy">%1$s</xliff:g></string>
     <string name="copy_fail">下载失败:<xliff:g id="copy">%1$s</xliff:g></string>
     <string name="stop">停止</string>
@@ -161,8 +157,6 @@
      <string name="pre_send">准备发送给:<xliff:g id="pre_send">%1$s</xliff:g></string>
      <string name="sending">发送给:<xliff:g id="sending">%1$s</xliff:g></string>
      <string name="send_ok">已发送给:<xliff:g id="send_ok">%1$s</xliff:g></string>
-     <string name="send_fail">传输失败:<xliff:g id="send_fail">%1$s</xliff:g></string>
-     <string name="receive_fail">传输失败</string>
      <string name="transfer_wait">等待传输</string>
      <string name="transfer_ok">传输完成</string>
      <string name="transfer_fail">传输失败</string>
@@ -187,14 +181,12 @@
      <string name="invite_install">邀请朋友安装聚游</string>
      <string name="invite_weixin">微信邀请</string>
      <string name="invite_qq">QQ邀请</string>
-     <string name="invite_bluetooth">蓝牙邀请</string>
      <string name="invite_sms">短信邀请</string>
      <string name="invite_weibo_sina">新浪微博邀请</string>
      <string name="invite_weibo_tencent">腾讯微博邀请</string>
      <string name="invite_zero_gprs">零流量邀请</string>
      <string name="invite_tip">仅支持邀请安卓用户</string>
      <string name="dimen_code_download">扫一扫二维码下载聚游</string>
-     <string name="traffic_statistics">流量统计</string>
      <string name="traffic_send">发送流量：%s</string>
      <string name="traffic_receive">接收流量：%s</string>
      <string name="traffic_notice">通过聚游手机之间互传文件的时候不会消耗任何一部手机的移动网络流量，

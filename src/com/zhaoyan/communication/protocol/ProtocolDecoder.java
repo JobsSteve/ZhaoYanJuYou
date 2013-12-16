@@ -101,7 +101,15 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 		case Protocol.DATA_TYPE_HEADER_SEND_FILE:
 			Log.d(TAG, "DATA_TYPE_HEADER_SEND_FILE");
 			handleSendFile(data);
-
+            break;
+		case Protocol.DATA_TYPE_HEADER_CANCEL_SEND_FILE:
+			Log.d(TAG, "DATA_TYPE_HEADER_CANCEL_SEND_FILE");
+			// For Later
+            break;
+		case Protocol.DATA_TYPE_HEADER_CANCEL_RECEIVE_FILE:
+			Log.d(TAG, "DATA_TYPE_HEADER_CANCEL_RECEIVE_FILE");
+			// For Later
+            break;
 		default:
 			Log.d(TAG, "Unkown data type: " + dataType);
 			break;

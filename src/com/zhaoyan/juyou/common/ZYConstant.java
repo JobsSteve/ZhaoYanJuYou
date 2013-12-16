@@ -34,11 +34,6 @@ public class ZYConstant {
 		public static final String RECEIVE_FILE = "receive_file";
 		public static final String SEND_USERS = "send_users";
 
-		public static final String SHARED_PERFERENCE_NAME = "my_shared";
-		public static final String DEFAULT_SAVE_PATH = "DEFAULT_SAVE_PATH";
-		public static final String SDCARD_PATH = "sdcard_path";
-		public static final String INTERNAL_PATH = "internal_path";
-
 		public static final String APP_ID = "app_id";
 
 	}
@@ -70,6 +65,8 @@ public class ZYConstant {
 	public static final String MEDIA_VIDEO_ACTION = "intent.media.video.action";
 	public static final String SEND_FILE_ACTION = FileTransferService.ACTION_SEND_FILE;
 	public static final String RECEIVE_FILE_ACTION = "com.zhaoyan.juyou.receivefile";
+	public static final String CANCEL_SEND_ACTION = FileTransferService.ACTION_CANCEL_SEND;
+	public static final String CANCEL_RECEIVE_ACTION = FileTransferService.ACTION_CANCEL_RECEIVE;
 
 	public static final String FILE_EX = "file://";
 	public static final String ENTER = "\n";

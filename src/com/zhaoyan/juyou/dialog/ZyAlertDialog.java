@@ -168,7 +168,7 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 		WindowManager windowManager = getWindow().getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.width = (int)display.getWidth() - 60;
+		lp.width = (int)display.getWidth() - 40;
 		getWindow().setAttributes(lp);
 	}
 	
