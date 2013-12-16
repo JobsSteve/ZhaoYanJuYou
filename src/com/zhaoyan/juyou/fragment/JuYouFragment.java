@@ -92,7 +92,9 @@ public class JuYouFragment extends BaseFragment implements OnClickListener,
 			User[] usersSorted = UserHelper.sortUsersById(users);
 			for (User user : usersSorted) {
 				UserInfo userInfo = UserHelper.getUserInfo(mContext, user);
-				addUser(userInfo);
+				if (userInfo != null) {
+					addUser(userInfo);
+				}
 			}
 		}
 	}

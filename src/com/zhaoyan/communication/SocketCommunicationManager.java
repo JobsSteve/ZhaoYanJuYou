@@ -29,7 +29,8 @@ import com.zhaoyan.communication.SocketCommunication.OnReceiveMessageListener;
 import com.zhaoyan.communication.SocketServerTask.OnClientConnectedListener;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.communication.protocol.FileTransferInfo;
-import com.zhaoyan.communication.protocol.LoginProtocol;
+import com.zhaoyan.communication.protocol2.LoginProtocol;
+import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
 import com.zhaoyan.communication.protocol.ProtocolDecoder;
 import com.zhaoyan.communication.protocol.ProtocolEncoder;
 
@@ -37,6 +38,7 @@ import java.util.Arrays;
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.zhaoyan.communication.protocol.Protocol;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.communication.protocol2.ZhaoyanProtocol;
 
 /**
  * This class is used for providing communication operations for activity.</br>
@@ -133,6 +135,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	private ILoginRequestCallBack mLoginRequestCallBack;
 	private ILoginRespondCallback mLoginRespondCallback;
 
+	private ZhaoyanProtocol mZhaoyanProtocol;
+
 	private SocketCommunicationManager() {
 
 	}
@@ -187,6 +191,9 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mProtocolDecoder = new ProtocolDecoder(context);
 		mProtocolDecoder.setLoginRequestCallBack(this);
 		mProtocolDecoder.setLoginRespondCallback(this);
+
+		mZhaoyanProtocol = new ZhaoyanProtocol(mContext);
+		mZhaoyanProtocol.init();
 	}
 
 	/**
@@ -289,37 +296,47 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			User receiveUser, int appID) {
 		sendFile(file, listener, receiveUser, appID, null);
 	}
-	
+
 	// @Snow.Tian, Cancel Send File
 	public void cancelSendFile(User receiveUser, int appID) {
-		Log.d(TAG, "cancelSendFile: " + receiveUser.getUserName() + ", appID = " + appID);
-		
+		Log.d(TAG, "cancelSendFile: " + receiveUser.getUserName()
+				+ ", appID = " + appID);
+
 		int userID = receiveUser.getUserID();
-		SocketCommunication communication = mUserManager.getSocketCommunication(userID);
-		byte[] headData = ArrayUtil.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_SEND_FILE);
+		SocketCommunication communication = mUserManager
+				.getSocketCommunication(userID);
+		byte[] headData = ArrayUtil
+				.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_SEND_FILE);
 		byte[] userData = ArrayUtil.int2ByteArray(userID);
 		if (communication != null) {
 			mNotice.showToast(R.string.cancel_send);
 			communication.sendMessage(ArrayUtil.join(headData, userData));
 		} else {
-			Log.e(TAG, "cancelSendFile fail. can not connect with the receiver: " + receiveUser);
+			Log.e(TAG,
+					"cancelSendFile fail. can not connect with the receiver: "
+							+ receiveUser);
 			mNotice.showToast("cancelSendFile: Communcation Null!");
 		}
 	}
-	
+
 	// @Snow.Tian, Cancel Receive File
 	public void cancelReceiveFile(User sendUser, int appID) {
-		Log.d(TAG, "cancelReceiveFile: " + sendUser.getUserName() + ", appID = " + appID);
-		
+		Log.d(TAG, "cancelReceiveFile: " + sendUser.getUserName()
+				+ ", appID = " + appID);
+
 		int userID = sendUser.getUserID();
-		SocketCommunication communication = mUserManager.getSocketCommunication(userID);
-		byte[] headData = ArrayUtil.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_RECEIVE_FILE);
+		SocketCommunication communication = mUserManager
+				.getSocketCommunication(userID);
+		byte[] headData = ArrayUtil
+				.int2ByteArray(Protocol.DATA_TYPE_HEADER_CANCEL_RECEIVE_FILE);
 		byte[] userData = ArrayUtil.int2ByteArray(userID);
 		if (communication != null) {
 			mNotice.showToast(R.string.cancel_receive);
 			communication.sendMessage(ArrayUtil.join(headData, userData));
 		} else {
-			Log.e(TAG, "cancelReceiveFile fail. can not connect with the sender: " + sendUser);
+			Log.e(TAG,
+					"cancelReceiveFile fail. can not connect with the sender: "
+							+ sendUser);
 			mNotice.showToast("cancelReceiveFile: Communcation Null!");
 		}
 	}
@@ -362,7 +379,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			Log.e(TAG, "sendFile fail. can not connect with the receiver: "
 					+ receiveUser);
 		}
-		
+
 		return fileSender;
 	}
 
@@ -522,6 +539,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		// decode;
 		long start = System.currentTimeMillis();
 		mProtocolDecoder.decode(msg, socketCommunication);
+		mZhaoyanProtocol.decode(msg, socketCommunication);
 		long end = System.currentTimeMillis();
 		Log.i(TAG, "onReceiveMessage() decode takes time: " + (end - start));
 	}
@@ -566,8 +584,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 * client login server directly.
 	 */
 	public void sendLoginRequest() {
-		byte[] loginRequest = ProtocolEncoder.encodeLoginRequest(mContext);
-		sendMessageToAllWithoutEncode(loginRequest);
+		LoginProtocol.encodeLoginRequest(mContext);
 	}
 
 	/**
@@ -696,7 +713,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 * Update user when user connect and disconnect.
 	 */
 	private void sendMessageToUpdateAllUser() {
-		ProtocolEncoder.encodeUpdateAllUser(mContext);
+		UserUpdateProtocol.encodeUpdateAllUser(mContext);
 	}
 
 	/**
@@ -858,16 +875,11 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		if (isAllow) {
 			loginResult = mUserManager.addNewLoginedUser(userInfo,
 					communication);
-
-			byte[] respond = LoginProtocol.encodeLoginRespond(loginResult,
-					userInfo.getUser().getUserID());
-			sendMessage(communication, respond);
 		} else {
 			loginResult = false;
-			byte[] respond = LoginProtocol.encodeLoginRespond(loginResult,
-					userInfo.getUser().getUserID());
-			sendMessage(communication, respond);
 		}
+		LoginProtocol.encodeLoginRespond(loginResult, userInfo.getUser()
+				.getUserID(), communication);
 		Log.d(TAG, "longin result = " + loginResult + ", userInfo = "
 				+ userInfo);
 

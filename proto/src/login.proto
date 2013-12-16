@@ -1,0 +1,25 @@
+package com.zhaoyan.juyou;
+
+option java_package = "com.zhaoyan.communication.protocol.gen";
+option java_outer_classname = "PBLoginProtos";
+message PBLoginRequest {
+	required string name = 1;
+	required int32 headImageId = 2;
+	optional bytes headImageData = 3;
+}
+
+message PBLoginRespond {
+	required PBLoginResult result = 1;
+	optional int32 userId = 2;
+	optional PBLoginFailReason failReason = 3;
+}
+
+enum PBLoginResult {
+	SUCCESS = 1;
+	FAIL = 2;
+}
+
+enum PBLoginFailReason {
+	UNKOWN = 1;
+}
+
