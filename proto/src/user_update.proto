@@ -1,0 +1,15 @@
+package com.zhaoyan.juyou;
+
+option java_package = "com.zhaoyan.communication.protocol.gen";
+option java_outer_classname = "PBUserUpdateProtos";
+message PBClearUserNotExist {
+	required string name = 1;
+	required int32 headImageId = 2;
+	optional bytes headImageData = 3;
+}
+
+message PBUpdateUser {
+
+}
+
+

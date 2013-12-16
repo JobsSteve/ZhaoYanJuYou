@@ -1,0 +1,14 @@
+package com.zhaoyan.juyou;
+
+option java_package = "com.zhaoyan.communication.protocol.gen";
+option java_outer_classname = "PBBaseProtos";
+message PBBase {
+	required PBType type = 1;
+	optional bytes message = 2;
+}
+
+enum PBType {
+	LOGIN_REQUEST = 100;
+	LOGIN_RESPOND = 101;
+	FILE_TRANSPORT = 200;
+}
