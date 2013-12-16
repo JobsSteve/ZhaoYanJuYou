@@ -14,10 +14,10 @@ import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBBase;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBType;
-import com.zhaoyan.communication.protocol.gen.PBUserUpdateProtos.PBUpdateUserId;
-import com.zhaoyan.communication.protocol.gen.PBUserUpdateProtos.PBUserInfo;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUpdateUserId;
+import com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUserInfo;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class UserUpdateProtocol implements IProtocol {

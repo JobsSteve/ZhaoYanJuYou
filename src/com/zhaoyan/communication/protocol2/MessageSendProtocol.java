@@ -11,10 +11,10 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBBase;
-import com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBType;
-import com.zhaoyan.communication.protocol.gen.PBSendMessageProtos.PBSendMessageToAll;
-import com.zhaoyan.communication.protocol.gen.PBSendMessageProtos.PBSendMessageToSingle;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToAll;
+import com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToSingle;
 
 /**
  * This class is used for encode and decode send message.
