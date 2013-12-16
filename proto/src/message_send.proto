@@ -1,0 +1,17 @@
+package com.zhaoyan.juyou;
+
+option java_package = "com.zhaoyan.communication.protocol.gen";
+option java_outer_classname = "PBSendMessageProtos";
+message PBSendMessageToSingle {
+	required int32 sendUserId = 1;
+	required int32 receiveUserId = 2;
+	required int32 appId = 3;
+	required bytes data = 4;
+}
+
+message PBSendMessageToAll {
+	required int32 sendUserId = 1;
+	required int32 appId = 2;
+	required bytes data = 3;
+}
+
