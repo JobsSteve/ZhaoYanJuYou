@@ -439,7 +439,7 @@ public class WifiOrAPSearchService extends Service {
 		if (info == null) {
 			return false;
 		} else if (info.getServerType().equals(ConnectHelper.SERVER_TYPE_WIFI)) {
-			SocketCommunicationManager.getInstance(getApplicationContext())
+			SocketCommunicationManager.getInstance()
 					.connectServer(this.getApplicationContext(),
 							info.getServerIp());
 			return true;
@@ -455,7 +455,7 @@ public class WifiOrAPSearchService extends Service {
 		if (ip == null) {
 			return false;
 		}
-		SocketCommunicationManager.getInstance(getApplicationContext())
+		SocketCommunicationManager.getInstance()
 				.connectServer(this, ip);
 		return true;
 	}
@@ -500,7 +500,7 @@ public class WifiOrAPSearchService extends Service {
 	}
 
 	private void createServerAndStartSearch() {
-		SocketCommunicationManager.getInstance(getApplicationContext())
+		SocketCommunicationManager.getInstance()
 				.startServer(getApplicationContext());
 		UserManager.getInstance().addLocalServerUser();
 

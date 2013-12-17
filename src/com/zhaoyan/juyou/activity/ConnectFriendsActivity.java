@@ -44,8 +44,7 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connect_friends);
 		mHandler = new UiHandler();
-		mCommunicationManager = SocketCommunicationManager
-				.getInstance(getApplicationContext());
+		mCommunicationManager = SocketCommunicationManager.getInstance();
 		mUserManager = UserManager.getInstance();
 		mUserManager.registerOnUserChangedListener(this);
 

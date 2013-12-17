@@ -149,8 +149,7 @@ public class SocketCommunicationService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		mSocketCommunicationManager = SocketCommunicationManager
-				.getInstance(this);
+		mSocketCommunicationManager = SocketCommunicationManager.getInstance();
 		mPlatformManager = PlatformManager.getInstance(getApplicationContext());
 		if (mRemote == null) {
 			mRemote = new SocketCommunicationMananerRemote();

@@ -163,7 +163,7 @@ public class FileTransferService extends Service implements
 
 		mNotice = new Notice(this);
 		mHistoryManager = new HistoryManager(getApplicationContext());
-		mSocketMgr = SocketCommunicationManager.getInstance(this);
+		mSocketMgr = SocketCommunicationManager.getInstance();
 		mAppId = AppUtil.getAppID(this);
 		Log.d(TAG, "mappid=" + mAppId);
 		mSocketMgr.registerOnFileTransportListener(this, mAppId);

@@ -136,27 +136,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 
 	}
 
-	private SocketCommunicationManager(Context context) {
-		mContext = context;
-		init(context);
-	}
-
-	/**
-	 * Use {@link #getInstance()} instead.
-	 * 
-	 * @param context
-	 * @return
-	 */
-	@Deprecated
-	public static synchronized SocketCommunicationManager getInstance(
-			Context context) {
-		if (mInstance == null) {
-			mInstance = new SocketCommunicationManager(
-					context.getApplicationContext());
-		}
-		return mInstance;
-	}
-
 	/**
 	 * Get instance without context. If this is first called, must initialize
 	 * context by {@link #init(Context)}.

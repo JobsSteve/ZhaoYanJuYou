@@ -23,8 +23,7 @@ public class LoginService extends Service implements ILoginRequestCallBack,
 	public void onCreate() {
 		super.onCreate();
 		Log.d(TAG, "onCreate()");
-		mCommunicationManager = SocketCommunicationManager
-				.getInstance(getApplicationContext());
+		mCommunicationManager = SocketCommunicationManager.getInstance();
 		mCommunicationManager.setLoginRequestCallBack(this);
 		mCommunicationManager.setLoginRespondCallback(this);
 	}
@@ -47,11 +46,13 @@ public class LoginService extends Service implements ILoginRequestCallBack,
 	}
 
 	@Override
-	public void onLoginRequest(UserInfo userInfo, SocketCommunication communication) {
+	public void onLoginRequest(UserInfo userInfo,
+			SocketCommunication communication) {
 		// TODO auto respond.
 		Log.d(TAG, "onLoginRequest user = " + userInfo + ", communication = "
 				+ communication);
-		mCommunicationManager.respondLoginRequest(userInfo, communication, true);
+		mCommunicationManager
+				.respondLoginRequest(userInfo, communication, true);
 	}
 
 	@Override

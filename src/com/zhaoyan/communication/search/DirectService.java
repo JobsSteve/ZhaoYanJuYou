@@ -148,12 +148,10 @@ public class DirectService extends Service {
 					new ConnectionInfoListener() {
 						public void onConnectionInfoAvailable(WifiP2pInfo info) {
 							if (flag) {
-								SocketCommunicationManager.getInstance(
-										getApplicationContext()).startServer(
+								SocketCommunicationManager.getInstance().startServer(
 										getApplicationContext());
 							} else {
-								SocketCommunicationManager.getInstance(
-										getApplicationContext())
+								SocketCommunicationManager.getInstance()
 										.connectServer(
 												getApplicationContext(),
 												info.groupOwnerAddress
