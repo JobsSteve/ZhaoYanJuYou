@@ -10,10 +10,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.Log;
@@ -39,64 +36,37 @@ public class VideoCursorAdapter extends BaseCursorAdapter {
 	}
 	
 	@Override
-	public void selectAll(boolean isSelected) {
-		super.selectAll(isSelected);
+	public void checkedAll(boolean isChecked) {
 		int count = this.getCount();
 		for (int i = 0; i < count; i++) {
-			setSelected(i, isSelected);
+			setChecked(i, isChecked);
 		}
 	}
 	
 	@Override
-	public int getSelectedItemsCount() {
-		int count = 0;
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
-				count ++;
-			}
-		}
-		return count;
-	}
-	
-	@Override
-	public List<Integer> getSelectedItemPos() {
-		List<Integer> list = new ArrayList<Integer>();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
-				list.add(i);
-			}
-		}
-		return list;
-	}
-	
-	public List<String> getSelectItemList(){
+	public List<String> getCheckedPathList(){
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = getCursor();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
 				cursor.moveToPosition(i);
 				String url = cursor.getString(cursor
 						.getColumnIndex(MediaStore.Video.Media.DATA));
-				Log.d(TAG, "getSelectItemList:" + url);
 				list.add(url);
 			}
 		}
 		return list;
 	}
 	
-	/**
-	 * get Select item filename  list
-	 * @return
-	 */
-	public List<String> getSelectItemNameList(){
+	@Override
+	public List<String> getCheckedNameList() {
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = getCursor();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
 				cursor.moveToPosition(i);
 				String name = cursor.getString(cursor
 						.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
-				Log.d(TAG, "getSelectItemNameList:" + name);
 				list.add(name);
 			}
 		}
@@ -162,7 +132,7 @@ public class VideoCursorAdapter extends BaseCursorAdapter {
 		}
 
 		item.setVideoTime(duration);
-		item.setChecked(mIsSelected.get(cursor.getPosition()));
+		item.setChecked(mCheckArray.get(cursor.getPosition()));
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.zhaoyan.juyou.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -13,55 +14,15 @@ import android.view.ViewGroup;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 
-public class BaseCursorAdapter extends CursorAdapter {
+public class BaseCursorAdapter extends CursorAdapter implements SelectInterface {
 	private static final String TAG = "BaseCursorAdapter";
 	protected int mMenuMode = ActionMenu.MODE_NORMAL;
-	protected SparseBooleanArray mIsSelected = null;
+	protected SparseBooleanArray mCheckArray = null;
 
 	public BaseCursorAdapter(Context context, Cursor c, boolean autoRequery) {
 		super(context, c, autoRequery);
-		mIsSelected = new SparseBooleanArray();
+		mCheckArray = new SparseBooleanArray();
 		// TODO Auto-generated constructor stub
-	}
-	
-	public void changeMode(int mode){
-		mMenuMode = mode;
-	}
-	
-	public int getMode(){
-		return mMenuMode;
-	}
-	
-	/**
-	 * Select All or not
-	 * @param isSelected true or false
-	 */
-	public void selectAll(boolean isSelected){
-	}
-	
-	/**
-	 * set the item is selected or not
-	 * @param position the position that clicked
-	 * @param isSelected selected or not
-	 */
-	public void setSelected(int position, boolean isSelected){
-		mIsSelected.put(position, isSelected);
-	}
-	
-	public void setSelected(int position){
-		mIsSelected.put(position, !isSelected(position));
-	}
-	
-	public boolean isSelected(int position){
-		return mIsSelected.get(position);
-	}
-	
-	public int getSelectedItemsCount(){
-		return 0;
-	};
-	
-	public List<Integer> getSelectedItemPos(){
-		return null;
 	}
 	
 	public void updateViewBackground(boolean selected, int position, View view){
@@ -82,6 +43,77 @@ public class BaseCursorAdapter extends CursorAdapter {
 	public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void changeMode(int mode){
+		mMenuMode = mode;
+	}
+
+	@Override
+	public boolean isMode(int mode) {
+		return mMenuMode == mode;
+	}
+
+	@Override
+	public void checkedAll(boolean isChecked) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setChecked(int position, boolean isChecked) {
+		mCheckArray.put(position, isChecked);
+	}
+
+	@Override
+	public void setChecked(int position) {
+		mCheckArray.put(position, !isChecked(position));
+	}
+
+	@Override
+	public boolean isChecked(int position) {
+		return mCheckArray.get(position);
+	}
+
+	@Override
+	public int getCheckedCount() {
+//		// TODO Auto-generated method stub
+//		return 0;
+		int count = 0;
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
+				count ++;
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public List<Integer> getCheckedPosList() {
+		List<Integer> list = new ArrayList<Integer>();
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
+				list.add(i);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<String> getCheckedNameList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getCheckedPathList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setIdleFlag(boolean flag) {
+		// TODO Auto-generated method stub
 	}
 
 }

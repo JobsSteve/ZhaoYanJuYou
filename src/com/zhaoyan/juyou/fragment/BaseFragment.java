@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.common.ActionMenu;
 
 public class BaseFragment extends Fragment{
 	protected Notice mNotice = null;
@@ -64,21 +63,6 @@ public class BaseFragment extends Fragment{
 				mContext);
 		transportAnimationView.startTransportAnimation(mViewGroup,
 				mTitleNameView, startViews);
-	}
-	
-	/**
-	 * get current fragment file count
-	 */
-	public int getCount(){
-		return count;
-	}
-	
-	public int getSelectedCount(){
-		return -1;
-	}
-	
-	public int getMenuMode(){
-		return ActionMenu.MODE_NORMAL;
 	}
 	
 	/**
