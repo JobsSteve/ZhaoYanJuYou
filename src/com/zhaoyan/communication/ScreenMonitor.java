@@ -19,8 +19,7 @@ public class ScreenMonitor extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mCommunicationManager = SocketCommunicationManager
-				.getInstance(getApplicationContext());
+		mCommunicationManager = SocketCommunicationManager.getInstance();
 		mReceiver = new ScreenMonitorBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -46,14 +45,16 @@ public class ScreenMonitor extends Service {
 			String action = intent.getAction();
 			if (Intent.ACTION_SCREEN_ON.equals(action)) {
 				Log.d(TAG, "ACTION_SCREEN_ON");
-				Vector<SocketCommunication> communications = mCommunicationManager.getCommunications();
+				Vector<SocketCommunication> communications = mCommunicationManager
+						.getCommunications();
 				for (SocketCommunication communication : communications) {
 					communication.setScreenOn();
 				}
-				
+
 			} else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
 				Log.d(TAG, "ACTION_SCREEN_OFF");
-				Vector<SocketCommunication> communications = mCommunicationManager.getCommunications();
+				Vector<SocketCommunication> communications = mCommunicationManager
+						.getCommunications();
 				for (SocketCommunication communication : communications) {
 					communication.setScreenOff();
 				}

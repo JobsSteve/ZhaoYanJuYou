@@ -5,7 +5,7 @@ import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
 
 public interface IProtocol {
 	/**
-	 * Get the message types which this protocol supported.
+	 * Get the message types which the protocol support.
 	 * 
 	 * @return
 	 */
@@ -17,6 +17,9 @@ public interface IProtocol {
 	 * @param type
 	 * @param msgData
 	 * @param communication
+	 * @return decode result. If decode success, return true, else false should
+	 *         be returned.
 	 */
-	void decode(PBType type, byte[] msgData, SocketCommunication communication);
+	boolean decode(PBType type, byte[] msgData,
+			SocketCommunication communication);
 }

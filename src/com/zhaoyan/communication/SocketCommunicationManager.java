@@ -33,9 +33,8 @@ import com.zhaoyan.communication.protocol2.FileTransportProtocol.FileInfo;
 import com.zhaoyan.communication.protocol2.LoginProtocol;
 import com.zhaoyan.communication.protocol2.MessageSendProtocol;
 import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
-
+import com.zhaoyan.communication.protocol2.ProtocolManager;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.communication.protocol2.ZhaoyanProtocol;
 
 /**
  * This class is used for providing communication operations for activity.</br>
@@ -131,31 +130,10 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	private ILoginRequestCallBack mLoginRequestCallBack;
 	private ILoginRespondCallback mLoginRespondCallback;
 
-	private ZhaoyanProtocol mZhaoyanProtocol;
+	private ProtocolManager mProtocolManager;
 
 	private SocketCommunicationManager() {
 
-	}
-
-	private SocketCommunicationManager(Context context) {
-		mContext = context;
-		init(context);
-	}
-
-	/**
-	 * Use {@link #getInstance()} instead.
-	 * 
-	 * @param context
-	 * @return
-	 */
-	@Deprecated
-	public static synchronized SocketCommunicationManager getInstance(
-			Context context) {
-		if (mInstance == null) {
-			mInstance = new SocketCommunicationManager(
-					context.getApplicationContext());
-		}
-		return mInstance;
 	}
 
 	/**
@@ -185,8 +163,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mUserManager.init(context);
 		mUserManager.registerOnUserChangedListener(this);
 
-		mZhaoyanProtocol = new ZhaoyanProtocol(mContext);
-		mZhaoyanProtocol.init();
+		mProtocolManager = new ProtocolManager(mContext);
+		mProtocolManager.init();
 	}
 
 	/**
@@ -495,7 +473,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			SocketCommunication socketCommunication) {
 		// decode;
 		long start = System.currentTimeMillis();
-		mZhaoyanProtocol.decode(msg, socketCommunication);
+		mProtocolManager.decode(msg, socketCommunication);
 		long end = System.currentTimeMillis();
 		Log.i(TAG, "onReceiveMessage() decode takes time: " + (end - start));
 	}

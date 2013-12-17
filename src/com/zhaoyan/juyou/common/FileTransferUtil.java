@@ -37,7 +37,7 @@ public class FileTransferUtil {
 		this.context = context;
 		mUserManager = UserManager.getInstance();
 		mNotice = new Notice(context);
-		mSocketMgr = SocketCommunicationManager.getInstance(context);
+		mSocketMgr = SocketCommunicationManager.getInstance();
 	}
 
 	/**

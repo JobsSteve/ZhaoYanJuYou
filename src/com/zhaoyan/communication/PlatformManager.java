@@ -68,7 +68,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 		}
 		return mPlatformManager;
 	}
-	
+
 	public void release() {
 		mPlatformManager = null;
 	}
@@ -76,8 +76,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 	@SuppressLint("UseSparseArrays")
 	public void onCreate() {
 		mUserManager = UserManager.getInstance();
-		mSocketCommunicationManager = SocketCommunicationManager
-				.getInstance(mContext);
+		mSocketCommunicationManager = SocketCommunicationManager.getInstance();
 		joinedGroup = new ConcurrentHashMap<Integer, HostInfo>();
 		allHostList = new ConcurrentHashMap<Integer, HostInfo>();
 		mSocketCommunicationManager.registerOnCommunicationListenerExternal(

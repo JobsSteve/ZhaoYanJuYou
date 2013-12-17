@@ -1,19 +1,25 @@
 package com.zhaoyan.communication.protocol2;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.zhaoyan.communication.SocketCommunication;
 
-public class ZhaoyanProtocol {
+/**
+ * Manage all protocols.
+ * 
+ */
+public class ProtocolManager {
+	private static final String TAG = "ProtocolManager";
 	private BaseProtocol mBaseProtocol;
 	private Context mContext;
 
-	public ZhaoyanProtocol(Context context) {
+	public ProtocolManager(Context context) {
 		mContext = context;
-		init();
 	}
 
 	public void init() {
+		Log.d(TAG, "init()");
 		mBaseProtocol = new BaseProtocol();
 		mBaseProtocol.addProtocol(new LoginProtocol(mContext));
 		mBaseProtocol.addProtocol(new UserUpdateProtocol(mContext));
@@ -21,7 +27,15 @@ public class ZhaoyanProtocol {
 		mBaseProtocol.addProtocol(new FileTransportProtocol(mContext));
 	}
 
-	public void decode(byte[] msgData, SocketCommunication communication) {
-		mBaseProtocol.decode(msgData, communication);
+	/**
+	 * Decode the message.
+	 * 
+	 * @param msgData
+	 * @param communication
+	 * @return decode result whether the message is decoded.
+	 */
+	public boolean decode(byte[] msgData, SocketCommunication communication) {
+		boolean result = mBaseProtocol.decode(msgData, communication);
+		return result;
 	}
 }
