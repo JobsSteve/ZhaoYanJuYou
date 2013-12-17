@@ -24,7 +24,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.zhaoyan.common.util.IntentBuilder;
@@ -37,8 +36,6 @@ import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuBarManager;
-import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.VideoGridItem;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
@@ -46,18 +43,13 @@ import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
 public class VideoFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, 
-			onMenuItemClickListener, OnScrollListener, MenuBarInterface {
+			 OnScrollListener, MenuBarInterface {
 	private static final String TAG = "VideoFragment";
 	private GridView mGridView;
 	private ProgressBar mLoadingBar;
 	
 	private VideoCursorAdapter mAdapter;
 	private QueryHandler mQueryHandler = null;
-	
-	private MenuBarManager mMenuManager;
-	private View mMenuBottomView;
-	private LinearLayout mMenuHolder;
-	private ActionMenu mActionMenu;
 	
 	private DeleteDialog mDeleteDialog;
 	
@@ -113,10 +105,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		mGridView.setAdapter(mAdapter);
 		
 		initTitle(rootView.findViewById(R.id.rl_video_main), R.string.video);
-		
-		mMenuBottomView = rootView.findViewById(R.id.menubar_bottom);
-		mMenuBottomView.setVisibility(View.GONE);
-		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
+		initMenuBar(rootView);
 		
 		return rootView;
 	}
@@ -208,7 +197,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			int selectedCount = mAdapter.getCheckedCount();
 			updateTitleNum(selectedCount);
 			updateMenuBar();
-			mMenuManager.refreshMenus(mActionMenu);
+			mMenuBarManager.refreshMenus(mActionMenu);
 		}
 	}
 	
@@ -218,6 +207,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			doCheckAll();
 			return true;
 		} else {
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
 		
@@ -231,10 +221,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		
-		mMenuManager = new MenuBarManager(mContext, mMenuHolder);
-		showMenuBar(true);
-		mMenuManager.refreshMenus(mActionMenu);
-		mMenuManager.setOnMenuItemClickListener(this);
+		startMenuBar();
 		return true;
 	}
 	
@@ -251,7 +238,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 				List<String> deleteList = mAdapter.getCheckedPathList();
 				DeleteTask deleteTask = new DeleteTask(deleteList);
 				deleteTask.execute();
-				showMenuBar(false);
+				destroyMenuBar();
 			}
 		});
     	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
@@ -320,7 +307,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 	@Override
 	public boolean onBackPressed() {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			showMenuBar(false);
+			destroyMenuBar();
 			return false;
 		} else {
 			return true;
@@ -361,7 +348,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 				public void onTransportFail() {
 				}
 			});
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
 			showDeleteDialog();
@@ -411,23 +398,18 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
-		mMenuManager.refreshMenus(mActionMenu);
+		mMenuBarManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
-	public void showMenuBar(boolean show){
-		if (show) {
-			mMenuBottomView.setVisibility(View.VISIBLE);
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
-		}else {
-			mMenuBottomView.setVisibility(View.GONE);
-			updateTitleNum(-1);
-			
-			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-			mAdapter.checkedAll(false);
-			mAdapter.notifyDataSetChanged();
-		}
+	public void destroyMenuBar() {
+		super.destroyMenuBar();
+		updateTitleNum(-1);
+		
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+		mAdapter.checkedAll(false);
+		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override

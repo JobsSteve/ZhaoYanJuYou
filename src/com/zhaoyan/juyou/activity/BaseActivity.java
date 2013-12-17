@@ -7,17 +7,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.ActionMenu;
+import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.MenuBarManager;
+import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 
-public class BaseActivity extends Activity {
+public class BaseActivity extends Activity implements onMenuItemClickListener {
 
 	// title view
 	protected View mCustomTitleView;
 	protected TextView mTitleNameView;
 	protected TextView mTitleNumView;
+	
+	//menubar
+	protected View mMenuBarView;
+	protected LinearLayout mMenuHolder;
+	protected MenuBarManager mMenuBarManager;
+	protected ActionMenu mActionMenu;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +44,24 @@ public class BaseActivity extends Activity {
 				.findViewById(R.id.tv_title_name);
 		mTitleNameView.setText(titleName);
 		mTitleNumView = (TextView) mCustomTitleView.findViewById(R.id.tv_title_num);
+	}
+	
+	protected void initMenuBar(){
+		mMenuBarView = findViewById(R.id.menubar_bottom);
+		mMenuBarView.setVisibility(View.GONE);
+		mMenuHolder = (LinearLayout) findViewById(R.id.ll_menutabs_holder);
+		
+		mMenuBarManager = new MenuBarManager(getApplicationContext(), mMenuHolder);
+		mMenuBarManager.setOnMenuItemClickListener(this);
+	}
+	
+	public void startMenuBar(){
+		mMenuBarView.setVisibility(View.VISIBLE);
+		mMenuBarManager.refreshMenus(mActionMenu);
+	}
+	
+	public void destroyMenuBar(){
+		mMenuBarView.setVisibility(View.GONE);
 	}
 	
 	protected void setTitleNumVisible(boolean visible){
@@ -79,5 +108,10 @@ public class BaseActivity extends Activity {
 	
 	public boolean onBackKeyPressed(){
 		return true;
+	}
+
+	@Override
+	public void onMenuClick(ActionMenuItem item) {
+		// TODO Auto-generated method stub
 	}
 }

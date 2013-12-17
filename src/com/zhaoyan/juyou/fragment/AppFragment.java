@@ -22,7 +22,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.zhaoyan.common.util.Log;
@@ -36,8 +35,6 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuBarManager;
-import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.AppDialog;
 import com.zhaoyan.juyou.provider.AppData;
@@ -46,7 +43,7 @@ import com.zhaoyan.juyou.provider.AppData;
  * use this to load app
  */
 public class AppFragment extends AppBaseFragment implements OnItemClickListener, OnItemLongClickListener,
-			onMenuItemClickListener, MenuBarInterface {
+		 MenuBarInterface {
 	private static final String TAG = "AppFragment";
 	
 	private QueryHandler mQueryHandler;
@@ -96,11 +93,8 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mGridView = (GridView) rootView.findViewById(R.id.app_normal_gridview);
 		mLoadingBar = (ProgressBar) rootView.findViewById(R.id.app_progressbar);
 		
-		mMenuBottomView = rootView.findViewById(R.id.menubar_bottom);
-		mMenuBottomView.setVisibility(View.GONE);
-		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
-		
 		initTitle(rootView.findViewById(R.id.rl_ui_app), R.string.app);
+		initMenuBar(rootView);
 		
 		mQueryHandler = new QueryHandler(getActivity().getApplicationContext().getContentResolver());
 
@@ -167,7 +161,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			int selectedCount = mAdapter.getCheckedCount();
 			updateTitleNum(selectedCount);
 			updateMenuBar();
-			mMenuManager.refreshMenus(mActionMenu);
+			mMenuBarManager.refreshMenus(mActionMenu);
 		} else {
 			Cursor cursor = mAdapter.getCursor();
 			cursor.moveToPosition(position);
@@ -195,6 +189,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			doCheckAll();
 			return true;
 		} else {
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
 		
@@ -210,10 +205,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_app_info,R.string.menu_app_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 
-		mMenuManager = new MenuBarManager(getActivity().getApplicationContext(), mMenuHolder);
-		showMenuBar(true);
-		mMenuManager.refreshMenus(mActionMenu);
-		mMenuManager.setOnMenuItemClickListener(this);
+		startMenuBar();
 		return true;
 	}
     
@@ -244,7 +236,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	
 	public boolean onBackPressed(){
 		if (null != mAdapter && mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			showMenuBar(false);
+			destroyMenuBar();
 			return false;
 		}
 		
@@ -285,13 +277,13 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 				public void onTransportFail() {
 				}
 			});
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_UNINSTALL:
 			mUninstallList = mAdapter.getCheckedPkgList();
 			showUninstallDialog();
 			uninstallApp();
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_MOVE_TO_GAME:
 			showMoveDialog();
@@ -299,7 +291,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		case ActionMenu.ACTION_MENU_INFO:
 			String packageName = mAdapter.getCheckedPkgList().get(0);
 			showInstalledAppDetails(packageName);
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
 			doCheckAll();
@@ -307,7 +299,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		case ActionMenu.ACTION_MENU_BACKUP:
 			List<String> backupList = mAdapter.getCheckedPkgList();
 			showBackupDialog(backupList);
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 
 		default:
@@ -318,7 +310,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	public void showMoveDialog(){
 		final List<String> packageList = mAdapter.getCheckedPkgList();
 		new MoveAsyncTask(packageList).execute();
-		showMenuBar(false);
+		destroyMenuBar();
 	}
 	
 	private class MoveAsyncTask extends AsyncTask<Void, Void, Void>{
@@ -397,23 +389,19 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
-		mMenuManager.refreshMenus(mActionMenu);
+		mMenuBarManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
-	public void showMenuBar(boolean show){
-		if (show) {
-			mMenuBottomView.setVisibility(View.VISIBLE);
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
-		}else {
-			mMenuBottomView.setVisibility(View.GONE);
-			updateTitleNum(-1);
-			
-			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-			mAdapter.checkedAll(false);
-			mAdapter.notifyDataSetChanged();
-		}
+	public void destroyMenuBar() {
+		super.destroyMenuBar();
+		
+		updateTitleNum(-1);
+		
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+		mAdapter.checkedAll(false);
+		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override

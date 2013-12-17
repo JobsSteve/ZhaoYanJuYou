@@ -13,8 +13,6 @@ import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.ImageInfo;
 import com.zhaoyan.juyou.common.MenuBarInterface;
-import com.zhaoyan.juyou.common.MenuBarManager;
-import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
@@ -43,12 +41,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.AbsListView.OnScrollListener;
 
 public class ImageActivity extends BaseActivity implements OnScrollListener, OnItemClickListener, 
-		OnItemLongClickListener, onMenuItemClickListener, MenuBarInterface {
+		OnItemLongClickListener, MenuBarInterface {
 	private static final String TAG = "ImageActivity";
 	
 	public static final String IMAGE_TYPE = "IMAGE_TYPE";
@@ -79,11 +76,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	private static final String CAMERA = "Camera";
 	private static final String GALLERY = "Gallery";
 	private static final String MIMETYPE_PNG = "image/png";
-	
-	private LinearLayout mMenuHolder;
-	private View mMenuBarView;
-	private MenuBarManager mMenuTabManager;
-	private ActionMenu mActionMenu;
 	
 	private Notice mNotice = null;
 	private FileInfoManager mFileInfoManager = null;
@@ -148,11 +140,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mAdapter = new ImageAdapter(getApplicationContext(), mPictureItemInfoList);
 		mGridView.setAdapter(mAdapter);
 		
-		mMenuHolder = (LinearLayout) findViewById(R.id.ll_menutabs_holder);
-		mMenuBarView = findViewById(R.id.menubar_bottom);
-		mMenuBarView.setVisibility(View.GONE);
-		mMenuTabManager = new MenuBarManager(getApplicationContext(),
-				mMenuHolder);
+		initMenuBar();
 	}
 	
 	public void query(int token, String selection, String[] selectionArgs, String orderBy) {
@@ -283,8 +271,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			int selectedCount = mAdapter.getCheckedCount();
 			updateTitleNum(selectedCount, mAdapter.getCount());
 			updateMenuBar();
-			mMenuTabManager.refreshMenus(mActionMenu);
-		}	else {
+			mMenuBarManager.refreshMenus(mActionMenu);
+		} else {
 			startPagerActivityByPosition(position);
 		}
 	}
@@ -296,6 +284,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			doCheckAll();
 			return true;
 		}else {
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1, mAdapter.getCount());
 		}
 		
@@ -308,17 +297,14 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		
-		mMenuTabManager = new MenuBarManager(getApplicationContext(), mMenuHolder);
-		showMenuBar(true);
-		mMenuTabManager.refreshMenus(mActionMenu);
-		mMenuTabManager.setOnMenuItemClickListener(this);
+		startMenuBar();
 		return true;
 	}
 	
 	@Override
 	public boolean onBackKeyPressed() {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			showMenuBar(false);
+			destroyMenuBar();
 			return false;
 		}else {
 			return true;
@@ -359,7 +345,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 				public void onTransportFail() {
 				}
 			});
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
 			showDeleteDialog();
@@ -445,7 +431,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			showMenuBar(false);
+			destroyMenuBar();
 			if (null != mDeleteDialog) {
 				mDeleteDialog.cancel();
 				mDeleteDialog = null;
@@ -470,23 +456,18 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
-		mMenuTabManager.refreshMenus(mActionMenu);
+		mMenuBarManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
-	public void showMenuBar(boolean show){
-		if (show) {
-			mMenuBarView.setVisibility(View.VISIBLE);
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
-		}else {
-			mMenuBarView.setVisibility(View.GONE);
-			updateTitleNum(-1, mAdapter.getCount());
-			
-			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-			mAdapter.checkedAll(false);
-			mAdapter.notifyDataSetChanged();
-		}
+	public void destroyMenuBar() {
+		super.destroyMenuBar();
+		updateTitleNum(-1, mAdapter.getCount());
+		
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+		mAdapter.checkedAll(false);
+		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override

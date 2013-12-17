@@ -8,12 +8,6 @@ package com.zhaoyan.juyou.common;
 public interface MenuBarInterface {
 	
 	/**
-	 * show menubar or not
-	 * @param show
-	 */
-	public void showMenuBar(boolean show);
-	
-	/**
 	 * update menu bar item icon and text color,enable or disable
 	 */
 	public void updateMenuBar();

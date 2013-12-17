@@ -59,8 +59,6 @@ import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileInfoManager.NavigationRecord;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuBarManager;
-import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.dialog.CopyMoveDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
@@ -69,7 +67,7 @@ import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
 public class FileBrowserFragment extends BaseFragment implements OnClickListener, OnItemClickListener, OnScrollListener,
-		OnItemLongClickListener, onMenuItemClickListener, OnOperationListener, MenuBarInterface {
+		OnItemLongClickListener, OnOperationListener, MenuBarInterface {
 	private static final String TAG = "FileBrowserFragment";
 
 	// File path navigation bar
@@ -128,11 +126,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	private String sdcard_path;
 	private String internal_path;
-
-	private ActionMenu mActionMenu;
-	private MenuBarManager mMenuTabManager;
-	private LinearLayout mMenuHolder;
-	private View mMenuBarView;
 	
 	private Comparator<FileInfo> NAME_COMPARATOR = FileInfo.getNameComparator();
 
@@ -173,7 +166,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				browserTo(new File(mCurrentPath));
 				break;
 			case MSG_OPERATION_OVER:
-				showMenuBar(false);
+				destroyMenuBar();
 				browserTo(new File(mCurrentPath));
 				break;
 			case MSG_OPERATION_NOTIFY:
@@ -228,9 +221,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mHomeView = rootView.findViewById(R.id.ll_home);
 		mHomeView.setOnClickListener(this);
 
-		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
-		mMenuBarView = rootView.findViewById(R.id.bottom);
-		mMenuBarView.setVisibility(View.GONE);
+		initMenuBar(rootView);
 
 		return rootView;
 	}
@@ -274,7 +265,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.ll_home:
-			showMenuBar(false);
+			destroyMenuBar();
 			goToHome();
 			break;
 		default:
@@ -320,7 +311,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				int selectedCount = mAdapter.getSelectedItems();
 				updateTitleNum(selectedCount);
 				updateMenuBar();
-				mMenuTabManager.refreshMenus(mActionMenu);
+				mMenuBarManager.refreshMenus(mActionMenu);
 			} else {
 				FileInfo selectedFileInfo = mAdapter.getItem(position);
 				if (selectedFileInfo.isDir) {
@@ -354,6 +345,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				|| mAdapter.isMode(ActionMenu.MODE_CUT)) {
 			return true;
 		} else {
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
 		
@@ -369,14 +361,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_MORE, R.drawable.ic_action_overflow, R.string.menu_more);
 
-		mMenuTabManager = new MenuBarManager(mContext, mMenuHolder);
-		showMenuBar(true);
 		if (mAllLists.get(position).isDir) {
 			//we do not support send folder
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
 		}
-		mMenuTabManager.refreshMenus(mActionMenu);
-		mMenuTabManager.setOnMenuItemClickListener(this);
+		
+		startMenuBar();
 		return true;
 	}
 
@@ -484,7 +474,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
 			@Override
 			public void onClick(View view, String path) {
-				showMenuBar(false);
+				destroyMenuBar();
 				DeleteTask deleteTask = new DeleteTask(posList);
 				deleteTask.execute();
 			}
@@ -767,7 +757,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			// click current button do not response
 			if (id < mTabNameList.size() - 1) {
 				if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-					showMenuBar(false);
+					destroyMenuBar();
 				}
 				int count = mTabNameList.size() - id;
 				mTabsHolder.removeViews(id, count);
@@ -883,7 +873,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		Log.d(TAG, "onBackPressed.mStatus=" + mStatus);
 		mIconHelper.stopLoader();
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			showMenuBar(false);
+			destroyMenuBar();
 			return false;
 		}
 
@@ -925,7 +915,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		switch (item.getItemId()) {
 		case ActionMenu.ACTION_MENU_SEND:
 			doTransfer();
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
 			List<Integer> posList = mAdapter.getSelectedItemsPos();
@@ -956,7 +946,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			}
 			break;
 		case ActionMenu.ACTION_MENU_CANCEL:
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_MORE:
 			ActionMenu actionMenu = new ActionMenu(mContext);
@@ -972,7 +962,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 						List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
 						mFileInfoManager.showRenameDialog(getActivity(), renameList);
 						mAdapter.notifyDataSetChanged();
-						showMenuBar(false);
+						destroyMenuBar();
 						break;
 					case ActionMenu.ACTION_MENU_INFO:
 						List<FileInfo> list = mAdapter.getSelectedFileInfos();
@@ -1024,19 +1014,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	}
 
 	@Override
-	public void showMenuBar(boolean show) {
-		if (show) {
-			mMenuBarView.setVisibility(View.VISIBLE);
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
-		} else {
-			mMenuBarView.setVisibility(View.GONE);
-			updateTitleNum(-1);
-			
-			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-			mAdapter.clearSelected();
-			mAdapter.notifyDataSetChanged();
-			mCopyList.clear();
-		}
+	public void destroyMenuBar() {
+		super.destroyMenuBar();
+		
+		updateTitleNum(-1);
+		
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+		mAdapter.clearSelected();
+		mAdapter.notifyDataSetChanged();
+		mCopyList.clear();
 	}
 
 	@Override
@@ -1080,7 +1066,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mAdapter.selectAll(false);
 		}
 		updateMenuBar();
-		mMenuTabManager.refreshMenus(mActionMenu);
+		mMenuBarManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
 	
@@ -1091,7 +1077,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_CREATE_FOLDER, R.drawable.ic_action_createfolder, R.string.create_folder);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_PASTE, R.drawable.ic_action_paste, R.string.paste);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, R.drawable.ic_action_cancel, R.string.cancel);
-		mMenuTabManager.refreshMenus(mActionMenu);
+		mMenuBarManager.refreshMenus(mActionMenu);
 	}
 	
 	private void onOperationPaste(){

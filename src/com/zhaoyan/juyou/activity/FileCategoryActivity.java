@@ -42,14 +42,12 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuBarManager;
-import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
 public class FileCategoryActivity extends BaseActivity implements
 		OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-		onMenuItemClickListener, FileCategoryScanListener, MenuBarInterface {
+		FileCategoryScanListener, MenuBarInterface {
 	private static final String TAG = "CategoryActivity";
 	private ProgressBar mLoadingBar;
 	private ListView mListView;
@@ -59,11 +57,6 @@ public class FileCategoryActivity extends BaseActivity implements
 	protected FileInfoAdapter mAdapter;
 	protected FileInfoManager mFileInfoManager;
 	private FileCategoryScanner mFileCategoryScanner;
-
-	private LinearLayout mMenuHolder;
-	private View mMenuBarView;
-	private MenuBarManager mMenuTabManager;
-	private ActionMenu mActionMenu;
 
 	public static final int TYPE_DOC = 0;
 	public static final int TYPE_ARCHIVE = 1;
@@ -148,12 +141,8 @@ public class FileCategoryActivity extends BaseActivity implements
 
 		mFileInfoManager = new FileInfoManager();
 
-		mMenuHolder = (LinearLayout) findViewById(R.id.ll_menutabs_holder);
-		mMenuBarView = findViewById(R.id.menubar_bottom);
-		mMenuBarView.setVisibility(View.GONE);
 		mNotice = new Notice(getApplicationContext());
-		mMenuTabManager = new MenuBarManager(getApplicationContext(),
-				mMenuHolder);
+		initMenuBar();
 
 		SharedPreferences sp = SharedPreferenceUtil.getSharedPreference(getApplicationContext());
 		String sdcard_path = sp.getString(SharedPreferenceUtil.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
@@ -216,6 +205,7 @@ public class FileCategoryActivity extends BaseActivity implements
 			doCheckAll();
 			return true;
 		} else {
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1, mAdapter.getCount());
 		}
 		boolean isSelected = mAdapter.isSelected(position);
@@ -229,9 +219,7 @@ public class FileCategoryActivity extends BaseActivity implements
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		
-		showMenuBar(true);
-		mMenuTabManager.refreshMenus(mActionMenu);
-		mMenuTabManager.setOnMenuItemClickListener(this);
+		startMenuBar();
 		return true;
 	}
 
@@ -245,7 +233,7 @@ public class FileCategoryActivity extends BaseActivity implements
 			int selectedCount = mAdapter.getSelectedItems();
 			updateTitleNum(selectedCount, mAdapter.getCount());
 			updateMenuBar();
-			mMenuTabManager.refreshMenus(mActionMenu);
+			mMenuBarManager.refreshMenus(mActionMenu);
 		} else {
 			// open file
 			IntentBuilder.viewFile(this, mAdapter.getItem(position).filePath);
@@ -285,7 +273,7 @@ public class FileCategoryActivity extends BaseActivity implements
 		switch (item.getItemId()) {
 		case ActionMenu.ACTION_MENU_SEND:
 			doTransfer();
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
 			List<Integer> posList = mAdapter.getSelectedItemsPos();
@@ -302,27 +290,21 @@ public class FileCategoryActivity extends BaseActivity implements
 			List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
 			mFileInfoManager.showRenameDialog(this, renameList);
 			mAdapter.notifyDataSetChanged();
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		default:
 			break;
 		}
 	}
-
+	
 	@Override
-	public void showMenuBar(boolean show) {
-		if (show) {
-			mMenuBarView.setVisibility(View.VISIBLE);
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
-		} else {
-			mMenuBarView.setVisibility(View.GONE);
-			
-			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-			mAdapter.clearSelected();
-			mAdapter.notifyDataSetChanged();
-			
-			updateTitleNum(-1, mAdapter.getCount());
-		}
+	public void destroyMenuBar() {
+		super.destroyMenuBar();
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+		mAdapter.clearSelected();
+		mAdapter.notifyDataSetChanged();
+		
+		updateTitleNum(-1, mAdapter.getCount());
 	}
 
 	@Override
@@ -362,7 +344,7 @@ public class FileCategoryActivity extends BaseActivity implements
 			mAdapter.selectAll(false);
 		}
 		updateMenuBar();
-		mMenuTabManager.refreshMenus(mActionMenu);
+		mMenuBarManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
 
@@ -423,7 +405,7 @@ public class FileCategoryActivity extends BaseActivity implements
 		mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
 			@Override
 			public void onClick(View view, String path) {
-				showMenuBar(false);
+				destroyMenuBar();
 				new DeleteTask(posList).execute();
 			}
 		});
@@ -481,7 +463,7 @@ public class FileCategoryActivity extends BaseActivity implements
 	@Override
 	public boolean onBackKeyPressed() {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			showMenuBar(false);
+			destroyMenuBar();
 			return false;
 		}
 		return super.onBackKeyPressed();
