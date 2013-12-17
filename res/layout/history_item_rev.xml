@@ -35,7 +35,6 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
-            android:background="@drawable/head1"
             android:focusable="false" />
         
         <Button
