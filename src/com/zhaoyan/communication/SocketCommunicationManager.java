@@ -20,8 +20,6 @@ import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.communication.CallBacks.ILoginRequestCallBack;
-import com.zhaoyan.communication.CallBacks.ILoginRespondCallback;
 import com.zhaoyan.communication.FileSender.OnFileSendListener;
 import com.zhaoyan.communication.SocketClientTask.OnConnectedToServerListener;
 import com.zhaoyan.communication.SocketCommunication.OnCommunicationChangedListener;
@@ -45,8 +43,7 @@ import com.zhaoyan.juyou.R;
  */
 public class SocketCommunicationManager implements OnClientConnectedListener,
 		OnConnectedToServerListener, OnCommunicationChangedListener,
-		OnReceiveMessageListener, OnUserChangedListener, ILoginRequestCallBack,
-		ILoginRespondCallback {
+		OnReceiveMessageListener, OnUserChangedListener {
 	private static final String TAG = "SocketCommunicationManager";
 
 	/**
@@ -125,10 +122,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 */
 	private ConcurrentHashMap<OnFileTransportListener, Integer> mOnFileTransportListener = new ConcurrentHashMap<SocketCommunicationManager.OnFileTransportListener, Integer>();
 	private UserManager mUserManager = UserManager.getInstance();
-
-	/** Used for Login confirm UI */
-	private ILoginRequestCallBack mLoginRequestCallBack;
-	private ILoginRespondCallback mLoginRespondCallback;
 
 	private ProtocolManager mProtocolManager;
 
@@ -229,14 +222,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 				Log.e(TAG, "there is no this listener in the map");
 			}
 		}
-	}
-
-	public void setLoginRequestCallBack(ILoginRequestCallBack callback) {
-		mLoginRequestCallBack = callback;
-	}
-
-	public void setLoginRespondCallback(ILoginRespondCallback callback) {
-		mLoginRespondCallback = callback;
 	}
 
 	/**
@@ -770,63 +755,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			} catch (RemoteException e) {
 				Log.e(TAG, "onUserDisconnected error." + e);
 			}
-		}
-	}
-
-	@Override
-	public void onLoginSuccess(User localUser, SocketCommunication communication) {
-		if (mLoginRespondCallback != null) {
-			mLoginRespondCallback.onLoginSuccess(localUser, communication);
-		} else {
-			Log.d(TAG, "mLoginReusltCallback is null");
-		}
-	}
-
-	@Override
-	public void onLoginFail(int failReason, SocketCommunication communication) {
-		if (mLoginRespondCallback != null) {
-			mLoginRespondCallback.onLoginFail(failReason, communication);
-		} else {
-			Log.d(TAG, "mLoginReusltCallback is null");
-		}
-	}
-
-	@Override
-	public void onLoginRequest(UserInfo user, SocketCommunication communication) {
-		Log.d(TAG, "onLoginRequest()");
-		if (mLoginRequestCallBack != null) {
-			mLoginRequestCallBack.onLoginRequest(user, communication);
-		}
-
-	}
-
-	/**
-	 * Respond to the login request. If login is allowed, send message to update
-	 * user list.
-	 * 
-	 * @param userInfo
-	 * @param communication
-	 * @param isAllow
-	 */
-	public void respondLoginRequest(UserInfo userInfo,
-			SocketCommunication communication, boolean isAllow) {
-		// TODO If the server disallow the login request, may be stop the socket
-		// communication. But we should check the login request is from the WiFi
-		// direct server or a client. Let this be done in the future.
-		boolean loginResult = false;
-		if (isAllow) {
-			loginResult = mUserManager.addNewLoginedUser(userInfo,
-					communication);
-		} else {
-			loginResult = false;
-		}
-		LoginProtocol.encodeLoginRespond(loginResult, userInfo.getUser()
-				.getUserID(), communication);
-		Log.d(TAG, "longin result = " + loginResult + ", userInfo = "
-				+ userInfo);
-
-		if (loginResult) {
-			sendMessageToUpdateAllUser();
 		}
 	}
 

@@ -6,6 +6,7 @@ import com.dreamlink.communication.aidl.User;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.ProtocolCommunication;
 import com.zhaoyan.communication.SocketCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserHelper;
@@ -94,10 +95,10 @@ public class LoginProtocol implements IProtocol {
 			Log.d(TAG, "This is manager server, process login request.");
 			UserInfo userInfo = getLoginRequestUserInfo(data);
 
-			// Let SocketCommunicationManager to handle the request.
-			SocketCommunicationManager manager = SocketCommunicationManager
+			// Let ProtocolCommunication to handle the request.
+			ProtocolCommunication protocolCommunication = ProtocolCommunication
 					.getInstance();
-			manager.onLoginRequest(userInfo, communication);
+			protocolCommunication.notifyLoginRequest(userInfo, communication);
 		}
 	}
 
@@ -177,9 +178,10 @@ public class LoginProtocol implements IProtocol {
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}
+
+		ProtocolCommunication protocolCommunication = ProtocolCommunication
+				.getInstance();
 		if (loginRespond != null) {
-			SocketCommunicationManager manager = SocketCommunicationManager
-					.getInstance();
 			PBLoginResult result = loginRespond.getResult();
 			Log.d(TAG, "Login result = " + result);
 			if (result == PBLoginResult.SUCCESS) {
@@ -194,11 +196,14 @@ public class LoginProtocol implements IProtocol {
 				UserManager.getInstance().setLocalUserInfo(userInfo);
 				UserManager.getInstance().setLocalUserConnected(communication);
 
-				manager.onLoginSuccess(userInfo.getUser(), communication);
+				protocolCommunication.notifyLoginSuccess(userInfo.getUser(),
+						communication);
 			} else if (result == PBLoginResult.FAIL) {
 				// fail reason.
 				PBLoginFailReason reason = loginRespond.getFailReason();
-				manager.onLoginFail(reason.getNumber(), communication);
+
+				protocolCommunication.notifyLoginFail(reason.getNumber(),
+						communication);
 			}
 		}
 	}

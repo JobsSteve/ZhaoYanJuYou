@@ -1,18 +1,18 @@
 package com.zhaoyan.communication;
 
-import com.dreamlink.communication.aidl.User;
-import com.zhaoyan.common.util.Log;
-import com.zhaoyan.communication.CallBacks.ILoginRequestCallBack;
-import com.zhaoyan.communication.CallBacks.ILoginRespondCallback;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.dreamlink.communication.aidl.User;
+import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.ProtocolCommunication.ILoginRequestCallBack;
+import com.zhaoyan.communication.ProtocolCommunication.ILoginRespondCallback;
+
 public class LoginService extends Service implements ILoginRequestCallBack,
 		ILoginRespondCallback {
 	private static final String TAG = "LoginService";
-	private SocketCommunicationManager mCommunicationManager;
+	private ProtocolCommunication mProtocolCommunication;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -23,9 +23,9 @@ public class LoginService extends Service implements ILoginRequestCallBack,
 	public void onCreate() {
 		super.onCreate();
 		Log.d(TAG, "onCreate()");
-		mCommunicationManager = SocketCommunicationManager.getInstance();
-		mCommunicationManager.setLoginRequestCallBack(this);
-		mCommunicationManager.setLoginRespondCallback(this);
+		mProtocolCommunication = ProtocolCommunication.getInstance();
+		mProtocolCommunication.setLoginRequestCallBack(this);
+		mProtocolCommunication.setLoginRespondCallback(this);
 	}
 
 	@Override
@@ -51,15 +51,15 @@ public class LoginService extends Service implements ILoginRequestCallBack,
 		// TODO auto respond.
 		Log.d(TAG, "onLoginRequest user = " + userInfo + ", communication = "
 				+ communication);
-		mCommunicationManager
-				.respondLoginRequest(userInfo, communication, true);
+		mProtocolCommunication.respondLoginRequest(userInfo, communication,
+				true);
 	}
 
 	@Override
 	public void onDestroy() {
 		Log.d(TAG, "onDestroy()");
-		mCommunicationManager.setLoginRequestCallBack(null);
-		mCommunicationManager.setLoginRespondCallback(null);
+		mProtocolCommunication.setLoginRequestCallBack(null);
+		mProtocolCommunication.setLoginRespondCallback(null);
 		super.onDestroy();
 	}
 }

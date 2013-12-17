@@ -11,6 +11,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileTransferService;
+import com.zhaoyan.communication.ProtocolCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.TrafficStatics;
 import com.zhaoyan.communication.UserManager;
@@ -45,9 +46,9 @@ public class JuYouApplication extends Application {
 		}
 		Log.d(TAG, "initApplication");
 		mIsInit = true;
-		//init mount
+		// init mount
 		MountManager.init(context);
-		
+
 		initImageLoader(context);
 		// Start save log to file.
 		Log.startSaveToFile();
@@ -55,6 +56,8 @@ public class JuYouApplication extends Application {
 		TrafficStatics.getInstance().init(context);
 		// Initialize SocketCommunicationManager
 		SocketCommunicationManager.getInstance().init(context);
+		// Initialize ProtocolCommunication
+		ProtocolCommunication.getInstance().init(context);
 	}
 
 	public static synchronized void quitApplication(Context context) {
@@ -67,6 +70,8 @@ public class JuYouApplication extends Application {
 		stopServerCreator(context);
 		stopCommunication(context);
 		stopFileTransferService(context);
+		// Release ProtocolCommunication
+		ProtocolCommunication.getInstance().release();
 		// Release SocketCommunicationManager
 		SocketCommunicationManager.getInstance().release();
 		// Release TrafficStatics

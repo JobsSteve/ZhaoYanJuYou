@@ -28,11 +28,11 @@ import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.APKUtil;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.file.SingleMediaScanner;
+import com.zhaoyan.common.util.BitmapUtilities;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileReceiver.OnReceiveListener;
 import com.zhaoyan.communication.FileSender.OnFileSendListener;
 import com.zhaoyan.communication.SocketCommunicationManager.OnFileTransportListener;
-import com.zhaoyan.communication.protocol.FileTransferInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
 import com.zhaoyan.juyou.common.AppManager;
@@ -59,15 +59,15 @@ public class FileTransferService extends Service implements
 	public static final String ACTION_NOTIFY_SEND_OR_RECEIVE = "com.zhaoyan.communication.FileTransferService.ACTION_NOTIFY_SEND_OR_RECEIVE";
 	public static final String ACTION_CANCEL_SEND = "com.zhaoyan.communication.FileTransferService.ACTION_CANCEL_SEND";
 	public static final String ACTION_CANCEL_RECEIVE = "com.zhaoyan.communication.FileTransferService.ACTION_CANCEL_RECEIVE";
-	
-	//show badgeview or not
+
+	// show badgeview or not
 	public static final String EXTRA_BADGEVIEW_SHOW = "badgeview_show";
 
 	private Notice mNotice;
 	private SocketCommunicationManager mSocketMgr;
 	private HistoryManager mHistoryManager = null;
 	private UserManager mUserManager = null;
-	
+
 	// uri string <==> key object
 	private Map<String, Object> mUriMap = new ConcurrentHashMap<String, Object>();
 	// key object <==> FileReceiver
@@ -81,7 +81,7 @@ public class FileTransferService extends Service implements
 
 	/** Thread pool */
 	private ExecutorService mExecutorService = Executors.newCachedThreadPool();
-	
+
 	FileSender mFileSender = null;
 
 	@Override
@@ -104,7 +104,8 @@ public class FileTransferService extends Service implements
 				// get installed app
 				AppInfo appInfo = null;
 				try {
-					ApplicationInfo info = getPackageManager().getApplicationInfo(packageName, 0);
+					ApplicationInfo info = getPackageManager()
+							.getApplicationInfo(packageName, 0);
 					appInfo = new AppInfo(getApplicationContext(), info);
 					appInfo.setPackageName(packageName);
 					appInfo.setAppIcon(info.loadIcon(getPackageManager()));
@@ -115,8 +116,10 @@ public class FileTransferService extends Service implements
 					} else {
 						appInfo.setType(AppManager.NORMAL_APP);
 					}
-					ContentValues values = AppManager.getValuesByAppInfo(appInfo);
-					getContentResolver().insert(AppData.App.CONTENT_URI, values);
+					ContentValues values = AppManager
+							.getValuesByAppInfo(appInfo);
+					getContentResolver()
+							.insert(AppData.App.CONTENT_URI, values);
 				} catch (NameNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -127,13 +130,13 @@ public class FileTransferService extends Service implements
 				Uri uri = Uri
 						.parse(AppData.App.CONTENT_URI + "/" + packageName);
 				getContentResolver().delete(uri, null, null);
-			}else if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
+			} else if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
 				Log.d(TAG, "onReceive:ACTION_MEDIA_MOUNTED");
 				mNotice.showToast("SD卡可用");
 				MountManager.init(getApplicationContext());
-			}else if (Intent.ACTION_MEDIA_UNMOUNTED.equals(action) ||
-					Intent.ACTION_MEDIA_REMOVED.equals(action) ||
-					Intent.ACTION_MEDIA_SHARED.equals(action)) {
+			} else if (Intent.ACTION_MEDIA_UNMOUNTED.equals(action)
+					|| Intent.ACTION_MEDIA_REMOVED.equals(action)
+					|| Intent.ACTION_MEDIA_SHARED.equals(action)) {
 				Log.d(TAG, "onReceive:ACTION_MEDIA_UNMOUNTED");
 				mNotice.showToast("SD卡已拔出");
 				MountManager.init(getApplicationContext());
@@ -153,8 +156,8 @@ public class FileTransferService extends Service implements
 		filter.addAction(Intent.ACTION_MEDIA_EJECT);
 		filter.addAction(Intent.ACTION_MEDIA_SHARED);
 		registerReceiver(transferReceiver, filter);
-		
-		//register appliaction install/remove
+
+		// register appliaction install/remove
 		IntentFilter appFilter = new IntentFilter();
 		appFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
 		appFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
@@ -176,29 +179,30 @@ public class FileTransferService extends Service implements
 		if (null != intent) {
 			String action = intent.getAction();
 			Log.d(TAG, "onStartCommand: action = " + action);
-			
-			if (ACTION_CANCEL_SEND.equals(action)){
+
+			if (ACTION_CANCEL_SEND.equals(action)) {
 				handleCancelSendRequest(intent);
-			} else if (ACTION_CANCEL_RECEIVE.equals(action)){
+			} else if (ACTION_CANCEL_RECEIVE.equals(action)) {
 				handleCancelReceiveRequest(intent);
 			}
 		}
-	
+
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	/**
 	 * Cancel receiving data.
 	 * 
-	 * @param intent Include the storage identifier.
-	 *
+	 * @param intent
+	 *            Include the storage identifier.
+	 * 
 	 * @return void
 	 */
 	private void handleCancelReceiveRequest(Intent intent) {
 		Bundle bundle = intent.getExtras();
 		String uri = bundle.getString(HistoryManager.HISTORY_URI);
 		Log.d(TAG, "handleCancelReceiveRequest: uri = " + uri);
-		
+
 		// 由于系统调用延迟，调用到这里时，数据传输可能刚好完成，此时的key就为null
 		Object key = mUriMap.get(uri);
 		if (key == null) {
@@ -206,14 +210,14 @@ public class FileTransferService extends Service implements
 			return;
 		}
 		FileReceiver currFileReceiver = mFileReceiverMap.get(key);
-		
+
 		if (currFileReceiver != null) {
 			// Send Message to Client
-		    User sendUser = currFileReceiver.getSendUser();
-		    mSocketMgr.cancelReceiveFile(sendUser, mAppId);
-		    
-		    // Close receive thread
-		    currFileReceiver.cancelReceiveFile();
+			User sendUser = currFileReceiver.getSendUser();
+			mSocketMgr.cancelReceiveFile(sendUser, mAppId);
+
+			// Close receive thread
+			currFileReceiver.cancelReceiveFile();
 		} else {
 			Log.d(TAG, "currFileReceiver is null!");
 		}
@@ -223,15 +227,16 @@ public class FileTransferService extends Service implements
 	/**
 	 * Cancel sending data.
 	 * 
-	 * @param intent Include the storage identifier.
-	 *
+	 * @param intent
+	 *            Include the storage identifier.
+	 * 
 	 * @return void
 	 */
 	private void handleCancelSendRequest(Intent intent) {
 		Bundle bundle = intent.getExtras();
 		String uri = bundle.getString(HistoryManager.HISTORY_URI);
 		Log.d(TAG, "handleCancelSendRequest: uri = " + uri);
-		
+
 		// 由于系统调用延迟，调用到这里时，数据传输可能刚好完成，此时的key就为null
 		Object key = mUriMap.get(uri);
 		if (key == null) {
@@ -241,13 +246,13 @@ public class FileTransferService extends Service implements
 		SendFileThread currExeSendThread = mSendingFileThreadMap.get(key);
 		if (currExeSendThread != null) {
 			// Send Message to Client
-		    User receiverUser = currExeSendThread.getReceiveUser();
-		    mSocketMgr.cancelSendFile(receiverUser, mAppId);
-		    
-		    // Close send thread
-		    mFileSender.cancelSendFile();
+			User receiverUser = currExeSendThread.getReceiveUser();
+			mSocketMgr.cancelSendFile(receiverUser, mAppId);
+
+			// Close send thread
+			mFileSender.cancelSendFile();
 		} else {
-			Log.d(TAG, "currExeSendThread is null!"); 
+			Log.d(TAG, "currExeSendThread is null!");
 		}
 	}
 
@@ -311,7 +316,7 @@ public class FileTransferService extends Service implements
 			historyInfo.setFileSize(file.length());
 			historyInfo.setReceiveUser(receiveUser);
 			historyInfo.setSendUserName(getResources().getString(R.string.me));
-			//set user head 
+			// set user head
 			historyInfo.setSendUserHeadId(0);
 			historyInfo.setSendUserIcon(null);
 			//
@@ -322,8 +327,8 @@ public class FileTransferService extends Service implements
 					getApplicationContext(), file));
 			if (FileManager.APK == FileManager.getFileType(
 					getApplicationContext(), file)) {
-				byte[] fileIcon = FileTransferInfo
-						.bitmapToByteArray(FileTransferInfo
+				byte[] fileIcon = BitmapUtilities
+						.bitmapToByteArray(BitmapUtilities
 								.drawableToBitmap(APKUtil.getApkIcon2(
 										getApplicationContext(),
 										file.getAbsolutePath())));
@@ -338,7 +343,7 @@ public class FileTransferService extends Service implements
 			mTransferMap.put(key, uri);
 			// save uri string & key
 			mUriMap.put(uri.toString(), key);
-			
+
 			Log.d(TAG, "addToSendQueue: URI = " + uri.toString());
 		}
 
@@ -347,12 +352,12 @@ public class FileTransferService extends Service implements
 			ContentValues values = new ContentValues();
 			values.put(JuyouData.History.STATUS, HistoryManager.STATUS_PRE_SEND);
 			getContentResolver().update(getFileUri(key), values, null, null);
-			mFileSender = mSocketMgr.sendFile(file, FileTransferService.this, receiveUser,
-					mAppId, key);
-			//when send a file,notify othes that need to know
+			mFileSender = mSocketMgr.sendFile(file, FileTransferService.this,
+					receiveUser, mAppId, key);
+			// when send a file,notify othes that need to know
 			sendBroadcastForNotify(true);
 		}
-		
+
 		public User getReceiveUser() {
 			return receiveUser;
 		}
@@ -365,8 +370,8 @@ public class FileTransferService extends Service implements
 			isFileSending = false;
 		}
 	}
-	
-	public void sendBroadcastForNotify(boolean show){
+
+	public void sendBroadcastForNotify(boolean show) {
 		Intent intent = new Intent(ACTION_NOTIFY_SEND_OR_RECEIVE);
 		intent.putExtra(EXTRA_BADGEVIEW_SHOW, show);
 		sendBroadcast(intent);
@@ -381,7 +386,8 @@ public class FileTransferService extends Service implements
 		File file = null;
 		long fileSize = fileReceiver.getFileTransferInfo().getFileSize();
 		byte[] fileIcon = fileReceiver.getFileTransferInfo().getFileIcon();
-		userInfo = UserHelper.getUserInfo(getApplicationContext(), fileReceiver.getSendUser());
+		userInfo = UserHelper.getUserInfo(getApplicationContext(),
+				fileReceiver.getSendUser());
 		int sendUserHeadId = userInfo.getHeadId();
 		byte[] sendUserIcon = null;
 		Log.d(TAG, "onReceiveFile:" + fileName + "," + sendUserName + ",size="
@@ -398,8 +404,9 @@ public class FileTransferService extends Service implements
 		historyInfo.setMsgType(HistoryManager.TYPE_RECEIVE);
 		historyInfo.setDate(System.currentTimeMillis());
 		historyInfo.setStatus(HistoryManager.STATUS_PRE_RECEIVE);
-		
-		int fileType = FileManager.getFileTypeByName(getApplicationContext(), fileName);
+
+		int fileType = FileManager.getFileTypeByName(getApplicationContext(),
+				fileName);
 		switch (fileType) {
 		case FileManager.APK:
 			currentRevFolder = ZYConstant.JUYOU_APP_FOLDER;
@@ -427,8 +434,7 @@ public class FileTransferService extends Service implements
 			}
 		}
 
-		String filePath = currentRevFolder
-				+ File.separator + fileName;
+		String filePath = currentRevFolder + File.separator + fileName;
 		file = new File(filePath);
 		if (!file.exists()) {
 			try {
@@ -441,12 +447,11 @@ public class FileTransferService extends Service implements
 		} else {
 			// if file is exist,auto rename
 			fileName = FileInfoManager.autoRename(fileName);
-			while (new File(currentRevFolder
-					+ File.separator + fileName).exists()) {
+			while (new File(currentRevFolder + File.separator + fileName)
+					.exists()) {
 				fileName = FileInfoManager.autoRename(fileName);
 			}
-			filePath = currentRevFolder + File.separator
-					+ fileName;
+			filePath = currentRevFolder + File.separator + fileName;
 			file = new File(filePath);
 		}
 
@@ -471,7 +476,7 @@ public class FileTransferService extends Service implements
 		Log.d(TAG, "onReceiveFile: URI = " + uri.toString());
 
 		fileReceiver.receiveFile(file, FileTransferService.this, key);
-		//when receive a file,notify othes that need to know
+		// when receive a file,notify othes that need to know
 		sendBroadcastForNotify(true);
 	}
 

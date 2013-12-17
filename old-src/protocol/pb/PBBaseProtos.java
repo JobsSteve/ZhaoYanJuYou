@@ -49,10 +49,6 @@ public final class PBBaseProtos {
      * <code>FILE_TRANSPORT_CANCEL_RECEIVE = 402;</code>
      */
     FILE_TRANSPORT_CANCEL_RECEIVE(8, 402),
-    /**
-     * <code>HEART_BEAT = 500;</code>
-     */
-    HEART_BEAT(9, 500),
     ;
 
     /**
@@ -91,10 +87,6 @@ public final class PBBaseProtos {
      * <code>FILE_TRANSPORT_CANCEL_RECEIVE = 402;</code>
      */
     public static final int FILE_TRANSPORT_CANCEL_RECEIVE_VALUE = 402;
-    /**
-     * <code>HEART_BEAT = 500;</code>
-     */
-    public static final int HEART_BEAT_VALUE = 500;
 
 
     public final int getNumber() { return value; }
@@ -110,7 +102,6 @@ public final class PBBaseProtos {
         case 400: return FILE_TRANSPORT_SEND;
         case 401: return FILE_TRANSPORT_CANCEL_SEND;
         case 402: return FILE_TRANSPORT_CANCEL_RECEIVE;
-        case 500: return HEART_BEAT;
         default: return null;
       }
     }
@@ -675,15 +666,15 @@ public final class PBBaseProtos {
     java.lang.String[] descriptorData = {
       "\n\026src/message_type.proto\022\021com.zhaoyan.ju" +
       "you\"B\n\006PBBase\022\'\n\004type\030\001 \002(\0162\031.com.zhaoya" +
-      "n.juyou.PBType\022\017\n\007message\030\002 \001(\014*\201\002\n\006PBTy" +
+      "n.juyou.PBType\022\017\n\007message\030\002 \001(\014*\360\001\n\006PBTy" +
       "pe\022\021\n\rLOGIN_REQUEST\020d\022\021\n\rLOGIN_RESPOND\020e" +
       "\022\023\n\016UPDATE_USER_ID\020\310\001\022\025\n\020UPDATE_USER_INF" +
       "O\020\311\001\022\033\n\026SEND_MESSAGE_TO_SINGLE\020\254\002\022\030\n\023SEN" +
       "D_MESSAGE_TO_ALL\020\255\002\022\030\n\023FILE_TRANSPORT_SE" +
       "ND\020\220\003\022\037\n\032FILE_TRANSPORT_CANCEL_SEND\020\221\003\022\"" +
-      "\n\035FILE_TRANSPORT_CANCEL_RECEIVE\020\222\003\022\017\n\nHE" +
-      "ART_BEAT\020\364\003B5\n%com.zhaoyan.communication",
-      ".protocol.pbB\014PBBaseProtos"
+      "\n\035FILE_TRANSPORT_CANCEL_RECEIVE\020\222\003B5\n%co" +
+      "m.zhaoyan.communication.protocol.pbB\014PBB",
+      "aseProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
