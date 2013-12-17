@@ -294,7 +294,7 @@ public final class PBUserUpdateProtos {
                 com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUpdateUserId.class, com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUpdateUserId.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBUserUpdateProtos.PBUpdateUserId.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUpdateUserId.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1098,7 +1098,7 @@ public final class PBUserUpdateProtos {
                 com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUserInfo.class, com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUserInfo.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBUserUpdateProtos.PBUserInfo.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUserInfo.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1692,9 +1692,9 @@ public final class PBUserUpdateProtos {
       "\nPBUserInfo\022\016\n\006userId\030\001 \001(\005\022\020\n\010userName\030" +
       "\002 \001(\t\022\023\n\013headImageId\030\003 \001(\005\022\025\n\rheadImageD" +
       "ata\030\004 \001(\014\022\021\n\tipAddress\030\005 \001(\t\022\014\n\004type\030\006 \001" +
-      "(\005\022\014\n\004ssid\030\007 \001(\t\022\016\n\006status\030\010 \001(\005B<\n&com." +
-      "zhaoyan.communication.protocol.genB\022PBUs" +
-      "erUpdateProtos"
+      "(\005\022\014\n\004ssid\030\007 \001(\t\022\016\n\006status\030\010 \001(\005B;\n%com." +
+      "zhaoyan.communication.protocol.pbB\022PBUse" +
+      "rUpdateProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

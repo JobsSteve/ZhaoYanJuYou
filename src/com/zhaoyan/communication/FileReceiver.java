@@ -19,7 +19,7 @@ import android.os.Message;
 import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.TrafficStaticInterface.TrafficStaticsRxListener;
-import com.zhaoyan.communication.protocol.FileTransferInfo;
+import com.zhaoyan.communication.protocol2.FileTransportProtocol.FileInfo;
 
 /**
  * Connect to server socket and get the file from server.
@@ -30,11 +30,11 @@ public class FileReceiver {
 	private static final int SOCKET_TIMEOUT = 5000;
 	/** To avoid call back to fast, set the minimum interval callback time。 */
 	private static final int TIME_CALLBACK_INTERVAL = 1000;
-	
+
 	private User mSendUser;
 	private InetAddress mServerInetAddress;
 	private int mServerPort;
-	private FileTransferInfo mFileTransferInfo;
+	private FileInfo mFileInfo;
 	private File mReceivedFile;
 	private OnReceiveListener mListener;
 
@@ -49,18 +49,18 @@ public class FileReceiver {
 
 	private static final int FINISH_RESULT_SUCCESS = 1;
 	private static final int FINISH_RESULT_FAIL = 2;
-	
+
 	private Object mKey;
 
 	/** The socket to recieve file. */
 	private Socket mSocket;
-	
+
 	private TrafficStaticsRxListener mRxListener = TrafficStatics.getInstance();
-	
+
 	private boolean mCancelReceiveFlag = false;
 
 	public FileReceiver(User sendUser, byte[] serverAddress, int serverPort,
-			FileTransferInfo fileTransferInfo) {
+			FileInfo fileInfo) {
 		mSendUser = sendUser;
 		try {
 			mServerInetAddress = InetAddress.getByAddress(serverAddress);
@@ -68,7 +68,7 @@ public class FileReceiver {
 			Log.e(TAG, "FileReceiver() get server addresss error. " + e);
 		}
 		mServerPort = serverPort;
-		mFileTransferInfo = fileTransferInfo;
+		mFileInfo = fileInfo;
 	}
 
 	/**
@@ -81,8 +81,8 @@ public class FileReceiver {
 	/**
 	 * @return the FileInfo
 	 */
-	public FileTransferInfo getFileTransferInfo() {
-		return mFileTransferInfo;
+	public FileInfo getFileTransferInfo() {
+		return mFileInfo;
 	}
 
 	/**
@@ -92,7 +92,8 @@ public class FileReceiver {
 	 *            the file to save.
 	 * @param listener
 	 */
-	public void receiveFile(File receivedFile, OnReceiveListener listener, Object key) {
+	public void receiveFile(File receivedFile, OnReceiveListener listener,
+			Object key) {
 		mKey = key;
 		Log.d(TAG,
 				"receiveFile() received file " + receivedFile.getAbsolutePath());
@@ -111,7 +112,7 @@ public class FileReceiver {
 
 		mHandler = new Handler(mHandlerThread.getLooper(), mHandlerThread);
 	}
-	
+
 	public void cancelReceiveFile() {
 		mCancelReceiveFlag = true;
 	}
@@ -170,32 +171,34 @@ public class FileReceiver {
 		byte buf[] = new byte[4096];
 		int len;
 		long receiveBytes = 0;
-		long totalBytes = mFileTransferInfo.getFileSize();
+		long totalBytes = mFileInfo.mFileSize;
 		long start = System.currentTimeMillis();
 		long lastCallbackTime = start;
 		long currentTime = start;
 		mCancelReceiveFlag = false;
-		
+
 		try {
-			while ((len = inputStream.read(buf)) != -1 && mCancelReceiveFlag == false) {
+			while ((len = inputStream.read(buf)) != -1
+					&& mCancelReceiveFlag == false) {
 				out.write(buf, 0, len);
 				receiveBytes += len;
-				
+
 				currentTime = System.currentTimeMillis();
-				if (currentTime - lastCallbackTime >= TIME_CALLBACK_INTERVAL || receiveBytes >= totalBytes) {
+				if (currentTime - lastCallbackTime >= TIME_CALLBACK_INTERVAL
+						|| receiveBytes >= totalBytes) {
 					notifyProgress(receiveBytes, totalBytes);
 					lastCallbackTime = currentTime;
 				}
-				
+
 				mRxListener.addRxBytes(len);
 			}
-			
+
 			if (mCancelReceiveFlag == true) {
 				notifyFinish(false);
 			} else if (receiveBytes != totalBytes) {
 				notifyFinish(false);
 			} else {
-			    notifyFinish(true);
+				notifyFinish(true);
 			}
 			out.close();
 			inputStream.close();
@@ -222,7 +225,8 @@ public class FileReceiver {
 				Bundle data = msg.getData();
 				long receiveBytes = data.getLong(KEY_RECEIVE_BYTES);
 				if (mListener != null) {
-					mListener.onReceiveProgress(receiveBytes, mReceivedFile, mKey);
+					mListener.onReceiveProgress(receiveBytes, mReceivedFile,
+							mKey);
 				}
 				break;
 			case MSG_FINISH:
@@ -306,7 +310,7 @@ public class FileReceiver {
 	public String toString() {
 		return "FileReceiver [mSendUser=" + mSendUser + ", mServerInetAddress="
 				+ mServerInetAddress + ", mServerPort=" + mServerPort
-				+ ", mFileInfo=" + mFileTransferInfo + "]";
+				+ ", mFileInfo=" + mFileInfo + "]";
 	}
 
 }

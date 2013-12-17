@@ -393,7 +393,7 @@ public final class PBSendMessageProtos {
                 com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToSingle.class, com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToSingle.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBSendMessageProtos.PBSendMessageToSingle.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToSingle.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1024,7 +1024,7 @@ public final class PBSendMessageProtos {
                 com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToAll.class, com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToAll.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBSendMessageProtos.PBSendMessageToAll.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageToAll.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1291,8 +1291,8 @@ public final class PBSendMessageProtos {
       "Id\030\001 \002(\005\022\025\n\rreceiveUserId\030\002 \002(\005\022\r\n\005appId" +
       "\030\003 \002(\005\022\014\n\004data\030\004 \002(\014\"E\n\022PBSendMessageToA" +
       "ll\022\022\n\nsendUserId\030\001 \002(\005\022\r\n\005appId\030\002 \002(\005\022\014\n" +
-      "\004data\030\003 \002(\014B=\n&com.zhaoyan.communication" +
-      ".protocol.genB\023PBSendMessageProtos"
+      "\004data\030\003 \002(\014B<\n%com.zhaoyan.communication" +
+      ".protocol.pbB\023PBSendMessageProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
