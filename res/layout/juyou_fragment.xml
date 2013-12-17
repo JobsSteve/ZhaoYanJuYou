@@ -29,7 +29,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/setting_item_bg_top"
                 android:clickable="true"
-                android:padding="10dp" >
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp" >
 
                 <ImageView
                     android:id="@+id/iv_juyou_connect_friends"
@@ -68,9 +71,8 @@
                 <LinearLayout
                     android:id="@+id/ll_juyou_connected_users"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="60dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_toLeftOf="@id/iv_juyou_connect_arrow"
                     android:orientation="horizontal" >

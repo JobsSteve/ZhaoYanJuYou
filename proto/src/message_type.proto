@@ -1,6 +1,6 @@
 package com.zhaoyan.juyou;
 
-option java_package = "com.zhaoyan.communication.protocol.gen";
+option java_package = "com.zhaoyan.communication.protocol.pb";
 option java_outer_classname = "PBBaseProtos";
 message PBBase {
 	required PBType type = 1;
@@ -14,5 +14,7 @@ enum PBType {
 	UPDATE_USER_INFO = 201;
 	SEND_MESSAGE_TO_SINGLE = 300;
 	SEND_MESSAGE_TO_ALL = 301;
-	FILE_TRANSPORT = 400;
+	FILE_TRANSPORT_SEND = 400;
+	FILE_TRANSPORT_CANCEL_SEND = 401;
+	FILE_TRANSPORT_CANCEL_RECEIVE = 402;
 }

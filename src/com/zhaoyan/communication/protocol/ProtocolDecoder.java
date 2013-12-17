@@ -359,8 +359,8 @@ public class ProtocolDecoder implements ISendProtocolTypeSingleCallBack,
 		User localUser = mUserManager.getLocalUser();
 		if (receiveUserID == localUser.getUserID()) {
 			Log.d(TAG, "onReceiveFile This file is for me");
-			mCommunicationManager.notfiyFileReceiveListeners(sendUserID, appID,
-					serverAddress, serverPort, fileInfo);
+//			mCommunicationManager.notfiyFileReceiveListeners(sendUserID, appID,
+//					serverAddress, serverPort, fileInfo);
 		} else {
 			Log.d(TAG, "onReceiveFile This file is not for me");
 			SocketCommunication communication = mUserManager

@@ -38,9 +38,17 @@ public final class PBBaseProtos {
      */
     SEND_MESSAGE_TO_ALL(5, 301),
     /**
-     * <code>FILE_TRANSPORT = 400;</code>
+     * <code>FILE_TRANSPORT_SEND = 400;</code>
      */
-    FILE_TRANSPORT(6, 400),
+    FILE_TRANSPORT_SEND(6, 400),
+    /**
+     * <code>FILE_TRANSPORT_CANCEL_SEND = 401;</code>
+     */
+    FILE_TRANSPORT_CANCEL_SEND(7, 401),
+    /**
+     * <code>FILE_TRANSPORT_CANCEL_RECEIVE = 402;</code>
+     */
+    FILE_TRANSPORT_CANCEL_RECEIVE(8, 402),
     ;
 
     /**
@@ -68,9 +76,17 @@ public final class PBBaseProtos {
      */
     public static final int SEND_MESSAGE_TO_ALL_VALUE = 301;
     /**
-     * <code>FILE_TRANSPORT = 400;</code>
+     * <code>FILE_TRANSPORT_SEND = 400;</code>
      */
-    public static final int FILE_TRANSPORT_VALUE = 400;
+    public static final int FILE_TRANSPORT_SEND_VALUE = 400;
+    /**
+     * <code>FILE_TRANSPORT_CANCEL_SEND = 401;</code>
+     */
+    public static final int FILE_TRANSPORT_CANCEL_SEND_VALUE = 401;
+    /**
+     * <code>FILE_TRANSPORT_CANCEL_RECEIVE = 402;</code>
+     */
+    public static final int FILE_TRANSPORT_CANCEL_RECEIVE_VALUE = 402;
 
 
     public final int getNumber() { return value; }
@@ -83,7 +99,9 @@ public final class PBBaseProtos {
         case 201: return UPDATE_USER_INFO;
         case 300: return SEND_MESSAGE_TO_SINGLE;
         case 301: return SEND_MESSAGE_TO_ALL;
-        case 400: return FILE_TRANSPORT;
+        case 400: return FILE_TRANSPORT_SEND;
+        case 401: return FILE_TRANSPORT_CANCEL_SEND;
+        case 402: return FILE_TRANSPORT_CANCEL_RECEIVE;
         default: return null;
       }
     }
@@ -436,7 +454,7 @@ public final class PBBaseProtos {
                 com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase.class, com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBBaseProtos.PBBase.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -648,13 +666,15 @@ public final class PBBaseProtos {
     java.lang.String[] descriptorData = {
       "\n\026src/message_type.proto\022\021com.zhaoyan.ju" +
       "you\"B\n\006PBBase\022\'\n\004type\030\001 \002(\0162\031.com.zhaoya" +
-      "n.juyou.PBType\022\017\n\007message\030\002 \001(\014*\246\001\n\006PBTy" +
+      "n.juyou.PBType\022\017\n\007message\030\002 \001(\014*\360\001\n\006PBTy" +
       "pe\022\021\n\rLOGIN_REQUEST\020d\022\021\n\rLOGIN_RESPOND\020e" +
       "\022\023\n\016UPDATE_USER_ID\020\310\001\022\025\n\020UPDATE_USER_INF" +
       "O\020\311\001\022\033\n\026SEND_MESSAGE_TO_SINGLE\020\254\002\022\030\n\023SEN" +
-      "D_MESSAGE_TO_ALL\020\255\002\022\023\n\016FILE_TRANSPORT\020\220\003" +
-      "B6\n&com.zhaoyan.communication.protocol.g" +
-      "enB\014PBBaseProtos"
+      "D_MESSAGE_TO_ALL\020\255\002\022\030\n\023FILE_TRANSPORT_SE" +
+      "ND\020\220\003\022\037\n\032FILE_TRANSPORT_CANCEL_SEND\020\221\003\022\"" +
+      "\n\035FILE_TRANSPORT_CANCEL_RECEIVE\020\222\003B5\n%co" +
+      "m.zhaoyan.communication.protocol.pbB\014PBB",
+      "aseProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

@@ -533,7 +533,7 @@ public final class PBLoginProtos {
                 com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRequest.class, com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRequest.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBLoginProtos.PBLoginRequest.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRequest.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1161,7 +1161,7 @@ public final class PBLoginProtos {
                 com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRespond.class, com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRespond.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBLoginProtos.PBLoginRespond.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRespond.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1426,8 +1426,8 @@ public final class PBLoginProtos {
       "\nfailReason\030\003 \001(\0162$.com.zhaoyan.juyou.PB" +
       "LoginFailReason*&\n\rPBLoginResult\022\013\n\007SUCC" +
       "ESS\020\001\022\010\n\004FAIL\020\002*\037\n\021PBLoginFailReason\022\n\n\006" +
-      "UNKOWN\020\001B7\n&com.zhaoyan.communication.pr" +
-      "otocol.genB\rPBLoginProtos"
+      "UNKOWN\020\001B6\n%com.zhaoyan.communication.pr" +
+      "otocol.pbB\rPBLoginProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

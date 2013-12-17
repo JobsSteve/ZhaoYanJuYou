@@ -491,7 +491,7 @@ public final class PBFileTransportProtos {
                 com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBSendFile.class, com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBSendFile.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBFileTransportProtos.PBSendFile.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBSendFile.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1404,7 +1404,7 @@ public final class PBFileTransportProtos {
                 com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBFileInfo.class, com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBFileInfo.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.gen.PBFileTransportProtos.PBFileInfo.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBFileInfo.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1775,6 +1775,814 @@ public final class PBFileTransportProtos {
     // @@protoc_insertion_point(class_scope:com.zhaoyan.juyou.PBFileInfo)
   }
 
+  public interface PBCancelSendFileOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // required int32 receiveUserId = 1;
+    /**
+     * <code>required int32 receiveUserId = 1;</code>
+     */
+    boolean hasReceiveUserId();
+    /**
+     * <code>required int32 receiveUserId = 1;</code>
+     */
+    int getReceiveUserId();
+  }
+  /**
+   * Protobuf type {@code com.zhaoyan.juyou.PBCancelSendFile}
+   */
+  public static final class PBCancelSendFile extends
+      com.google.protobuf.GeneratedMessage
+      implements PBCancelSendFileOrBuilder {
+    // Use PBCancelSendFile.newBuilder() to construct.
+    private PBCancelSendFile(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private PBCancelSendFile(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final PBCancelSendFile defaultInstance;
+    public static PBCancelSendFile getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public PBCancelSendFile getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private PBCancelSendFile(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              receiveUserId_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelSendFile_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelSendFile_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile.class, com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<PBCancelSendFile> PARSER =
+        new com.google.protobuf.AbstractParser<PBCancelSendFile>() {
+      public PBCancelSendFile parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new PBCancelSendFile(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PBCancelSendFile> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // required int32 receiveUserId = 1;
+    public static final int RECEIVEUSERID_FIELD_NUMBER = 1;
+    private int receiveUserId_;
+    /**
+     * <code>required int32 receiveUserId = 1;</code>
+     */
+    public boolean hasReceiveUserId() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 receiveUserId = 1;</code>
+     */
+    public int getReceiveUserId() {
+      return receiveUserId_;
+    }
+
+    private void initFields() {
+      receiveUserId_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasReceiveUserId()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, receiveUserId_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, receiveUserId_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code com.zhaoyan.juyou.PBCancelSendFile}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFileOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelSendFile_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelSendFile_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile.class, com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile.Builder.class);
+      }
+
+      // Construct using com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        receiveUserId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelSendFile_descriptor;
+      }
+
+      public com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile getDefaultInstanceForType() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile.getDefaultInstance();
+      }
+
+      public com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile build() {
+        com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile buildPartial() {
+        com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile result = new com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.receiveUserId_ = receiveUserId_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile) {
+          return mergeFrom((com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile other) {
+        if (other == com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile.getDefaultInstance()) return this;
+        if (other.hasReceiveUserId()) {
+          setReceiveUserId(other.getReceiveUserId());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasReceiveUserId()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendFile) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // required int32 receiveUserId = 1;
+      private int receiveUserId_ ;
+      /**
+       * <code>required int32 receiveUserId = 1;</code>
+       */
+      public boolean hasReceiveUserId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 receiveUserId = 1;</code>
+       */
+      public int getReceiveUserId() {
+        return receiveUserId_;
+      }
+      /**
+       * <code>required int32 receiveUserId = 1;</code>
+       */
+      public Builder setReceiveUserId(int value) {
+        bitField0_ |= 0x00000001;
+        receiveUserId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required int32 receiveUserId = 1;</code>
+       */
+      public Builder clearReceiveUserId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        receiveUserId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:com.zhaoyan.juyou.PBCancelSendFile)
+    }
+
+    static {
+      defaultInstance = new PBCancelSendFile(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:com.zhaoyan.juyou.PBCancelSendFile)
+  }
+
+  public interface PBCancelReceiveFileOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // required int32 sendUserId = 1;
+    /**
+     * <code>required int32 sendUserId = 1;</code>
+     */
+    boolean hasSendUserId();
+    /**
+     * <code>required int32 sendUserId = 1;</code>
+     */
+    int getSendUserId();
+  }
+  /**
+   * Protobuf type {@code com.zhaoyan.juyou.PBCancelReceiveFile}
+   */
+  public static final class PBCancelReceiveFile extends
+      com.google.protobuf.GeneratedMessage
+      implements PBCancelReceiveFileOrBuilder {
+    // Use PBCancelReceiveFile.newBuilder() to construct.
+    private PBCancelReceiveFile(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private PBCancelReceiveFile(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final PBCancelReceiveFile defaultInstance;
+    public static PBCancelReceiveFile getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public PBCancelReceiveFile getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private PBCancelReceiveFile(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              sendUserId_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile.class, com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<PBCancelReceiveFile> PARSER =
+        new com.google.protobuf.AbstractParser<PBCancelReceiveFile>() {
+      public PBCancelReceiveFile parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new PBCancelReceiveFile(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PBCancelReceiveFile> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // required int32 sendUserId = 1;
+    public static final int SENDUSERID_FIELD_NUMBER = 1;
+    private int sendUserId_;
+    /**
+     * <code>required int32 sendUserId = 1;</code>
+     */
+    public boolean hasSendUserId() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 sendUserId = 1;</code>
+     */
+    public int getSendUserId() {
+      return sendUserId_;
+    }
+
+    private void initFields() {
+      sendUserId_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasSendUserId()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, sendUserId_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, sendUserId_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code com.zhaoyan.juyou.PBCancelReceiveFile}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFileOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile.class, com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile.Builder.class);
+      }
+
+      // Construct using com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        sendUserId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_descriptor;
+      }
+
+      public com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile getDefaultInstanceForType() {
+        return com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile.getDefaultInstance();
+      }
+
+      public com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile build() {
+        com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile buildPartial() {
+        com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile result = new com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.sendUserId_ = sendUserId_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile) {
+          return mergeFrom((com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile other) {
+        if (other == com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile.getDefaultInstance()) return this;
+        if (other.hasSendUserId()) {
+          setSendUserId(other.getSendUserId());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasSendUserId()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelReceiveFile) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // required int32 sendUserId = 1;
+      private int sendUserId_ ;
+      /**
+       * <code>required int32 sendUserId = 1;</code>
+       */
+      public boolean hasSendUserId() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 sendUserId = 1;</code>
+       */
+      public int getSendUserId() {
+        return sendUserId_;
+      }
+      /**
+       * <code>required int32 sendUserId = 1;</code>
+       */
+      public Builder setSendUserId(int value) {
+        bitField0_ |= 0x00000001;
+        sendUserId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required int32 sendUserId = 1;</code>
+       */
+      public Builder clearSendUserId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        sendUserId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:com.zhaoyan.juyou.PBCancelReceiveFile)
+    }
+
+    static {
+      defaultInstance = new PBCancelReceiveFile(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:com.zhaoyan.juyou.PBCancelReceiveFile)
+  }
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_com_zhaoyan_juyou_PBSendFile_descriptor;
   private static
@@ -1785,6 +2593,16 @@ public final class PBFileTransportProtos {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_com_zhaoyan_juyou_PBFileInfo_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_zhaoyan_juyou_PBCancelSendFile_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_zhaoyan_juyou_PBCancelSendFile_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1801,9 +2619,11 @@ public final class PBFileTransportProtos {
       "\005\022/\n\010fileInfo\030\006 \001(\0132\035.com.zhaoyan.juyou." +
       "PBFileInfo\"T\n\nPBFileInfo\022\020\n\010filePath\030\001 \002" +
       "(\t\022\020\n\010fileName\030\002 \002(\t\022\020\n\010fileSize\030\003 \002(\003\022\020" +
-      "\n\010fileIcon\030\004 \001(\014B?\n&com.zhaoyan.communic" +
-      "ation.protocol.genB\025PBFileTransportProto" +
-      "s"
+      "\n\010fileIcon\030\004 \001(\014\")\n\020PBCancelSendFile\022\025\n\r" +
+      "receiveUserId\030\001 \002(\005\")\n\023PBCancelReceiveFi" +
+      "le\022\022\n\nsendUserId\030\001 \002(\005B>\n%com.zhaoyan.co",
+      "mmunication.protocol.pbB\025PBFileTransport" +
+      "Protos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1822,6 +2642,18 @@ public final class PBFileTransportProtos {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_zhaoyan_juyou_PBFileInfo_descriptor,
               new java.lang.String[] { "FilePath", "FileName", "FileSize", "FileIcon", });
+          internal_static_com_zhaoyan_juyou_PBCancelSendFile_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_com_zhaoyan_juyou_PBCancelSendFile_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_com_zhaoyan_juyou_PBCancelSendFile_descriptor,
+              new java.lang.String[] { "ReceiveUserId", });
+          internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_descriptor =
+            getDescriptor().getMessageTypes().get(3);
+          internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_com_zhaoyan_juyou_PBCancelReceiveFile_descriptor,
+              new java.lang.String[] { "SendUserId", });
           return null;
         }
       };
