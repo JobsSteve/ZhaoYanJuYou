@@ -7,7 +7,7 @@ import java.util.List;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.adapter.ImageItemAdapter;
+import com.zhaoyan.juyou.adapter.ImageAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
@@ -58,7 +58,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	private ProgressBar mLoadingBar;
 	private ViewGroup mViewGroup;
 	
-	private ImageItemAdapter mItemAdapter;
+	private ImageAdapter mAdapter;
 	private List<ImageInfo> mPictureItemInfoList = new ArrayList<ImageInfo>();
 	
 	private static final int QUERY_TOKEN_FOLDER = 0x11;
@@ -99,8 +99,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 				break;
 			case MSG_UPDATE_LIST:
 				mPictureItemInfoList.remove(msg.arg1);
-				mItemAdapter.notifyDataSetChanged();
-				updateTitleNum(-1, mItemAdapter.getCount());
+				mAdapter.notifyDataSetChanged();
+				updateTitleNum(-1, mAdapter.getCount());
 				break;
 
 			default:
@@ -143,8 +143,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mGridView.setOnItemLongClickListener(this);
 		mLoadingBar = (ProgressBar) findViewById(R.id.bar_loading_image);
 		
-		mItemAdapter = new ImageItemAdapter(getApplicationContext(), mPictureItemInfoList);
-		mGridView.setAdapter(mItemAdapter);
+		mAdapter = new ImageAdapter(getApplicationContext(), mPictureItemInfoList);
+		mGridView.setAdapter(mAdapter);
 		
 		mMenuHolder = (LinearLayout) findViewById(R.id.ll_menutabs_holder);
 		mMenuBarView = findViewById(R.id.menubar_bottom);
@@ -214,8 +214,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 						cursor.close();
 					}
 					num = mPictureItemInfoList.size();
-					mItemAdapter.notifyDataSetChanged();
-					mItemAdapter.selectAll(false);
+					mAdapter.notifyDataSetChanged();
+					mAdapter.checkedAll(false);
 					updateUI(num);
 					break;
 				default:
@@ -237,14 +237,14 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
 		case OnScrollListener.SCROLL_STATE_FLING:
-			mItemAdapter.setIdleFlag(false);
+			mAdapter.setIdleFlag(false);
 			break;
 		case OnScrollListener.SCROLL_STATE_IDLE:
-			mItemAdapter.setIdleFlag(true);
-			mItemAdapter.notifyDataSetChanged();
+			mAdapter.setIdleFlag(true);
+			mAdapter.notifyDataSetChanged();
 			break;
 		case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-			mItemAdapter.setIdleFlag(false);
+			mAdapter.setIdleFlag(false);
 			break;
 
 		default:
@@ -274,12 +274,12 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (mItemAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			mItemAdapter.setSelected(position);
-			mItemAdapter.notifyDataSetChanged();
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
+			mAdapter.setChecked(position);
+			mAdapter.notifyDataSetChanged();
 			
-			int selectedCount = mItemAdapter.getSelectedItemsCount();
-			updateTitleNum(selectedCount, mItemAdapter.getCount());
+			int selectedCount = mAdapter.getCheckedCount();
+			updateTitleNum(selectedCount, mAdapter.getCount());
 			updateMenuBar();
 			mMenuTabManager.refreshMenus(mActionMenu);
 		}	else {
@@ -290,16 +290,16 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		if (mItemAdapter.isMode(ActionMenu.MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
 		}else {
-			mItemAdapter.changeMode(ActionMenu.MODE_EDIT);
-			updateTitleNum(1, mItemAdapter.getCount());
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
+			updateTitleNum(1, mAdapter.getCount());
 		}
 		
-		mItemAdapter.setSelected(position, true);
-		mItemAdapter.notifyDataSetChanged();
+		mAdapter.setChecked(position, true);
+		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getApplicationContext());
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
@@ -315,14 +315,14 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	}
 	
 	public void onActionMenuDone() {
-		mItemAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mItemAdapter.selectAll(false);
-		mItemAdapter.notifyDataSetChanged();
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+		mAdapter.checkedAll(false);
+		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
 	public boolean onBackKeyPressed() {
-		if (mItemAdapter.isMode(ActionMenu.MODE_EDIT)) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}else {
@@ -334,7 +334,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	public void onMenuClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case ActionMenu.ACTION_MENU_SEND:
-			ArrayList<String> selectedList = (ArrayList<String>) mItemAdapter.getSelectedItemsPathList();
+			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getCheckedPathList();
 			//send
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(this);
 			fileTransferUtil.sendFiles(selectedList, new TransportCallback() {
@@ -342,7 +342,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 				public void onTransportSuccess() {
 					int first = mGridView.getFirstVisiblePosition();
 					int last = mGridView.getLastVisiblePosition();
-					List<Integer> checkedItems = mItemAdapter.getSelectedItemsPos();
+					List<Integer> checkedItems = mAdapter.getCheckedPosList();
 					ArrayList<ImageView> icons = new ArrayList<ImageView>();
 					for(int id : checkedItems) {
 						if (id >= first && id <= last) {
@@ -370,7 +370,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			showDeleteDialog();
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
-			List<Integer> list = mItemAdapter.getSelectedItemsPos();
+			List<Integer> list = mAdapter.getCheckedPosList();
 			InfoDialog dialog = null;
 			if (1 == list.size()) {
 				dialog = new InfoDialog(this,InfoDialog.SINGLE_FILE);
@@ -411,7 +411,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
      * @param path file path
      */
     public void showDeleteDialog() {
-    	List<String> deleteNameList = mItemAdapter.getSelectedItemsNameList();
+    	List<String> deleteNameList = mAdapter.getCheckedNameList();
     	mDeleteDialog = new DeleteDialog(this, deleteNameList);
     	mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
 			@Override
@@ -430,8 +430,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
     private class DeleteTask extends AsyncTask<Void, String, String>{
 		@Override
 		protected String doInBackground(Void... params) {
-			List<Integer> posList = mItemAdapter.getSelectedItemsPos();
-			List<String> selectedPathList = mItemAdapter.getSelectedItemsPathList();
+			List<Integer> posList = mAdapter.getCheckedPosList();
+			List<String> selectedPathList = mAdapter.getCheckedPathList();
 			int currentDelPos = -1;
 			
 			for (int i = 0; i < selectedPathList.size(); i++) {
@@ -470,15 +470,15 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	 * do select all items or unselect all items
 	 */
 	public void doSelectAll(){
-		int selectedCount1 = mItemAdapter.getSelectedItemsCount();
-		if (mItemAdapter.getCount() != selectedCount1) {
-			mItemAdapter.selectAll(true);
+		int selectedCount1 = mAdapter.getCheckedCount();
+		if (mAdapter.getCount() != selectedCount1) {
+			mAdapter.checkedAll(true);
 		} else {
-			mItemAdapter.selectAll(false);
+			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
 		mMenuTabManager.refreshMenus(mActionMenu);
-		mItemAdapter.notifyDataSetChanged();
+		mAdapter.notifyDataSetChanged();
 	}
 	
 	/**
@@ -490,7 +490,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			mMenuBarView.setVisibility(View.VISIBLE);
 		}else {
 			mMenuBarView.setVisibility(View.GONE);
-			updateTitleNum(-1, mItemAdapter.getCount());
+			updateTitleNum(-1, mAdapter.getCount());
 			onActionMenuDone();
 		}
 	}
@@ -499,10 +499,10 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	 * update menu bar item icon and text color,enable or disable
 	 */
 	public void updateMenuBar(){
-		int selectCount = mItemAdapter.getSelectedItemsCount();
-		updateTitleNum(selectCount,mItemAdapter.getCount());
+		int selectCount = mAdapter.getCheckedCount();
+		updateTitleNum(selectCount,mAdapter.getCount());
 		
-		if (mItemAdapter.getCount() == selectCount) {
+		if (mAdapter.getCount() == selectCount) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.unselect_all);
 		}else {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.select_all);

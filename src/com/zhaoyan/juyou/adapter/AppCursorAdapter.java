@@ -32,45 +32,23 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 	}
 	
 	@Override
-	public void selectAll(boolean isSelected) {
+	public void checkedAll(boolean isChecked) {
 		int count = this.getCount();
 		for (int i = 0; i < count; i++) {
-			setSelected(i, isSelected);
+			setChecked(i, isChecked);
 		}
-	}
-	
-	@Override
-	public int getSelectedItemsCount() {
-		int count = 0;
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
-				count ++;
-			}
-		}
-		return count;
-	}
-	
-	@Override
-	public List<Integer> getSelectedItemPos() {
-		List<Integer> list = new ArrayList<Integer>();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
-				list.add(i);
-			}
-		}
-		return list;
 	}
 	
 	/**
 	 * get Select item pakcageName list
 	 * @return
 	 */
-	public List<String> getSelectedPkgList(){
+	public List<String> getCheckedPkgList(){
 		Log.d(TAG, "getSelectedPkgList");
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = getCursor();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
 				cursor.moveToPosition(i);
 				String url = cursor.getString(cursor
 						.getColumnIndex(AppData.App.PKG_NAME));
@@ -84,12 +62,13 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 	 * get Select item installed path list
 	 * @return
 	 */
-	public List<String> getSelectItemPathList(){
-		Log.d(TAG, "getSelectItemPathList");
+	@Override
+	public List<String> getCheckedPathList(){
+		Log.d(TAG, "getCheckedPathList");
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = getCursor();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
 				cursor.moveToPosition(i);
 				String packagename = cursor.getString(cursor
 						.getColumnIndex(AppData.App.PKG_NAME));
@@ -105,15 +84,12 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 		return list;
 	}
 	
-	/**
-	 * get Select item filename  list
-	 * @return
-	 */
-	public List<String> getSelectItemNameList(){
+	@Override
+	public List<String> getCheckedNameList(){
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = getCursor();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
 				cursor.moveToPosition(i);
 				String name = cursor.getString(cursor
 						.getColumnIndex(AppData.App.PKG_NAME));
@@ -146,8 +122,8 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 		long size = new File(applicationInfo.sourceDir).length();
 		holder.sizeView.setText(ZYUtils.getFormatSize(size));
 		
-		boolean isSelected = isSelected(cursor.getPosition());
-		updateViewBackground(isSelected, cursor.getPosition(), view);
+		boolean isChecked = isChecked(cursor.getPosition());
+		updateViewBackground(isChecked, cursor.getPosition(), view);
 	}
 	
 	@Override

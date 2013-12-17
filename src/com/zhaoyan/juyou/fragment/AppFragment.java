@@ -144,7 +144,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 				Log.d(TAG, "onQueryComplete.count=" + cursor.getCount());
 				mAdapter.changeCursor(cursor);
 				mGridView.setAdapter(mAdapter);
-				mAdapter.selectAll(false);
+				mAdapter.checkedAll(false);
 				message.arg1 = cursor.getCount();
 			} else {
 				message.arg1 = 0;
@@ -158,11 +158,11 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if (mAdapter.getMode() == ActionMenu.MODE_EDIT) {
-			mAdapter.setSelected(position);
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
+			mAdapter.setChecked(position);
 			mAdapter.notifyDataSetChanged();
 			
-			int selectedCount = mAdapter.getSelectedItemsCount();
+			int selectedCount = mAdapter.getCheckedCount();
 			updateTitleNum(selectedCount);
 			updateMenuBar();
 			mMenuManager.refreshMenus(mActionMenu);
@@ -189,16 +189,16 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			final int position, long id) {
-		int mode = mAdapter.getMode();
-		if (ActionMenu.MODE_EDIT == mode) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
-		}else {
+		} else {
 			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
-		boolean isSelected = mAdapter.isSelected(position);
-		mAdapter.setSelected(position, !isSelected);
+		
+		boolean isChecked = mAdapter.isChecked(position);
+		mAdapter.setChecked(position, !isChecked);
 		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
@@ -242,10 +242,11 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	}
 	
 	public boolean onBackPressed(){
-		if (null != mAdapter && mAdapter.getMode() == ActionMenu.MODE_EDIT) {
+		if (null != mAdapter && mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
 		}
+		
 		return true;
 	}
 
@@ -253,7 +254,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	public void onMenuClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case ActionMenu.ACTION_MENU_SEND:
-			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getSelectItemPathList();
+			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getCheckedPathList();
 			//send
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(getActivity());
 			fileTransferUtil.sendFiles(selectedList, new TransportCallback() {
@@ -261,7 +262,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 				public void onTransportSuccess() {
 					int first = mGridView.getFirstVisiblePosition();
 					int last = mGridView.getLastVisiblePosition();
-					List<Integer> checkedItems = mAdapter.getSelectedItemPos();
+					List<Integer> checkedItems = mAdapter.getCheckedPosList();
 					ArrayList<ImageView> icons = new ArrayList<ImageView>();
 					for(int id : checkedItems) {
 						if (id >= first && id <= last) {
@@ -286,7 +287,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_UNINSTALL:
-			mUninstallList = mAdapter.getSelectedPkgList();
+			mUninstallList = mAdapter.getCheckedPkgList();
 			showUninstallDialog();
 			uninstallApp();
 			showMenuBar(false);
@@ -295,7 +296,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			showMoveDialog();
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
-			String packageName = mAdapter.getSelectedPkgList().get(0);
+			String packageName = mAdapter.getCheckedPkgList().get(0);
 			showInstalledAppDetails(packageName);
 			showMenuBar(false);
 			break;
@@ -303,7 +304,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			doSelectAll();
 			break;
 		case ActionMenu.ACTION_MENU_BACKUP:
-			List<String> backupList = mAdapter.getSelectedPkgList();
+			List<String> backupList = mAdapter.getCheckedPkgList();
 			showBackupDialog(backupList);
 			showMenuBar(false);
 			break;
@@ -314,7 +315,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	}
 	
 	public void showMoveDialog(){
-		final List<String> packageList = mAdapter.getSelectedPkgList();
+		final List<String> packageList = mAdapter.getCheckedPkgList();
 		new MoveAsyncTask(packageList).execute();
 		showMenuBar(false);
 	}
@@ -390,11 +391,11 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	 * do select all items or unselect all items
 	 */
 	public void doSelectAll(){
-		int selectedCount1 = mAdapter.getSelectedItemsCount();
+		int selectedCount1 = mAdapter.getCheckedCount();
 		if (mAdapter.getCount() != selectedCount1) {
-			mAdapter.selectAll(true);
+			mAdapter.checkedAll(true);
 		} else {
-			mAdapter.selectAll(false);
+			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
 		mMenuManager.refreshMenus(mActionMenu);
@@ -418,7 +419,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	
 	public void onActionMenuDone() {
 		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mAdapter.selectAll(false);
+		mAdapter.checkedAll(false);
 		mAdapter.notifyDataSetChanged();
 	}
 	
@@ -426,7 +427,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	 * update menu bar item icon and text color,enable or disable
 	 */
 	public void updateMenuBar(){
-		int selectCount = mAdapter.getSelectedItemsCount();
+		int selectCount = mAdapter.getCheckedCount();
 		updateTitleNum(selectCount);
 		
 		if (mAdapter.getCount() == selectCount) {
@@ -454,18 +455,5 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
         	mActionMenu.findItem(ActionMenu.ACTION_MENU_MOVE_TO_GAME).setEnable(true);
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
 		}
-	}
-	
-	@Override
-	public int getSelectedCount() {
-		if (null != mAdapter) {
-			return mAdapter.getSelectedItemsCount();
-		}
-		return super.getSelectedCount();
-	}
-	
-	@Override
-	public int getMenuMode() {
-		return mAdapter.getMode();
 	}
 }

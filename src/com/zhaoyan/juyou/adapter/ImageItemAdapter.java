@@ -26,6 +26,11 @@ import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.AsyncPictureLoader;
 import com.zhaoyan.juyou.common.ImageInfo;
 
+/**
+ * @unuse use new adapter {@link ImageAdapter} </br>
+ * This adapter is modify by someone i don’t know
+ * @author Yuri
+ */
 public class ImageItemAdapter extends BaseAdapter {
 	private static final String TAG = "PictureItemAdapter";
 	private LayoutInflater mInflater = null;

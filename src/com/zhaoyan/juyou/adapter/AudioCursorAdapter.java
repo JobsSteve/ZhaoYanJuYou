@@ -26,44 +26,22 @@ public class AudioCursorAdapter extends BaseCursorAdapter {
 	}
 	
 	@Override
-	public void selectAll(boolean isSelected) {
+	public void checkedAll(boolean isChecked) {
 		int count = this.getCount();
 		for (int i = 0; i < count; i++) {
-			setSelected(i, isSelected);
+			setChecked(i, isChecked);
 		}
 	}
 	
 	@Override
-	public int getSelectedItemsCount() {
-		int count = 0;
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
-				count ++;
-			}
-		}
-		return count;
-	}
-	
-	@Override
-	public List<Integer> getSelectedItemPos() {
-		List<Integer> list = new ArrayList<Integer>();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
-				list.add(i);
-			}
-		}
-		return list;
-	}
-	
-	public List<String> getSelectItemList(){
+	public List<String> getCheckedPathList() {
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = getCursor();
-		for (int i = 0; i < mIsSelected.size(); i++) {
-			if (mIsSelected.valueAt(i)) {
+		for (int i = 0; i < mCheckArray.size(); i++) {
+			if (mCheckArray.valueAt(i)) {
 				cursor.moveToPosition(i);
 				String url = cursor.getString(cursor
 						.getColumnIndex(MediaStore.Audio.Media.DATA));
-				Log.d(TAG, "getSelectItemList:" + url);
 				list.add(url);
 			}
 		}
@@ -88,8 +66,8 @@ public class AudioCursorAdapter extends BaseCursorAdapter {
 		holder.timeView.setText(ZYUtils.mediaTimeFormat(duration));
 		holder.sizeView.setText(ZYUtils.getFormatSize(size));
 		
-		boolean isSelected = isSelected(cursor.getPosition());
-		updateViewBackground(isSelected, cursor.getPosition(), view);
+		boolean isChecked = isChecked(cursor.getPosition());
+		updateViewBackground(isChecked, cursor.getPosition(), view);
 	}
 
 	@Override

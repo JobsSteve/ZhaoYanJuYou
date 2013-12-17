@@ -33,8 +33,8 @@ import com.zhaoyan.communication.protocol2.FileTransportProtocol.FileInfo;
 import com.zhaoyan.communication.protocol2.LoginProtocol;
 import com.zhaoyan.communication.protocol2.MessageSendProtocol;
 import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
-
 import com.zhaoyan.communication.protocol2.ProtocolManager;
+import com.zhaoyan.juyou.R;
 
 /**
  * This class is used for providing communication operations for activity.</br>
@@ -291,7 +291,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		boolean result = FileTransportProtocol.encodeCancelSend(receiveUser,
 				appID);
 		if (result) {
-			mNotice.showToast("Cancel Send!");
+			mNotice.showToast(R.string.cancel_send);
 		} else {
 			mNotice.showToast("cancelSendFile: Communcation Null!");
 		}
@@ -304,7 +304,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		boolean result = FileTransportProtocol.encodeCancelReceive(sendUser,
 				appID);
 		if (result) {
-			mNotice.showToast("Cancel Receive!");
+			mNotice.showToast(R.string.cancel_receive);
 		} else {
 			mNotice.showToast("cancelReceiveFile: Communcation Null!");
 		}

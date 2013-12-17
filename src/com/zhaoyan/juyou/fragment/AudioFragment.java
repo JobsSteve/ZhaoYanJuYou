@@ -1,6 +1,5 @@
 package com.zhaoyan.juyou.fragment;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,7 +157,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			int num = 0;
 			if (null != cursor) {
 				mAdapter.changeCursor(cursor);
-				mAdapter.selectAll(false);
+				mAdapter.checkedAll(false);
 				num = mAdapter.getCount();
 			}
 			updateUI(num);
@@ -168,8 +167,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		int mode = mAdapter.getMode();
-		if (ActionMenu.MODE_NORMAL == mode) {
+		if (mAdapter.isMode(ActionMenu.MODE_NORMAL)) {
 			//open audio
 			Cursor cursor = mAdapter.getCursor();
 			cursor.moveToPosition(position);
@@ -177,10 +175,10 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 					.getColumnIndex(MediaStore.Audio.Media.DATA)); // 文件路径
 			IntentBuilder.viewFile(getActivity(), url);
 		}else {
-			mAdapter.setSelected(position);
+			mAdapter.setChecked(position);
 			mAdapter.notifyDataSetChanged();
 			
-			int selectedCount = mAdapter.getSelectedItemsCount();
+			int selectedCount = mAdapter.getCheckedCount();
 			updateTitleNum(selectedCount);
 			updateMenuBar();
 			mMenuManager.refreshMenus(mActionMenu);
@@ -189,16 +187,16 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
-		int mode = mAdapter.getMode();
-		if (ActionMenu.MODE_EDIT == mode) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			doSelectAll();
 			return true;
-		}else {
+		} else {
 			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
-		boolean isSelected = mAdapter.isSelected(position);
-		mAdapter.setSelected(position, !isSelected);
+		
+		boolean isChecked = mAdapter.isChecked(position);
+		mAdapter.setChecked(position, !isChecked);
 		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
@@ -231,7 +229,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
     	mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
 			@Override
 			public void onClick(View view, String path) {
-				List<String> deleteList = mAdapter.getSelectItemList();
+				List<String> deleteList = mAdapter.getCheckedPathList();
 				DeleteTask deleteTask = new DeleteTask(deleteList);
 				deleteTask.execute(posList);
 				showMenuBar(false);
@@ -255,7 +253,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		protected String doInBackground(List<Integer>... params) {
 			//start delete file from delete list
 			for (int i = 0; i < deleteList.size(); i++) {
-				File file = new File(deleteList.get(i));
 				doDelete(deleteList.get(i));
 			}
 			return null;
@@ -309,18 +306,16 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	
 	public void onActionMenuDone() {
 		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mAdapter.selectAll(false);
+		mAdapter.checkedAll(false);
 		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
 	public boolean onBackPressed() {
-		int mode = mAdapter.getMode();
-		Log.d(TAG, "onBackPressed.mode="+ mode);
-		if (ActionMenu.MODE_EDIT == mode) {
+		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			showMenuBar(false);
 			return false;
-		}else {
+		} else {
 			return true;
 		}
 	}
@@ -329,7 +324,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	public void onMenuClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case ActionMenu.ACTION_MENU_SEND:
-			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getSelectItemList();
+			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getCheckedPathList();
 			//send
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(getActivity());
 			fileTransferUtil.sendFiles(selectedList, new TransportCallback() {
@@ -337,7 +332,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				public void onTransportSuccess() {
 					int first = mListView.getFirstVisiblePosition();
 					int last = mListView.getLastVisiblePosition();
-					List<Integer> checkedItems = mAdapter.getSelectedItemPos();
+					List<Integer> checkedItems = mAdapter.getCheckedPosList();
 					ArrayList<ImageView> icons = new ArrayList<ImageView>();
 					for(int id : checkedItems) {
 						if (id >= first && id <= last) {
@@ -364,11 +359,11 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
 			//delete
-			List<Integer> selectPosList = mAdapter.getSelectedItemPos();
+			List<Integer> selectPosList = mAdapter.getCheckedPosList();
 			showDeleteDialog(selectPosList);
 			break;
 		case ActionMenu.ACTION_MENU_INFO:
-			List<Integer> list = mAdapter.getSelectedItemPos();
+			List<Integer> list = mAdapter.getCheckedPosList();
 			InfoDialog dialog = null;
 			if (1 == list.size()) {
 				dialog = new InfoDialog(mContext,InfoDialog.SINGLE_FILE);
@@ -408,11 +403,11 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	 * do select all items or unselect all items
 	 */
 	public void doSelectAll(){
-		int selectedCount1 = mAdapter.getSelectedItemsCount();
+		int selectedCount1 = mAdapter.getCheckedCount();
 		if (mAdapter.getCount() != selectedCount1) {
-			mAdapter.selectAll(true);
+			mAdapter.checkedAll(true);
 		} else {
-			mAdapter.selectAll(false);
+			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
 		mMenuManager.refreshMenus(mActionMenu);
@@ -437,7 +432,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	 * update menu bar item icon and text color,enable or disable
 	 */
 	public void updateMenuBar(){
-		int selectCount = mAdapter.getSelectedItemsCount();
+		int selectCount = mAdapter.getCheckedCount();
 		updateTitleNum(selectCount);
 		
 		if (mAdapter.getCount() == selectCount) {
@@ -455,16 +450,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
         	mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
         	mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
 		}
-	}
-	
-	@Override
-	public int getSelectedCount() {
-		return mAdapter.getSelectedItemsCount();
-	}
-	
-	@Override
-	public int getMenuMode() {
-		return mAdapter.getMode();
 	}
 
 	@Override

@@ -196,7 +196,7 @@ public class FileTransferService extends Service implements
 	 */
 	private void handleCancelReceiveRequest(Intent intent) {
 		Bundle bundle = intent.getExtras();
-		String uri = bundle.getString("history.uri");
+		String uri = bundle.getString(HistoryManager.HISTORY_URI);
 		Log.d(TAG, "handleCancelReceiveRequest: uri = " + uri);
 		
 		// 由于系统调用延迟，调用到这里时，数据传输可能刚好完成，此时的key就为null
@@ -229,7 +229,7 @@ public class FileTransferService extends Service implements
 	 */
 	private void handleCancelSendRequest(Intent intent) {
 		Bundle bundle = intent.getExtras();
-		String uri = bundle.getString("history.uri");
+		String uri = bundle.getString(HistoryManager.HISTORY_URI);
 		Log.d(TAG, "handleCancelSendRequest: uri = " + uri);
 		
 		// 由于系统调用延迟，调用到这里时，数据传输可能刚好完成，此时的key就为null
