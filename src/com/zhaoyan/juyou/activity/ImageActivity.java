@@ -12,8 +12,9 @@ import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.ImageInfo;
-import com.zhaoyan.juyou.common.MenuTabManager;
-import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
+import com.zhaoyan.juyou.common.MenuBarInterface;
+import com.zhaoyan.juyou.common.MenuBarManager;
+import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
@@ -46,7 +47,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.AbsListView.OnScrollListener;
 
-public class ImageActivity extends BaseActivity implements OnScrollListener, OnItemClickListener, OnItemLongClickListener, onMenuItemClickListener {
+public class ImageActivity extends BaseActivity implements OnScrollListener, OnItemClickListener, 
+		OnItemLongClickListener, onMenuItemClickListener, MenuBarInterface {
 	private static final String TAG = "ImageActivity";
 	
 	public static final String IMAGE_TYPE = "IMAGE_TYPE";
@@ -80,7 +82,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	
 	private LinearLayout mMenuHolder;
 	private View mMenuBarView;
-	private MenuTabManager mMenuTabManager;
+	private MenuBarManager mMenuTabManager;
 	private ActionMenu mActionMenu;
 	
 	private Notice mNotice = null;
@@ -149,7 +151,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mMenuHolder = (LinearLayout) findViewById(R.id.ll_menutabs_holder);
 		mMenuBarView = findViewById(R.id.menubar_bottom);
 		mMenuBarView.setVisibility(View.GONE);
-		mMenuTabManager = new MenuTabManager(getApplicationContext(),
+		mMenuTabManager = new MenuBarManager(getApplicationContext(),
 				mMenuHolder);
 	}
 	
@@ -291,10 +293,9 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doSelectAll();
+			doCheckAll();
 			return true;
 		}else {
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1, mAdapter.getCount());
 		}
 		
@@ -307,17 +308,11 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		
-		mMenuTabManager = new MenuTabManager(getApplicationContext(), mMenuHolder);
+		mMenuTabManager = new MenuBarManager(getApplicationContext(), mMenuHolder);
 		showMenuBar(true);
 		mMenuTabManager.refreshMenus(mActionMenu);
 		mMenuTabManager.setOnMenuItemClickListener(this);
 		return true;
-	}
-	
-	public void onActionMenuDone() {
-		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mAdapter.checkedAll(false);
-		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
@@ -398,7 +393,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			//info
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
-			doSelectAll();
+			doCheckAll();
 			break;
 
 		default:
@@ -466,10 +461,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		}
 	}
 	
-	/**
-	 * do select all items or unselect all items
-	 */
-	public void doSelectAll(){
+	@Override
+	public void doCheckAll(){
 		int selectedCount1 = mAdapter.getCheckedCount();
 		if (mAdapter.getCount() != selectedCount1) {
 			mAdapter.checkedAll(true);
@@ -481,23 +474,22 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mAdapter.notifyDataSetChanged();
 	}
 	
-	/**
-	 * set menubar visible or gone
-	 * @param show
-	 */
+	@Override
 	public void showMenuBar(boolean show){
 		if (show) {
 			mMenuBarView.setVisibility(View.VISIBLE);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 		}else {
 			mMenuBarView.setVisibility(View.GONE);
 			updateTitleNum(-1, mAdapter.getCount());
-			onActionMenuDone();
+			
+			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+			mAdapter.checkedAll(false);
+			mAdapter.notifyDataSetChanged();
 		}
 	}
 	
-	/**
-	 * update menu bar item icon and text color,enable or disable
-	 */
+	@Override
 	public void updateMenuBar(){
 		int selectCount = mAdapter.getCheckedCount();
 		updateTitleNum(selectCount,mAdapter.getCount());

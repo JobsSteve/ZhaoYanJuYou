@@ -33,10 +33,11 @@ import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
+import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuTabManager;
-import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
+import com.zhaoyan.juyou.common.MenuBarManager;
+import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.AppDialog;
 import com.zhaoyan.juyou.provider.AppData;
@@ -44,7 +45,8 @@ import com.zhaoyan.juyou.provider.AppData;
 /**
  * use this to load app
  */
-public class AppFragment extends AppBaseFragment implements OnItemClickListener, OnItemLongClickListener, onMenuItemClickListener {
+public class AppFragment extends AppBaseFragment implements OnItemClickListener, OnItemLongClickListener,
+			onMenuItemClickListener, MenuBarInterface {
 	private static final String TAG = "AppFragment";
 	
 	private QueryHandler mQueryHandler;
@@ -190,10 +192,9 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			final int position, long id) {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doSelectAll();
+			doCheckAll();
 			return true;
 		} else {
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1);
 		}
 		
@@ -209,7 +210,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_app_info,R.string.menu_app_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 
-		mMenuManager = new MenuTabManager(getActivity().getApplicationContext(), mMenuHolder);
+		mMenuManager = new MenuBarManager(getActivity().getApplicationContext(), mMenuHolder);
 		showMenuBar(true);
 		mMenuManager.refreshMenus(mActionMenu);
 		mMenuManager.setOnMenuItemClickListener(this);
@@ -301,7 +302,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			showMenuBar(false);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
-			doSelectAll();
+			doCheckAll();
 			break;
 		case ActionMenu.ACTION_MENU_BACKUP:
 			List<String> backupList = mAdapter.getCheckedPkgList();
@@ -387,10 +388,8 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		contentResolver.insert(AppData.AppGame.CONTENT_URI, values);
 	}
 	
-	/**
-	 * do select all items or unselect all items
-	 */
-	public void doSelectAll(){
+	@Override
+	public void doCheckAll(){
 		int selectedCount1 = mAdapter.getCheckedCount();
 		if (mAdapter.getCount() != selectedCount1) {
 			mAdapter.checkedAll(true);
@@ -402,30 +401,22 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mAdapter.notifyDataSetChanged();
 	}
 	
-	/**
-	 * set menubar visible or gone
-	 * @param show
-	 */
+	@Override
 	public void showMenuBar(boolean show){
 		if (show) {
 			mMenuBottomView.setVisibility(View.VISIBLE);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 		}else {
 			mMenuBottomView.setVisibility(View.GONE);
 			updateTitleNum(-1);
-			onActionMenuDone();
+			
+			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+			mAdapter.checkedAll(false);
+			mAdapter.notifyDataSetChanged();
 		}
 	}
 	
-	
-	public void onActionMenuDone() {
-		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mAdapter.checkedAll(false);
-		mAdapter.notifyDataSetChanged();
-	}
-	
-	/**
-	 * update menu bar item icon and text color,enable or disable
-	 */
+	@Override
 	public void updateMenuBar(){
 		int selectCount = mAdapter.getCheckedCount();
 		updateTitleNum(selectCount);

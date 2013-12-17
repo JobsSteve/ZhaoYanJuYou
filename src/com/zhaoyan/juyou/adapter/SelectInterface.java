@@ -2,6 +2,11 @@ package com.zhaoyan.juyou.adapter;
 
 import java.util.List;
 
+/**
+ * if you want relize multi select function,you need implements thi interface
+ * @author Yuri
+ *
+ */
 public interface SelectInterface {
 	/**
 	 * change current opertion mode,normal or menu edit

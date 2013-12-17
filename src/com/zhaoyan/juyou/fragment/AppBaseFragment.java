@@ -27,7 +27,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.AppCursorAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.AppManager;
-import com.zhaoyan.juyou.common.MenuTabManager;
+import com.zhaoyan.juyou.common.MenuBarManager;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.AppDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
@@ -44,7 +44,7 @@ public class AppBaseFragment extends BaseFragment{
 	protected int mAppId = -1;
 	
 	protected ActionMenu mActionMenu;
-	protected MenuTabManager mMenuManager;
+	protected MenuBarManager mMenuManager;
 	
 	protected View mMenuBottomView;
 	protected LinearLayout mMenuHolder;

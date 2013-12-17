@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -40,17 +39,17 @@ import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
+import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuTabManager;
-import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
-import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.common.MenuBarManager;
+import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
 public class FileCategoryActivity extends BaseActivity implements
 		OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-		onMenuItemClickListener, FileCategoryScanListener {
+		onMenuItemClickListener, FileCategoryScanListener, MenuBarInterface {
 	private static final String TAG = "CategoryActivity";
 	private ProgressBar mLoadingBar;
 	private ListView mListView;
@@ -63,7 +62,7 @@ public class FileCategoryActivity extends BaseActivity implements
 
 	private LinearLayout mMenuHolder;
 	private View mMenuBarView;
-	private MenuTabManager mMenuTabManager;
+	private MenuBarManager mMenuTabManager;
 	private ActionMenu mActionMenu;
 
 	public static final int TYPE_DOC = 0;
@@ -153,7 +152,7 @@ public class FileCategoryActivity extends BaseActivity implements
 		mMenuBarView = findViewById(R.id.menubar_bottom);
 		mMenuBarView.setVisibility(View.GONE);
 		mNotice = new Notice(getApplicationContext());
-		mMenuTabManager = new MenuTabManager(getApplicationContext(),
+		mMenuTabManager = new MenuBarManager(getApplicationContext(),
 				mMenuHolder);
 
 		SharedPreferences sp = SharedPreferenceUtil.getSharedPreference(getApplicationContext());
@@ -214,10 +213,9 @@ public class FileCategoryActivity extends BaseActivity implements
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doSelectAll();
+			doCheckAll();
 			return true;
 		} else {
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 			updateTitleNum(1, mAdapter.getCount());
 		}
 		boolean isSelected = mAdapter.isSelected(position);
@@ -298,7 +296,7 @@ public class FileCategoryActivity extends BaseActivity implements
 			 mFileInfoManager.showInfoDialog(this, list);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
-			doSelectAll();
+			doCheckAll();
 			break;
 		case ActionMenu.ACTION_MENU_RENAME:
 			List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
@@ -311,24 +309,23 @@ public class FileCategoryActivity extends BaseActivity implements
 		}
 	}
 
-	/**
-	 * set menubar visible or gone
-	 * 
-	 * @param show
-	 */
+	@Override
 	public void showMenuBar(boolean show) {
 		if (show) {
 			mMenuBarView.setVisibility(View.VISIBLE);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 		} else {
 			mMenuBarView.setVisibility(View.GONE);
-			onActionMenuDone();
+			
+			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+			mAdapter.clearSelected();
+			mAdapter.notifyDataSetChanged();
+			
 			updateTitleNum(-1, mAdapter.getCount());
 		}
 	}
 
-	/**
-	 * update menu bar item icon and text color,enable or disable
-	 */
+	@Override
 	public void updateMenuBar() {
 		int selectCount = mAdapter.getSelectedItems();
 		updateTitleNum(selectCount, mAdapter.getCount());
@@ -356,17 +353,8 @@ public class FileCategoryActivity extends BaseActivity implements
 		}
 	}
 
-	// Cancle Action menu
-	public void onActionMenuDone() {
-		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mAdapter.clearSelected();
-		mAdapter.notifyDataSetChanged();
-	}
-
-	/**
-	 * do select all items or unselect all items
-	 */
-	public void doSelectAll() {
+	@Override
+	public void doCheckAll() {
 		int selectedCount = mAdapter.getSelectedItems();
 		if (mAdapter.getCount() != selectedCount) {
 			mAdapter.selectAll(true);

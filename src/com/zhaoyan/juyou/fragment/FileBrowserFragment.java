@@ -53,13 +53,14 @@ import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileOperationHelper;
+import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.FileOperationHelper.OnOperationListener;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileInfoManager.NavigationRecord;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuTabManager;
-import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
+import com.zhaoyan.juyou.common.MenuBarManager;
+import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.dialog.CopyMoveDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
@@ -68,7 +69,7 @@ import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
 public class FileBrowserFragment extends BaseFragment implements OnClickListener, OnItemClickListener, OnScrollListener,
-		OnItemLongClickListener, onMenuItemClickListener, OnOperationListener {
+		OnItemLongClickListener, onMenuItemClickListener, OnOperationListener, MenuBarInterface {
 	private static final String TAG = "FileBrowserFragment";
 
 	// File path navigation bar
@@ -129,7 +130,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private String internal_path;
 
 	private ActionMenu mActionMenu;
-	private MenuTabManager mMenuTabManager;
+	private MenuBarManager mMenuTabManager;
 	private LinearLayout mMenuHolder;
 	private View mMenuBarView;
 	
@@ -347,13 +348,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doSelectAll();
+			doCheckAll();
 			return true;
 		} else if (mAdapter.isMode(ActionMenu.MODE_COPY)
 				|| mAdapter.isMode(ActionMenu.MODE_CUT)) {
 			return true;
 		} else {
-			mAdapter.changeMode(ActionMenu.MODE_EDIT);
+			updateTitleNum(1);
 		}
 		
 		boolean isSelected = mAdapter.isSelected(position);
@@ -368,7 +369,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_MORE, R.drawable.ic_action_overflow, R.string.menu_more);
 
-		mMenuTabManager = new MenuTabManager(mContext, mMenuHolder);
+		mMenuTabManager = new MenuBarManager(mContext, mMenuHolder);
 		showMenuBar(true);
 		if (mAllLists.get(position).isDir) {
 			//we do not support send folder
@@ -931,7 +932,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			showDeleteDialog(posList);
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
-			doSelectAll();
+			doCheckAll();
 			break;
 		case ActionMenu.ACTION_MENU_COPY:
 			mFileOperationHelper.copy(mAdapter.getSelectedFileInfos());
@@ -1022,24 +1023,23 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 	}
 
-	/**
-	 * set menubar visible or gone
-	 * 
-	 * @param show
-	 */
+	@Override
 	public void showMenuBar(boolean show) {
 		if (show) {
 			mMenuBarView.setVisibility(View.VISIBLE);
+			mAdapter.changeMode(ActionMenu.MODE_EDIT);
 		} else {
 			mMenuBarView.setVisibility(View.GONE);
-			onActionMenuDone();
 			updateTitleNum(-1);
+			
+			mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+			mAdapter.clearSelected();
+			mAdapter.notifyDataSetChanged();
+			mCopyList.clear();
 		}
 	}
 
-	/**
-	 * update menu bar item icon and text color,enable or disable
-	 */
+	@Override
 	public void updateMenuBar() {
 		int selectCount = mAdapter.getSelectedItems();
 		updateTitleNum(selectCount);
@@ -1071,18 +1071,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 	}
 
-	// Cancle Action menu
-	public void onActionMenuDone() {
-		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mAdapter.clearSelected();
-		mAdapter.notifyDataSetChanged();
-		mCopyList.clear();
-	}
-
-	/**
-	 * do select all items or unselect all items
-	 */
-	public void doSelectAll() {
+	@Override
+	public void doCheckAll() {
 		int selectedCount = mAdapter.getSelectedItems();
 		if (mAdapter.getCount() != selectedCount) {
 			mAdapter.selectAll(true);
