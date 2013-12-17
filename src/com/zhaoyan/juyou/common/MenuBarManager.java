@@ -15,7 +15,7 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 
-public class MenuTabManager implements OnClickListener {
+public class MenuBarManager implements OnClickListener {
 	private static final String TAG  = "MenuTabManager";
 	
 	private LinearLayout mMenuHolders;
@@ -25,12 +25,12 @@ public class MenuTabManager implements OnClickListener {
 	private int enable_color;
 	private int disable_color;
 	
-	public MenuTabManager(Context context, View rootView){
+	public MenuBarManager(Context context, View rootView){
 		mInflater = LayoutInflater.from(context);
 		mMenuHolders = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
 	}
 	
-	public MenuTabManager(Context context, LinearLayout menuHodlers){
+	public MenuBarManager(Context context, LinearLayout menuHodlers){
 		mInflater = LayoutInflater.from(context);
 		mMenuHolders = menuHodlers;
 		

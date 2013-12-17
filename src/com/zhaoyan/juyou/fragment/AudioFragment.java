@@ -20,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -34,14 +33,14 @@ import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MenuTabManager;
-import com.zhaoyan.juyou.common.MenuTabManager.onMenuItemClickListener;
+import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 
-public class AudioFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, onMenuItemClickListener, OnClickListener {
+public class AudioFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, 
+			OnClickListener, MenuBarInterface {
 	private static final String TAG = "AudioFragment";
 	private ListView mListView;
 	private AudioCursorAdapter mAdapter;
@@ -49,11 +48,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	private FileInfoManager mFileInfoManager = null;
 	
 	private QueryHandler mQueryHandler = null;
-	
-	private View mMenuBottomView;
-	private LinearLayout mMenuHolder;
-	private MenuTabManager mMenuManager;
-	private ActionMenu mActionMenu;
 	
 	private DeleteDialog mDeleteDialog;
 	
@@ -107,10 +101,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		mListView.setAdapter(mAdapter);
 		
 		initTitle(rootView.findViewById(R.id.rl_audio_main), R.string.music);
-		
-		mMenuBottomView = rootView.findViewById(R.id.menubar_bottom);
-		mMenuBottomView.setVisibility(View.GONE);
-		mMenuHolder = (LinearLayout) rootView.findViewById(R.id.ll_menutabs_holder);
+		initMenuBar(rootView);
 		
 		return rootView;
 	}
@@ -181,14 +172,14 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			int selectedCount = mAdapter.getCheckedCount();
 			updateTitleNum(selectedCount);
 			updateMenuBar();
-			mMenuManager.refreshMenus(mActionMenu);
+			mMenuBarManager.refreshMenus(mActionMenu);
 		}
 	} 
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doSelectAll();
+			doCheckAll();
 			return true;
 		} else {
 			mAdapter.changeMode(ActionMenu.MODE_EDIT);
@@ -205,10 +196,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		
-		mMenuManager = new MenuTabManager(mContext, mMenuHolder);
-		showMenuBar(true);
-		mMenuManager.refreshMenus(mActionMenu);
-		mMenuManager.setOnMenuItemClickListener(this);
+		startMenuBar();
 		return true;
 	}
 	
@@ -232,7 +220,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				List<String> deleteList = mAdapter.getCheckedPathList();
 				DeleteTask deleteTask = new DeleteTask(deleteList);
 				deleteTask.execute(posList);
-				showMenuBar(false);
+				destroyMenuBar();
 			}
 		});
     	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
@@ -304,16 +292,10 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		message.sendToTarget();
 	}
 	
-	public void onActionMenuDone() {
-		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
-		mAdapter.checkedAll(false);
-		mAdapter.notifyDataSetChanged();
-	}
-	
 	@Override
 	public boolean onBackPressed() {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			showMenuBar(false);
+			destroyMenuBar();
 			return false;
 		} else {
 			return true;
@@ -355,7 +337,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 					Log.e(TAG, "onMenuClick.onTransportFail");
 				}
 			});
-			showMenuBar(false);
+			destroyMenuBar();
 			break;
 		case ActionMenu.ACTION_MENU_DELETE:
 			//delete
@@ -391,7 +373,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			//info
 			break;
 		case ActionMenu.ACTION_MENU_SELECT:
-			doSelectAll();
+			doCheckAll();
 			break;
 
 		default:
@@ -399,10 +381,8 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		}
 	}
 	
-	/**
-	 * do select all items or unselect all items
-	 */
-	public void doSelectAll(){
+	@Override
+	public void doCheckAll(){
 		int selectedCount1 = mAdapter.getCheckedCount();
 		if (mAdapter.getCount() != selectedCount1) {
 			mAdapter.checkedAll(true);
@@ -410,27 +390,22 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
-		mMenuManager.refreshMenus(mActionMenu);
+		mMenuBarManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
 	
-	/**
-	 * set menubar visible or gone
-	 * @param show
-	 */
-	public void showMenuBar(boolean show){
-		if (show) {
-			mMenuBottomView.setVisibility(View.VISIBLE);
-		}else {
-			mMenuBottomView.setVisibility(View.GONE);
-			updateTitleNum(-1);
-			onActionMenuDone();
-		}
+	@Override
+	public void destroyMenuBar() {
+		super.destroyMenuBar();
+		
+		updateTitleNum(-1);
+		
+		mAdapter.changeMode(ActionMenu.MODE_NORMAL);
+		mAdapter.checkedAll(false);
+		mAdapter.notifyDataSetChanged();
 	}
 	
-	/**
-	 * update menu bar item icon and text color,enable or disable
-	 */
+	@Override
 	public void updateMenuBar(){
 		int selectCount = mAdapter.getCheckedCount();
 		updateTitleNum(selectCount);

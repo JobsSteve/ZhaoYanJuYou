@@ -15,9 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.view.View;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.dreamlink.communication.lib.util.Notice;
@@ -25,9 +23,7 @@ import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.AppCursorAdapter;
-import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.AppManager;
-import com.zhaoyan.juyou.common.MenuTabManager;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.AppDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
@@ -42,12 +38,6 @@ public class AppBaseFragment extends BaseFragment{
 	protected AppCursorAdapter mAdapter = null;
 	
 	protected int mAppId = -1;
-	
-	protected ActionMenu mActionMenu;
-	protected MenuTabManager mMenuManager;
-	
-	protected View mMenuBottomView;
-	protected LinearLayout mMenuHolder;
 	
 	protected AppDialog mAppDialog = null;
 	protected List<String> mUninstallList = null;

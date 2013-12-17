@@ -7,13 +7,18 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.ActionMenu;
+import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.MenuBarManager;
+import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 
-public class BaseFragment extends Fragment{
+public class BaseFragment extends Fragment implements onMenuItemClickListener{
 	protected Notice mNotice = null;
 	protected boolean mIsSelectAll = false;
 	protected Context mContext = null;
@@ -21,6 +26,12 @@ public class BaseFragment extends Fragment{
 	//title
 	protected TextView mTitleNameView,mTitleNumView;
 	private ViewGroup mViewGroup;
+	
+	//menubar
+	protected View mMenuBarView;
+	protected LinearLayout mMenuHolder;
+	protected MenuBarManager mMenuBarManager;
+	protected ActionMenu mActionMenu;
 	
 	/**
 	 * current fragment file size
@@ -41,6 +52,24 @@ public class BaseFragment extends Fragment{
 		mTitleNameView.setText(title_resId);
 		mTitleNumView = (TextView) view.findViewById(R.id.tv_title_num);
 		mTitleNumView.setVisibility(View.VISIBLE);
+	}
+	
+	protected void initMenuBar(View view){
+		mMenuBarView = view.findViewById(R.id.menubar_bottom);
+		mMenuBarView.setVisibility(View.GONE);
+		mMenuHolder = (LinearLayout) view.findViewById(R.id.ll_menutabs_holder);
+		
+		mMenuBarManager = new MenuBarManager(getActivity().getApplicationContext(), mMenuHolder);
+		mMenuBarManager.setOnMenuItemClickListener(this);
+	}
+	
+	public void startMenuBar(){
+		mMenuBarView.setVisibility(View.VISIBLE);
+		mMenuBarManager.refreshMenus(mActionMenu);
+	}
+	
+	public void destroyMenuBar(){
+		mMenuBarView.setVisibility(View.GONE);
 	}
 	
 	protected void updateTitleNum(int selected){
@@ -97,5 +126,11 @@ public class BaseFragment extends Fragment{
 	
 	public void onDestroy() {
 		super.onDestroy();
+	}
+
+	@Override
+	public void onMenuClick(ActionMenuItem item) {
+		// TODO Auto-generated method stub
+		
 	};
 }
