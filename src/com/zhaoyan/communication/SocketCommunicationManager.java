@@ -34,7 +34,7 @@ import com.zhaoyan.communication.protocol2.LoginProtocol;
 import com.zhaoyan.communication.protocol2.MessageSendProtocol;
 import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
 
-import com.zhaoyan.communication.protocol2.ZhaoyanProtocol;
+import com.zhaoyan.communication.protocol2.ProtocolManager;
 
 /**
  * This class is used for providing communication operations for activity.</br>
@@ -130,7 +130,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	private ILoginRequestCallBack mLoginRequestCallBack;
 	private ILoginRespondCallback mLoginRespondCallback;
 
-	private ZhaoyanProtocol mZhaoyanProtocol;
+	private ProtocolManager mProtocolManager;
 
 	private SocketCommunicationManager() {
 
@@ -184,8 +184,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mUserManager.init(context);
 		mUserManager.registerOnUserChangedListener(this);
 
-		mZhaoyanProtocol = new ZhaoyanProtocol(mContext);
-		mZhaoyanProtocol.init();
+		mProtocolManager = new ProtocolManager(mContext);
+		mProtocolManager.init();
 	}
 
 	/**
@@ -494,7 +494,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			SocketCommunication socketCommunication) {
 		// decode;
 		long start = System.currentTimeMillis();
-		mZhaoyanProtocol.decode(msg, socketCommunication);
+		mProtocolManager.decode(msg, socketCommunication);
 		long end = System.currentTimeMillis();
 		Log.i(TAG, "onReceiveMessage() decode takes time: " + (end - start));
 	}

@@ -19,6 +19,7 @@ import com.zhaoyan.communication.protocol.pb.PBSendMessageProtos.PBSendMessageTo
 /**
  * This class is used for encode and decode send message.
  * 
+ * @see PBSendMessageProtos
  */
 public class MessageSendProtocol implements IProtocol {
 	private static final String TAG = "SendProtocol";
@@ -33,15 +34,28 @@ public class MessageSendProtocol implements IProtocol {
 	}
 
 	@Override
-	public void decode(PBType type, byte[] msgData,
+	public boolean decode(PBType type, byte[] msgData,
 			SocketCommunication communication) {
+		boolean result = true;
 		if (type == PBType.SEND_MESSAGE_TO_SINGLE) {
 			decodeSendMessageToSingle(msgData, communication);
 		} else if (type == PBType.SEND_MESSAGE_TO_ALL) {
 			decodeSendMessageToAll(msgData, communication);
+		} else {
+			result = false;
 		}
+		return result;
 	}
 
+	/**
+	 * Encode and send the message to the receiver user.
+	 * 
+	 * @param msg
+	 * @param sendUserID
+	 * @param receiveUserID
+	 * @param appID
+	 * @see PBSendMessageToSingle
+	 */
 	public static void encodeSendMessageToSingle(byte[] msg, int sendUserID,
 			int receiveUserID, int appID) {
 		PBSendMessageToSingle.Builder builder = PBSendMessageToSingle
@@ -66,6 +80,12 @@ public class MessageSendProtocol implements IProtocol {
 		}
 	}
 
+	/**
+	 * 
+	 * @param msgData
+	 * @param communication
+	 * @see #encodeSendMessageToSingle(byte[], int, int, int)
+	 */
 	private void decodeSendMessageToSingle(byte[] msgData,
 			SocketCommunication communication) {
 		PBSendMessageToSingle message = null;
@@ -109,6 +129,14 @@ public class MessageSendProtocol implements IProtocol {
 		}
 	}
 
+	/**
+	 * Encode and send the message to all user in the network.
+	 * 
+	 * @param msg
+	 * @param sendUserID
+	 * @param appID
+	 * @see PBSendMessageToAll
+	 */
 	public static void encodeSendMessageToAll(byte[] msg, int sendUserID,
 			int appID) {
 		PBSendMessageToAll.Builder builder = PBSendMessageToAll.newBuilder();
@@ -125,6 +153,12 @@ public class MessageSendProtocol implements IProtocol {
 				.toByteArray());
 	}
 
+	/**
+	 * 
+	 * @param msg
+	 * @param communication
+	 * @see #encodeSendMessageToAll(byte[], int, int)
+	 */
 	private void decodeSendMessageToAll(byte[] msg,
 			SocketCommunication communication) {
 		PBSendMessageToAll message = null;

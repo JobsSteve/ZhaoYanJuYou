@@ -20,6 +20,18 @@ import com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUpdateUserId;
 import com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUserInfo;
 import com.zhaoyan.juyou.provider.JuyouData;
 
+/**
+ * Update all user after user login. Rules is below:</br>
+ * 
+ * 1. Server send all user to all users.</br>
+ * 
+ * 2. Send one use in one time.</br>
+ * 
+ * 3. Send all user id first, then send all user info.</br>
+ * 
+ * @see PBUserUpdateProtos
+ * 
+ */
 public class UserUpdateProtocol implements IProtocol {
 	private static final String TAG = "UserUpdateProtocol";
 
@@ -33,13 +45,17 @@ public class UserUpdateProtocol implements IProtocol {
 	}
 
 	@Override
-	public void decode(PBType type, byte[] msgData,
+	public boolean decode(PBType type, byte[] msgData,
 			SocketCommunication communication) {
+		boolean result = true;
 		if (type == PBType.UPDATE_USER_ID) {
 			decodeUpdateUserId(msgData, communication);
 		} else if (type == PBType.UPDATE_USER_INFO) {
 			decodeUpdateUserInfo(msgData, communication);
+		} else {
+			result = false;
 		}
+		return result;
 	}
 
 	/**
@@ -47,6 +63,7 @@ public class UserUpdateProtocol implements IProtocol {
 	 * 
 	 * @param msgData
 	 * @param communication
+	 * @see #encodeUpdateUserInfo(Context);
 	 */
 	private void decodeUpdateUserInfo(byte[] msgData,
 			SocketCommunication communication) {
@@ -68,6 +85,7 @@ public class UserUpdateProtocol implements IProtocol {
 	 * 
 	 * @param msgData
 	 * @param communication
+	 * @see #encodeUpdateUserId(Context)
 	 */
 	private void decodeUpdateUserId(byte[] msgData,
 			SocketCommunication communication) {
@@ -97,16 +115,11 @@ public class UserUpdateProtocol implements IProtocol {
 	}
 
 	/**
-	 * Update all user protocol:</br>
+	 * Encode and send update user message.
 	 * 
-	 * 1. Server send all user to all users.</br>
-	 * 
-	 * 2. Send one use in one time.</br>
-	 * 
-	 * 3. Send all user id first, then send all user info.</br>
-	 * 
-	 * @param userManager
-	 * @return
+	 * @param context
+	 * @see PBUpdateUserId
+	 * @see PBUserInfo
 	 */
 	public static void encodeUpdateAllUser(Context context) {
 		encodeUpdateUserId(context);

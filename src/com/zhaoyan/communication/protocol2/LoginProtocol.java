@@ -13,6 +13,7 @@ import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase;
 import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
+import com.zhaoyan.communication.protocol.pb.PBLoginProtos;
 import com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginFailReason;
 import com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRequest;
 import com.zhaoyan.communication.protocol.pb.PBLoginProtos.PBLoginRespond;
@@ -22,6 +23,7 @@ import com.zhaoyan.juyou.provider.JuyouData;
 /**
  * This class is used for encode and decode login message.
  * 
+ * @see PBLoginProtos
  */
 public class LoginProtocol implements IProtocol {
 	private static final String TAG = "LoginProtocol";
@@ -37,19 +39,24 @@ public class LoginProtocol implements IProtocol {
 	}
 
 	@Override
-	public void decode(PBType type, byte[] msgData,
+	public boolean decode(PBType type, byte[] msgData,
 			SocketCommunication communication) {
+		boolean result = true;
 		if (type == PBType.LOGIN_REQUEST) {
 			decodeLoginRequest(msgData, communication);
 		} else if (type == PBType.LOGIN_RESPOND) {
 			decodeLoginRespond(msgData, communication);
+		} else {
+			result = false;
 		}
+		return result;
 	}
 
 	/**
 	 * Encode and send login request.
 	 * 
 	 * @param context
+	 * @see PBLoginRequest
 	 */
 	public static void encodeLoginRequest(Context context) {
 		PBLoginRequest.Builder requestBuilder = PBLoginRequest.newBuilder();
@@ -76,12 +83,11 @@ public class LoginProtocol implements IProtocol {
 	}
 
 	/**
-	 * see {@link #encodeLoginRequest(Context)}.
-	 * 
+	 * @see {@link #encodeLoginRequest(Context)}
 	 * @param data
-	 * @return
+	 * @param communication
 	 */
-	public void decodeLoginRequest(byte[] data,
+	private void decodeLoginRequest(byte[] data,
 			SocketCommunication communication) {
 		User localUser = UserManager.getInstance().getLocalUser();
 		if (UserManager.isManagerServer(localUser)) {
@@ -123,6 +129,14 @@ public class LoginProtocol implements IProtocol {
 		return userInfo;
 	}
 
+	/**
+	 * Encode and send login respond.
+	 * 
+	 * @param isAdded
+	 * @param userID
+	 * @param communication
+	 * @see PBLoginRespond
+	 */
 	public static void encodeLoginRespond(boolean isAdded, int userID,
 			SocketCommunication communication) {
 		PBLoginRespond.Builder respondBuilder = PBLoginRespond.newBuilder();
@@ -149,14 +163,13 @@ public class LoginProtocol implements IProtocol {
 	/**
 	 * Get the login result and update user id.</br>
 	 * 
-	 * Protocol see {@link #encodeLoginRespond(boolean, User, UserManager)}
-	 * 
 	 * @param data
 	 * @param userManager
 	 * @param communication
+	 * @see #encodeLoginRespond(boolean, int, SocketCommunication)
 	 * @return
 	 */
-	public void decodeLoginRespond(byte[] data,
+	private void decodeLoginRespond(byte[] data,
 			SocketCommunication communication) {
 		PBLoginRespond loginRespond = null;
 		try {

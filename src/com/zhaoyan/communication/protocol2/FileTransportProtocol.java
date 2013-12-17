@@ -25,6 +25,11 @@ import com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBCancelSendF
 import com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBFileInfo;
 import com.zhaoyan.communication.protocol.pb.PBFileTransportProtos.PBSendFile;
 
+/**
+ * Send file.
+ * 
+ * @see PBFileTransportProtos
+ */
 public class FileTransportProtocol implements IProtocol {
 	private static final String TAG = "FileTransportProtocol";
 
@@ -40,16 +45,19 @@ public class FileTransportProtocol implements IProtocol {
 	}
 
 	@Override
-	public void decode(PBType type, byte[] msgData,
+	public boolean decode(PBType type, byte[] msgData,
 			SocketCommunication communication) {
-		Log.d(TAG, "decode type = " + type);
+		boolean result = true;
 		if (type == PBType.FILE_TRANSPORT_SEND) {
 			decodeSend(msgData, communication);
 		} else if (type == PBType.FILE_TRANSPORT_CANCEL_SEND) {
 			decodeCancelSend(msgData, communication);
 		} else if (type == PBType.FILE_TRANSPORT_CANCEL_RECEIVE) {
 			decodeCancelReceive(msgData, communication);
+		} else {
+			result = false;
 		}
+		return result;
 	}
 
 	public static boolean encodeCancelReceive(User sendUser, int appID) {
