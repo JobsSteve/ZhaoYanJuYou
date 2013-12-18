@@ -13,12 +13,12 @@ import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileSender.OnFileSendListener;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
-import com.zhaoyan.communication.protocol2.FileTransportProtocol;
-import com.zhaoyan.communication.protocol2.LoginProtocol;
-import com.zhaoyan.communication.protocol2.MessageSendProtocol;
-import com.zhaoyan.communication.protocol2.ProtocolManager;
-import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
-import com.zhaoyan.communication.protocol2.FileTransportProtocol.FileInfo;
+import com.zhaoyan.communication.protocol.FileTransportProtocol;
+import com.zhaoyan.communication.protocol.LoginProtocol;
+import com.zhaoyan.communication.protocol.MessageSendProtocol;
+import com.zhaoyan.communication.protocol.ProtocolManager;
+import com.zhaoyan.communication.protocol.UserUpdateProtocol;
+import com.zhaoyan.communication.protocol.FileTransportProtocol.FileInfo;
 import com.zhaoyan.juyou.R;
 
 import android.content.Context;

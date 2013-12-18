@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.protocol2;
+package com.zhaoyan.communication.protocol;
 
 import java.util.Map;
 

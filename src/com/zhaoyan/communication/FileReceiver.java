@@ -19,7 +19,7 @@ import android.os.Message;
 import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.TrafficStaticInterface.TrafficStaticsRxListener;
-import com.zhaoyan.communication.protocol2.FileTransportProtocol.FileInfo;
+import com.zhaoyan.communication.protocol.FileTransportProtocol.FileInfo;
 
 /**
  * Connect to server socket and get the file from server.

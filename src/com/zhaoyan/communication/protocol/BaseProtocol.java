@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.protocol2;
+package com.zhaoyan.communication.protocol;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
