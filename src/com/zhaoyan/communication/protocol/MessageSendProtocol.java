@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.protocol2;
+package com.zhaoyan.communication.protocol;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import com.dreamlink.communication.aidl.User;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.ProtocolCommunication;
 import com.zhaoyan.communication.SocketCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
@@ -104,15 +105,15 @@ public class MessageSendProtocol implements IProtocol {
 					+ ", receiveUserId = " + receiveUserId + ", appId = "
 					+ appId);
 
-			SocketCommunicationManager communicationManager = SocketCommunicationManager
-					.getInstance();
 			UserManager userManager = UserManager.getInstance();
 			User localUser = userManager.getLocalUser();
 
 			if (receiveUserId == localUser.getUserID()) {
 				Log.d(TAG, "This message is for me");
-				communicationManager.notifyReceiveListeners(sendUserId, appId,
-						data);
+				ProtocolCommunication protocolCommunication = ProtocolCommunication
+						.getInstance();
+				protocolCommunication.notifyMessageReceiveListeners(sendUserId,
+						appId, data);
 			} else {
 				Log.d(TAG, "This message is not for me");
 				SocketCommunication destinationCommunication = userManager
@@ -191,8 +192,10 @@ public class MessageSendProtocol implements IProtocol {
 				return;
 			}
 			// Notify me.
-			communicationManager
-					.notifyReceiveListeners(sendUserID, appID, data);
+			ProtocolCommunication protocolCommunication = ProtocolCommunication
+					.getInstance();
+			protocolCommunication.notifyMessageReceiveListeners(sendUserID,
+					appID, data);
 			// Send this message to others.
 			PBBase baseMessage = BaseProtocol.createBaseMessage(
 					PBType.SEND_MESSAGE_TO_ALL, message);

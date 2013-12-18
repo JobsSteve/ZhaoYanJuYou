@@ -118,8 +118,6 @@
             android:theme="@style/Theme.Translucent" >
         </activity>
 
-        <service android:name="com.zhaoyan.communication.search.WifiOrAPSearchService" >
-        </service>
         <service android:name="com.zhaoyan.communication.LoginService" >
         </service>
         <service android:name="com.zhaoyan.communication.FileTransferService" >

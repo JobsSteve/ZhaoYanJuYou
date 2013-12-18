@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.search2.DiscoveryService;
+import com.zhaoyan.communication.search.DiscoveryService;
 
 public class ServerCreateAndDiscovery extends Thread {
 	private static final String TAG = "ServerCreateAndDiscovery";

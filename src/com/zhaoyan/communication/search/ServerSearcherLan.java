@@ -1,10 +1,9 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import android.content.Context;
 
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.communication.search.SearchUtil;
 
 /**
  * This class is used for search the server in current WiFi network

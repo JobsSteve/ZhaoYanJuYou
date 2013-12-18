@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.protocol2;
+package com.zhaoyan.communication.protocol;
 
 import android.content.Context;
 import android.util.Log;

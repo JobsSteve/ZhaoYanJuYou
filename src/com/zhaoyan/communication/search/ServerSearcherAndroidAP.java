@@ -1,10 +1,9 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import java.util.List;
 
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.communication.search.WiFiNameEncryption;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

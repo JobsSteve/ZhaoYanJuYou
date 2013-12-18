@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

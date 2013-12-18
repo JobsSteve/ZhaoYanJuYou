@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.communication.search.Search;
 
 /**
  * This is a discovery service and WiFi AP is not Android AP.</br>

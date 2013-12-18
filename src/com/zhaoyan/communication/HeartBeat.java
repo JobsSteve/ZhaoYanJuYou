@@ -7,7 +7,7 @@ import java.util.TimerTask;
 import com.dreamlink.communication.lib.util.ArrayUtil;
 import com.zhaoyan.common.util.ArraysCompat;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.communication.protocol.Protocol;
+import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
 
 /**
  * 1. Server and client every {@link #INTERVAL_TIME} send
@@ -34,7 +34,7 @@ public class HeartBeat {
 	 */
 	private static final int LOST_CONNECTION_TIME = INTERVAL_TIME * 3;
 	private static final byte[] HEART_BEAT_MESSAGE = ArrayUtil
-			.int2ByteArray(Protocol.DATA_TYPE_HEADER_HEART_BEAT);
+			.int2ByteArray(PBType.HEART_BEAT_VALUE);
 	private static final byte MODE_SCREEN_ON = 0;
 	private static final byte MODE_SCREEN_OFF = 1;
 

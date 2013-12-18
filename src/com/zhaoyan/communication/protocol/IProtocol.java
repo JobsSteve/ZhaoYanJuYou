@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.protocol2;
+package com.zhaoyan.communication.protocol;
 
 import com.zhaoyan.communication.SocketCommunication;
 import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;

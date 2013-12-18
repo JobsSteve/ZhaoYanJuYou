@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -10,8 +10,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.zhaoyan.common.net.NetWorkUtil;
-import com.zhaoyan.communication.search.Search;
-import com.zhaoyan.communication.search2.ServerSearcherLan.OnSearchListenerLan;
+import com.zhaoyan.communication.search.ServerSearcherLan.OnSearchListenerLan;
 
 /**
  * This class is use for search server in WiFi network in which the AP is

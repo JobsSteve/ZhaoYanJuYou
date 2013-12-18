@@ -28,6 +28,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 	private Map<Integer, ArrayList<Integer>> groupMember;
 	private UserManager mUserManager;
 	private SocketCommunicationManager mSocketCommunicationManager;
+	private ProtocolCommunication mProtocolCommunication;
 	private int appId = 115;;
 	private String TAG = "ArbiterLiu-PlatformManagerService";
 	private ConcurrentHashMap<Integer, PlatformManagerCallback> callbackList;
@@ -77,9 +78,10 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 	public void onCreate() {
 		mUserManager = UserManager.getInstance();
 		mSocketCommunicationManager = SocketCommunicationManager.getInstance();
+		mProtocolCommunication = ProtocolCommunication.getInstance();
 		joinedGroup = new ConcurrentHashMap<Integer, HostInfo>();
 		allHostList = new ConcurrentHashMap<Integer, HostInfo>();
-		mSocketCommunicationManager.registerOnCommunicationListenerExternal(
+		mProtocolCommunication.registerOnCommunicationListenerExternal(
 				this, appId);
 		platformProtocol = new PlatformProtocol(this);
 		createHost = new HashMap<Integer, HostInfo>();
@@ -113,7 +115,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 				byte[] tartgetData = platformProtocol.encodePlatformProtocol(
 						platformProtocol.CREATE_HOST_CMD_CODE,
 						ArrayUtil.objectToByteArray(hostInfo));
-				mSocketCommunicationManager.sendMessageToSingle(tartgetData,
+				mProtocolCommunication.sendMessageToSingle(tartgetData,
 						temUser, appId);
 			}
 		} else {
@@ -144,7 +146,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 								.encodePlatformProtocol(
 										platformProtocol.CREATE_HOST_ACK_CMD_CODE,
 										ArrayUtil.objectToByteArray(temp));
-						mSocketCommunicationManager.sendMessageToSingle(target,
+						mProtocolCommunication.sendMessageToSingle(target,
 								tem, appId);
 					}
 				}
@@ -163,7 +165,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 					byte[] target = platformProtocol.encodePlatformProtocol(
 							platformProtocol.CREATE_HOST_ACK_CMD_CODE,
 							ArrayUtil.objectToByteArray(hostInfo));
-					mSocketCommunicationManager.sendMessageToSingle(target,
+					mProtocolCommunication.sendMessageToSingle(target,
 							tem, appId);
 				} else {
 					/** this is mean the communication has lost,do nothing */
@@ -177,7 +179,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 		byte[] target = platformProtocol.encodePlatformProtocol(
 				platformProtocol.GROUP_INFO_CHANGE_CMD_CODE,
 				ArrayUtil.objectToByteArray(allHostList));
-		mSocketCommunicationManager.sendMessageToAll(target, appId);
+		mProtocolCommunication.sendMessageToAll(target, appId);
 	}
 
 	/** 本地收到创建的ACK */
@@ -225,7 +227,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 		byte[] target = platformProtocol.encodePlatformProtocol(
 				platformProtocol.GROUP_INFO_CHANGE_CMD_CODE,
 				ArrayUtil.objectToByteArray(temMap));
-		mSocketCommunicationManager.sendMessageToSingle(target, user, appId);
+		mProtocolCommunication.sendMessageToSingle(target, user, appId);
 	}
 
 	public void getAllHost(int appID) {
@@ -242,7 +244,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 		tem_target = ArrayUtil.int2ByteArray(appID);
 		byte[] target = platformProtocol.encodePlatformProtocol(
 				platformProtocol.GET_ALL_HOST_INFO_CMD_CODE, tem_target);
-		mSocketCommunicationManager.sendMessageToSingle(target, user, appId);
+		mProtocolCommunication.sendMessageToSingle(target, user, appId);
 	}
 
 	public void receiverAllHostInfo(
@@ -287,7 +289,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 			byte[] target = platformProtocol.encodePlatformProtocol(
 					platformProtocol.JOIN_GROUP_CMD_CODE,
 					ArrayUtil.int2ByteArray(hostInfo.hostId));
-			mSocketCommunicationManager.sendMessageToSingle(target, temUser,
+			mProtocolCommunication.sendMessageToSingle(target, temUser,
 					appId);
 		}
 	}
@@ -333,7 +335,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 			if (tem == null) {
 				Log.e(TAG, "There is no main server,check the netwok");
 			} else {
-				mSocketCommunicationManager.sendMessageToSingle(target, tem,
+				mProtocolCommunication.sendMessageToSingle(target, tem,
 						appId);
 			}
 		}
@@ -370,7 +372,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 		temp = ArrayUtil.join(temp, ArrayUtil.objectToByteArray(hostInfo));
 		byte[] target = platformProtocol.encodePlatformProtocol(
 				platformProtocol.JOIN_GROUP_ACK_CMD_CODE, temp);
-		mSocketCommunicationManager.sendMessageToSingle(target, user, appId);
+		mProtocolCommunication.sendMessageToSingle(target, user, appId);
 
 	}
 
@@ -402,7 +404,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 					platformProtocol.GROUP_MEMBER_UPDATE_CMD_CODE, temp);
 			for (int id : temList) {
 				if (id != mUserManager.getLocalUser().getUserID())
-					mSocketCommunicationManager.sendMessageToSingle(target,
+					mProtocolCommunication.sendMessageToSingle(target,
 							mUserManager.getAllUser().get(id), appId);
 			}
 		}
@@ -452,7 +454,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 			if (tem == null) {
 				/** this mean the owner has disconnect */
 			} else {
-				mSocketCommunicationManager.sendMessageToSingle(target, tem,
+				mProtocolCommunication.sendMessageToSingle(target, tem,
 						appId);
 			}
 		}
@@ -476,7 +478,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 			byte[] target = platformProtocol.encodePlatformProtocol(
 					platformProtocol.EXIT_GROUP_ACK_CMD_CODE,
 					ArrayUtil.objectToByteArray(hostInfo));
-			mSocketCommunicationManager.sendMessageToSingle(target, applyUser,
+			mProtocolCommunication.sendMessageToSingle(target, applyUser,
 					appId);
 			notifyGroupInfoChangeForMember(hostId);
 			prepareUpdateHostInfo(hostInfo);
@@ -508,7 +510,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 						ArrayUtil.objectToByteArray(hostInfo));
 				User tem = mUserManager.getAllUser().get(userId);
 				if (tem != null)
-					mSocketCommunicationManager.sendMessageToSingle(target,
+					mProtocolCommunication.sendMessageToSingle(target,
 							tem, appId);
 				hostInfo.personNumber--;
 				notifyGroupInfoChangeForMember(hostId);
@@ -555,11 +557,11 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 						continue;
 					}
 					User u = mUserManager.getAllUser().get(n);
-					mSocketCommunicationManager.sendMessageToSingle(target, u,
+					mProtocolCommunication.sendMessageToSingle(target, u,
 							appId);
 				}
 			}
-			mSocketCommunicationManager.sendMessageToSingle(target,
+			mProtocolCommunication.sendMessageToSingle(target,
 					mUserManager.getAllUser().get(-1), appId);
 		}
 
@@ -610,7 +612,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 				platformProtocol.GET_ALL_GROUP_MEMBER_CMD_CODE,
 				ArrayUtil.int2ByteArray(hostInfo.hostId));
 		if (tempUser != null) {
-			mSocketCommunicationManager.sendMessageToSingle(target, tempUser,
+			mProtocolCommunication.sendMessageToSingle(target, tempUser,
 					appId);
 		} else {
 			Log.e(TAG, "the owner can not reachable");
@@ -627,7 +629,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 						.join(tem, ArrayUtil.objectToByteArray(userList));
 				byte[] target = platformProtocol.encodePlatformProtocol(
 						platformProtocol.GROUP_MEMBER_UPDATE_CMD_CODE, tem);
-				mSocketCommunicationManager.sendMessageToSingle(target, user,
+				mProtocolCommunication.sendMessageToSingle(target, user,
 						appId);
 			} else {
 				Log.e(TAG, "the apply user " + user.getUserID()
@@ -707,7 +709,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 				if (id == mUserManager.getLocalUser().getUserID()) {
 					continue;
 				} else {
-					mSocketCommunicationManager.sendMessageToSingle(target,
+					mProtocolCommunication.sendMessageToSingle(target,
 							userMap.get(id), appId);
 				}
 			}
@@ -766,7 +768,7 @@ public class PlatformManager implements OnCommunicationListenerExternal {
 		data = ArrayUtil.join(tempData, data);
 		byte[] target = platformProtocol.encodePlatformProtocol(
 				platformProtocol.MESSAGE_CMD_CODE, data);
-		mSocketCommunicationManager.sendMessageToSingle(target, user, appId);
+		mProtocolCommunication.sendMessageToSingle(target, user, appId);
 	}
 
 	public void receiverData(byte[] data, User sendUser, boolean allFlag,
