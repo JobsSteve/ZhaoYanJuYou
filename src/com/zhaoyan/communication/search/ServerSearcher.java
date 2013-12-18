@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import android.content.Context;
 

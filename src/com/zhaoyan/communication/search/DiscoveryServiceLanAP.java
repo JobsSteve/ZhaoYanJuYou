@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -13,7 +13,6 @@ import android.content.Context;
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.UserManager;
-import com.zhaoyan.communication.search.Search;
 
 /**
  * This class is use for search client in Android AP network.</br>

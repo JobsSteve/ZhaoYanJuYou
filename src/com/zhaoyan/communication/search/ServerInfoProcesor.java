@@ -1,4 +1,4 @@
-package com.zhaoyan.communication.search2;
+package com.zhaoyan.communication.search;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -8,9 +8,8 @@ import com.dreamlink.communication.aidl.User;
 import com.zhaoyan.communication.SocketPort;
 import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserInfo;
-import com.zhaoyan.communication.search.WiFiNameEncryption;
-import com.zhaoyan.communication.search2.ServerSearcherAndroidAP.OnSearchListenerAP;
-import com.zhaoyan.communication.search2.ServerSearcherLan.OnSearchListenerLan;
+import com.zhaoyan.communication.search.ServerSearcherAndroidAP.OnSearchListenerAP;
+import com.zhaoyan.communication.search.ServerSearcherLan.OnSearchListenerLan;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 /**

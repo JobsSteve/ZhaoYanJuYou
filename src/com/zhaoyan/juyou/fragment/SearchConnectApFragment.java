@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.zhaoyan.communication.connect.ServerCreator;
-import com.zhaoyan.communication.search2.ServerSearcher;
+import com.zhaoyan.communication.search.ServerSearcher;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.provider.JuyouData;
 

@@ -11,7 +11,7 @@ import android.view.View.OnClickListener;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.connect.ServerCreator;
-import com.zhaoyan.communication.search2.ServerSearcher;
+import com.zhaoyan.communication.search.ServerSearcher;
 import com.zhaoyan.juyou.R;
 
 public class InviteActivity extends BaseActivity implements OnClickListener {

@@ -12,7 +12,7 @@ import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.communication.connect.ServerConnector;
 import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.communication.search.SearchUtil;
-import com.zhaoyan.communication.search2.ServerSearcher;
+import com.zhaoyan.communication.search.ServerSearcher;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.ServerCursorAdapter;
 import com.zhaoyan.juyou.provider.JuyouData;

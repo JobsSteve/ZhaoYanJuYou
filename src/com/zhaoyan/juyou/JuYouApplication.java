@@ -18,7 +18,7 @@ import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.connect.ServerConnector;
 import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.communication.search.SearchUtil;
-import com.zhaoyan.communication.search2.ServerSearcher;
+import com.zhaoyan.communication.search.ServerSearcher;
 import com.zhaoyan.juyou.common.MountManager;
 
 public class JuYouApplication extends Application {
