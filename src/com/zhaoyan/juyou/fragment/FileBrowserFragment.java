@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -354,12 +355,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mAdapter.notifyDataSetChanged();
 
 		mActionMenu = new ActionMenu(mContext);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_COPY, R.drawable.ic_action_copy, R.string.copy);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_CUT, R.drawable.ic_action_cut, R.string.cut);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send_enable, R.string.menu_send);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_COPY, R.drawable.ic_action_copy_enable, R.string.copy);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CUT, R.drawable.ic_action_cut_enable, R.string.cut);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE, R.drawable.ic_action_delete_enable, R.string.menu_delete);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_MORE, R.drawable.ic_action_overflow, R.string.menu_more);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_MORE, R.drawable.ic_action_overflow_enable, R.string.menu_more);
 
 		if (mAllLists.get(position).isDir) {
 			//we do not support send folder
@@ -950,8 +951,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			break;
 		case ActionMenu.ACTION_MENU_MORE:
 			ActionMenu actionMenu = new ActionMenu(mContext);
-			actionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename, R.string.rename);
-			actionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info, R.string.menu_info);
+			actionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename_enable, R.string.rename);
+			actionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info_enable, R.string.menu_info);
 			ZyPopupMenu popupMenu = new ZyPopupMenu(getActivity(), actionMenu);
 			popupMenu.showAsLoaction(mMenuBarView, Gravity.RIGHT | Gravity.BOTTOM, 5, (int) mContext.getResources().getDimension(R.dimen.menubar_height));
 			popupMenu.setOnPopupViewListener(new PopupViewClickListener() {
@@ -1029,7 +1030,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void updateMenuBar() {
 		int selectCount = mAdapter.getSelectedItems();
 		updateTitleNum(selectCount);
-
 		if (mAdapter.getCount() == selectCount) {
 			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.unselect_all);
 		} else {
@@ -1074,9 +1074,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mCopyList = mAdapter.getSelectedFileInfos();
 		//update new menu
 		mActionMenu = new ActionMenu(mContext);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_CREATE_FOLDER, R.drawable.ic_action_createfolder, R.string.create_folder);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_PASTE, R.drawable.ic_action_paste, R.string.paste);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, R.drawable.ic_action_cancel, R.string.cancel);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CREATE_FOLDER, R.drawable.ic_action_createfolder_enable, R.string.create_folder);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_PASTE, R.drawable.ic_action_paste_enable, R.string.paste);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_CANCEL, R.drawable.ic_action_cancel_enable, R.string.cancel);
 		mMenuBarManager.refreshMenus(mActionMenu);
 	}
 	

@@ -198,11 +198,11 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_BACKUP, R.drawable.ic_action_backup, R.string.menu_backup);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_UNINSTALL,R.drawable.ic_aciton_uninstall,R.string.menu_uninstall);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_MOVE_TO_GAME,R.drawable.ic_action_move_to,R.string.menu_move_to_game);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_app_info,R.string.menu_app_info);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send_enable, R.string.menu_send);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_BACKUP, R.drawable.ic_action_backup_enable, R.string.menu_backup);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_UNINSTALL,R.drawable.ic_aciton_uninstall_enable,R.string.menu_uninstall);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_MOVE_TO_GAME,R.drawable.ic_action_move_to_enable,R.string.menu_move_to_game);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_app_info_enable,R.string.menu_app_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 
 		startMenuBar();

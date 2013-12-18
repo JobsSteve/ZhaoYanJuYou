@@ -292,9 +292,9 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getApplicationContext());
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send_enable, R.string.menu_send);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE,R.drawable.ic_action_delete_enable,R.string.menu_delete);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
+		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info_enable,R.string.menu_info);
 		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
 		
 		startMenuBar();
