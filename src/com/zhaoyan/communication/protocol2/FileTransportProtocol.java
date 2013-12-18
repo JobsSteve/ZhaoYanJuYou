@@ -15,6 +15,7 @@ import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.BitmapUtilities;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.ProtocolCommunication;
 import com.zhaoyan.communication.SocketCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
@@ -180,7 +181,9 @@ public class FileTransportProtocol implements IProtocol {
 			int serverPort = pbSendFile.getServerPort();
 
 			FileInfo fileInfo = pbFileInfo2FileInfo(pbSendFile.getFileInfo());
-			communicationManager.notfiyFileReceiveListeners(sendUserID, appID,
+			ProtocolCommunication protocolCommunication = ProtocolCommunication
+					.getInstance();
+			protocolCommunication.notfiyFileReceiveListeners(sendUserID, appID,
 					serverAddress, serverPort, fileInfo);
 		} else {
 			Log.d(TAG, "onReceiveFile This file is not for me");

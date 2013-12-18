@@ -32,7 +32,7 @@ import com.zhaoyan.common.util.BitmapUtilities;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileReceiver.OnReceiveListener;
 import com.zhaoyan.communication.FileSender.OnFileSendListener;
-import com.zhaoyan.communication.SocketCommunicationManager.OnFileTransportListener;
+import com.zhaoyan.communication.ProtocolCommunication.OnFileTransportListener;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
 import com.zhaoyan.juyou.common.AppManager;
@@ -65,6 +65,7 @@ public class FileTransferService extends Service implements
 
 	private Notice mNotice;
 	private SocketCommunicationManager mSocketMgr;
+	private ProtocolCommunication mProtocolCommunication;
 	private HistoryManager mHistoryManager = null;
 	private UserManager mUserManager = null;
 
@@ -169,7 +170,8 @@ public class FileTransferService extends Service implements
 		mSocketMgr = SocketCommunicationManager.getInstance();
 		mAppId = AppUtil.getAppID(this);
 		Log.d(TAG, "mappid=" + mAppId);
-		mSocketMgr.registerOnFileTransportListener(this, mAppId);
+		mProtocolCommunication = ProtocolCommunication.getInstance();
+		mProtocolCommunication.registerOnFileTransportListener(this, mAppId);
 
 		mUserManager = UserManager.getInstance();
 	}
@@ -214,7 +216,7 @@ public class FileTransferService extends Service implements
 		if (currFileReceiver != null) {
 			// Send Message to Client
 			User sendUser = currFileReceiver.getSendUser();
-			mSocketMgr.cancelReceiveFile(sendUser, mAppId);
+			mProtocolCommunication.cancelReceiveFile(sendUser, mAppId);
 
 			// Close receive thread
 			currFileReceiver.cancelReceiveFile();
@@ -247,7 +249,7 @@ public class FileTransferService extends Service implements
 		if (currExeSendThread != null) {
 			// Send Message to Client
 			User receiverUser = currExeSendThread.getReceiveUser();
-			mSocketMgr.cancelSendFile(receiverUser, mAppId);
+			mProtocolCommunication.cancelSendFile(receiverUser, mAppId);
 
 			// Close send thread
 			mFileSender.cancelSendFile();
@@ -352,8 +354,8 @@ public class FileTransferService extends Service implements
 			ContentValues values = new ContentValues();
 			values.put(JuyouData.History.STATUS, HistoryManager.STATUS_PRE_SEND);
 			getContentResolver().update(getFileUri(key), values, null, null);
-			mFileSender = mSocketMgr.sendFile(file, FileTransferService.this,
-					receiveUser, mAppId, key);
+			mFileSender = mProtocolCommunication.sendFile(file,
+					FileTransferService.this, receiveUser, mAppId, key);
 			// when send a file,notify othes that need to know
 			sendBroadcastForNotify(true);
 		}
@@ -558,7 +560,7 @@ public class FileTransferService extends Service implements
 	public void onDestroy() {
 		Log.d(TAG, "onDestroy");
 		super.onDestroy();
-		mSocketMgr.unregisterOnFileTransportListener(this);
+		mProtocolCommunication.unregisterOnFileTransportListener(this);
 		unregisterReceiver(transferReceiver);
 
 		mSendingFileThreadMap.clear();
