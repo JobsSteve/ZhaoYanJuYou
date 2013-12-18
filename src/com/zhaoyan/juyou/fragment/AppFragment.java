@@ -198,13 +198,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send_enable, R.string.menu_send);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_BACKUP, R.drawable.ic_action_backup_enable, R.string.menu_backup);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_UNINSTALL,R.drawable.ic_aciton_uninstall_enable,R.string.menu_uninstall);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_MOVE_TO_GAME,R.drawable.ic_action_move_to_enable,R.string.menu_move_to_game);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_app_info_enable,R.string.menu_app_info);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
-
+		getActionMenuInflater().inflate(R.menu.app_menu, mActionMenu);
 		startMenuBar();
 		return true;
 	}
@@ -246,7 +240,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	@Override
 	public void onMenuClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
-		case ActionMenu.ACTION_MENU_SEND:
+		case R.id.menu_send:
 			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getCheckedPathList();
 			//send
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(getActivity());
@@ -279,24 +273,24 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			});
 			destroyMenuBar();
 			break;
-		case ActionMenu.ACTION_MENU_UNINSTALL:
+		case R.id.menu_uninstall:
 			mUninstallList = mAdapter.getCheckedPkgList();
 			showUninstallDialog();
 			uninstallApp();
 			destroyMenuBar();
 			break;
-		case ActionMenu.ACTION_MENU_MOVE_TO_GAME:
+		case R.id.menu_move_app:
 			showMoveDialog();
 			break;
-		case ActionMenu.ACTION_MENU_INFO:
+		case R.id.menu_app_info:
 			String packageName = mAdapter.getCheckedPkgList().get(0);
 			showInstalledAppDetails(packageName);
 			destroyMenuBar();
 			break;
-		case ActionMenu.ACTION_MENU_SELECT:
+		case R.id.menu_select:
 			doCheckAll();
 			break;
-		case ActionMenu.ACTION_MENU_BACKUP:
+		case R.id.menu_backup:
 			List<String> backupList = mAdapter.getCheckedPkgList();
 			showBackupDialog(backupList);
 			destroyMenuBar();
@@ -409,30 +403,33 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		int selectCount = mAdapter.getCheckedCount();
 		updateTitleNum(selectCount);
 		
+		ActionMenuItem selectItem = mActionMenu.findItem(R.id.menu_select);
 		if (mAdapter.getCount() == selectCount) {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.unselect_all);
-		}else {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.select_all);
+			selectItem.setTitle(R.string.unselect_all);
+			selectItem.setEnableIcon(R.drawable.ic_aciton_unselect);
+		} else {
+			selectItem.setTitle(R.string.select_all);
+			selectItem.setEnableIcon(R.drawable.ic_aciton_select);
 		}
 		
 		if (0==selectCount) {
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_BACKUP).setEnable(false);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_UNINSTALL).setEnable(false);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_MOVE_TO_GAME).setEnable(false);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
+        	mActionMenu.findItem(R.id.menu_send).setEnable(false);
+        	mActionMenu.findItem(R.id.menu_backup).setEnable(false);
+        	mActionMenu.findItem(R.id.menu_uninstall).setEnable(false);
+        	mActionMenu.findItem(R.id.menu_move_app).setEnable(false);
+        	mActionMenu.findItem(R.id.menu_app_info).setEnable(false);
 		} else if (1 == selectCount) {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_BACKUP).setEnable(true);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_UNINSTALL).setEnable(true);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_MOVE_TO_GAME).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
+			mActionMenu.findItem(R.id.menu_send).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_backup).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_uninstall).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_move_app).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_app_info).setEnable(true);
 		} else {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_BACKUP).setEnable(true);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_UNINSTALL).setEnable(true);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_MOVE_TO_GAME).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
+			mActionMenu.findItem(R.id.menu_send).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_backup).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_uninstall).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_move_app).setEnable(true);
+        	mActionMenu.findItem(R.id.menu_app_info).setEnable(false);
 		}
 	}
 }

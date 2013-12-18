@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+     xmlns:zhaoyan="http://schemas.android.com/apk/res/com.zhaoyan.juyou" 
+    >
+    <item 
+        zhaoyan:id="@+id/menu_send"
+        zhaoyan:title="@string/menu_send"
+        zhaoyan:icon_enable="@drawable/ic_action_send_enable"
+        zhaoyan:icon_disable="@drawable/ic_action_send_disable"
+        zhaoyan:enabled="true"
+        />
+    
+    <item 
+        zhaoyan:id="@+id/menu_backup"
+        zhaoyan:title="@string/menu_backup"
+        zhaoyan:icon_enable="@drawable/ic_action_backup_enable"
+        zhaoyan:icon_disable="@drawable/ic_action_backup_disable"
+        zhaoyan:enabled="true"
+        />
+    
+    <item 
+        zhaoyan:id="@+id/menu_uninstall"
+        zhaoyan:title="@string/menu_uninstall"
+        zhaoyan:icon_enable="@drawable/ic_aciton_uninstall_enable"
+        zhaoyan:icon_disable="@drawable/ic_aciton_uninstall_disable"
+        zhaoyan:enabled="true"
+        />
+    
+    <item 
+        zhaoyan:id="@+id/menu_move_app"
+        zhaoyan:title="@string/menu_move_to_game"
+        zhaoyan:icon_enable="@drawable/ic_action_move_to_enable"
+        zhaoyan:icon_disable="@drawable/ic_action_move_to_disable"
+        zhaoyan:enabled="true"
+        />
+    
+    <item 
+        zhaoyan:id="@+id/menu_app_info"
+        zhaoyan:title="@string/menu_app_info"
+        zhaoyan:icon_enable="@drawable/ic_action_app_info_enable"
+        zhaoyan:icon_disable="@drawable/ic_action_app_info_disbale"
+        zhaoyan:enabled="true"
+        />
+    
+    <item 
+        zhaoyan:id="@+id/menu_select"
+        zhaoyan:title="@string/select_all"
+        zhaoyan:icon_enable="@drawable/ic_aciton_select"
+        zhaoyan:icon_disable="@drawable/ic_aciton_select"
+        zhaoyan:enabled="true"
+        />
+</menu>

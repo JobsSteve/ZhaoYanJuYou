@@ -69,7 +69,7 @@ public class MenuBarManager implements OnClickListener {
 				LinearLayout.LayoutParams.MATCH_PARENT, 1.0f));
 		ImageView imageView = (ImageView) view.findViewById(R.id.iv_menu_icon);
 		TextView textView = (TextView) view.findViewById(R.id.tv_menu_name);
-		int icon = item.getIcon();
+		int icon = item.isEnable() ? item.getEnableIcon() : item.getDisableIcon();
 		String name = item.getTitle().toString();
 		imageView.setImageResource(icon);
 		textView.setText(name);

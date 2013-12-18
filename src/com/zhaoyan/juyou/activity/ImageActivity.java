@@ -292,10 +292,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getApplicationContext());
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send_enable, R.string.menu_send);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE,R.drawable.ic_action_delete_enable,R.string.menu_delete);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info_enable,R.string.menu_info);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
+		getActionMenuInflater().inflate(R.menu.image_menu, mActionMenu);
 		
 		startMenuBar();
 		return true;
@@ -314,7 +311,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	@Override
 	public void onMenuClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
-		case ActionMenu.ACTION_MENU_SEND:
+		case R.id.menu_send:
 			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getCheckedPathList();
 			//send
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(this);
@@ -347,10 +344,10 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			});
 			destroyMenuBar();
 			break;
-		case ActionMenu.ACTION_MENU_DELETE:
+		case R.id.menu_delete:
 			showDeleteDialog();
 			break;
-		case ActionMenu.ACTION_MENU_INFO:
+		case R.id.menu_info:
 			List<Integer> list = mAdapter.getCheckedPosList();
 			InfoDialog dialog = null;
 			if (1 == list.size()) {
@@ -378,7 +375,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			dialog.invisbileLoadBar();
 			//info
 			break;
-		case ActionMenu.ACTION_MENU_SELECT:
+		case R.id.menu_select:
 			doCheckAll();
 			break;
 
@@ -475,20 +472,23 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		int selectCount = mAdapter.getCheckedCount();
 		updateTitleNum(selectCount,mAdapter.getCount());
 		
+		ActionMenuItem selectItem = mActionMenu.findItem(R.id.menu_select);
 		if (mAdapter.getCount() == selectCount) {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.unselect_all);
+			selectItem.setTitle(R.string.unselect_all);
+			selectItem.setEnableIcon(R.drawable.ic_aciton_unselect);
 		}else {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(R.string.select_all);
+			selectItem.setTitle(R.string.select_all);
+			selectItem.setEnableIcon(R.drawable.ic_aciton_select);
 		}
-		
+
 		if (0==selectCount) {
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(false);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
+			mActionMenu.findItem(R.id.menu_send).setEnable(false);
+			mActionMenu.findItem(R.id.menu_delete).setEnable(false);
+			mActionMenu.findItem(R.id.menu_info).setEnable(false);
 		}else {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-        	mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
+			mActionMenu.findItem(R.id.menu_send).setEnable(true);
+			mActionMenu.findItem(R.id.menu_delete).setEnable(true);
+			mActionMenu.findItem(R.id.menu_info).setEnable(true);
 		}
 	}
 }
