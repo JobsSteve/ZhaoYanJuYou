@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.dreamlink.communication.aidl.Communication;
 import com.dreamlink.communication.aidl.HostInfo;
@@ -18,7 +17,7 @@ import com.dreamlink.communication.aidl.PlatformManagerCallback;
 import com.dreamlink.communication.aidl.User;
 
 public class SocketCommunicationService extends Service {
-	private SocketCommunicationManager mSocketCommunicationManager;
+	private ProtocolCommunication mProtocolCommunication;
 	private SocketCommunicationMananerRemote mRemote;
 	public static RemoteCallbackList<OnCommunicationListenerExternal> mCallBackList = new RemoteCallbackList<OnCommunicationListenerExternal>();
 	private PlatformManager mPlatformManager;
@@ -32,7 +31,7 @@ public class SocketCommunicationService extends Service {
 		@Override
 		public void registListener(OnCommunicationListenerExternal lis,
 				int appid) throws RemoteException {
-			mSocketCommunicationManager
+			mProtocolCommunication
 					.registerOnCommunicationListenerExternal(lis, appid);
 		}
 
@@ -41,9 +40,9 @@ public class SocketCommunicationService extends Service {
 		public void sendMessage(byte[] msg, int appID, User user)
 				throws RemoteException {
 			if (user == null) {
-				mSocketCommunicationManager.sendMessageToAll(msg, appID);
+				mProtocolCommunication.sendMessageToAll(msg, appID);
 			} else {
-				mSocketCommunicationManager.sendMessageToSingle(msg, user,
+				mProtocolCommunication.sendMessageToSingle(msg, user,
 						appID);
 			}
 		}
@@ -61,7 +60,7 @@ public class SocketCommunicationService extends Service {
 
 		@Override
 		public void unRegistListener(int appId) throws RemoteException {
-			mSocketCommunicationManager
+			mProtocolCommunication
 					.unregisterOnCommunicationListenerExternal(appId);
 			mPlatformManager.unregister(appId);
 		}
@@ -74,7 +73,7 @@ public class SocketCommunicationService extends Service {
 		@Override
 		public void sendMessageToAll(byte[] msg, int appID)
 				throws RemoteException {
-			mSocketCommunicationManager.sendMessageToAll(msg, appID);
+			mProtocolCommunication.sendMessageToAll(msg, appID);
 		}
 
 		@Override
@@ -149,7 +148,7 @@ public class SocketCommunicationService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		mSocketCommunicationManager = SocketCommunicationManager.getInstance();
+		mProtocolCommunication = ProtocolCommunication.getInstance();
 		mPlatformManager = PlatformManager.getInstance(getApplicationContext());
 		if (mRemote == null) {
 			mRemote = new SocketCommunicationMananerRemote();

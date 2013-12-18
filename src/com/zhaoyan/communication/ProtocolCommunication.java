@@ -3,26 +3,36 @@ package com.zhaoyan.communication;
 import java.io.File;
 import java.net.InetAddress;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.dreamlink.communication.aidl.OnCommunicationListenerExternal;
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.FileSender.OnFileSendListener;
+import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.communication.protocol2.FileTransportProtocol;
 import com.zhaoyan.communication.protocol2.LoginProtocol;
+import com.zhaoyan.communication.protocol2.MessageSendProtocol;
+import com.zhaoyan.communication.protocol2.ProtocolManager;
 import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
 import com.zhaoyan.communication.protocol2.FileTransportProtocol.FileInfo;
 import com.zhaoyan.juyou.R;
 
 import android.content.Context;
+import android.os.RemoteException;
 
 /**
  * This class provide common interface for protocols.
  * 
+ * 1. use protocols to communicate.</br>
+ * 
+ * 2. notify protocols' events to listeners.
+ * 
  */
-public class ProtocolCommunication {
+public class ProtocolCommunication implements OnUserChangedListener {
 	private static final String TAG = "ProtocolCommunication";
 	private static ProtocolCommunication mInstance;
 	private Context mContext;
@@ -31,8 +41,8 @@ public class ProtocolCommunication {
 	private ILoginRespondCallback mLoginRespondCallback;
 
 	private UserManager mUserManager;
-	private SocketCommunicationManager mSocketComManager;
 	private Notice mNotice;
+	private ProtocolManager mProtocolManager;
 
 	/**
 	 * Map for OnFileTransportListener and appID management. When an application
@@ -45,6 +55,17 @@ public class ProtocolCommunication {
 	 * key: listener, value: app ID.
 	 */
 	private ConcurrentHashMap<OnFileTransportListener, Integer> mOnFileTransportListener = new ConcurrentHashMap<OnFileTransportListener, Integer>();
+	/**
+	 * Map for OnCommunicationListenerExternal and appID management. When an
+	 * application register to SocketCommunicationManager, record it in this
+	 * map. When received a message, notify the related applications base on the
+	 * appID.</br>
+	 * 
+	 * Map structure</br>
+	 * 
+	 * key: listener, value: app ID.
+	 */
+	private ConcurrentHashMap<OnCommunicationListenerExternal, Integer> mOnCommunicationListenerExternals = new ConcurrentHashMap<OnCommunicationListenerExternal, Integer>();
 
 	private ProtocolCommunication() {
 
@@ -60,11 +81,55 @@ public class ProtocolCommunication {
 	public void init(Context context) {
 		mContext = context;
 		mUserManager = UserManager.getInstance();
+		mUserManager.registerOnUserChangedListener(this);
 		mNotice = new Notice(mContext);
+		mProtocolManager = new ProtocolManager(mContext);
+		mProtocolManager.init();
 	}
 
 	public void release() {
 		mInstance = null;
+		if (mUserManager != null) {
+			mUserManager.unregisterOnUserChangedListener(this);
+		}
+	}
+
+	public void decodeMessage(byte[] msg,
+			SocketCommunication socketCommunication) {
+		long start = System.currentTimeMillis();
+		mProtocolManager.decode(msg, socketCommunication);
+		long end = System.currentTimeMillis();
+		Log.i(TAG, "decodeMessage() takes time: " + (end - start));
+	}
+
+	public void registerOnCommunicationListenerExternal(
+			OnCommunicationListenerExternal listener, int appID) {
+		Log.d(TAG, "registerOnCommunicationListenerExternal() appID = " + appID);
+		mOnCommunicationListenerExternals.put(listener, appID);
+	}
+
+	public void unregisterOnCommunicationListenerExternal(
+			OnCommunicationListenerExternal listener) {
+		if (listener == null) {
+			Log.e(TAG, "the params listener is null");
+		} else {
+			if (mOnCommunicationListenerExternals.containsKey(listener)) {
+				int appID = mOnCommunicationListenerExternals.remove(listener);
+				Log.d(TAG, "registerOnCommunicationListenerExternal() appID = "
+						+ appID);
+			} else {
+				Log.e(TAG, "there is no this listener in the map");
+			}
+		}
+	}
+
+	public void unregisterOnCommunicationListenerExternal(int appId) {
+		for (Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
+				.entrySet()) {
+			if (entry.getValue() == appId) {
+				mOnCommunicationListenerExternals.remove(entry.getKey());
+			}
+		}
 	}
 
 	public void setLoginRequestCallBack(ILoginRequestCallBack callback) {
@@ -95,6 +160,13 @@ public class ProtocolCommunication {
 		if (mLoginRequestCallBack != null) {
 			mLoginRequestCallBack.onLoginRequest(user, communication);
 		}
+	}
+
+	/**
+	 * client login server directly.
+	 */
+	public void sendLoginRequest() {
+		LoginProtocol.encodeLoginRequest(mContext);
 	}
 
 	/**
@@ -172,7 +244,7 @@ public class ProtocolCommunication {
 			mNotice.showToast("cancelReceiveFile: Communcation Null!");
 		}
 	}
-	
+
 	/**
 	 * Send file to the receive user.
 	 * 
@@ -193,7 +265,8 @@ public class ProtocolCommunication {
 	 * @param listener
 	 * @param receiveUser
 	 * @param appID
-	 * @param key Key is used for marking different FileSenders.
+	 * @param key
+	 *            Key is used for marking different FileSenders.
 	 * @return
 	 */
 	public FileSender sendFile(File file, OnFileSendListener listener,
@@ -258,6 +331,87 @@ public class ProtocolCommunication {
 	}
 
 	/**
+	 * Notify all listeners that we received a message sent by the user with the
+	 * ID sendUserID for us.
+	 * 
+	 * This is used by ProtocolDecoder.
+	 * 
+	 * @param sendUserID
+	 * @param appID
+	 * @param data
+	 */
+	public void notifyMessageReceiveListeners(int sendUserID, int appID,
+			byte[] data) {
+		for (Map.Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
+				.entrySet()) {
+			if (entry.getValue() == appID) {
+				try {
+					entry.getKey().onReceiveMessage(data,
+							mUserManager.getAllUser().get(sendUserID));
+				} catch (RemoteException e) {
+					Log.e(TAG, "notifyReceiveListeners error." + e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Send message to the receiver.
+	 * 
+	 * @param msg
+	 * @param receiveUser
+	 * @param appID
+	 */
+	public void sendMessageToSingle(byte[] msg, User receiveUser, int appID) {
+		int localUserID = mUserManager.getLocalUser().getUserID();
+		int receiveUserID = receiveUser.getUserID();
+		MessageSendProtocol.encodeSendMessageToSingle(msg, localUserID,
+				receiveUserID, appID);
+	}
+
+	/**
+	 * Send message to all users in the network.
+	 * 
+	 * @param msg
+	 */
+	public void sendMessageToAll(byte[] msg, int appID) {
+		Log.d(TAG, "sendMessageToAll.msg.=" + new String(msg));
+		int localUserID = mUserManager.getLocalUser().getUserID();
+		MessageSendProtocol.encodeSendMessageToAll(msg, localUserID, appID);
+	}
+
+	/**
+	 * Update user when user connect and disconnect.
+	 */
+	public void sendMessageToUpdateAllUser() {
+		UserUpdateProtocol.encodeUpdateAllUser(mContext);
+	}
+
+	@Override
+	public void onUserConnected(User user) {
+		for (Map.Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
+				.entrySet()) {
+			try {
+				entry.getKey().onUserConnected(user);
+			} catch (RemoteException e) {
+				Log.e(TAG, "onUserConnected error." + e);
+			}
+		}
+	}
+
+	@Override
+	public void onUserDisconnected(User user) {
+		for (Map.Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
+				.entrySet()) {
+			try {
+				entry.getKey().onUserDisconnected(user);
+			} catch (RemoteException e) {
+				Log.e(TAG, "onUserDisconnected error." + e);
+			}
+		}
+	}
+
+	/**
 	 * Call back interface for login activity.
 	 * 
 	 */
@@ -305,4 +459,13 @@ public class ProtocolCommunication {
 		status.append(mOnFileTransportListener.toString() + "\n");
 		return status.toString();
 	}
+
+	public String getOnCommunicationListenerExternalStatus() {
+		StringBuffer status = new StringBuffer();
+		status.append("Total size: " + mOnCommunicationListenerExternals.size()
+				+ "\n");
+		status.append(mOnCommunicationListenerExternals.toString() + "\n");
+		return status.toString();
+	}
+
 }

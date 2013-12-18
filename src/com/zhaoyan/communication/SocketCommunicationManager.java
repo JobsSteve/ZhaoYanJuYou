@@ -2,7 +2,6 @@ package com.zhaoyan.communication;
 
 import java.net.Socket;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -11,9 +10,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.RemoteException;
 
-import com.dreamlink.communication.aidl.OnCommunicationListenerExternal;
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.util.Log;
@@ -21,14 +18,9 @@ import com.zhaoyan.communication.SocketClientTask.OnConnectedToServerListener;
 import com.zhaoyan.communication.SocketCommunication.OnCommunicationChangedListener;
 import com.zhaoyan.communication.SocketCommunication.OnReceiveMessageListener;
 import com.zhaoyan.communication.SocketServerTask.OnClientConnectedListener;
-import com.zhaoyan.communication.UserManager.OnUserChangedListener;
-import com.zhaoyan.communication.protocol2.LoginProtocol;
-import com.zhaoyan.communication.protocol2.MessageSendProtocol;
-import com.zhaoyan.communication.protocol2.UserUpdateProtocol;
-import com.zhaoyan.communication.protocol2.ProtocolManager;
 
 /**
- * This class is used for providing communication operations for activity.</br>
+ * This class is used for providing socket communication operations.</br>
  * 
  * This class is single instance, so use {@link #getInstance(Context)} to get
  * object.
@@ -36,70 +28,15 @@ import com.zhaoyan.communication.protocol2.ProtocolManager;
  */
 public class SocketCommunicationManager implements OnClientConnectedListener,
 		OnConnectedToServerListener, OnCommunicationChangedListener,
-		OnReceiveMessageListener, OnUserChangedListener {
+		OnReceiveMessageListener {
 	private static final String TAG = "SocketCommunicationManager";
 
-	/**
-	 * Interface of SocketCommunication. </br>
-	 * 
-	 * Notice: </br>
-	 * 
-	 * 1. Message in this interface is not encoded with Protocol.</br>
-	 * 
-	 * 2. This is only used before Login operation. After Login success, use
-	 * OnCommunicationListenerExternal instead of this.</br>
-	 * 
-	 */
-	public interface OnCommunicationListener {
-		/**
-		 * Received a message from communication.</br>
-		 * 
-		 * Be careful, this method is not run in UI thread. If do UI operation,
-		 * we can use {@link android.os.Handler}.</br>
-		 * 
-		 * Message in this method is not encoded with Protocol.</br>
-		 * 
-		 * @param msg
-		 *            the message.
-		 * @param communication
-		 *            the message from.
-		 * 
-		 */
-		void onReceiveMessage(byte[] msg, SocketCommunication communication);
-
-		void onSendResult(byte[] msg);
-
-		/**
-		 * There is new communication established or a communication lost.
-		 */
-		void notifyConnectChanged();
-
-	}
-
 	private static SocketCommunicationManager mInstance;
-
 	private Context mContext;
 	private Notice mNotice;
-
 	private Vector<SocketCommunication> mCommunications;
-	/** Thread pool */
 	private ExecutorService mExecutorService = null;
-
-	private Vector<OnCommunicationListener> mOnCommunicationListeners;
-
-	/**
-	 * Map for OnCommunicationListenerExternal and appID management. When an
-	 * application register to SocketCommunicationManager, record it in this
-	 * map. When received a message, notify the related applications base on the
-	 * appID.</br>
-	 * 
-	 * Map structure</br>
-	 * 
-	 * key: listener, value: app ID.
-	 */
-	private ConcurrentHashMap<OnCommunicationListenerExternal, Integer> mOnCommunicationListenerExternals = new ConcurrentHashMap<OnCommunicationListenerExternal, Integer>();
 	private UserManager mUserManager = UserManager.getInstance();
-	private ProtocolManager mProtocolManager;
 
 	private SocketCommunicationManager() {
 
@@ -125,15 +62,9 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 */
 	public void init(Context context) {
 		mContext = context;
-		mOnCommunicationListeners = new Vector<OnCommunicationListener>();
 		mNotice = new Notice(context);
 		mCommunications = new Vector<SocketCommunication>();
-
 		mUserManager.init(context);
-		mUserManager.registerOnUserChangedListener(this);
-
-		mProtocolManager = new ProtocolManager(mContext);
-		mProtocolManager.init();
 	}
 
 	/**
@@ -141,43 +72,10 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 */
 	public void release() {
 		mInstance = null;
-		if (mUserManager != null) {
-			mUserManager.unregisterOnUserChangedListener(this);
-		}
 		UserManager.getInstance().release();
 
 		SocketServer.getInstance().release();
 		PlatformManager.getInstance(mContext).release();
-	}
-
-	public void registerOnCommunicationListenerExternal(
-			OnCommunicationListenerExternal listener, int appID) {
-		Log.d(TAG, "registerOnCommunicationListenerExternal() appID = " + appID);
-		mOnCommunicationListenerExternals.put(listener, appID);
-	}
-
-	public void unregisterOnCommunicationListenerExternal(
-			OnCommunicationListenerExternal listener) {
-		if (listener == null) {
-			Log.e(TAG, "the params listener is null");
-		} else {
-			if (mOnCommunicationListenerExternals.containsKey(listener)) {
-				int appID = mOnCommunicationListenerExternals.remove(listener);
-				Log.d(TAG, "registerOnCommunicationListenerExternal() appID = "
-						+ appID);
-			} else {
-				Log.e(TAG, "there is no this listener in the map");
-			}
-		}
-	}
-
-	public void unregisterOnCommunicationListenerExternal(int appId) {
-		for (Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
-				.entrySet()) {
-			if (entry.getValue() == appId) {
-				mOnCommunicationListenerExternals.remove(entry.getKey());
-			}
-		}
 	}
 
 	/**
@@ -253,7 +151,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 					}
 				}
 			}
-			notifyComunicationChange();
 		}
 		startScreenMonitor();
 	}
@@ -261,7 +158,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	@Override
 	public void OnCommunicationLost(SocketCommunication communication) {
 		mCommunications.remove(communication);
-		notifyComunicationChange();
 		if (mCommunications.isEmpty()) {
 			if (mExecutorService != null) {
 				mExecutorService.shutdown();
@@ -292,22 +188,12 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		mContext.stopService(intent);
 	}
 
-	public void registered(OnCommunicationListener iSubscribe) {
-		mOnCommunicationListeners.add(iSubscribe);
-	}
-
-	public void unregistered(OnCommunicationListener iSubscribe) {
-		mOnCommunicationListeners.remove(iSubscribe);
-	}
-
 	@Override
 	public void onReceiveMessage(byte[] msg,
 			SocketCommunication socketCommunication) {
-		// decode;
-		long start = System.currentTimeMillis();
-		mProtocolManager.decode(msg, socketCommunication);
-		long end = System.currentTimeMillis();
-		Log.i(TAG, "onReceiveMessage() decode takes time: " + (end - start));
+		ProtocolCommunication protocolCommunication = ProtocolCommunication
+				.getInstance();
+		protocolCommunication.decodeMessage(msg, socketCommunication);
 	}
 
 	/**
@@ -350,32 +236,9 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 * client login server directly.
 	 */
 	public void sendLoginRequest() {
-		LoginProtocol.encodeLoginRequest(mContext);
-	}
-
-	/**
-	 * Send message to the receiver.
-	 * 
-	 * @param msg
-	 * @param receiveUser
-	 * @param appID
-	 */
-	public void sendMessageToSingle(byte[] msg, User receiveUser, int appID) {
-		int localUserID = mUserManager.getLocalUser().getUserID();
-		int receiveUserID = receiveUser.getUserID();
-		MessageSendProtocol.encodeSendMessageToSingle(msg, localUserID,
-				receiveUserID, appID);
-	}
-
-	/**
-	 * Send message to all users in the network.
-	 * 
-	 * @param msg
-	 */
-	public void sendMessageToAll(byte[] msg, int appID) {
-		Log.d(TAG, "sendMessageToAll.msg.=" + new String(msg));
-		int localUserID = mUserManager.getLocalUser().getUserID();
-		MessageSendProtocol.encodeSendMessageToAll(msg, localUserID, appID);
+		ProtocolCommunication protocolCommunication = ProtocolCommunication
+				.getInstance();
+		protocolCommunication.sendLoginRequest();
 	}
 
 	/**
@@ -419,19 +282,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		} else {
 			Log.e(TAG, "sendMessageToSingleWithoutEncode cannot find receiver "
 					+ receiveUserId);
-		}
-	}
-
-	/**
-	 * @param addFlag
-	 *            ,if true ,connect add ,else connect remove
-	 * */
-	private void notifyComunicationChange() {
-		// if need notify someone ,doing here
-		if (!mOnCommunicationListeners.isEmpty()) {
-			for (OnCommunicationListener listener : mOnCommunicationListeners) {
-				listener.notifyConnectChanged();
-			}
 		}
 	}
 
@@ -506,7 +356,9 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	 * Update user when user connect and disconnect.
 	 */
 	private void sendMessageToUpdateAllUser() {
-		UserUpdateProtocol.encodeUpdateAllUser(mContext);
+		ProtocolCommunication protocolCommunication = ProtocolCommunication
+				.getInstance();
+		protocolCommunication.sendMessageToUpdateAllUser();
 	}
 
 	/**
@@ -523,107 +375,6 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 				String.valueOf(SocketCommunication.PORT) });
 	}
 
-	/**
-	 * Notify all listeners that we received a message sent by the user with the
-	 * ID sendUserID for us.
-	 * 
-	 * This is used by ProtocolDecoder.
-	 * 
-	 * @param sendUserID
-	 * @param appID
-	 * @param data
-	 */
-	public void notifyReceiveListeners(int sendUserID, int appID, byte[] data) {
-		// int index =
-		// SocketCommunicationService.mCallBackList.beginBroadcast();
-		// for (int i = 0; i < index; i++) {
-		// int app_ip = (Integer) SocketCommunicationService.mCallBackList
-		// .getBroadcastCookie(i);
-		// if (app_ip == appID) {
-		// OnCommunicationListenerExternal l = (OnCommunicationListenerExternal)
-		// SocketCommunicationService.mCallBackList
-		// .getBroadcastItem(i);
-		// try {
-		// l.onReceiveMessage(data,
-		// mUserManager.getAllUser().get(sendUserID));
-		// } catch (RemoteException e) {
-		// Log.e(TAG,
-		// "notifyReceiveListeners SocketCommunicationService listener error."
-		// + e);
-		// }
-		// }
-		// }
-		// SocketCommunicationService.mCallBackList.finishBroadcast();
-		for (Map.Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
-				.entrySet()) {
-			if (entry.getValue() == appID) {
-				try {
-					entry.getKey().onReceiveMessage(data,
-							mUserManager.getAllUser().get(sendUserID));
-				} catch (RemoteException e) {
-					Log.e(TAG, "notifyReceiveListeners error." + e);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void onUserConnected(User user) {
-
-		// int index =
-		// SocketCommunicationService.mCallBackList.beginBroadcast();
-		// for (int i = 0; i < index; i++) {
-		// OnCommunicationListenerExternal l = (OnCommunicationListenerExternal)
-		// SocketCommunicationService.mCallBackList
-		// .getBroadcastItem(i);
-		// try {
-		// l.onUserConnected(user);
-		// } catch (RemoteException e) {
-		// Log.e(TAG, "onUserConnected SocketCommunicationService error."
-		// + e);
-		// }
-		// }
-		// SocketCommunicationService.mCallBackList.finishBroadcast();
-
-		for (Map.Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
-				.entrySet()) {
-			try {
-				entry.getKey().onUserConnected(user);
-			} catch (RemoteException e) {
-				Log.e(TAG, "onUserConnected error." + e);
-			}
-		}
-	}
-
-	@Override
-	public void onUserDisconnected(User user) {
-
-		// int index =
-		// SocketCommunicationService.mCallBackList.beginBroadcast();
-		// for (int i = 0; i < index; i++) {
-		// OnCommunicationListenerExternal l = (OnCommunicationListenerExternal)
-		// SocketCommunicationService.mCallBackList
-		// .getBroadcastItem(i);
-		// try {
-		// l.onUserDisconnected(user);
-		// } catch (RemoteException e) {
-		// Log.e(TAG,
-		// "onUserDisconnected SocketCommunicationService error."
-		// + e);
-		// }
-		// }
-		// SocketCommunicationService.mCallBackList.finishBroadcast();
-
-		for (Map.Entry<OnCommunicationListenerExternal, Integer> entry : mOnCommunicationListenerExternals
-				.entrySet()) {
-			try {
-				entry.getKey().onUserDisconnected(user);
-			} catch (RemoteException e) {
-				Log.e(TAG, "onUserDisconnected error." + e);
-			}
-		}
-	}
-
 	@Override
 	public void onClientConnected(Socket clientSocket) {
 		Log.d(TAG, "onClientConnected ip = "
@@ -635,27 +386,4 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	public void onConnectedToServer(Socket socket) {
 		startCommunication(socket);
 	}
-
-	// For debug begin.
-	/**
-	 * This method is used for debug.
-	 * 
-	 * @return
-	 */
-	public String getOnCommunicationListenerExternalStatus() {
-		StringBuffer status = new StringBuffer();
-		status.append("Total size: " + mOnCommunicationListenerExternals.size()
-				+ "\n");
-		status.append(mOnCommunicationListenerExternals.toString() + "\n");
-		return status.toString();
-	}
-
-	public String getOnCommunicationListenerStatus() {
-		StringBuffer status = new StringBuffer();
-		status.append("Total size: " + mOnCommunicationListeners.size() + "\n");
-		status.append(mOnCommunicationListeners.toString() + "\n");
-		return status.toString();
-	}
-	// For debug end.
-
 }
