@@ -21,9 +21,18 @@ public class UserInfo implements Serializable {
 	private int mType;
 	private String mSsid;
 	private int mStatus;
+	private int mNetworkType;
 
 	public UserInfo() {
 
+	}
+
+	public void setNetworkType(int type) {
+		mNetworkType = type;
+	}
+
+	public int getNetworkType() {
+		return mNetworkType;
 	}
 
 	public int getStatus() {
@@ -113,8 +122,10 @@ public class UserInfo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserInfo [mUser=" + mUser + ", mHeadBitmap=" + mHeadBitmapData
-				+ ", mHeadId=" + mHeadId + ", mIpAddress=" + mIpAddress
-				+ ", mType=" + mType + ", mSsid=" + mSsid + "]";
+		return "UserInfo [mUser=" + mUser + ", mHeadBitmapData="
+				+ mHeadBitmapData + ", mHeadId=" + mHeadId + ", mIpAddress="
+				+ mIpAddress + ", mType=" + mType + ", mSsid=" + mSsid
+				+ ", mStatus=" + mStatus + ", mNetworkType=" + mNetworkType
+				+ "]";
 	}
 }

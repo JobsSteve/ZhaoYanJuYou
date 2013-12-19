@@ -1,11 +1,10 @@
+import "user_info.proto";
 package com.zhaoyan.juyou;
 
 option java_package = "com.zhaoyan.communication.protocol.pb";
 option java_outer_classname = "PBLoginProtos";
 message PBLoginRequest {
-	required string name = 1;
-	required int32 headImageId = 2;
-	optional bytes headImageData = 3;
+	required PBUserInfo userInfo = 1;
 }
 
 message PBLoginRespond {

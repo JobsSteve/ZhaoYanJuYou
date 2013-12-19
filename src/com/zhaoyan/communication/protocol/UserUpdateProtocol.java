@@ -6,7 +6,6 @@ import java.util.Map;
 import android.content.Context;
 
 import com.dreamlink.communication.aidl.User;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunication;
@@ -17,7 +16,7 @@ import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBBase;
 import com.zhaoyan.communication.protocol.pb.PBBaseProtos.PBType;
 import com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUpdateUserId;
-import com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUserInfo;
+import com.zhaoyan.communication.protocol.pb.PBUserUpdateProtos.PBUpdateUserInfo;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 /**
@@ -68,14 +67,15 @@ public class UserUpdateProtocol implements IProtocol {
 	private void decodeUpdateUserInfo(byte[] msgData,
 			SocketCommunication communication) {
 		UserManager userManager = UserManager.getInstance();
-		PBUserInfo pbUserInfo = null;
+		PBUpdateUserInfo pbUpdateUserInfo = null;
 		try {
-			pbUserInfo = PBUserInfo.parseFrom(msgData);
+			pbUpdateUserInfo = PBUpdateUserInfo.parseFrom(msgData);
 		} catch (InvalidProtocolBufferException e) {
 			Log.e(TAG, "decodeUpdateUserInfo " + e);
 		}
-		if (pbUserInfo != null) {
-			UserInfo userInfo = pbUserInfo2UserInfo(pbUserInfo);
+		if (pbUpdateUserInfo != null) {
+			UserInfo userInfo = UserInfoUtil
+					.pbUserInfo2UserInfo(pbUpdateUserInfo.getUserInfo());
 			userManager.addUpdateUser(userInfo, communication);
 		}
 	}
@@ -153,9 +153,13 @@ public class UserUpdateProtocol implements IProtocol {
 			if (userInfo != null) {
 				// Set type as TYPE_REMOTE.
 				userInfo.setType(JuyouData.User.TYPE_REMOTE);
-				PBUserInfo pbUserInfo = userInfo2PBUserInfo(userInfo);
+				PBUpdateUserInfo.Builder builder = PBUpdateUserInfo
+						.newBuilder();
+				builder.setUserInfo(UserInfoUtil.userInfo2PBUserInfo(userInfo));
+				PBUpdateUserInfo pbUpdateUserInfo = builder.build();
+
 				PBBase pbBase = BaseProtocol.createBaseMessage(
-						PBType.UPDATE_USER_INFO, pbUserInfo);
+						PBType.UPDATE_USER_INFO, pbUpdateUserInfo);
 				communicationManager.sendMessageToAllWithoutEncode(pbBase
 						.toByteArray());
 			} else {
@@ -165,38 +169,4 @@ public class UserUpdateProtocol implements IProtocol {
 		}
 	}
 
-	public static PBUserInfo userInfo2PBUserInfo(UserInfo userInfo) {
-		PBUserInfo.Builder userInfoBuilder = PBUserInfo.newBuilder();
-		userInfoBuilder.setUserId(userInfo.getUser().getUserID());
-		userInfoBuilder.setUserName(userInfo.getUser().getUserName());
-		userInfoBuilder.setHeadImageId(userInfo.getHeadId());
-		if (userInfo.getHeadBitmapData() != null) {
-			userInfoBuilder.setHeadImageData(ByteString.copyFrom(userInfo
-					.getHeadBitmapData()));
-		}
-		if (userInfo.getIpAddress() != null) {
-			userInfoBuilder.setIpAddress(userInfo.getIpAddress());
-		}
-		userInfoBuilder.setType(userInfo.getType());
-		if (userInfo.getSsid() != null) {
-			userInfoBuilder.setSsid(userInfo.getSsid());
-		}
-		userInfoBuilder.setStatus(userInfo.getStatus());
-		return userInfoBuilder.build();
-	}
-
-	public static UserInfo pbUserInfo2UserInfo(PBUserInfo pbUserInfo) {
-		UserInfo userInfo = new UserInfo();
-		User user = new User();
-		user.setUserID(pbUserInfo.getUserId());
-		user.setUserName(pbUserInfo.getUserName());
-		userInfo.setUser(user);
-		userInfo.setHeadId(pbUserInfo.getHeadImageId());
-		userInfo.setHeadBitmapData(pbUserInfo.getHeadImageData().toByteArray());
-		userInfo.setIpAddress(pbUserInfo.getIpAddress());
-		userInfo.setType(userInfo.getType());
-		userInfo.setSsid(pbUserInfo.getSsid());
-		userInfo.setStatus(pbUserInfo.getStatus());
-		return userInfo;
-	}
 }

@@ -7,15 +7,18 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.search.DiscoveryService;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 public class ServerCreateAndDiscovery extends Thread {
 	private static final String TAG = "ServerCreateAndDiscovery";
 	private Context mContext;
 	private DiscoveryService mDiscoveryService;
 	private boolean mStop = false;
+	private int mServerType;
 
-	public ServerCreateAndDiscovery(Context context) {
+	public ServerCreateAndDiscovery(Context context, int serverType) {
 		mContext = context;
+		mServerType = serverType;
 	}
 
 	@Override
@@ -40,7 +43,18 @@ public class ServerCreateAndDiscovery extends Thread {
 
 		// If every thing is OK, the server is started.
 		if (communicationManager.isServerSocketStarted()) {
-			UserManager.getInstance().addLocalServerUser();
+			int networkType = 0;
+			switch (mServerType) {
+			case ServerCreator.TYPE_AP:
+				networkType = JuyouData.User.NETWORK_AP;
+				break;
+			case ServerCreator.TYPE_LAN:
+				networkType = JuyouData.User.NETWORK_WIFI;
+				break;
+			default:
+				break;
+			}
+			UserManager.getInstance().addLocalServerUser(networkType);
 			mContext.sendBroadcast(new Intent(
 					ServerCreator.ACTION_SERVER_CREATED));
 		} else {
