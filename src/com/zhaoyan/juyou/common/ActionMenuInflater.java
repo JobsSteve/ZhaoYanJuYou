@@ -154,11 +154,11 @@ public class ActionMenuInflater {
                     R.styleable.ZyMenuItem);
 
             // Inherit attributes from the group as default value
-            itemId = a.getResourceId(R.styleable.ZyMenuItem_id, defaultItemId);
-            itemTitle = a.getText(R.styleable.ZyMenuItem_title);
-            itemIconEnableResId = a.getResourceId(R.styleable.ZyMenuItem_icon_enable, 0);
-            itemIconDisableResId = a.getResourceId(R.styleable.ZyMenuItem_icon_disable, 0);
-            itemEnabled = a.getBoolean(R.styleable.ZyMenuItem_enabled, defaultItemEnabled);
+            itemId = a.getResourceId(R.styleable.ZyMenuItem_zyId, defaultItemId);
+            itemTitle = a.getText(R.styleable.ZyMenuItem_zyTitle);
+            itemIconEnableResId = a.getResourceId(R.styleable.ZyMenuItem_zyIconEnable, 0);
+            itemIconDisableResId = a.getResourceId(R.styleable.ZyMenuItem_zyIconDisable, 0);
+            itemEnabled = a.getBoolean(R.styleable.ZyMenuItem_zyEnabled, defaultItemEnabled);
             
 //            Log.d(TAG, "=============getItem===========");
 //            Log.d(TAG, "itemId=" + itemId);
