@@ -15,6 +15,7 @@ import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.ActionMenuInflater;
 import com.zhaoyan.juyou.common.MenuBarManager;
 import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 
@@ -33,6 +34,7 @@ public class BaseFragment extends Fragment implements onMenuItemClickListener{
 	protected MenuBarManager mMenuBarManager;
 	protected ActionMenu mActionMenu;
 	
+	private ActionMenuInflater mActionMenuInflater;
 	/**
 	 * current fragment file size
 	 */
@@ -133,4 +135,11 @@ public class BaseFragment extends Fragment implements onMenuItemClickListener{
 		// TODO Auto-generated method stub
 		
 	};
+	
+	protected ActionMenuInflater getActionMenuInflater(){
+		if (null == mActionMenuInflater) {
+			mActionMenuInflater = new ActionMenuInflater(getActivity().getApplicationContext());
+		}
+		return mActionMenuInflater;
+	}
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
+import com.zhaoyan.juyou.common.ActionMenuInflater;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.MenuBarManager;
 import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
@@ -29,6 +30,8 @@ public class BaseActivity extends Activity implements onMenuItemClickListener {
 	protected LinearLayout mMenuHolder;
 	protected MenuBarManager mMenuBarManager;
 	protected ActionMenu mActionMenu;
+	
+	private ActionMenuInflater mActionMenuInflater;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,5 +116,12 @@ public class BaseActivity extends Activity implements onMenuItemClickListener {
 	@Override
 	public void onMenuClick(ActionMenuItem item) {
 		// TODO Auto-generated method stub
+	}
+	
+	protected ActionMenuInflater getActionMenuInflater(){
+		if (null == mActionMenuInflater) {
+			mActionMenuInflater = new ActionMenuInflater(getApplicationContext());
+		}
+		return mActionMenuInflater;
 	}
 }

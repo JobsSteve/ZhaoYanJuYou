@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.zhaoyan.common.util.Log;
 
-import android.R.integer;
 import android.content.Context;
 
 public class ActionMenu{
@@ -48,6 +47,12 @@ public class ActionMenu{
 		mContext = context;
 	}
 	
+	public ActionMenuItem addItem(int itemId){
+		ActionMenuItem item = new ActionMenuItem(itemId);
+		items.add(item);
+		return item;
+	}
+	
 	public void addItem(int id, int iconId, String title){
 		ActionMenuItem item = new ActionMenuItem(id, iconId, title);
 		items.add(item);
@@ -85,9 +90,16 @@ public class ActionMenu{
 	public class ActionMenuItem{
 		int id;
 		int iconId;
+		int enableIconId;
+		int disableIconId;
 		String title;
 		boolean enable = true;
 		int text_color;
+		
+		ActionMenuItem(int itemid){
+			id = itemid;
+			text_color = mContext.getResources().getColor(android.R.color.black);
+		}
 		
 		ActionMenuItem(int id, int iconid, String title){
 			this.id = id;
@@ -127,6 +139,22 @@ public class ActionMenu{
 		
 		public int getIcon(){
 			return iconId;
+		}
+		
+		public void setEnableIcon(int iconId){
+			this.enableIconId = iconId;
+		}
+		
+		public int getEnableIcon(){
+			return enableIconId == 0 ? iconId : enableIconId;
+		}
+		
+		public void setDisableIcon(int iconId){
+			this.disableIconId = iconId;
+		}
+		
+		public int getDisableIcon(){
+			return disableIconId == 0 ? iconId : disableIconId;
 		}
 		
 		public void setEnable(boolean enable){

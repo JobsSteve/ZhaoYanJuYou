@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,7 +47,7 @@ import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 public class FileCategoryActivity extends BaseActivity implements
 		OnItemClickListener, OnItemLongClickListener, OnScrollListener,
 		FileCategoryScanListener, MenuBarInterface {
-	private static final String TAG = "CategoryActivity";
+	private static final String TAG = "FileCategoryActivity";
 	private ProgressBar mLoadingBar;
 	private ListView mListView;
 	private TextView mTipView;
@@ -213,11 +212,7 @@ public class FileCategoryActivity extends BaseActivity implements
 		mAdapter.notifyDataSetChanged();
 
 		mActionMenu = new ActionMenu(getApplicationContext());
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SEND, R.drawable.ic_action_send, R.string.menu_send);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_DELETE,R.drawable.ic_action_delete_enable,R.string.menu_delete);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename, R.string.rename);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_INFO,R.drawable.ic_action_info,R.string.menu_info);
-		mActionMenu.addItem(ActionMenu.ACTION_MENU_SELECT, R.drawable.ic_aciton_select, R.string.select_all);
+		getActionMenuInflater().inflate(R.menu.filecategory_menu, mActionMenu);
 		
 		startMenuBar();
 		return true;
@@ -271,22 +266,22 @@ public class FileCategoryActivity extends BaseActivity implements
 	@Override
 	public void onMenuClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
-		case ActionMenu.ACTION_MENU_SEND:
+		case R.id.menu_send:
 			doTransfer();
 			destroyMenuBar();
 			break;
-		case ActionMenu.ACTION_MENU_DELETE:
+		case R.id.menu_delete:
 			List<Integer> posList = mAdapter.getSelectedItemsPos();
 			showDeleteDialog(posList);
 			break;
-		case ActionMenu.ACTION_MENU_INFO:
+		case R.id.menu_info:
 			List<FileInfo> list = mAdapter.getSelectedFileInfos();
 			 mFileInfoManager.showInfoDialog(this, list);
 			break;
-		case ActionMenu.ACTION_MENU_SELECT:
+		case R.id.menu_select:
 			doCheckAll();
 			break;
-		case ActionMenu.ACTION_MENU_RENAME:
+		case R.id.menu_rename:
 			List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
 			mFileInfoManager.showRenameDialog(this, renameList);
 			mAdapter.notifyDataSetChanged();
@@ -312,26 +307,25 @@ public class FileCategoryActivity extends BaseActivity implements
 		int selectCount = mAdapter.getSelectedItems();
 		updateTitleNum(selectCount, mAdapter.getCount());
 
+		ActionMenuItem selectItem = mActionMenu.findItem(R.id.menu_select);
 		if (mAdapter.getCount() == selectCount) {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(
-					R.string.unselect_all);
+			selectItem.setTitle(R.string.unselect_all);
+			selectItem.setEnableIcon(R.drawable.ic_aciton_unselect);
 		} else {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SELECT).setTitle(
-					R.string.select_all);
+			selectItem.setTitle(R.string.select_all);
+			selectItem.setEnableIcon(R.drawable.ic_aciton_select);
 		}
 
-		if (0 == selectCount) {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(false);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE)
-					.setEnable(false);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME)
-					.setEnable(false);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(false);
-		} else {
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_SEND).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_DELETE).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_RENAME).setEnable(true);
-			mActionMenu.findItem(ActionMenu.ACTION_MENU_INFO).setEnable(true);
+		if (0==selectCount) {
+			mActionMenu.findItem(R.id.menu_send).setEnable(false);
+			mActionMenu.findItem(R.id.menu_delete).setEnable(false);
+			mActionMenu.findItem(R.id.menu_rename).setEnable(false);
+			mActionMenu.findItem(R.id.menu_info).setEnable(false);
+		}else {
+			mActionMenu.findItem(R.id.menu_send).setEnable(true);
+			mActionMenu.findItem(R.id.menu_delete).setEnable(true);
+			mActionMenu.findItem(R.id.menu_rename).setEnable(true);
+			mActionMenu.findItem(R.id.menu_info).setEnable(true);
 		}
 	}
 
