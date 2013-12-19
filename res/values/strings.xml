@@ -237,8 +237,18 @@
     <string name="copy_cancel">取消</string>
      <string name="copy_cancel_msg">将不会改变任何文件</string>
      
+     <!-- delete -->
      <string name="delete_confirm_msg">确定要删除这些？</string>
      <string name="delete_fail">无法删除这个文件</string>
+     <string name="delete_music">删除歌曲</string>
+     <string name="delete_image">删除图片</string>
+     <string name="delete_video">删除视频</string>
+     <string name="delete_file">删除文件</string>
+     <string name="delete_file_confirm_msg">确定要删除“%1$s”？</string>
+     <string name="delete_file_confirm_msg_music">确定要删除这%1$s首歌曲？</string>
+     <string name="delete_file_confirm_msg_image">确定要删除这%1$s个图片？</string>
+     <string name="delete_file_confirm_msg_video">确定要删除这%1$s个视频？</string>
+     <string name="delete_file_confirm_msg_file">确定要删除这%1$s个文件？</string>
      
      <string name="remote_share_server_list_msg">远程文件共享列表</string>
      <string name="create_remote_share">创建共享</string>

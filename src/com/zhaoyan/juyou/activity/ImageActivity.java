@@ -19,11 +19,12 @@ import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
-import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.InfoDialog;
-import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
+import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
+import com.zhaoyan.juyou.dialog.ZyProgressDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -81,8 +82,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	
 	private Notice mNotice = null;
 	private FileInfoManager mFileInfoManager = null;
-	
-	private DeleteDialog mDeleteDialog;
 	
 	private static final int MSG_UPDATE_UI = 0;
 	private static final int MSG_UPDATE_LIST = 1;
@@ -179,7 +178,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-			Log.d(TAG, "PictureFragment onQueryComplete");
+			Log.d(TAG, "onQueryComplete");
 			mLoadingBar.setVisibility(View.INVISIBLE);
 			int num = 0;
 			if (null != cursor) {
@@ -404,32 +403,51 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
      */
     public void showDeleteDialog() {
     	List<String> deleteNameList = mAdapter.getCheckedNameList();
-    	mDeleteDialog = new DeleteDialog(this, deleteNameList);
-    	mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
+    	
+    	ZyDeleteDialog deleteDialog = new ZyDeleteDialog(this);
+		deleteDialog.setTitle(R.string.delete_image);
+		String msg = "";
+		if (deleteNameList.size() == 1) {
+			msg = getString(R.string.delete_file_confirm_msg, deleteNameList.get(0));
+		}else {
+			msg = getString(R.string.delete_file_confirm_msg_image, deleteNameList.size());
+		}
+		deleteDialog.setMessage(msg);
+		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
-			public void onClick(View view, String path) {
+			public void onClick(Dialog dialog) {
 				DeleteTask deleteTask = new DeleteTask();
 				deleteTask.execute();
+				
+				dialog.dismiss();
 			}
 		});
-    	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
-    	mDeleteDialog.show();
+		deleteDialog.setNegativeButton(R.string.cancel, null);
+		deleteDialog.show();
     }
     
     /**
      * Delete file task
      */
     private class DeleteTask extends AsyncTask<Void, String, String>{
+    	ZyProgressDialog progressDialog = null;
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		super.onPreExecute();
+    		progressDialog = new ZyProgressDialog(ImageActivity.this);
+    		progressDialog.setMessage(R.string.deleting);
+    		progressDialog.show();
+    	}
+    	
 		@Override
 		protected String doInBackground(Void... params) {
 			List<Integer> posList = mAdapter.getCheckedPosList();
 			List<String> selectedPathList = mAdapter.getCheckedPathList();
 			int currentDelPos = -1;
-			
 			for (int i = 0; i < selectedPathList.size(); i++) {
 				doDelete(selectedPathList.get(i));
 				currentDelPos = posList.get(i) - i;
-				
 				Message message = mHandler.obtainMessage();
 				message.arg1 = currentDelPos;
 				message.what = MSG_UPDATE_LIST;
@@ -443,9 +461,9 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			destroyMenuBar();
-			if (null != mDeleteDialog) {
-				mDeleteDialog.cancel();
-				mDeleteDialog = null;
+			if (null != progressDialog) {
+				progressDialog.cancel();
+				progressDialog = null;
 			}
 			mNotice.showToast(R.string.operator_over);
 		}

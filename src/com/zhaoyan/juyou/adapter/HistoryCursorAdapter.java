@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.content.ContentUris;
 import android.os.Bundle;
 import android.content.Intent;
-import android.widget.Button;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.FileManager;
@@ -59,7 +58,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	private AsyncImageLoader bitmapLoader = null;
 	private boolean mIdleFlag = true;
 	private MsgOnClickListener mClickListener = new MsgOnClickListener();
-	private CancelOnClickListener mCancelClickListener = new CancelOnClickListener();
 	private DeleteOnClick mDeleteOnClick = new DeleteOnClick(0);
 	private ListView mListView;
 	private UserInfo mLocalUserInfo = null;
@@ -184,7 +182,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		
 		MsgData msgData = new MsgData(id, fileName, filePath, type, status);
 		holder.msgLayout.setTag(msgData);
-		holder.cancelView.setTag(msgData);
 		
 		byte[] fileIcon = cursor.getBlob(cursor.getColumnIndex(JuyouData.History.FILE_ICON));
 		if(fileIcon == null || fileIcon.length == 0) {
@@ -241,8 +238,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		}
 
 		holder.transferBar.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
-//		holder.cancelView.setVisibility(showBar ? View.VISIBLE : View.INVISIBLE);
-		holder.cancelView.setVisibility(View.INVISIBLE);
 		
 		if (showBar) {
 			holder.transferBar.setProgress(bar_progress);
@@ -314,10 +309,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 					.findViewById(R.id.tv_send_title_msg);
 		}
 		
-		holder.cancelView = (Button)view.findViewById(R.id.cancel_transfer);
-		holder.cancelView.setOnClickListener(mCancelClickListener);
-		holder.cancelView.setVisibility(View.INVISIBLE);
-		
 		holder.transferBar = (ProgressBar) view
 				.findViewById(R.id.bar_progressing);
 		holder.transferBar.setMax(100);
@@ -376,7 +367,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	}
 
 	class ViewHolder {
-		Button cancelView;
 		ProgressBar transferBar;
 		TextView dateView;
 		TextView userNameView;
@@ -444,22 +434,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
         bundle.putString(HistoryManager.HISTORY_URI, uri);
         intent.putExtras(bundle);
         mContext.startService(intent); 
-	}
-	
-	class CancelOnClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			MsgData data = (MsgData) v.getTag();
-			final int id = data.itemID;
-			int status = data.status;
-			
-			Log.d(TAG, "CancelOnClickListener: status = " + status + ", id = " + id);
-			if (status == HistoryManager.STATUS_SENDING) {
-				cancelSending(id);
-			} else if (status == HistoryManager.STATUS_RECEIVING) {
-				cancelReceiving(id);
-			}
-		}
 	}
 
 	class MsgOnClickListener implements OnClickListener {
@@ -714,6 +688,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						dialog.dismiss();
 					}
 				});
+		dialog.setNegativeButton(R.string.cancel, null);
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}
@@ -732,6 +707,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						dialog.dismiss();
 					}
 				});
+		dialog.setNegativeButton(R.string.cancel, null);
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}
@@ -771,6 +747,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 						dialog.dismiss();
 					}
 				});
+		dialog.setNegativeButton(R.string.cancel, null);
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.show();
 	}

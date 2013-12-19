@@ -3,7 +3,6 @@ package com.zhaoyan.juyou.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
@@ -39,11 +38,9 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
-import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
-import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
-import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyProgressDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class AudioFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, 
@@ -55,8 +52,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	private FileInfoManager mFileInfoManager = null;
 	
 	private QueryHandler mQueryHandler = null;
-	
-	private DeleteDialog mDeleteDialog;
 	
 	private static final String[] PROJECTION = {
 		MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE,
@@ -209,38 +204,17 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
      * @param path file path
      */
     public void showDeleteDialog(final List<Integer> posList) {
-//    	List<String> deleteNameList = new ArrayList<String>();
-//    	Cursor cursor = mAdapter.getCursor();
-//    	for (int i = 0; i < posList.size(); i++) {
-//			cursor.moveToPosition(posList.get(i));
-//			String name = cursor.getString(cursor
-//					.getColumnIndex(MediaStore.Audio.Media.TITLE));
-//			deleteNameList.add(name);
-//		}
-//    	mDeleteDialog = new DeleteDialog(mContext, deleteNameList);
-//    	mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
-//			@Override
-//			public void onClick(View view, String path) {
-//				List<String> deleteList = mAdapter.getCheckedPathList();
-//				DeleteTask deleteTask = new DeleteTask(deleteList);
-//				deleteTask.execute(posList);
-//				destroyMenuBar();
-//			}
-//		});
-//    	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
-//		mDeleteDialog.show();
-		
 		ZyDeleteDialog deleteDialog = new ZyDeleteDialog(mContext);
-		deleteDialog.setTitle("删除歌曲");
+		deleteDialog.setTitle(R.string.delete_music);
 		String msg = "";
 		if (posList.size() == 1) {
 			Cursor cursor1 = mAdapter.getCursor();
 			cursor1.moveToPosition(posList.get(0));
 			String name = cursor1.getString(cursor1
 					.getColumnIndex(MediaStore.Audio.Media.TITLE));
-			msg = "你确定要删除 " + name + "?";
+			msg = mContext.getString(R.string.delete_file_confirm_msg, name);
 		}else {
-			msg = "确定要删除这" + posList.size() + "首歌曲？";
+			msg = mContext.getString(R.string.delete_file_confirm_msg_music, posList.size());
 		}
 		deleteDialog.setMessage(msg);
 		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
@@ -263,10 +237,19 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
      * Delete file task
      */
     private class DeleteTask extends AsyncTask<List<Integer>, String, String>{
+    	ZyProgressDialog progressDialog = null;
     	List<String> deleteList = new ArrayList<String>();
     	
     	DeleteTask(List<String> list){
     		deleteList = list;
+    	}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		super.onPreExecute();
+    		progressDialog = new ZyProgressDialog(mContext);
+    		progressDialog.setMessage(R.string.deleting);
+    		progressDialog.show();
     	}
     	
 		@Override
@@ -281,9 +264,9 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			if (null != mDeleteDialog) {
-				mDeleteDialog.cancel();
-				mDeleteDialog = null;
+			if (null != progressDialog) {
+				progressDialog.cancel();
+				progressDialog = null;
 			}
 			updateUI(mAdapter.getCount());
 			mNotice.showToast(R.string.operator_over);

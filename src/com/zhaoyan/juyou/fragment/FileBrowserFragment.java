@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -28,7 +27,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -39,7 +37,6 @@ import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.common.view.ZyPopupMenu;
 import com.zhaoyan.common.view.ZyPopupMenu.PopupViewClickListener;
@@ -61,10 +58,9 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.dialog.CopyMoveDialog;
-import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
+import com.zhaoyan.juyou.dialog.ZyProgressDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
-import com.zhaoyan.juyou.dialog.DeleteDialog;
-import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
 import com.zhaoyan.juyou.dialog.ZyEditDialog;
 
 public class FileBrowserFragment extends BaseFragment implements OnClickListener, OnItemClickListener, OnScrollListener,
@@ -129,12 +125,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private String internal_path;
 	
 	private Comparator<FileInfo> NAME_COMPARATOR = FileInfo.getNameComparator();
-
-	private DeleteDialog mDeleteDialog;
 	
-	//test
 	private FileOperationHelper mFileOperationHelper;
-	//test
 
 	private static final int MSG_UPDATE_UI = 0;
 	private static final int MSG_UPDATE_LIST = 2;
@@ -459,33 +451,49 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	 */
 	public void showDeleteDialog(final List<Integer> posList) {
 		// get name list
-		List<String> nameList = new ArrayList<String>();
 		List<FileInfo> fileList = mAdapter.getList();
-		for (int position : posList) {
-			nameList.add(fileList.get(position).fileName);
+		
+		ZyDeleteDialog deleteDialog = new ZyDeleteDialog(getActivity());
+		deleteDialog.setTitle(R.string.delete_file);
+		String msg = "";
+		if (posList.size() == 1) {
+			msg = getString(R.string.delete_file_confirm_msg, fileList.get(posList.get(0)).fileName);
+		}else {
+			msg = getString(R.string.delete_file_confirm_msg_file, posList.size());
 		}
-
-		mDeleteDialog = new DeleteDialog(getActivity(), nameList);
-		mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
+		deleteDialog.setMessage(msg);
+		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
-			public void onClick(View view, String path) {
+			public void onClick(Dialog dialog) {
 				destroyMenuBar();
 				DeleteTask deleteTask = new DeleteTask(posList);
 				deleteTask.execute();
+				
+				dialog.dismiss();
 			}
 		});
-		mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
-		mDeleteDialog.show();
+		deleteDialog.setNegativeButton(R.string.cancel, null);
+		deleteDialog.show();
 	}
 
 	/**
 	 * Delete file task
 	 */
 	private class DeleteTask extends AsyncTask<Void, String, String> {
+		ZyProgressDialog progressDialog = null;
 		List<Integer> positionList = new ArrayList<Integer>();
 
 		DeleteTask(List<Integer> list) {
 			positionList = list;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			progressDialog = new ZyProgressDialog(getActivity());
+			progressDialog.setMessage(R.string.deleting);
+			progressDialog.show();
 		}
 
 		@Override
@@ -516,9 +524,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			if (null != mDeleteDialog) {
-				mDeleteDialog.cancel();
-				mDeleteDialog = null;
+			if (null != progressDialog) {
+				progressDialog.cancel();
+				progressDialog = null;
 			}
 			mNotice.showToast(R.string.operator_over);
 		}
