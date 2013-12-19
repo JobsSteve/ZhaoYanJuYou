@@ -141,6 +141,8 @@ public class UserManager {
 			mLastUserId++;
 			user.setUserID(mLastUserId);
 		}
+		// Set user status.
+		userInfo.setStatus(JuyouData.User.STATUS_CONNECTED);
 
 		// Add user into user tree
 		if (!mCommunications.contains(communication)) {
@@ -177,6 +179,12 @@ public class UserManager {
 					+ user);
 			return false;
 		}
+		
+		if (isManagerServer(user)) {
+			UserInfo localUserInfo = UserHelper.loadLocalUser(mContext);
+			localUserInfo.setNetworkType(userInfo.getNetworkType());
+			UserHelper.saveLocalUser(mContext, localUserInfo);
+		}
 
 		addUser(userInfo, communication);
 		return true;
@@ -205,7 +213,6 @@ public class UserManager {
 		// If the user is not exist in database, add it.
 		if (UserHelper.getUserInfo(mContext, user) == null) {
 			// The user is not exist in database
-			userInfo.setStatus(JuyouData.User.STATUS_CONNECTED);
 			UserHelper.addRemoteUserToDatabase(mContext, userInfo);
 		}
 
@@ -245,7 +252,7 @@ public class UserManager {
 	 * 
 	 * @return
 	 */
-	public synchronized boolean addLocalServerUser() {
+	public synchronized boolean addLocalServerUser(int networkType) {
 		mLocalUser.setUserID(SERVER_USER_ID);
 		UserTree.getInstance().setHead(mLocalUser);
 
@@ -256,6 +263,7 @@ public class UserManager {
 		UserInfo userInfo = UserHelper.loadLocalUser(mContext);
 		userInfo.getUser().setUserID(SERVER_USER_ID);
 		userInfo.setStatus(JuyouData.User.STATUS_SERVER_CREATED);
+		userInfo.setNetworkType(networkType);
 		UserHelper.saveLocalUser(mContext, userInfo);
 
 		// Add communication.
@@ -447,6 +455,10 @@ public class UserManager {
 				listener.onUserConnected(mLocalUser);
 			}
 		}
+	}
+
+	public User getServer() {
+		return mUsers.get(SERVER_USER_ID);
 	}
 
 }

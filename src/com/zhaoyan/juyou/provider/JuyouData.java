@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class JuyouData {
 	public static final String DATABASE_NAME = "juyou.db";
-	public static final int DATABASE_VERSION = 4;
+	public static final int DATABASE_VERSION = 5;
 
 	public static final String AUTHORITY = "com.zhaoyan.juyou.provider.JuyouProvider";
 
@@ -160,7 +160,6 @@ public class JuyouData {
 		public static final int STATUS_SERVER_CREATED = 1;
 		public static final int STATUS_CONNECTED = 2;
 		public static final int STATUS_DISCONNECT = 3;
-		
 
 		/**
 		 * Local user or remote user, type:int. {@link #TYPE_LOCAL},
@@ -176,6 +175,10 @@ public class JuyouData {
 		 * Android AP Server, type:string
 		 */
 		public static final String SSID = "ssid";
+
+		public static final String NETWORK = "network_type";
+		public static final int NETWORK_AP = 1;
+		public static final int NETWORK_WIFI = 2;
 
 		/** order by DATE DESC */
 		public static final String SORT_ORDER_DEFAULT = USER_ID + " ASC";

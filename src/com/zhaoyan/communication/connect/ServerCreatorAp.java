@@ -133,7 +133,7 @@ public class ServerCreatorAp {
 		private void createServerAndStartDiscoveryService() {
 			if (mServerCreateAndDiscovery == null) {
 				mServerCreateAndDiscovery = new ServerCreateAndDiscovery(
-						mContext);
+						mContext, ServerCreator.TYPE_AP);
 				mServerCreateAndDiscovery.start();
 			}
 		}

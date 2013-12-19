@@ -26,7 +26,7 @@ public class UserHelper {
 			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
 			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
 			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE,
-			JuyouData.User.SSID };
+			JuyouData.User.SSID, JuyouData.User.NETWORK };
 
 	public static final int getHeadImageResource(int headId) {
 		return HEAD_IMAGES[headId];
@@ -71,12 +71,15 @@ public class UserHelper {
 				.getColumnIndex(JuyouData.User.SSID));
 		int status = cursor
 				.getInt(cursor.getColumnIndex(JuyouData.User.STATUS));
+		int networkType = cursor.getInt(cursor
+				.getColumnIndex(JuyouData.User.NETWORK));
 		userInfo.setHeadId(headID);
 		userInfo.setHeadBitmapData(headData);
 		userInfo.setType(type);
 		userInfo.setIpAddress(ipAddress);
 		userInfo.setSsid(ssid);
 		userInfo.setStatus(status);
+		userInfo.setNetworkType(networkType);
 		return userInfo;
 	}
 
@@ -223,6 +226,7 @@ public class UserHelper {
 		values.put(JuyouData.User.IP_ADDR, userInfo.getIpAddress());
 		values.put(JuyouData.User.SSID, userInfo.getSsid());
 		values.put(JuyouData.User.STATUS, userInfo.getStatus());
+		values.put(JuyouData.User.NETWORK, userInfo.getNetworkType());
 		return values;
 	}
 
@@ -268,10 +272,9 @@ public class UserHelper {
 	 */
 	public static void removeRemoteConnectedUser(Context context, int userId) {
 		ContentResolver contentResolver = context.getContentResolver();
-		String selection = JuyouData.User.STATUS + "="
-				+ JuyouData.User.STATUS_CONNECTED + " and "
-				+ JuyouData.User.TYPE + "!=" + JuyouData.User.TYPE_LOCAL
-				+ " and " + JuyouData.User.USER_ID + "=" + userId;
+		String selection = JuyouData.User.TYPE + "!="
+				+ JuyouData.User.TYPE_LOCAL + " and " + JuyouData.User.USER_ID
+				+ "=" + userId;
 		contentResolver.delete(JuyouData.User.CONTENT_URI, selection, null);
 	}
 
@@ -303,5 +306,19 @@ public class UserHelper {
 	public static User decodeUser(byte[] data) {
 		User user = (User) ArrayUtil.byteArrayToObject(data);
 		return user;
+	}
+
+	public static UserInfo getUserInfo(Context context, String selection) {
+		UserInfo userInfo = null;
+		Cursor cursor = context.getContentResolver().query(
+				JuyouData.User.CONTENT_URI, PROJECTION, selection, null,
+				JuyouData.User.SORT_ORDER_DEFAULT);
+		if (cursor != null) {
+			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+				userInfo = getUserFromCursor(cursor);
+			}
+			cursor.close();
+		}
+		return userInfo;
 	}
 }

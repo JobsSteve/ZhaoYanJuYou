@@ -337,7 +337,7 @@ public class JuyouProvider extends ContentProvider {
 					+ JuyouData.User.IP_ADDR + " TEXT, "
 					+ JuyouData.User.STATUS + " INTEGER, "
 					+ JuyouData.User.TYPE + " INTEGER, " + JuyouData.User.SSID
-					+ " TEXT);");
+					+ " TEXT, " + JuyouData.User.NETWORK + " INTEGER);");
 		}
 
 		@Override

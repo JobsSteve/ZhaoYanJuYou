@@ -19,7 +19,8 @@ public class ServerCreatorLan {
 			Log.e(TAG, "createServer fail, wifi is not connected");
 			return;
 		}
-		mServerCreateAndDiscovery = new ServerCreateAndDiscovery(mContext);
+		mServerCreateAndDiscovery = new ServerCreateAndDiscovery(mContext,
+				ServerCreator.TYPE_LAN);
 		mServerCreateAndDiscovery.start();
 	}
 

@@ -3,7 +3,6 @@ package com.zhaoyan.communication.protocol;
 import android.content.Context;
 
 import com.dreamlink.communication.aidl.User;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.ProtocolCommunication;
@@ -60,19 +59,10 @@ public class LoginProtocol implements IProtocol {
 	 * @see PBLoginRequest
 	 */
 	public static void encodeLoginRequest(Context context) {
-		PBLoginRequest.Builder requestBuilder = PBLoginRequest.newBuilder();
-		// name
 		UserInfo userInfo = UserHelper.loadLocalUser(context);
-		String name = userInfo.getUser().getUserName();
-		requestBuilder.setName(name);
-		// head image id
-		int headImageId = userInfo.getHeadId();
-		requestBuilder.setHeadImageId(headImageId);
-		// If head is user customized, send head image data.
-		if (userInfo.getHeadId() == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
-			byte[] headImage = userInfo.getHeadBitmapData();
-			requestBuilder.setHeadImageData(ByteString.copyFrom(headImage));
-		}
+		userInfo.setType(JuyouData.User.TYPE_REMOTE);
+		PBLoginRequest.Builder requestBuilder = PBLoginRequest.newBuilder();
+		requestBuilder.setUserInfo(UserInfoUtil.userInfo2PBUserInfo(userInfo));
 		PBLoginRequest pbLoginRequest = requestBuilder.build();
 
 		PBBase pbBase = BaseProtocol.createBaseMessage(PBType.LOGIN_REQUEST,
@@ -110,23 +100,8 @@ public class LoginProtocol implements IProtocol {
 			Log.e(TAG, "getLoginRequestUserInfo " + e);
 		}
 
-		// Get user info
-		UserInfo userInfo = null;
-		if (loginRequest != null) {
-			userInfo = new UserInfo();
-			// name
-			User user = new User();
-			user.setUserName(loginRequest.getName());
-			userInfo.setUser(user);
-			// head image id.
-			int headImageId = loginRequest.getHeadImageId();
-			userInfo.setHeadId(headImageId);
-			if (headImageId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
-				userInfo.setHeadBitmapData(loginRequest.getHeadImageData()
-						.toByteArray());
-			}
-			userInfo.setType(JuyouData.User.TYPE_REMOTE);
-		}
+		UserInfo userInfo = UserInfoUtil.pbUserInfo2UserInfo(loginRequest
+				.getUserInfo());
 		return userInfo;
 	}
 
