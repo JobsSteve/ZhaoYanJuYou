@@ -41,7 +41,9 @@ import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.InfoDialog;
+import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class AudioFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, 
@@ -207,26 +209,54 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
      * @param path file path
      */
     public void showDeleteDialog(final List<Integer> posList) {
-    	List<String> deleteNameList = new ArrayList<String>();
-    	Cursor cursor = mAdapter.getCursor();
-    	for (int i = 0; i < posList.size(); i++) {
-			cursor.moveToPosition(posList.get(i));
-			String name = cursor.getString(cursor
+//    	List<String> deleteNameList = new ArrayList<String>();
+//    	Cursor cursor = mAdapter.getCursor();
+//    	for (int i = 0; i < posList.size(); i++) {
+//			cursor.moveToPosition(posList.get(i));
+//			String name = cursor.getString(cursor
+//					.getColumnIndex(MediaStore.Audio.Media.TITLE));
+//			deleteNameList.add(name);
+//		}
+//    	mDeleteDialog = new DeleteDialog(mContext, deleteNameList);
+//    	mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
+//			@Override
+//			public void onClick(View view, String path) {
+//				List<String> deleteList = mAdapter.getCheckedPathList();
+//				DeleteTask deleteTask = new DeleteTask(deleteList);
+//				deleteTask.execute(posList);
+//				destroyMenuBar();
+//			}
+//		});
+//    	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
+//		mDeleteDialog.show();
+		
+		ZyDeleteDialog deleteDialog = new ZyDeleteDialog(mContext);
+		deleteDialog.setTitle("删除歌曲");
+		String msg = "";
+		if (posList.size() == 1) {
+			Cursor cursor1 = mAdapter.getCursor();
+			cursor1.moveToPosition(posList.get(0));
+			String name = cursor1.getString(cursor1
 					.getColumnIndex(MediaStore.Audio.Media.TITLE));
-			deleteNameList.add(name);
+			msg = "你确定要删除 " + name + "?";
+		}else {
+			msg = "确定要删除这" + posList.size() + "首歌曲？";
 		}
-    	mDeleteDialog = new DeleteDialog(mContext, deleteNameList);
-    	mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
+		deleteDialog.setMessage(msg);
+		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
-			public void onClick(View view, String path) {
+			public void onClick(Dialog dialog) {
+				// TODO Auto-generated method stub
 				List<String> deleteList = mAdapter.getCheckedPathList();
 				DeleteTask deleteTask = new DeleteTask(deleteList);
 				deleteTask.execute(posList);
+				
 				destroyMenuBar();
+				dialog.dismiss();
 			}
 		});
-    	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
-		mDeleteDialog.show();
+		deleteDialog.setNegativeButton(R.string.cancel, null);
+		deleteDialog.show();
     }
     
     /**
@@ -383,13 +413,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 						destroyMenuBar();
 					}
 				});
-				dialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
-					@Override
-					public void onClick(Dialog dialog) {
-						dialog.dismiss();
-						destroyMenuBar();
-					}
-				});
+				dialog.setNegativeButton(R.string.cancel, null);
 			}else {
 				dialog = new InfoDialog(mContext,InfoDialog.MULTI);
 				dialog.setTitle(R.string.info_music_info);

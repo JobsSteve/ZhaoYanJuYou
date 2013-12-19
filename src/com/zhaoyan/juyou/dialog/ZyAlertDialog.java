@@ -73,7 +73,6 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 		if (mHasMessage) {
 			mMessageTV = (TextView) findViewById(R.id.tv_dialog_msg);
 			mMessageTV.setVisibility(View.VISIBLE);
-			mMessageTV.setVisibility(View.VISIBLE);
 			mMessageTV.setText(mMessage);
 		}
 		
@@ -155,6 +154,13 @@ public class ZyAlertDialog extends Dialog implements android.view.View.OnClickLi
 		mCustomeView = view;
 	}
 	
+	/**
+	 * allow to define customview margis
+	 * @param left
+	 * @param top
+	 * @param right
+	 * @param bottom
+	 */
 	public void setCustomViewMargins(int left, int top, int right, int bottom){
 		this.padding_left = left;
 		this.padding_top = top;

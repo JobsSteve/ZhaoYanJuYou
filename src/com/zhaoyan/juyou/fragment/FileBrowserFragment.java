@@ -65,6 +65,7 @@ import com.zhaoyan.juyou.dialog.ZyAlertDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
+import com.zhaoyan.juyou.dialog.ZyEditDialog;
 
 public class FileBrowserFragment extends BaseFragment implements OnClickListener, OnItemClickListener, OnScrollListener,
 		OnItemLongClickListener, OnOperationListener, MenuBarInterface {
@@ -970,20 +971,16 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			});
 			break;
 		case R.id.menu_create_folder:
-			LayoutInflater inflater = LayoutInflater.from(mContext);
-			View view = inflater.inflate(R.layout.dialog_edit, null);
-			final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
-			editText.setText(R.string.new_folder);
-			editText.selectAll();
-			ZYUtils.onFocusChange(editText, true);
-			ZyAlertDialog dialog = new ZyAlertDialog(getActivity());
-			dialog.setTitle(R.string.create_folder);
-			dialog.setMessage(R.string.folder_input);
-			dialog.setCustomView(view);
-			dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
+			final ZyEditDialog editDialog = new ZyEditDialog(getActivity());
+			editDialog.setTitle(R.string.create_folder);
+			editDialog.setEditDialogMsg(mContext.getString(R.string.folder_input));
+			editDialog.setEditStr(mContext.getString(R.string.new_folder));
+			editDialog.selectAll();
+			editDialog.showIME(true);
+			editDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 				@Override
 				public void onClick(Dialog dialog) {
-					String folderName = editText.getText().toString();
+					String folderName = editDialog.getEditTextStr();
 					String newPath = mCurrentPath + File.separator + folderName;
 					File file = new File(newPath);
 					if (file.exists()) {
@@ -998,9 +995,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					dialog.dismiss();
 				}
 			});
-			dialog.setNegativeButton(R.string.cancel, null);
-			dialog.setCanceledOnTouchOutside(true);
-			dialog.show();
+			editDialog.setNegativeButton(R.string.cancel, null);
+			editDialog.show();
 			break;
 		default:
 			break;

@@ -24,8 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="@dimen/dialog_left_margin"
+            android:layout_marginRight="@dimen/dialog_right_margin"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@string/info"
@@ -42,7 +42,6 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="10dp"
@@ -54,6 +53,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/dialog_left_margin"
             >
             <TextView 
                 android:id="@+id/tv_info_name_ext"
@@ -84,6 +84,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
              android:layout_marginBottom="5dp"
+             android:layout_marginLeft="@dimen/dialog_left_margin"
             >
             <TextView 
                 android:id="@+id/tv_info_type_ext"
@@ -108,7 +109,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-             android:layout_marginBottom="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/dialog_left_margin"
             >
             <TextView 
                 android:id="@+id/tv_info_size_ext"
@@ -133,7 +135,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-             android:layout_marginBottom="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/dialog_left_margin"
             >
             <TextView 
                 android:id="@+id/tv_info_location_ext"
@@ -157,6 +160,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginLeft="@dimen/dialog_left_margin"
             >
             <TextView 
                 android:id="@+id/tv_info_include_ext"
@@ -180,6 +184,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginLeft="@dimen/dialog_left_margin"
             >
             <TextView 
                 android:id="@+id/tv_info_date_ext"

@@ -3,14 +3,12 @@ package com.zhaoyan.common.file;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.List;
 
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
 import android.provider.MediaStore.MediaColumns;
 import android.view.LayoutInflater;
@@ -20,9 +18,9 @@ import android.widget.EditText;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyEditDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileManager {
@@ -261,19 +259,15 @@ public class FileManager {
 	 *            the click position
 	 */
 	public static void showModifyDialog(final Context context, final int id, final int mediaType, String oldName) {
-		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.dialog_edit, null);
-		final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
-		editText.setText(oldName);
-		editText.selectAll();
-		ZYUtils.onFocusChange(editText, true);
-		ZyAlertDialog dialog = new ZyAlertDialog(context);
-		dialog.setTitle(R.string.modify);
-		dialog.setCustomView(view);
-		dialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
+		final ZyEditDialog editDialog = new ZyEditDialog(context);
+		editDialog.setTitle(R.string.info_modify_music_name);
+		editDialog.setEditStr(oldName);
+		editDialog.selectAll();
+		editDialog.showIME(true);
+		editDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
-				String newName = editText.getText().toString().trim();
+				String newName = editDialog.getEditTextStr();
 				Uri uri = null;
 				ContentResolver contentResolver = context.getContentResolver();
 				ContentValues values = null;
@@ -286,22 +280,21 @@ public class FileManager {
 					values = new ContentValues();
 					values.put(MediaColumns.DISPLAY_NAME, newName);
 				}else {
-					Log.e(TAG, "showRenameDialog.error.mediaType=" + mediaType);
+					Log.e(TAG, "showModifyDialog.error.mediaType=" + mediaType);
 				}
 				
 				try {
 					contentResolver.update(uri, values, MediaColumns._ID + "=" + id, null);
 				} catch (Exception e) {
 					e.printStackTrace();
-					Log.e(TAG, "showRenameDialog.update db error");
+					Log.e(TAG, "showModifyDialog.update db error");
 				}
 				
 				dialog.dismiss();
 			}
 		});		
-		dialog.setNegativeButton(R.string.cancel, null);
-		dialog.setCanceledOnTouchOutside(true);
-		dialog.show();
+		editDialog.setNegativeButton(R.string.cancel, null);
+		editDialog.show();
 	}
 
 }
