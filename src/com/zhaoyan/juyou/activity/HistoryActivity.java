@@ -29,7 +29,9 @@ import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HistoryCursorAdapter;
+import com.zhaoyan.juyou.common.HistoryManager;
 import com.zhaoyan.juyou.provider.JuyouData;
+import com.zhaoyan.juyou.provider.JuyouData.History;
 
 public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		OnItemClickListener {
@@ -142,6 +144,11 @@ public class HistoryActivity extends BaseActivity implements OnScrollListener,
 	}
 
 	public void query() {
+//		String selection = JuyouData.History.STATUS + "!=?";
+//		String[] selectionArgs = {HistoryManager.STATUS_PRE_SEND +""};
+//		queryHandler.startQuery(HISTORY_QUERY_TOKEN, null, JuyouData.History.CONTENT_URI,
+//				PROJECTION, selection, selectionArgs, JuyouData.History.SORT_ORDER_DEFAULT);
+		
 		queryHandler.startQuery(HISTORY_QUERY_TOKEN, null, JuyouData.History.CONTENT_URI,
 				PROJECTION, null, null, JuyouData.History.SORT_ORDER_DEFAULT);
 	}

@@ -1,12 +1,7 @@
 package com.zhaoyan.common.util;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -32,7 +27,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
 
 public class ZYUtils {
-	private static final String TAG = "DreamUtil";
+	private static final String TAG = "ZYUtils";
 	
 	/**
 	 * 插入�?��数据到已经排好序的list�?

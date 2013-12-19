@@ -91,19 +91,36 @@
     
      <string name="ok">确定</string>
     <string name="delete_confirm">删除确认</string>
-    <string name="info">属性: <xliff:g id="info">%1$s</xliff:g></string>
-    <string name="info1">属性</string>
-    <string name="info2">%s 属性</string>
-    <string name="name">名称: <xliff:g id="name">%1$s</xliff:g></string>
-    <string name="version">版本: <xliff:g id="version">%1$s</xliff:g></string>
-    <string name="location">位置: <xliff:g id="location">%1$s</xliff:g></string>
-    <string name="pkg_name">包名: <xliff:g id="package">%1$s</xliff:g></string>
-    <string name="size">大小: <xliff:g id="size">%1$s</xliff:g></string>
-    <string name="include_files">包含: %1$d个文件, %2$d个文件夹</string>
-    <string name="modif_date">修改日期: <xliff:g id="date">%1$s</xliff:g></string>
-    <string name="type">类型: <xliff:g id="type">%1$s</xliff:g></string>
+    <string name="modify">修改</string>
+    <string name="unknow">未知</string>
+    
+    <!-- info dialog -->
+    <string name="info">属性</string>
+    
+    <string name="info_filename">文件名称:</string>
+    <string name="info_musicname">歌曲名称:</string>
+    <string name="info_imagename">图片名称:</string>
+    <string name="info_videoname">视频名称:</string>
+    <string name="info_foldername">文件夹名称:</string>
+    <string name="info_location">文件路径:</string>
+    <string name="info_size">文件大小:</string>
+    <string name="info_include">包含:</string>
+    <string name="info_include_files">%1$d个文件, %2$d个文件夹</string>
+    <string name="info_date">修改日期:</string>
+    <string name="info_filetype">文件格式:</string>
+    <string name="info_music_info">歌曲信息</string>
+    <string name="info_image_info">图片信息</string>
+    <string name="info_video_info">视频信息</string>
+    <string name="info_file_info">文件信息</string>
+    <string name="info_folder_info">文件夹信息</string>
+    <string name="info_modify_music_name">修改歌曲名称</string>
     <string name="type_file">类型: 文件</string>
     <string name="type_folder">类型: 文件夹</string>
+    <string name="type">文件类型: <xliff:g id="type">%1$s</xliff:g></string>
+    <string name="pkg_name">包名: <xliff:g id="package">%1$s</xliff:g></string>
+    <string name="version">版本: <xliff:g id="version">%1$s</xliff:g></string>
+    <!-- info dialog -->
+    
     <string name="rename">重命名</string>
     
     <string name="network">网络邻居</string>

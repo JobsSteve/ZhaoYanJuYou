@@ -131,7 +131,6 @@ public class ActionMenuInflater {
     private class MenuState {
         private ActionMenu actionMenu;
 
-        private boolean itemAdded;
         private int itemId;
         private CharSequence itemTitle;
         private int itemIconEnableResId;
@@ -161,13 +160,13 @@ public class ActionMenuInflater {
             itemIconDisableResId = a.getResourceId(R.styleable.ZyMenuItem_icon_disable, 0);
             itemEnabled = a.getBoolean(R.styleable.ZyMenuItem_enabled, defaultItemEnabled);
             
-            Log.d(TAG, "=============getItem===========");
-            Log.d(TAG, "itemId=" + itemId);
-            Log.d(TAG, "itemTitle=" + itemTitle);
-            Log.d(TAG, "itemIconEnableResId=" + itemIconEnableResId);
-            Log.d(TAG, "itemIconDisableResId=" + itemIconDisableResId);
-            Log.d(TAG, "itemEnabled=" + itemEnabled);
-            Log.d(TAG, "=============getItem===========");
+//            Log.d(TAG, "=============getItem===========");
+//            Log.d(TAG, "itemId=" + itemId);
+//            Log.d(TAG, "itemTitle=" + itemTitle);
+//            Log.d(TAG, "itemIconEnableResId=" + itemIconEnableResId);
+//            Log.d(TAG, "itemIconDisableResId=" + itemIconDisableResId);
+//            Log.d(TAG, "itemEnabled=" + itemEnabled);
+//            Log.d(TAG, "=============getItem===========");
             a.recycle();
 
         }
@@ -180,7 +179,6 @@ public class ActionMenuInflater {
         }
 
         public void addItem() {
-            itemAdded = true;
             setItem(actionMenu.addItem(itemId));
         }
     }

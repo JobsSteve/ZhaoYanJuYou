@@ -1,6 +1,8 @@
 package com.zhaoyan.juyou.adapter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -61,6 +63,9 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	private DeleteOnClick mDeleteOnClick = new DeleteOnClick(0);
 	private ListView mListView;
 	private UserInfo mLocalUserInfo = null;
+	
+	//wait tranfser name list 
+	private List<String> mWaitNameList = new ArrayList<String>();
 
 	public HistoryCursorAdapter(Context context, ListView listView) {
 		super(context, null, true);
@@ -130,7 +135,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 				.getColumnIndex(JuyouData.History.FILE_TYPE));
 		int headId;
 		byte[] headIcon;
-
+		
 		if (HistoryManager.TYPE_SEND == type) {
 			reveiveUserName = cursor.getString(cursor
 					.getColumnIndex(JuyouData.History.RECEIVE_USERNAME));
@@ -197,7 +202,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 
 	private void setSendReceiveStatus(ViewHolder holder, int status,
 			long fileSize, double progress) {
-		Log.d(TAG, "setSendReceiveStatus.status=" + status);
+//		Log.d(TAG, "setSendReceiveStatus.status=" + status);
 		String statusStr = "";
 		int color = Color.BLACK;
 		String fileSizeStr = ZYUtils.getFormatSize(fileSize);
@@ -256,7 +261,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	 */
 	private void setIconView(ViewHolder holder, final ImageView iconView,
 			final String filePath, int fileType) {
-		Log.d(TAG, "scroll flag=" + mIdleFlag);
+//		Log.d(TAG, "scroll flag=" + mIdleFlag);
 		switch (fileType) {
 		case FileManager.IMAGE:
 		case FileManager.VIDEO:

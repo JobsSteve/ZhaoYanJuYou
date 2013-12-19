@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.ImageAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
@@ -352,16 +354,28 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			InfoDialog dialog = null;
 			if (1 == list.size()) {
 				dialog = new InfoDialog(this,InfoDialog.SINGLE_FILE);
+				dialog.setTitle(R.string.info_image_info);
 				int position = list.get(0);
 				String url = mPictureItemInfoList.get(position).getPath();
 				String displayName = mPictureItemInfoList.get(position).getDisplayName();
 				File file = new File(url);
 				long size = file.length();
 				long date = file.lastModified();
-				dialog.updateUI(size, 0, 0);
-				dialog.updateUI(displayName, url, date);
+				
+				String imageType = FileManager.getExtFromFilename(displayName);
+				if ("".equals(imageType)) {
+					imageType = getApplicationContext().getResources().getString(R.string.unknow);
+				}
+				
+				dialog.setFileType(InfoDialog.IMAGE, imageType);
+				dialog.setFileName(displayName);
+				dialog.setFilePath(ZYUtils.getParentPath(url));
+				dialog.setModifyDate(date);
+				dialog.setFileSize(size);
+				
 			}else {
 				dialog = new InfoDialog(this,InfoDialog.MULTI);
+				dialog.setTitle(R.string.info_image_info);
 				int fileNum = list.size();
 				long totalSize = 0;
 				long size = 0;

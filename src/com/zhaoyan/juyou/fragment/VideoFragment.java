@@ -26,8 +26,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.VideoCursorAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
@@ -355,6 +357,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			InfoDialog dialog = null;
 			if (1 == list.size()) {
 				dialog = new InfoDialog(mContext,InfoDialog.SINGLE_FILE);
+				dialog.setTitle(R.string.info_video_info);
 				Cursor cursor = mAdapter.getCursor();
 				cursor.moveToPosition(list.get(0));
 				
@@ -365,10 +368,21 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 				String name = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
 				long date = cursor.getLong(cursor
 						.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED));
-				dialog.updateUI(size, 0, 0);
-				dialog.updateUI(name, url, date);
+				
+				String videoType = FileManager.getExtFromFilename(name);
+				if ("".equals(videoType)) {
+					videoType = mContext.getResources().getString(R.string.unknow);
+				}
+				
+				dialog.setFileType(InfoDialog.VIDEO, videoType);
+				dialog.setFileName(name);
+				dialog.setFilePath(ZYUtils.getParentPath(url));
+				dialog.setFileSize(size);
+				dialog.setModifyDate(date);
+				
 			}else {
 				dialog = new InfoDialog(mContext,InfoDialog.MULTI);
+				dialog.setTitle(R.string.info_video_info);
 				int fileNum = list.size();
 				long size = getTotalSize(list);
 				dialog.updateUI(size, fileNum, 0);

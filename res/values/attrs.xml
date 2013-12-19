@@ -11,12 +11,13 @@
 
     <!-- Base attributes that are available to all Item objects. -->
     <declare-styleable name="ZyMenuItem">
-
         <!-- The ID of the item. -->
         <attr name="id" />
         <!-- The title associated with the item. -->
         <attr name="title" />
+        <!-- the icon menu enable -->
         <attr name="icon_enable" />
+        <!-- the icon menu disable -->
         <attr name="icon_disable" />
         <!-- Whether the item is enabled. -->
         <attr name="enabled" />

@@ -48,7 +48,7 @@ public class ZyPopupMenu implements OnItemClickListener {
 		
 		for(int i = 0; i < actionMenu.size(); i++){
 			try {
-				Log.d(TAG, "title:" + actionMenu.getItem(i).getTitle());
+//				Log.d(TAG, "title:" + actionMenu.getItem(i).getTitle());
 				mMenuItemList.add(actionMenu.getItem(i));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -60,7 +60,7 @@ public class ZyPopupMenu implements OnItemClickListener {
 //		popupWindow = new PopupWindow(view, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		int width = context.getResources().getDisplayMetrics().widthPixels;
 		int height = LayoutParams.WRAP_CONTENT;
-		Log.d(TAG, "width=" + width+ ",heiht=" +height);
+//		Log.d(TAG, "width=" + width+ ",heiht=" +height);
 		popupWindow = new PopupWindow(view, width / 2, height);
 		popupWindow.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.dialog_full_holo_light));
 		popupWindow.setTouchInterceptor(new OnTouchListener() {

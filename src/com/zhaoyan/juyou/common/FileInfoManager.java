@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -25,12 +26,14 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.SingleMediaScanner;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
+import com.zhaoyan.juyou.provider.AppData;
 
 public class FileInfoManager {
 	private static final String TAG = "FileInfoManager";
@@ -273,7 +276,7 @@ public class FileInfoManager {
 	 * @param position
 	 *            the click position
 	 */
-	public void showRenameDialog(Context context, final List<FileInfo> list) {
+	public void showRenameDialog(final Context context, final List<FileInfo> list) {
 		LayoutInflater inflater = LayoutInflater.from(context);
 		View view = inflater.inflate(R.layout.dialog_edit, null);
 		final EditText editText = (EditText) view.findViewById(R.id.et_dialog);
@@ -288,10 +291,12 @@ public class FileInfoManager {
 			public void onClick(Dialog dialog) {
 				String newName = editText.getText().toString()
 						.trim();
+				String oldPath = list.get(renameFlag).filePath;
 				list.get(renameFlag).fileName = newName;
 				list.get(renameFlag).filePath = rename(
 						new File(list.get(renameFlag).filePath),
 						newName);
+				String newPath = list.get(renameFlag).filePath;
 				renameFlag++;
 				if (renameFlag < list.size()) {
 					editText.setText(list.get(renameFlag).fileName);
@@ -299,6 +304,36 @@ public class FileInfoManager {
 				} else {
 					dialog.dismiss();
 					renameFlag = 0;
+				}
+				
+				//upate media db
+				int type = FileManager.getFileTypeByName(context, list.get(renameFlag).fileName);
+				if (FileManager.IMAGE == type || FileManager.VIDEO == type
+						|| FileManager.AUDIO == type) {
+					Uri uri = null;
+					switch (type) {
+					case IMAGE:
+						uri = ZYConstant.IMAGE_URI;
+						break;
+					case AUDIO:
+						uri = ZYConstant.AUDIO_URI;
+						break;
+					case VIDEO:
+						uri = ZYConstant.VIDEO_URI;
+						break;
+					}
+					ContentResolver contentResolver = context.getContentResolver();
+					
+					String where = MediaColumns.DATA + "=?";
+					String[] whereArgs = new String[] { oldPath };
+					try {
+						contentResolver.delete(uri, where, whereArgs);
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e(TAG, "rename.delete item fail");
+					}
+					
+					new SingleMediaScanner(context, newPath);
 				}
 			}
 		});		
@@ -348,11 +383,7 @@ public class FileInfoManager {
 		GetFileSizeTask(Context context, List<FileInfo> list){
 			fileList = list;
 			if (list.size() == 1) {
-				if (fileList.get(0).isDir) {
-					type = InfoDialog.SINGLE_FOLDER;
-				}else {
-					type = InfoDialog.SINGLE_FILE;
-				}
+				type = InfoDialog.SINGLE_FILE;
 			}else {
 				type = InfoDialog.MULTI;
 			}
@@ -366,13 +397,34 @@ public class FileInfoManager {
 			File file = null;
 			switch (type) {
 			case InfoDialog.SINGLE_FILE:
-			case InfoDialog.SINGLE_FOLDER:
-				FileInfo fileInfo = fileList.get(0);
-				infoDialog.updateUI(fileInfo.fileName, fileInfo.filePath, fileInfo.fileDate);
-				file = new File(fileInfo.filePath);
+				FileInfo fileInfo1 = fileList.get(0);
+				String filename = fileInfo1.fileName;
+				
+				String fileType = "";
+				if (fileInfo1.isDir) {
+					fileType = "文件夹";
+					infoDialog.setTitle(R.string.info_folder_info);
+					infoDialog.setFileType(InfoDialog.FOLDER, fileType);
+				}else {
+					fileType = FileManager.getExtFromFilename(filename);
+					if ("".equals(fileType)) {
+						fileType = "未知";
+					}
+					infoDialog.setTitle(R.string.info_file_info);
+					infoDialog.setFileType(InfoDialog.FILE, fileType);
+				}
+				
+				infoDialog.setFileName(filename);
+				infoDialog.setFilePath(ZYUtils.getParentPath(fileInfo1.filePath));
+				infoDialog.setModifyDate(fileInfo1.fileDate);
+				infoDialog.updateSingleFileUI();
+				
+				file = new File(fileInfo1.filePath);
 				getFileSize(file);
 				break;
 			case InfoDialog.MULTI:
+				infoDialog.setTitle(R.string.info_file_info);
+				infoDialog.updateTitle();
 				for(FileInfo info : fileList){
 					file = new File(info.filePath);
 					getFileSize(file);
