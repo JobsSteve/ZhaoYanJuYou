@@ -15,4 +15,10 @@ public class ServerRecoveryWifi extends Recovery {
 		return false;
 	}
 
+	@Override
+	public void getLastSatus() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

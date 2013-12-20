@@ -14,4 +14,10 @@ public class ServerRecoveryAp extends Recovery {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public void getLastSatus() {
+		// TODO Auto-generated method stub
+		
+	}
 }

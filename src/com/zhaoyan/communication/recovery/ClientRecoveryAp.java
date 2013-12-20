@@ -1,16 +1,14 @@
 package com.zhaoyan.communication.recovery;
 
 import android.content.Context;
-import android.database.ContentObserver;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import com.dreamlink.communication.aidl.User;
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
@@ -26,22 +24,22 @@ public class ClientRecoveryAp extends Recovery {
 	private Handler mHandler;
 	private ServerSearchObserver mServerSearchObserver;
 	private ServerSearcher mServerSearcher;
+	private UserInfo serverInfo;
 
 	public ClientRecoveryAp(Context context) {
 		mContext = context;
-		mWifiManager = (WifiManager) context
-				.getSystemService(Context.WIFI_SERVICE);
-		HandlerThread handlerThread = new HandlerThread("ClientRecoveryAp");
-		handlerThread.start();
-		mHandler = new ServerSearchHander(handlerThread.getLooper());
+
 	}
 
 	@Override
 	protected boolean doRecovery() {
-		Log.d(TAG, "doRecovery");
-		UserManager userManager = UserManager.getInstance();
-		User server = userManager.getServer();
-		UserInfo serverInfo = UserHelper.getUserInfo(mContext, server);
+		Log.d(TAG, "doRecovery() serverInfo = " + serverInfo);
+		mWifiManager = (WifiManager) mContext
+				.getSystemService(Context.WIFI_SERVICE);
+		HandlerThread handlerThread = new HandlerThread("ClientRecoveryAp");
+		handlerThread.start();
+		mHandler = new ServerSearchHander(handlerThread.getLooper());
+
 		serverInfo.setType(JuyouData.User.TYPE_REMOTE_SEARCH_AP);
 		Log.d(TAG, "doRecovery server userInfo = " + serverInfo);
 		// Start search server.
@@ -55,7 +53,7 @@ public class ClientRecoveryAp extends Recovery {
 		mContext.getContentResolver().registerContentObserver(
 				JuyouData.User.CONTENT_URI, true, mServerSearchObserver);
 
-		return false;
+		return true;
 	}
 
 	private class ServerSearchHander extends Handler {
@@ -79,9 +77,18 @@ public class ClientRecoveryAp extends Recovery {
 	}
 
 	private void recoveryFinish() {
+		Log.d(TAG, "recoveryFinish");
 		mContext.getContentResolver().unregisterContentObserver(
 				mServerSearchObserver);
 		mHandler.getLooper().quit();
+	}
+
+	@Override
+	public void getLastSatus() {
+		UserManager userManager = UserManager.getInstance();
+		User server = userManager.getServer();
+		serverInfo = UserHelper.getUserInfo(mContext, server);
+		Log.d(TAG, "getLastSatus() serverInfo = " + serverInfo);
 	}
 
 }

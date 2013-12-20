@@ -2,7 +2,7 @@ package com.zhaoyan.communication.recovery;
 
 abstract public class Recovery {
 	protected abstract boolean doRecovery();
-
+	public abstract void getLastSatus();
 	/**
 	 * Attempt to recovery current communication.
 	 * 

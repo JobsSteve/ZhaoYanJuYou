@@ -18,6 +18,7 @@ import com.zhaoyan.communication.SocketClientTask.OnConnectedToServerListener;
 import com.zhaoyan.communication.SocketCommunication.OnCommunicationChangedListener;
 import com.zhaoyan.communication.SocketCommunication.OnReceiveMessageListener;
 import com.zhaoyan.communication.SocketServerTask.OnClientConnectedListener;
+import com.zhaoyan.communication.recovery.CommunicationRecovery;
 
 /**
  * This class is used for providing socket communication operations.</br>
@@ -166,6 +167,9 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	@Override
 	public void OnCommunicationLost(SocketCommunication communication) {
 		Log.d(TAG, "OnCommunicationLost " + communication);
+		CommunicationRecovery recovery = new CommunicationRecovery(mContext);
+		recovery.getLastSatus();
+		
 		mCommunications.remove(communication);
 		if (mCommunications.isEmpty()) {
 			if (mExecutorService != null) {
@@ -183,6 +187,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		if (mCommunications.isEmpty()) {
 			stopScreenMonitor();
 		}
+		
+		recovery.attemptRecovery();
 	}
 
 	private void startScreenMonitor() {
