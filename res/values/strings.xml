@@ -91,19 +91,36 @@
     
      <string name="ok">确定</string>
     <string name="delete_confirm">删除确认</string>
-    <string name="info">属性: <xliff:g id="info">%1$s</xliff:g></string>
-    <string name="info1">属性</string>
-    <string name="info2">%s 属性</string>
-    <string name="name">名称: <xliff:g id="name">%1$s</xliff:g></string>
-    <string name="version">版本: <xliff:g id="version">%1$s</xliff:g></string>
-    <string name="location">位置: <xliff:g id="location">%1$s</xliff:g></string>
-    <string name="pkg_name">包名: <xliff:g id="package">%1$s</xliff:g></string>
-    <string name="size">大小: <xliff:g id="size">%1$s</xliff:g></string>
-    <string name="include_files">包含: %1$d个文件, %2$d个文件夹</string>
-    <string name="modif_date">修改日期: <xliff:g id="date">%1$s</xliff:g></string>
-    <string name="type">类型: <xliff:g id="type">%1$s</xliff:g></string>
+    <string name="modify">修改</string>
+    <string name="unknow">未知</string>
+    
+    <!-- info dialog -->
+    <string name="info">属性</string>
+    
+    <string name="info_filename">文件名称:</string>
+    <string name="info_musicname">歌曲名称:</string>
+    <string name="info_imagename">图片名称:</string>
+    <string name="info_videoname">视频名称:</string>
+    <string name="info_foldername">文件夹名称:</string>
+    <string name="info_location">文件路径:</string>
+    <string name="info_size">文件大小:</string>
+    <string name="info_include">包含:</string>
+    <string name="info_include_files">%1$d个文件, %2$d个文件夹</string>
+    <string name="info_date">修改日期:</string>
+    <string name="info_filetype">文件格式:</string>
+    <string name="info_music_info">歌曲信息</string>
+    <string name="info_image_info">图片信息</string>
+    <string name="info_video_info">视频信息</string>
+    <string name="info_file_info">文件信息</string>
+    <string name="info_folder_info">文件夹信息</string>
+    <string name="info_modify_music_name">修改歌曲名称</string>
     <string name="type_file">类型: 文件</string>
     <string name="type_folder">类型: 文件夹</string>
+    <string name="type">文件类型: <xliff:g id="type">%1$s</xliff:g></string>
+    <string name="pkg_name">包名: <xliff:g id="package">%1$s</xliff:g></string>
+    <string name="version">版本: <xliff:g id="version">%1$s</xliff:g></string>
+    <!-- info dialog -->
+    
     <string name="rename">重命名</string>
     
     <string name="network">网络邻居</string>
@@ -220,8 +237,18 @@
     <string name="copy_cancel">取消</string>
      <string name="copy_cancel_msg">将不会改变任何文件</string>
      
+     <!-- delete -->
      <string name="delete_confirm_msg">确定要删除这些？</string>
      <string name="delete_fail">无法删除这个文件</string>
+     <string name="delete_music">删除歌曲</string>
+     <string name="delete_image">删除图片</string>
+     <string name="delete_video">删除视频</string>
+     <string name="delete_file">删除文件</string>
+     <string name="delete_file_confirm_msg">确定要删除“%1$s”？</string>
+     <string name="delete_file_confirm_msg_music">确定要删除这%1$s首歌曲？</string>
+     <string name="delete_file_confirm_msg_image">确定要删除这%1$s个图片？</string>
+     <string name="delete_file_confirm_msg_video">确定要删除这%1$s个视频？</string>
+     <string name="delete_file_confirm_msg_file">确定要删除这%1$s个文件？</string>
      
      <string name="remote_share_server_list_msg">远程文件共享列表</string>
      <string name="create_remote_share">创建共享</string>

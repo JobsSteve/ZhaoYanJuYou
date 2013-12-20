@@ -3,7 +3,7 @@ package com.zhaoyan.juyou.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,8 +24,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.AudioCursorAdapter;
 import com.zhaoyan.juyou.adapter.AudioCursorAdapter.ViewHolder;
@@ -35,9 +38,10 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
-import com.zhaoyan.juyou.dialog.DeleteDialog;
 import com.zhaoyan.juyou.dialog.InfoDialog;
-import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
+import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
+import com.zhaoyan.juyou.dialog.ZyProgressDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class AudioFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, 
 			OnClickListener, MenuBarInterface {
@@ -49,14 +53,13 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	
 	private QueryHandler mQueryHandler = null;
 	
-	private DeleteDialog mDeleteDialog;
-	
 	private static final String[] PROJECTION = {
 		MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE,
 		MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM,
 		MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION,
 		MediaStore.Audio.Media.SIZE, MediaStore.Audio.Media.DATA,
-		MediaStore.Audio.Media.IS_MUSIC, MediaStore.Audio.Media.DATE_MODIFIED
+		MediaStore.Audio.Media.IS_MUSIC, MediaStore.Audio.Media.DATE_MODIFIED,
+		MediaStore.Audio.Media.DISPLAY_NAME
 	};
 	
 	private static final int MSG_UPDATE_UI = 0;
@@ -201,36 +204,52 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
      * @param path file path
      */
     public void showDeleteDialog(final List<Integer> posList) {
-    	List<String> deleteNameList = new ArrayList<String>();
-    	Cursor cursor = mAdapter.getCursor();
-    	for (int i = 0; i < posList.size(); i++) {
-			cursor.moveToPosition(posList.get(i));
-			String name = cursor.getString(cursor
+		ZyDeleteDialog deleteDialog = new ZyDeleteDialog(mContext);
+		deleteDialog.setTitle(R.string.delete_music);
+		String msg = "";
+		if (posList.size() == 1) {
+			Cursor cursor1 = mAdapter.getCursor();
+			cursor1.moveToPosition(posList.get(0));
+			String name = cursor1.getString(cursor1
 					.getColumnIndex(MediaStore.Audio.Media.TITLE));
-			deleteNameList.add(name);
+			msg = mContext.getString(R.string.delete_file_confirm_msg, name);
+		}else {
+			msg = mContext.getString(R.string.delete_file_confirm_msg_music, posList.size());
 		}
-    	mDeleteDialog = new DeleteDialog(mContext, deleteNameList);
-    	mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
+		deleteDialog.setMessage(msg);
+		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
-			public void onClick(View view, String path) {
+			public void onClick(Dialog dialog) {
+				// TODO Auto-generated method stub
 				List<String> deleteList = mAdapter.getCheckedPathList();
 				DeleteTask deleteTask = new DeleteTask(deleteList);
 				deleteTask.execute(posList);
+				
 				destroyMenuBar();
+				dialog.dismiss();
 			}
 		});
-    	mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
-		mDeleteDialog.show();
+		deleteDialog.setNegativeButton(R.string.cancel, null);
+		deleteDialog.show();
     }
     
     /**
      * Delete file task
      */
     private class DeleteTask extends AsyncTask<List<Integer>, String, String>{
+    	ZyProgressDialog progressDialog = null;
     	List<String> deleteList = new ArrayList<String>();
     	
     	DeleteTask(List<String> list){
     		deleteList = list;
+    	}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		super.onPreExecute();
+    		progressDialog = new ZyProgressDialog(mContext);
+    		progressDialog.setMessage(R.string.deleting);
+    		progressDialog.show();
     	}
     	
 		@Override
@@ -245,9 +264,9 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			if (null != mDeleteDialog) {
-				mDeleteDialog.cancel();
-				mDeleteDialog = null;
+			if (null != progressDialog) {
+				progressDialog.cancel();
+				progressDialog = null;
 			}
 			updateUI(mAdapter.getCount());
 			mNotice.showToast(R.string.operator_over);
@@ -345,21 +364,42 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			InfoDialog dialog = null;
 			if (1 == list.size()) {
 				dialog = new InfoDialog(mContext,InfoDialog.SINGLE_FILE);
+				dialog.setTitle(R.string.info_music_info);
 				Cursor cursor = mAdapter.getCursor();
 				cursor.moveToPosition(list.get(0));
 				
+				final int id = cursor.getInt(cursor.getColumnIndex(MediaColumns._ID));
 				long size = cursor.getLong(cursor
 						.getColumnIndex(MediaStore.Audio.Media.SIZE)); // 文件大小
 				String url = cursor.getString(cursor
 						.getColumnIndex(MediaStore.Audio.Media.DATA)); // 文件路径
-				String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+				final String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
 				long date = cursor.getLong(cursor
 						.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED));
+				String displayName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
 				
-				dialog.updateUI(size, 0, 0);
-				dialog.updateUI(title, url, date);
+				String musicType = FileManager.getExtFromFilename(displayName);
+				if ("".equals(musicType)) {
+					musicType = mContext.getResources().getString(R.string.unknow);
+				}
+				
+				dialog.setFileType(InfoDialog.MUSIC, musicType);
+				dialog.setFileName(title);
+				dialog.setFilePath(ZYUtils.getParentPath(url));
+				dialog.setModifyDate(date);
+				dialog.setFileSize(size);
+				dialog.setPositiveButton(R.string.modify, new OnZyAlertDlgClickListener() {
+					@Override
+					public void onClick(Dialog dialog) {
+						FileManager.showModifyDialog(mContext, id, FileManager.AUDIO, title);
+						dialog.dismiss();
+						destroyMenuBar();
+					}
+				});
+				dialog.setNegativeButton(R.string.cancel, null);
 			}else {
 				dialog = new InfoDialog(mContext,InfoDialog.MULTI);
+				dialog.setTitle(R.string.info_music_info);
 				int fileNum = list.size();
 				long size = getTotalSize(list);
 				dialog.updateUI(size, fileNum, 0);

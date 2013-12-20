@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,8 +41,9 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.dialog.DeleteDialog;
-import com.zhaoyan.juyou.dialog.DeleteDialog.OnDelClickListener;
+import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
+import com.zhaoyan.juyou.dialog.ZyProgressDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileCategoryActivity extends BaseActivity implements
 		OnItemClickListener, OnItemLongClickListener, OnScrollListener,
@@ -63,7 +64,6 @@ public class FileCategoryActivity extends BaseActivity implements
 	public static final String CATEGORY_TYPE = "CATEGORY_TYPE";
 	private int mType = -1;
 	private String[] filterType = null;
-	private DeleteDialog mDeleteDialog = null;
 	private FileIconHelper mIconHelper;
 	
 	private Notice mNotice = null;
@@ -389,32 +389,47 @@ public class FileCategoryActivity extends BaseActivity implements
 	 */
 	public void showDeleteDialog(final List<Integer> posList) {
 		// get name list
-		List<String> nameList = new ArrayList<String>();
 		final List<FileInfo> fileList = mAdapter.getList();
-		for (int position : posList) {
-			nameList.add(fileList.get(position).fileName);
+		
+		ZyDeleteDialog deleteDialog = new ZyDeleteDialog(this);
+		deleteDialog.setTitle(R.string.delete_file);
+		String msg = "";
+		if (posList.size() == 1) {
+			msg = getString(R.string.delete_file_confirm_msg, fileList.get(posList.get(0)).fileName);
+		}else {
+			msg = getString(R.string.delete_file_confirm_msg_file, posList.size());
 		}
-
-		mDeleteDialog = new DeleteDialog(this, nameList);
-		mDeleteDialog.setButton(AlertDialog.BUTTON_POSITIVE, R.string.menu_delete, new OnDelClickListener() {
+		deleteDialog.setMessage(msg);
+		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
-			public void onClick(View view, String path) {
+			public void onClick(Dialog dialog) {
 				destroyMenuBar();
 				new DeleteTask(posList).execute();
+				
+				dialog.dismiss();
 			}
 		});
-		mDeleteDialog.setButton(AlertDialog.BUTTON_NEGATIVE, R.string.cancel, null);
-		mDeleteDialog.show();
+		deleteDialog.setNegativeButton(R.string.cancel, null);
+		deleteDialog.show();
 	}
 
 	/**
 	 * Delete file task
 	 */
 	private class DeleteTask extends AsyncTask<Void, String, String> {
+		ZyProgressDialog progressDialog = null;
 		List<Integer> positionList = new ArrayList<Integer>();
 
 		DeleteTask(List<Integer> list) {
 			positionList = list;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progressDialog = new ZyProgressDialog(FileCategoryActivity.this);
+			progressDialog.setMessage(R.string.deleting);
+			progressDialog.show();
 		}
 
 		@Override
@@ -446,9 +461,9 @@ public class FileCategoryActivity extends BaseActivity implements
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			if (null != mDeleteDialog) {
-				mDeleteDialog.cancel();
-				mDeleteDialog = null;
+			if (null != progressDialog) {
+				progressDialog.cancel();
+				progressDialog = null;
 			}
 			mNotice.showToast(R.string.operator_over);
 		}

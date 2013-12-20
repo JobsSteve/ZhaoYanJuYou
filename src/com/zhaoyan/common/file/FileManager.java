@@ -1,17 +1,27 @@
 package com.zhaoyan.common.file;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
-import android.R.integer;
+import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
+import android.provider.MediaStore.Audio.Media;
+import android.provider.MediaStore.MediaColumns;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyEditDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileManager {
 	private static final String TAG = "FileManager";
@@ -238,6 +248,53 @@ public class FileManager {
 	    }
 
 	    return false;
+	}
+	
+	/**
+	 * show rename dialog,modify single file,for audio or video
+	 * 
+	 * @param fileInfo
+	 *            the file info
+	 * @param position
+	 *            the click position
+	 */
+	public static void showModifyDialog(final Context context, final int id, final int mediaType, String oldName) {
+		final ZyEditDialog editDialog = new ZyEditDialog(context);
+		editDialog.setTitle(R.string.info_modify_music_name);
+		editDialog.setEditStr(oldName);
+		editDialog.selectAll();
+		editDialog.showIME(true);
+		editDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				String newName = editDialog.getEditTextStr();
+				Uri uri = null;
+				ContentResolver contentResolver = context.getContentResolver();
+				ContentValues values = null;
+				if (AUDIO == mediaType) {
+					uri = ZYConstant.AUDIO_URI;
+					values = new ContentValues();
+					values.put(Media.TITLE, newName);
+				}else if (VIDEO == mediaType) {
+					uri = ZYConstant.VIDEO_URI;
+					values = new ContentValues();
+					values.put(MediaColumns.DISPLAY_NAME, newName);
+				}else {
+					Log.e(TAG, "showModifyDialog.error.mediaType=" + mediaType);
+				}
+				
+				try {
+					contentResolver.update(uri, values, MediaColumns._ID + "=" + id, null);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e(TAG, "showModifyDialog.update db error");
+				}
+				
+				dialog.dismiss();
+			}
+		});		
+		editDialog.setNegativeButton(R.string.cancel, null);
+		editDialog.show();
 	}
 
 }

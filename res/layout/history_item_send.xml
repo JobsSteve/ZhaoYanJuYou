@@ -33,18 +33,8 @@
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
             android:focusable="false" />
-        
-        <Button
-            android:id="@+id/cancel_transfer"
-            android:layout_width="55.0dip"
-            android:layout_height="30.0dip"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/btn_selector"
-            android:text="@string/cancel"
-            android:textColor="@color/button_text_selector"
-            android:textSize="16.0sp" />
 
         <LinearLayout
             android:id="@+id/layout_chatcontent"
@@ -55,7 +45,7 @@
             android:background="@drawable/history_bg_message_send"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="left|center"
+            android:gravity="left"
             android:orientation="vertical" >
 
             <TextView
@@ -135,6 +125,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/iv_userhead"
             android:layout_toRightOf="@+id/layout_chatcontent"
+            android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"

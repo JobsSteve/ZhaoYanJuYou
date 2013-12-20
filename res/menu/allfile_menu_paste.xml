@@ -3,23 +3,23 @@
      xmlns:zhaoyan="http://schemas.android.com/apk/res/com.zhaoyan.juyou" 
     >
     <item 
-        zhaoyan:id="@+id/menu_create_folder"
-        zhaoyan:title="@string/create_folder"
-        zhaoyan:icon_enable="@drawable/ic_action_createfolder_enable"
-        zhaoyan:enabled="true"
+        zhaoyan:zyId="@+id/menu_create_folder"
+        zhaoyan:zyTitle="@string/create_folder"
+        zhaoyan:zyIconEnable="@drawable/ic_action_createfolder_enable"
+        zhaoyan:zyEnabled="true"
         />
     
      <item 
-        zhaoyan:id="@+id/menu_paste"
-        zhaoyan:title="@string/paste"
-        zhaoyan:icon_enable="@drawable/ic_action_paste_enable"
-        zhaoyan:enabled="true"
+        zhaoyan:zyId="@+id/menu_paste"
+        zhaoyan:zyTitle="@string/paste"
+        zhaoyan:zyIconEnable="@drawable/ic_action_paste_enable"
+        zhaoyan:zyEnabled="true"
         />
      
       <item 
-        zhaoyan:id="@+id/menu_cancel"
-        zhaoyan:title="@string/cancel"
-        zhaoyan:icon_enable="@drawable/ic_action_cancel_enable"
-        zhaoyan:enabled="true"
+        zhaoyan:zyId="@+id/menu_cancel"
+        zhaoyan:zyTitle="@string/cancel"
+        zhaoyan:zyIconEnable="@drawable/ic_action_cancel_enable"
+        zhaoyan:zyEnabled="true"
         />
 </menu>
