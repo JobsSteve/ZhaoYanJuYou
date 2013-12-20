@@ -56,7 +56,7 @@ public class LogoutProtocol implements IProtocol {
 			SocketCommunication communication) {
 		Log.d(TAG, "decodeLogoutServer");
 		UserManager userManager = UserManager.getInstance();
-		userManager.clear();
+		userManager.resetLocalUser();
 
 		SocketCommunicationManager socketCommunicationManager = SocketCommunicationManager
 				.getInstance();

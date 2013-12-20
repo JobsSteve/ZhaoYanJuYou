@@ -158,16 +158,24 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		}
 	}
 
+	/**
+	 * There is error cause communication lost.
+	 */
 	private void communicationLost() {
+		Log.d(TAG, "communicationLost "
+				+ getConnectedAddress().getHostAddress());
 		if (mSocket == null) {
 			// This is a fake one, used by UserManager.
 			return;
 		}
 		mHeartBeat.stop();
+
 		if (mListener != null) {
 			mListener.OnCommunicationLost(this);
+			mListener = null;
 		}
-		stopComunication();
+
+		closeSocket();
 	}
 
 	/**
@@ -450,12 +458,7 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		return true;
 	}
 
-	/**
-	 * Disconnect from the connected socket and stop communication.
-	 */
-	public void stopComunication() {
-		mListener = null;
-		mHeartBeat.stop();
+	private void closeSocket() {
 		try {
 			if (mDataInputStream != null) {
 				mDataInputStream.close();
@@ -467,16 +470,32 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 				mSocket.close();
 			}
 		} catch (IOException e) {
-			Log.e(TAG, "stopComunication fail." + e);
+			Log.e(TAG, "closeSocket fail." + e);
 		} catch (Exception e) {
-			Log.e(TAG, "stopComunication fail." + e);
+			Log.e(TAG, "closeSocket fail." + e);
 		}
+	}
+
+	/**
+	 * Disconnect from the connected socket and stop communication.
+	 */
+	public void stopComunication() {
+		Log.d(TAG, "stopComunication()");
+		mListener = null;
+		mHeartBeat.stop();
+
+		closeSocket();
 	}
 
 	@Override
 	public void onHeartBeatTimeOut() {
 		Log.d(TAG, "onHeartBeatTimeOut");
-		stopComunication();
+		if (mListener != null) {
+			mListener.OnCommunicationLost(this);
+			mListener = null;
+		}
+
+		closeSocket();
 	}
 
 	public void setScreenOn() {

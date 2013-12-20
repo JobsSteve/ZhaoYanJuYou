@@ -64,6 +64,9 @@ public class ServerCreateAndDiscovery extends Thread {
 
 	public void stopServerAndDiscovery() {
 		mStop = true;
+		UserManager userManager = UserManager.getInstance();
+		userManager.resetLocalUser();
+		
 		SocketCommunicationManager communicationManager = SocketCommunicationManager
 				.getInstance();
 		communicationManager.closeAllCommunication();

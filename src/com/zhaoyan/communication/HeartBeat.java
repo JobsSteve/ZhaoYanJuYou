@@ -128,6 +128,8 @@ public class HeartBeat {
 				if (mHeartBeatListener != null) {
 					mHeartBeatListener.onHeartBeatTimeOut();
 				}
+				
+				stop();
 			}
 		}
 	}
