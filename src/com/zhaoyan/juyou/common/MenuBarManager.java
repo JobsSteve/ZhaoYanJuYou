@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.ActionMenuInterface.OnMenuItemClickListener;
 
 public class MenuBarManager implements OnClickListener {
 	private static final String TAG  = "MenuTabManager";
@@ -21,7 +22,7 @@ public class MenuBarManager implements OnClickListener {
 	private LinearLayout mMenuHolders;
 	private LayoutInflater mInflater;
 	private List<ActionMenuItem> items = new ArrayList<ActionMenu.ActionMenuItem>();
-	private onMenuItemClickListener mListener; 
+	private OnMenuItemClickListener mListener; 
 	private int enable_color;
 	private int disable_color;
 	
@@ -38,24 +39,18 @@ public class MenuBarManager implements OnClickListener {
 		disable_color = context.getResources().getColor(R.color.disable_color);
 	}
 	
-	public void setOnMenuItemClickListener(onMenuItemClickListener listener){
+	public void setOnMenuItemClickListener(OnMenuItemClickListener listener){
 		this.mListener = listener;
 	}
 	
 	public void refreshMenus(ActionMenu actionMenu){
-		Log.d(TAG, "refreshMenus:" + actionMenu.size());
+//		Log.d(TAG, "refreshMenus:" + actionMenu.size());
 		int count = mMenuHolders.getChildCount();
 		mMenuHolders.removeViews(0, count);
 		items.clear();
 		
 		for (int i = 0; i < actionMenu.size(); i++) {
-			ActionMenuItem item = null;
-			try {
-				item = actionMenu.getItem(i);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ActionMenuItem item = actionMenu.getItem(i);
 			addMenuItem(item);
 		}
 	}
@@ -94,10 +89,6 @@ public class MenuBarManager implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		ActionMenuItem item = items.get(v.getId());
-		mListener.onMenuClick(item);
-	}
-	
-	public interface onMenuItemClickListener{
-		public void onMenuClick(ActionMenuItem item);
+		mListener.onMenuItemClick(item);
 	}
 }

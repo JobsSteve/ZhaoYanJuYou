@@ -16,10 +16,10 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.ActionMenuInflater;
+import com.zhaoyan.juyou.common.ActionMenuInterface.OnMenuItemClickListener;
 import com.zhaoyan.juyou.common.MenuBarManager;
-import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 
-public class BaseFragment extends Fragment implements onMenuItemClickListener{
+public class BaseFragment extends Fragment implements OnMenuItemClickListener{
 	protected Notice mNotice = null;
 	protected boolean mIsSelectAll = false;
 	protected Context mContext = null;
@@ -131,7 +131,7 @@ public class BaseFragment extends Fragment implements onMenuItemClickListener{
 	}
 
 	@Override
-	public void onMenuClick(ActionMenuItem item) {
+	public void onMenuItemClick(ActionMenuItem item) {
 		// TODO Auto-generated method stub
 		
 	};

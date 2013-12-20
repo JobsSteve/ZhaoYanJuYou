@@ -1,5 +1,9 @@
 package com.zhaoyan.juyou.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,8 +31,9 @@ import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.ImageActivity;
 import com.zhaoyan.juyou.activity.InviteActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
-import com.zhaoyan.juyou.common.ZYConstant.Extra;
-
+import com.zhaoyan.juyou.common.ActionMenu;
+import com.zhaoyan.juyou.dialog.MultiChoiceDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "GuanJiaFragment";
@@ -77,7 +83,6 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		//need update whether show badgeview at histroy view
 		boolean showBadgeView = sp.getBoolean(SHOW_BADGEVIEW, false);
@@ -129,6 +134,9 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		
 		View inviteView = view.findViewById(R.id.rl_guanjia_invite);
 		inviteView.setOnClickListener(this);
+		
+		View connectView = view.findViewById(R.id.rl_guanjia_connect);
+		connectView.setOnClickListener(this);
 	}
 
 	@Override
@@ -179,6 +187,9 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			break;
 		case R.id.rl_guanjia_invite:
 			openActivity(InviteActivity.class);
+			break;
+			
+		case R.id.rl_guanjia_connect:
 			break;
 
 		default:

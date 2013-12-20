@@ -238,7 +238,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 	}
 
 	@Override
-	public void onMenuClick(ActionMenuItem item) {
+	public void onMenuItemClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_send:
 			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getCheckedPathList();
@@ -265,13 +265,14 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 						ImageView[] imageViews = new ImageView[0];
 						showTransportAnimation(icons.toArray(imageViews));
 					}
+					
+					destroyMenuBar();
 				}
 				
 				@Override
 				public void onTransportFail() {
 				}
 			});
-			destroyMenuBar();
 			break;
 		case R.id.menu_uninstall:
 			mUninstallList = mAdapter.getCheckedPkgList();

@@ -310,15 +310,17 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	}
 
 	@Override
-	public void onMenuClick(ActionMenuItem item) {
+	public void onMenuItemClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_send:
+			Log.d(TAG, "send menu click");
 			ArrayList<String> selectedList = (ArrayList<String>) mAdapter.getCheckedPathList();
 			//send
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(this);
 			fileTransferUtil.sendFiles(selectedList, new TransportCallback() {
 				@Override
 				public void onTransportSuccess() {
+					Log.d(TAG, "onTransportSuccess.start");
 					int first = mGridView.getFirstVisiblePosition();
 					int last = mGridView.getLastVisiblePosition();
 					List<Integer> checkedItems = mAdapter.getCheckedPosList();
@@ -332,18 +334,18 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 							}
 						}
 					}
-					
 					if (icons.size() > 0) {
 						ImageView[] imageViews = new ImageView[0];
 						showTransportAnimation(mViewGroup, icons.toArray(imageViews));
 					}
+					
+					destroyMenuBar();
 				}
 				
 				@Override
 				public void onTransportFail() {
 				}
 			});
-			destroyMenuBar();
 			break;
 		case R.id.menu_delete:
 			showDeleteDialog();
