@@ -25,6 +25,7 @@ public class ProtocolManager {
 		mBaseProtocol.addProtocol(new UserUpdateProtocol(mContext));
 		mBaseProtocol.addProtocol(new MessageSendProtocol(mContext));
 		mBaseProtocol.addProtocol(new FileTransportProtocol(mContext));
+		mBaseProtocol.addProtocol(new LogoutProtocol());
 	}
 
 	/**

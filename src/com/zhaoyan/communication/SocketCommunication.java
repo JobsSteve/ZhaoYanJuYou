@@ -140,7 +140,9 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		try {
 			mDataInputStream = new DataInputStream(mSocket.getInputStream());
 			mDataOutputStream = new DataOutputStream(mSocket.getOutputStream());
-			mListener.OnCommunicationEstablished(this);
+			if (mListener != null) {
+				mListener.OnCommunicationEstablished(this);
+			}
 			mHeartBeat.start();
 			mReceiveBuffer = new byte[RECEIVE_BUFFER_SIZE];
 			while (!mSocket.isClosed()) {
@@ -162,7 +164,9 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 			return;
 		}
 		mHeartBeat.stop();
-		mListener.OnCommunicationLost(this);
+		if (mListener != null) {
+			mListener.OnCommunicationLost(this);
+		}
 		stopComunication();
 	}
 
@@ -321,7 +325,7 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		/**
 		 * Heart beat message is only for {@link #HeartBeat}.
 		 */
-		if (!mHeartBeat.processHeartBeat(msg)){
+		if (!mHeartBeat.processHeartBeat(msg)) {
 			mOnReceiveMessageListener.onReceiveMessage(msg, this);
 			mRxListener.addRxBytes(msg.length);
 		}
@@ -369,6 +373,7 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 
 	/**
 	 * Used for some message that without traffic statics.
+	 * 
 	 * @param msg
 	 * @param doTrafficStatic
 	 * @return
@@ -449,6 +454,7 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 	 * Disconnect from the connected socket and stop communication.
 	 */
 	public void stopComunication() {
+		mListener = null;
 		try {
 			if (mDataInputStream != null) {
 				mDataInputStream.close();
@@ -471,11 +477,11 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		Log.d(TAG, "onHeartBeatTimeOut");
 		stopComunication();
 	}
-	
+
 	public void setScreenOn() {
 		mHeartBeat.setScreenOn();
 	}
-	
+
 	public void setScreenOff() {
 		mHeartBeat.setScreenOff();
 	}

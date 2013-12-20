@@ -68,7 +68,6 @@ public class ServerCreateAndDiscovery extends Thread {
 				.getInstance();
 		communicationManager.closeAllCommunication();
 		communicationManager.stopServer();
-		UserManager.getInstance().resetLocalUser();
 
 		if (mDiscoveryService != null) {
 			mDiscoveryService.stopSearch();

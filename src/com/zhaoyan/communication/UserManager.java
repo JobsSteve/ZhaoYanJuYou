@@ -92,10 +92,11 @@ public class UserManager {
 			UserHelper.saveLocalUser(mContext, userInfo);
 
 			mLocalUser = userInfo.getUser();
-			clear();
 		} else {
 			mLocalUser = new User();
 		}
+
+		clear();
 	}
 
 	public void registerOnUserChangedListener(OnUserChangedListener listener) {
@@ -179,7 +180,7 @@ public class UserManager {
 					+ user);
 			return false;
 		}
-		
+
 		if (isManagerServer(user)) {
 			UserInfo localUserInfo = UserHelper.loadLocalUser(mContext);
 			localUserInfo.setNetworkType(userInfo.getNetworkType());
@@ -362,10 +363,12 @@ public class UserManager {
 
 	public void clear() {
 		UserHelper.removeAllRemoteConnectedUser(mContext);
-		mUsers.clear();
-		mCommunications.clear();
-		for (OnUserChangedListener listener : mOnUserChangedListeners) {
-			listener.onUserDisconnected(mLocalUser);
+		if (!mUsers.isEmpty()) {
+			mUsers.clear();
+			mCommunications.clear();
+			for (OnUserChangedListener listener : mOnUserChangedListeners) {
+				listener.onUserDisconnected(mLocalUser);
+			}
 		}
 	}
 

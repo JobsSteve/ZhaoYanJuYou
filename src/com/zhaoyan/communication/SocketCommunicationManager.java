@@ -103,7 +103,11 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		}
 		if (mExecutorService != null) {
 			mExecutorService.shutdown();
+			mExecutorService = null;
+
 		}
+
+		stopScreenMonitor();
 	}
 
 	/**
@@ -124,6 +128,15 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			Log.e(TAG, "addCommunication fail." + e.toString());
 		}
 
+	}
+
+	public void stopCommunication(SocketCommunication socketCommunication) {
+		socketCommunication.stopComunication();
+		mCommunications.remove(socketCommunication);
+
+		if (mCommunications.isEmpty()) {
+			stopScreenMonitor();
+		}
 	}
 
 	/**
