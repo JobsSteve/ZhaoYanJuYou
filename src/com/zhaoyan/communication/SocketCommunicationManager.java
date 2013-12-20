@@ -87,12 +87,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 		if (mCommunications != null) {
 			synchronized (mCommunications) {
 				for (final SocketCommunication communication : mCommunications) {
-					new Thread() {
-						@Override
-						public void run() {
-							communication.stopComunication();
-						}
-					}.start();
+					communication.stopComunication();
 				}
 			}
 			mCommunications.clear();
@@ -170,6 +165,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 
 	@Override
 	public void OnCommunicationLost(SocketCommunication communication) {
+		Log.d(TAG, "OnCommunicationLost " + communication);
 		mCommunications.remove(communication);
 		if (mCommunications.isEmpty()) {
 			if (mExecutorService != null) {

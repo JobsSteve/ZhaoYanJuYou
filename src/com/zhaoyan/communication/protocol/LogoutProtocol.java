@@ -104,8 +104,6 @@ public class LogoutProtocol implements IProtocol {
 		if (pbLogoutClient != null) {
 			int userId = pbLogoutClient.getUserId();
 			Log.d(TAG, "decodeLogoutClient userId = " + userId);
-			// Remove user from user manager.
-			userManager.removeUser(userId);
 			// Stop SocketCommunicaton
 			SocketCommunicationManager socketCommunicationManager = SocketCommunicationManager
 					.getInstance();
@@ -115,6 +113,8 @@ public class LogoutProtocol implements IProtocol {
 				socketCommunicationManager
 						.stopCommunication(socketCommunication);
 			}
+			// Remove user from user manager.
+			userManager.removeUser(userId);
 			// Update user list.
 			ProtocolCommunication protocolCommunication = ProtocolCommunication
 					.getInstance();

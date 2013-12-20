@@ -455,6 +455,7 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 	 */
 	public void stopComunication() {
 		mListener = null;
+		mHeartBeat.stop();
 		try {
 			if (mDataInputStream != null) {
 				mDataInputStream.close();
@@ -486,4 +487,9 @@ public class SocketCommunication extends Thread implements HeartBeatListener {
 		mHeartBeat.setScreenOff();
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + ", connected ip = "
+				+ mSocket.getInetAddress().getHostAddress();
+	}
 }
