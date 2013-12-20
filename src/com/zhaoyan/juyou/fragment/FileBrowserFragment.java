@@ -914,7 +914,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	}
 
 	@Override
-	public void onMenuClick(ActionMenuItem item) {
+	public void onMenuItemClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_send:
 			doTransfer();

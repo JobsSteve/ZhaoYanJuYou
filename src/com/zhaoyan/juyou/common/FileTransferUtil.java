@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
+import android.widget.Toast;
 
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.Notice;
@@ -17,9 +17,11 @@ import com.zhaoyan.communication.SocketCommunicationManager;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
+import com.zhaoyan.juyou.dialog.MultiChoiceDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileTransferUtil {
-	private static final String TAG = "FileSendUtil";
+	private static final String TAG = "FileTransferUtil";
 	private Context context;
 
 	public static final int TYPE_APK = 0;
@@ -114,48 +116,43 @@ public class FileTransferUtil {
 		showUserChooseDialog(data, filePathList, null);
 	}
 
-	public void showUserChooseDialog(List<String> data,
+	public void showUserChooseDialog(final List<String> data,
 			final ArrayList<String> filePathList,
 			final TransportCallback callback) {
-		final String[] items = new String[data.size()];
-		final boolean[] checkes = new boolean[data.size()];
+		ActionMenu actionMenu = new ActionMenu(context);
 		for (int i = 0; i < data.size(); i++) {
-			items[i] = data.get(i);
-			checkes[i] = true;
+			actionMenu.addItem(i, 0, data.get(i));
 		}
-		new AlertDialog.Builder(context)
-				.setTitle(R.string.user_list)
-				.setMultiChoiceItems(items, checkes,
-						new OnMultiChoiceClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which, boolean isChecked) {
-								// TODO
-							}
-						})
-				.setPositiveButton(R.string.menu_send,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								ArrayList<User> userList = new ArrayList<User>();
-								for (int i = 0; i < checkes.length; i++) {
-									if (checkes[i]) {
-										User user = mUserManager
-												.getUser(items[i]);
-										userList.add(user);
-									}
-								}
-								if (userList.size() > 0) {
-									doTransferFiles(userList, filePathList);
+		final MultiChoiceDialog choiceDialog = new MultiChoiceDialog(context, actionMenu);
+		choiceDialog.setCheckedAll(true);
+		choiceDialog.setTitle(R.string.user_list);
+		choiceDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				ArrayList<User> userList = new ArrayList<User>();
+				SparseBooleanArray choiceArray = choiceDialog.getChoiceArray();
+				User user = null;
+				for (int i = 0; i < choiceArray.size(); i++) {
+					if (choiceArray.get(i)) {
+						user = mUserManager.getUser(data.get(i));
+						userList.add(user);
+					}
+				}
+				
+				if (userList.size() > 0) {
+					doTransferFiles(userList, filePathList);
 
-									if (callback != null) {
-										callback.onTransportSuccess();
-									}
-								}
-							}
-						}).setNegativeButton(android.R.string.cancel, null)
-				.create().show();
+					if (callback != null) {
+						callback.onTransportSuccess();
+					}
+					dialog.dismiss();
+				}else {
+					Toast.makeText(context, R.string.select_user_null, Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+		choiceDialog.setNegativeButton(R.string.cancel, null);
+		choiceDialog.show();
 	}
 
 	/**

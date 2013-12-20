@@ -31,7 +31,11 @@ import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HeadChooseAdapter;
+import com.zhaoyan.juyou.common.ActionMenu;
+import com.zhaoyan.juyou.common.ActionMenuInterface.OnMenuItemClickListener;
 import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.dialog.ContextMenuDialog;
 import com.zhaoyan.juyou.provider.JuyouData;
 
 public class AccountSettingActivity extends BaseActivity implements
@@ -256,30 +260,28 @@ public class AccountSettingActivity extends BaseActivity implements
 	}
 
 	public void showCaptureDialog() {
-		AlertDialog dialog = new AlertDialog.Builder(this)
-				.setTitle(R.string.customize_head)
-				.setItems(R.array.customize_head_list,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-
-								switch (which) {
-								case 0:
-									// capture new picture.
-									captureHead();
-									break;
-								case 1:
-									// select from picture.
-									selectHead();
-									break;
-
-								default:
-									break;
-								}
-							}
-
-						}).create();
+		ActionMenu actionMenu = new ActionMenu(getApplicationContext());
+		actionMenu.addItem(ActionMenu.ACTION_MENU_CAPTURE, 0, R.string.capture_picture);
+		actionMenu.addItem(ActionMenu.ACTION_MENU_PICK_PICTURE, 0, R.string.choose_picture);
+		ContextMenuDialog dialog = new ContextMenuDialog(this, actionMenu);
+		dialog.setTitle(R.string.customize_head);
+		dialog.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			@Override
+			public void onMenuItemClick(ActionMenuItem actionMenuItem) {
+				switch (actionMenuItem.getItemId()) {
+				case ActionMenu.ACTION_MENU_CAPTURE:
+					// capture new picture.
+					captureHead();
+					break;
+				case ActionMenu.ACTION_MENU_PICK_PICTURE:
+					// select from picture.
+					selectHead();
+					break;
+				default:
+					break;
+				}
+			}
+		});
 		dialog.show();
 	}
 

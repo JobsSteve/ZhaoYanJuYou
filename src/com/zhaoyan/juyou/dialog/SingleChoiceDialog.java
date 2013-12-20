@@ -14,9 +14,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
-public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListener {
+public class SingleChoiceDialog extends ZyAlertDialog implements OnItemClickListener {
 
 	private ActionMenu mActionMenu;
 	private ListView mListView;
@@ -24,11 +25,15 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 	private OnMenuItemClickListener mListener;
 	
 	private boolean mShowIcon = false;
+	private SingleChoiceAdapter mAdapter;
 	
-	public ContextMenuDialog(Context context, ActionMenu actionMenu) {
+	private int mChoiceItemId;
+	
+	public SingleChoiceDialog(Context context, ActionMenu actionMenu) {
 		super(context);
 		mContext = context;
 		mActionMenu = actionMenu;
+		mChoiceItemId = actionMenu.getItem(0).getItemId();
 	}
 	
 	@Override
@@ -43,8 +48,8 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 			mShowIcon = true;
 		}
 		
-		ContextMenuAdapter adapter = new ContextMenuAdapter();
-		mListView.setAdapter(adapter);
+		mAdapter = new SingleChoiceAdapter();
+		mListView.setAdapter(mAdapter);
 		
 		setCanceledOnTouchOutside(true);
 		setCustomView(view);
@@ -53,33 +58,44 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 		super.onCreate(savedInstanceState);
 	}
 	
-	@Override
-	public void show() {
-		super.show();
-//		WindowManager windowManager = getWindow().getWindowManager();
-//		Display display = windowManager.getDefaultDisplay();
-//		WindowManager.LayoutParams lp = getWindow().getAttributes();
-//		lp.width = (int)display.getWidth() - 40;
-//		getWindow().setAttributes(lp);
+	public int getChoiceItemId(){
+		return mChoiceItemId;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
+		mAdapter.setChoicePosition(position);
+		mAdapter.notifyDataSetChanged();
+		
 		ActionMenuItem item = mActionMenu.getItem(position);
-		mListener.onMenuItemClick(item);
-		dismiss();
+		mChoiceItemId = item.getItemId();
+		
+		if (null != mListener) {
+			mListener.onMenuItemClick(item);
+		}
 	}
 	
 	public void setOnMenuItemClickListener(OnMenuItemClickListener listener){
 		mListener = listener;
 	}
 	
-	class ContextMenuAdapter extends BaseAdapter{
-
+	@Override
+	public void show() {
+		super.show();
+	}
+	
+	class SingleChoiceAdapter extends BaseAdapter{
+		static final int default_choice_pos = 0;
+		int choice_position = default_choice_pos;
+		
 		@Override
 		public int getCount() {
 			return mActionMenu.size();
+		}
+		
+		public void setChoicePosition(int position){
+			choice_position = position;
 		}
 
 		@Override
@@ -94,7 +110,7 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = getLayoutInflater().inflate(R.layout.dialog_contextmenu_item, null);
+			View view = getLayoutInflater().inflate(R.layout.dialog_singlechoice_item, null);
 			if (mShowIcon) {
 				ImageView imageView = (ImageView) view.findViewById(R.id.iv_menu_icon);
 				imageView.setVisibility(View.VISIBLE);
@@ -103,6 +119,19 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 			
 			TextView textView = (TextView) view.findViewById(R.id.tv_menu_title);
 			textView.setText(mActionMenu.getItem(position).getTitle());
+			
+			RadioButton radioButton = (RadioButton) view.findViewById(R.id.rb_menu);
+			if (position == choice_position) {
+				radioButton.setChecked(true);
+			}else {
+				radioButton.setChecked(false);
+			}
+			
+			if (!mActionMenu.getItem(position).isEnable()) {
+				textView.setTextColor(mContext.getResources().getColor(R.color.disable_color));
+				radioButton.setEnabled(false);
+				radioButton.setFocusable(true);
+			}
 			
 			return view;
 		}

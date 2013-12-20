@@ -7,16 +7,18 @@ import com.zhaoyan.juyou.common.ActionMenuInterface.OnMenuItemClickListener;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListener {
+public class MultiChoiceDialog extends ZyAlertDialog implements OnItemClickListener {
 
 	private ActionMenu mActionMenu;
 	private ListView mListView;
@@ -24,8 +26,11 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 	private OnMenuItemClickListener mListener;
 	
 	private boolean mShowIcon = false;
+	private MultiChoiceAdapter mAdapter;
 	
-	public ContextMenuDialog(Context context, ActionMenu actionMenu) {
+	private boolean mCheckedAll = false;
+	
+	public MultiChoiceDialog(Context context, ActionMenu actionMenu) {
 		super(context);
 		mContext = context;
 		mActionMenu = actionMenu;
@@ -43,8 +48,8 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 			mShowIcon = true;
 		}
 		
-		ContextMenuAdapter adapter = new ContextMenuAdapter();
-		mListView.setAdapter(adapter);
+		mAdapter = new MultiChoiceAdapter();
+		mListView.setAdapter(mAdapter);
 		
 		setCanceledOnTouchOutside(true);
 		setCustomView(view);
@@ -53,30 +58,61 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 		super.onCreate(savedInstanceState);
 	}
 	
-	@Override
-	public void show() {
-		super.show();
-//		WindowManager windowManager = getWindow().getWindowManager();
-//		Display display = windowManager.getDefaultDisplay();
-//		WindowManager.LayoutParams lp = getWindow().getAttributes();
-//		lp.width = (int)display.getWidth() - 40;
-//		getWindow().setAttributes(lp);
+	public SparseBooleanArray getChoiceArray(){
+		return mAdapter.checkArray;
+	}
+	
+	public void setCheckedAll(boolean checkedAll){
+		mCheckedAll = checkedAll;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		ActionMenuItem item = mActionMenu.getItem(position);
-		mListener.onMenuItemClick(item);
-		dismiss();
+		mAdapter.setChecked(position);
+		mAdapter.notifyDataSetChanged();
+		
+		if (null != mListener) {
+			ActionMenuItem item = mActionMenu.getItem(position);
+			mListener.onMenuItemClick(item);
+		}
 	}
 	
 	public void setOnMenuItemClickListener(OnMenuItemClickListener listener){
 		mListener = listener;
 	}
 	
-	class ContextMenuAdapter extends BaseAdapter{
-
+	@Override
+	public void show() {
+		super.show();
+	}
+	
+	class MultiChoiceAdapter extends BaseAdapter{
+		SparseBooleanArray checkArray;
+		
+		MultiChoiceAdapter(){
+			checkArray = new SparseBooleanArray(mActionMenu.size());
+			checkedAll(mCheckedAll);
+		}
+		
+		public void checkedAll(boolean checkedAll){
+			for (int i = 0; i < mActionMenu.size(); i++) {
+				setChecked(i, checkedAll);
+			}
+		}
+		
+		public void setChecked(int position, boolean checked){
+			checkArray.put(position, checked);
+		}
+		
+		public void setChecked(int position){
+			checkArray.put(position, !isChecked(position));
+		}
+		
+		public boolean isChecked(int position){
+			return checkArray.get(position);
+		}
+		
 		@Override
 		public int getCount() {
 			return mActionMenu.size();
@@ -94,7 +130,7 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = getLayoutInflater().inflate(R.layout.dialog_contextmenu_item, null);
+			View view = getLayoutInflater().inflate(R.layout.dialog_multichoice_item, null);
 			if (mShowIcon) {
 				ImageView imageView = (ImageView) view.findViewById(R.id.iv_menu_icon);
 				imageView.setVisibility(View.VISIBLE);
@@ -103,6 +139,19 @@ public class ContextMenuDialog extends ZyAlertDialog implements OnItemClickListe
 			
 			TextView textView = (TextView) view.findViewById(R.id.tv_menu_title);
 			textView.setText(mActionMenu.getItem(position).getTitle());
+			
+			CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_menu);
+			if (checkArray.valueAt(position)) {
+				checkBox.setChecked(true);
+			}else {
+				checkBox.setChecked(false);
+			}
+			
+			if (!mActionMenu.getItem(position).isEnable()) {
+				textView.setTextColor(mContext.getResources().getColor(R.color.disable_color));
+				checkBox.setEnabled(false);
+				checkBox.setFocusable(true);
+			}
 			
 			return view;
 		}

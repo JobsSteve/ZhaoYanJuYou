@@ -1,5 +1,7 @@
 package com.zhaoyan.common.view;
 
+import com.zhaoyan.common.util.Log;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +44,7 @@ public class TransportAnimationView extends View {
 	 */
 	public void startTransportAnimation(ViewGroup containView, View endView,
 			ImageView... startViews) {
+		Log.d(TAG, "startTransportAnimation.start");
 		// Create new layout.
 		AbsoluteLayout absoluteLayout = new AbsoluteLayout(getContext());
 		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -54,6 +57,7 @@ public class TransportAnimationView extends View {
 		int[] startViewPosition = new int[2];
 		int[] endViewPosition = new int[2];
 		boolean isTheLastAnimation = false;
+		Log.d(TAG, "startViews.length=" + startViews.length);
 		for (int i = 0; i < startViews.length; i++) {
 			ImageView startView = startViews[i];
 			ImageView shadowView = new ImageView(getContext());
@@ -74,6 +78,7 @@ public class TransportAnimationView extends View {
 			startAnimation(shadowView, xDelta, yDelta, absoluteLayout,
 					containView, isTheLastAnimation);
 		}
+		Log.d(TAG, "startTransportAnimation.end");
 	}
 
 	/**

@@ -264,11 +264,10 @@ public class FileCategoryActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void onMenuClick(ActionMenuItem item) {
+	public void onMenuItemClick(ActionMenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_send:
 			doTransfer();
-			destroyMenuBar();
 			break;
 		case R.id.menu_delete:
 			List<Integer> posList = mAdapter.getSelectedItemsPos();
@@ -375,6 +374,8 @@ public class FileCategoryActivity extends BaseActivity implements
 					ImageView[] imageViews = new ImageView[0];
 					showTransportAnimation(mViewGroup, icons.toArray(imageViews));
 				}
+				
+				destroyMenuBar();
 			}
 
 			@Override

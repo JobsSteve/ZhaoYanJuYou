@@ -10,16 +10,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenuInflater;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.ActionMenuInterface.OnMenuItemClickListener;
 import com.zhaoyan.juyou.common.MenuBarManager;
-import com.zhaoyan.juyou.common.MenuBarManager.onMenuItemClickListener;
 
-public class BaseActivity extends Activity implements onMenuItemClickListener {
-
+public class BaseActivity extends Activity implements OnMenuItemClickListener {
+	private static final String TAG = "BaseActivity";
 	// title view
 	protected View mCustomTitleView;
 	protected TextView mTitleNameView;
@@ -85,6 +86,7 @@ public class BaseActivity extends Activity implements onMenuItemClickListener {
 	 * @param startViews The transport item image view.
 	 */
 	protected void showTransportAnimation(ViewGroup viewGroup, ImageView... startViews) {
+		Log.d(TAG, "showTransportAnimation");
 		TransportAnimationView transportAnimationView = new TransportAnimationView(
 				getApplicationContext());
 		transportAnimationView.startTransportAnimation(viewGroup, mTitleNameView, startViews);
@@ -112,16 +114,16 @@ public class BaseActivity extends Activity implements onMenuItemClickListener {
 	public boolean onBackKeyPressed(){
 		return true;
 	}
-
-	@Override
-	public void onMenuClick(ActionMenuItem item) {
-		// TODO Auto-generated method stub
-	}
 	
 	protected ActionMenuInflater getActionMenuInflater(){
 		if (null == mActionMenuInflater) {
 			mActionMenuInflater = new ActionMenuInflater(getApplicationContext());
 		}
 		return mActionMenuInflater;
+	}
+
+	@Override
+	public void onMenuItemClick(ActionMenuItem item) {
+		// TODO Auto-generated method stub
 	}
 }
