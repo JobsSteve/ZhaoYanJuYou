@@ -20,7 +20,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Handler.Callback;
 
 import com.dreamlink.communication.aidl.User;
 import com.dreamlink.communication.lib.util.AppUtil;
@@ -64,7 +68,6 @@ public class FileTransferService extends Service implements
 	public static final String EXTRA_BADGEVIEW_SHOW = "badgeview_show";
 
 	private Notice mNotice;
-	private SocketCommunicationManager mSocketMgr;
 	private ProtocolCommunication mProtocolCommunication;
 	private HistoryManager mHistoryManager = null;
 	private UserManager mUserManager = null;
@@ -84,6 +87,10 @@ public class FileTransferService extends Service implements
 	private ExecutorService mExecutorService = Executors.newCachedThreadPool();
 
 	FileSender mFileSender = null;
+
+	private static final int MSG_SEND_FILE_REQUEST = 1;
+	private ProcessCommandThread mHandlerThread;
+	private Handler mHandler;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -149,6 +156,11 @@ public class FileTransferService extends Service implements
 	public void onCreate() {
 		Log.d(TAG, "onCreate");
 		super.onCreate();
+		mHandlerThread = new ProcessCommandThread(
+				"HandlerThread-FileTransferService");
+		mHandlerThread.start();
+		mHandler = new Handler(mHandlerThread.getLooper(), mHandlerThread);
+
 		// register broadcast
 		IntentFilter filter = new IntentFilter(ACTION_SEND_FILE);
 		filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
@@ -167,7 +179,6 @@ public class FileTransferService extends Service implements
 
 		mNotice = new Notice(this);
 		mHistoryManager = new HistoryManager(getApplicationContext());
-		mSocketMgr = SocketCommunicationManager.getInstance();
 		mAppId = AppUtil.getAppID(this);
 		Log.d(TAG, "mappid=" + mAppId);
 		mProtocolCommunication = ProtocolCommunication.getInstance();
@@ -259,22 +270,10 @@ public class FileTransferService extends Service implements
 	}
 
 	public void handleSendFileRequest(Intent intent) {
-		Bundle bundle;
-		bundle = intent.getExtras();
-		if (null != bundle) {
-			List<String> pathLists = bundle
-					.getStringArrayList(Extra.SEND_FILES);
-			List<User> userList = bundle
-					.getParcelableArrayList(Extra.SEND_USERS);
-			for (String path : pathLists) {
-				sendFile(path, userList);
-			}
-
-			SendFileThread thread = mSendQueue.peek();
-			if (thread != null && !thread.isSendSending()) {
-				mExecutorService.execute(thread);
-			}
-		}
+		Bundle bundle = intent.getExtras();
+		Message message = mHandler.obtainMessage(MSG_SEND_FILE_REQUEST);
+		message.setData(bundle);
+		message.sendToTarget();
 	}
 
 	public void sendFile(String path, List<User> list) {
@@ -565,6 +564,41 @@ public class FileTransferService extends Service implements
 
 		mSendingFileThreadMap.clear();
 		mSendQueue.clear();
+
+		mHandlerThread.quit();
 	}
 
+	private class ProcessCommandThread extends HandlerThread implements
+			Callback {
+
+		public ProcessCommandThread(String name) {
+			super(name);
+		}
+
+		@Override
+		public boolean handleMessage(Message msg) {
+			switch (msg.what) {
+			case MSG_SEND_FILE_REQUEST:
+				Bundle bundle = msg.getData();
+				if (null != bundle) {
+					List<String> pathLists = bundle
+							.getStringArrayList(Extra.SEND_FILES);
+					List<User> userList = bundle
+							.getParcelableArrayList(Extra.SEND_USERS);
+					for (String path : pathLists) {
+						sendFile(path, userList);
+					}
+
+					SendFileThread thread = mSendQueue.peek();
+					if (thread != null && !thread.isSendSending()) {
+						mExecutorService.execute(thread);
+					}
+				}
+				break;
+			default:
+				break;
+			}
+			return true;
+		}
+	}
 }
