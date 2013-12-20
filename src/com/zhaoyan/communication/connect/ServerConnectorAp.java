@@ -52,7 +52,7 @@ public class ServerConnectorAp {
 			WifiInfo info = mWifiManager.getConnectionInfo();
 			if (info != null) {
 				String connectedSSID = info.getSSID();
-				if (("\"" + ssidAp + "\"").equals(connectedSSID)) {
+				if (("\"" + ssidAp + "\"").equals(connectedSSID) || ssidAp.equals(connectedSSID)) {
 					// Already connected to the ssid ignore.
 					Log.d(TAG, "Already connected to the ssid ignore. "
 							+ ssidAp);
