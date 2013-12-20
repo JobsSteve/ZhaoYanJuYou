@@ -258,9 +258,8 @@ public class UserHelper {
 
 	public static void removeAllRemoteConnectedUser(Context context) {
 		ContentResolver contentResolver = context.getContentResolver();
-		String selection = JuyouData.User.STATUS + "="
-				+ JuyouData.User.STATUS_CONNECTED + " and "
-				+ JuyouData.User.TYPE + " != " + JuyouData.User.TYPE_LOCAL;
+		String selection = JuyouData.User.TYPE + " != "
+				+ JuyouData.User.TYPE_LOCAL;
 		contentResolver.delete(JuyouData.User.CONTENT_URI, selection, null);
 	}
 

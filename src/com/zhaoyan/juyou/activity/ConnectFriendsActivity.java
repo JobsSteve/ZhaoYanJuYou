@@ -117,9 +117,9 @@ public class ConnectFriendsActivity extends BaseFragmentActivity implements
 		}
 		try {
 			if (!fragment.isAdded()) {
-				transaction.add(R.id.fl_cf_container, fragment, tag).commit();
+				transaction.add(R.id.fl_cf_container, fragment, tag).commitAllowingStateLoss();
 			} else {
-				transaction.show(fragment).commit();
+				transaction.show(fragment).commitAllowingStateLoss();
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "transactTo " + e);

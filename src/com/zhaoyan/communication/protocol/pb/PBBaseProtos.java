@@ -22,37 +22,45 @@ public final class PBBaseProtos {
      */
     LOGIN_RESPOND(1, 101),
     /**
+     * <code>LOGOUT_CLIENT = 102;</code>
+     */
+    LOGOUT_CLIENT(2, 102),
+    /**
+     * <code>LOGOUT_SERVER = 103;</code>
+     */
+    LOGOUT_SERVER(3, 103),
+    /**
      * <code>UPDATE_USER_ID = 200;</code>
      */
-    UPDATE_USER_ID(2, 200),
+    UPDATE_USER_ID(4, 200),
     /**
      * <code>UPDATE_USER_INFO = 201;</code>
      */
-    UPDATE_USER_INFO(3, 201),
+    UPDATE_USER_INFO(5, 201),
     /**
      * <code>SEND_MESSAGE_TO_SINGLE = 300;</code>
      */
-    SEND_MESSAGE_TO_SINGLE(4, 300),
+    SEND_MESSAGE_TO_SINGLE(6, 300),
     /**
      * <code>SEND_MESSAGE_TO_ALL = 301;</code>
      */
-    SEND_MESSAGE_TO_ALL(5, 301),
+    SEND_MESSAGE_TO_ALL(7, 301),
     /**
      * <code>FILE_TRANSPORT_SEND = 400;</code>
      */
-    FILE_TRANSPORT_SEND(6, 400),
+    FILE_TRANSPORT_SEND(8, 400),
     /**
      * <code>FILE_TRANSPORT_CANCEL_SEND = 401;</code>
      */
-    FILE_TRANSPORT_CANCEL_SEND(7, 401),
+    FILE_TRANSPORT_CANCEL_SEND(9, 401),
     /**
      * <code>FILE_TRANSPORT_CANCEL_RECEIVE = 402;</code>
      */
-    FILE_TRANSPORT_CANCEL_RECEIVE(8, 402),
+    FILE_TRANSPORT_CANCEL_RECEIVE(10, 402),
     /**
      * <code>HEART_BEAT = 500;</code>
      */
-    HEART_BEAT(9, 500),
+    HEART_BEAT(11, 500),
     ;
 
     /**
@@ -63,6 +71,14 @@ public final class PBBaseProtos {
      * <code>LOGIN_RESPOND = 101;</code>
      */
     public static final int LOGIN_RESPOND_VALUE = 101;
+    /**
+     * <code>LOGOUT_CLIENT = 102;</code>
+     */
+    public static final int LOGOUT_CLIENT_VALUE = 102;
+    /**
+     * <code>LOGOUT_SERVER = 103;</code>
+     */
+    public static final int LOGOUT_SERVER_VALUE = 103;
     /**
      * <code>UPDATE_USER_ID = 200;</code>
      */
@@ -103,6 +119,8 @@ public final class PBBaseProtos {
       switch (value) {
         case 100: return LOGIN_REQUEST;
         case 101: return LOGIN_RESPOND;
+        case 102: return LOGOUT_CLIENT;
+        case 103: return LOGOUT_SERVER;
         case 200: return UPDATE_USER_ID;
         case 201: return UPDATE_USER_INFO;
         case 300: return SEND_MESSAGE_TO_SINGLE;
@@ -675,15 +693,16 @@ public final class PBBaseProtos {
     java.lang.String[] descriptorData = {
       "\n\022message_type.proto\022\021com.zhaoyan.juyou\"" +
       "B\n\006PBBase\022\'\n\004type\030\001 \002(\0162\031.com.zhaoyan.ju" +
-      "you.PBType\022\017\n\007message\030\002 \001(\014*\201\002\n\006PBType\022\021" +
-      "\n\rLOGIN_REQUEST\020d\022\021\n\rLOGIN_RESPOND\020e\022\023\n\016" +
-      "UPDATE_USER_ID\020\310\001\022\025\n\020UPDATE_USER_INFO\020\311\001" +
-      "\022\033\n\026SEND_MESSAGE_TO_SINGLE\020\254\002\022\030\n\023SEND_ME" +
-      "SSAGE_TO_ALL\020\255\002\022\030\n\023FILE_TRANSPORT_SEND\020\220" +
-      "\003\022\037\n\032FILE_TRANSPORT_CANCEL_SEND\020\221\003\022\"\n\035FI" +
-      "LE_TRANSPORT_CANCEL_RECEIVE\020\222\003\022\017\n\nHEART_" +
-      "BEAT\020\364\003B5\n%com.zhaoyan.communication.pro",
-      "tocol.pbB\014PBBaseProtos"
+      "you.PBType\022\017\n\007message\030\002 \001(\014*\247\002\n\006PBType\022\021" +
+      "\n\rLOGIN_REQUEST\020d\022\021\n\rLOGIN_RESPOND\020e\022\021\n\r" +
+      "LOGOUT_CLIENT\020f\022\021\n\rLOGOUT_SERVER\020g\022\023\n\016UP" +
+      "DATE_USER_ID\020\310\001\022\025\n\020UPDATE_USER_INFO\020\311\001\022\033" +
+      "\n\026SEND_MESSAGE_TO_SINGLE\020\254\002\022\030\n\023SEND_MESS" +
+      "AGE_TO_ALL\020\255\002\022\030\n\023FILE_TRANSPORT_SEND\020\220\003\022" +
+      "\037\n\032FILE_TRANSPORT_CANCEL_SEND\020\221\003\022\"\n\035FILE" +
+      "_TRANSPORT_CANCEL_RECEIVE\020\222\003\022\017\n\nHEART_BE",
+      "AT\020\364\003B5\n%com.zhaoyan.communication.proto" +
+      "col.pbB\014PBBaseProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

@@ -66,6 +66,7 @@ public class JuYouApplication extends Application {
 		}
 		Log.d(TAG, "quitApplication");
 		mIsInit = false;
+		logout(context);
 		stopServerSearch(context);
 		stopServerCreator(context);
 		stopCommunication(context);
@@ -79,6 +80,11 @@ public class JuYouApplication extends Application {
 		// Stop record log and close log file.
 		Log.stopAndSave();
 		releaseStaticInstance(context);
+	}
+
+	private static void logout(Context context) {
+		ProtocolCommunication protocolCommunication =ProtocolCommunication.getInstance();
+		protocolCommunication.logout();
 	}
 
 	private static void releaseStaticInstance(Context context) {

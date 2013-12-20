@@ -16,8 +16,8 @@ import android.widget.ListView;
 
 import com.zhaoyan.common.net.NetWorkUtil;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.communication.ProtocolCommunication;
 import com.zhaoyan.communication.SocketCommunicationManager;
-import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.connect.ServerCreator;
 import com.zhaoyan.communication.search.SearchUtil;
 import com.zhaoyan.juyou.R;
@@ -106,6 +106,10 @@ public class ConnectedInfoFragment extends ListFragment implements
 	}
 
 	private void disconnect() {
+		ProtocolCommunication protocolCommunication = ProtocolCommunication
+				.getInstance();
+		protocolCommunication.logout();
+
 		// Stop search if this is server.
 		// Stop all communication if this is client.
 		if (mServerCreator.isCreated()) {
@@ -114,7 +118,6 @@ public class ConnectedInfoFragment extends ListFragment implements
 			SocketCommunicationManager manager = SocketCommunicationManager
 					.getInstance();
 			manager.closeAllCommunication();
-			UserManager.getInstance().resetLocalUser();
 		}
 
 		// close WiFi AP if WiFi AP is enabled.

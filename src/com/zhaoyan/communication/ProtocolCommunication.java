@@ -15,6 +15,7 @@ import com.zhaoyan.communication.FileSender.OnFileSendListener;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.communication.protocol.FileTransportProtocol;
 import com.zhaoyan.communication.protocol.LoginProtocol;
+import com.zhaoyan.communication.protocol.LogoutProtocol;
 import com.zhaoyan.communication.protocol.MessageSendProtocol;
 import com.zhaoyan.communication.protocol.ProtocolManager;
 import com.zhaoyan.communication.protocol.UserUpdateProtocol;
@@ -197,6 +198,22 @@ public class ProtocolCommunication implements OnUserChangedListener {
 		if (loginResult) {
 			UserUpdateProtocol.encodeUpdateAllUser(mContext);
 		}
+	}
+
+	public void logout() {
+		Log.d(TAG, "logout()");
+		SocketCommunicationManager socketCommunicationManager = SocketCommunicationManager
+				.getInstance();
+		boolean isServer = socketCommunicationManager.isServerAndCreated();
+		boolean isConnectedToServer = socketCommunicationManager.isConnected();
+		if (isServer) {
+			LogoutProtocol.encodeLogoutSever(mContext);
+		} else if (isConnectedToServer) {
+			LogoutProtocol.encodeLogoutClient(mContext);
+		}
+
+		UserManager userManager = UserManager.getInstance();
+		userManager.resetLocalUser();
 	}
 
 	public void registerOnFileTransportListener(
