@@ -3,6 +3,7 @@ package com.zhaoyan.juyou.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import android.provider.MediaStore.MediaColumns;
 import android.text.TextUtils;
 
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.MultiMediaScanner;
 import com.zhaoyan.common.file.SingleMediaScanner;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
@@ -42,18 +44,6 @@ public class FileInfoManager {
 	public static final int ARCHIVE = 0x11;
 	public static final int IMAGE = 0x12;
 	public static final int UNKNOW = 0x20;
-	
-	/**
-	 * save num in sharedPrefernce
-	 */
-	//work document
-	public static final String DOC_NUM = "doc_num";
-	//ebook file
-	public static final String EBOOK_NUM = "ebook_num";
-	//app install package
-	public static final String APK_NUM = "app_num";
-	//archive file
-	public static final String ARCHIVE_NUM = "archive_num";
 
 	public FileInfoManager() {
 	}
@@ -223,35 +213,10 @@ public class FileInfoManager {
 					renameFlag = 0;
 				}
 				
-				//upate media db
-				int type = FileManager.getFileTypeByName(context, list.get(renameFlag).fileName);
-				if (FileManager.IMAGE == type || FileManager.VIDEO == type
-						|| FileManager.AUDIO == type) {
-					Uri uri = null;
-					switch (type) {
-					case IMAGE:
-						uri = ZYConstant.IMAGE_URI;
-						break;
-					case AUDIO:
-						uri = ZYConstant.AUDIO_URI;
-						break;
-					case VIDEO:
-						uri = ZYConstant.VIDEO_URI;
-						break;
-					}
-					ContentResolver contentResolver = context.getContentResolver();
-					
-					String where = MediaColumns.DATA + "=?";
-					String[] whereArgs = new String[] { oldPath };
-					try {
-						contentResolver.delete(uri, where, whereArgs);
-					} catch (Exception e) {
-						e.printStackTrace();
-						Log.e(TAG, "rename.delete item fail");
-					}
-					
-					new SingleMediaScanner(context, newPath);
-				}
+				List<String> pathsList = new ArrayList<String>();
+				pathsList.add(oldPath);
+				pathsList.add(newPath);
+				MultiMediaScanner.scanFiles(context, pathsList, null);
 			}
 		});		
 		editDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {

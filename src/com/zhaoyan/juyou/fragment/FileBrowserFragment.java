@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -50,21 +49,21 @@ import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileOperationHelper;
+import com.zhaoyan.juyou.common.FileDeleteHelper;
+import com.zhaoyan.juyou.common.FileDeleteHelper.OnDeleteListener;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.FileOperationHelper.OnOperationListener;
-import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileInfoManager.NavigationRecord;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.dialog.CopyMoveDialog;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
-import com.zhaoyan.juyou.dialog.ZyProgressDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.dialog.ZyEditDialog;
 
 public class FileBrowserFragment extends BaseFragment implements OnClickListener, OnItemClickListener, OnScrollListener,
-		OnItemLongClickListener, OnOperationListener, MenuBarInterface {
+		OnItemLongClickListener, OnOperationListener, MenuBarInterface, OnDeleteListener {
 	private static final String TAG = "FileBrowserFragment";
 
 	// File path navigation bar
@@ -99,6 +98,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	
 	//copy or cut file path list
 	private List<FileInfo> mCopyList = new ArrayList<FileInfo>();
+	
+	//delete item positions
+	private List<Integer> mDeletePosList = new ArrayList<Integer>();
 
 	public static final int INTERNAL = MountManager.INTERNAL;
 	public static final int SDCARD = MountManager.SDCARD;
@@ -106,7 +108,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private static final int STATUS_HOME = 1;
 	private int mStatus = STATUS_HOME;
 
-	private Context mContext;
+	private Context mApplicationContext;
 
 	/**
 	 * current dir path
@@ -127,6 +129,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private Comparator<FileInfo> NAME_COMPARATOR = FileInfo.getNameComparator();
 	
 	private FileOperationHelper mFileOperationHelper;
+	private FileDeleteHelper mDeleteHelper;
 
 	private static final int MSG_UPDATE_UI = 0;
 	private static final int MSG_UPDATE_LIST = 2;
@@ -148,9 +151,24 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				break;
 			case MSG_UPDATE_LIST:
 				List<FileInfo> fileList = mAdapter.getList();
-				fileList.remove(msg.arg1);
-				mAdapter.notifyDataSetChanged();
-				updateUI(fileList.size());
+				
+				List<Integer> poslist = new ArrayList<Integer>();
+				Bundle bundle = msg.getData();
+				if (null != bundle) {
+					poslist = bundle.getIntegerArrayList("position");
+//					Log.d(TAG, "poslist.size=" + poslist);
+					int removePosition;
+					for(int i = 0; i < poslist.size() ; i++){
+						//remove from the last item to the first item
+						removePosition = poslist.get(poslist.size() - (i + 1));
+//						Log.d(TAG, "removePosition:" + removePosition);
+						fileList.remove(removePosition);
+						mAdapter.notifyDataSetChanged();
+					}
+					updateUI(fileList.size());
+				}else {
+					Log.e(TAG, "bundle is null");
+				}
 				break;
 			case MSG_UPDATE_HOME:
 				mHomeAdapter.notifyDataSetChanged();
@@ -173,8 +191,11 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mFileOperationHelper = new FileOperationHelper();
+		mFileOperationHelper = new FileOperationHelper(getActivity().getApplicationContext());
 		mFileOperationHelper.setOnOperationListener(this);
+		
+		mDeleteHelper = new FileDeleteHelper(getActivity());
+		mDeleteHelper.setOnDeleteListener(this);
 		Log.d(TAG, "onCreate.mStatus=" + mStatus);
 	}
 
@@ -193,7 +214,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.file_main, container, false);
-		mContext = getActivity().getApplicationContext();
+		mApplicationContext = getActivity().getApplicationContext();
 		mListView = (ListView) rootView.findViewById(R.id.lv_file);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnScrollListener(this);
@@ -222,7 +243,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		sp = SharedPreferenceUtil.getSharedPreference(mContext);
+		sp = SharedPreferenceUtil.getSharedPreference(mApplicationContext);
 
 		mFileInfoManager = new FileInfoManager();
 
@@ -240,9 +261,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mHomeList.add(SDCARD);
 		}
 
-		mHomeAdapter = new FileHomeAdapter(mContext, mHomeList);
-		mIconHelper = new FileIconHelper(mContext);
-		mAdapter = new FileInfoAdapter(mContext, mAllLists, mIconHelper);
+		mHomeAdapter = new FileHomeAdapter(mApplicationContext, mHomeList);
+		mIconHelper = new FileIconHelper(mApplicationContext);
+		mAdapter = new FileInfoAdapter(mApplicationContext, mAllLists, mIconHelper);
 
 		if (mHomeList.size() <= 0) {
 			mNavBarLayout.setVisibility(View.GONE);
@@ -345,7 +366,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mAdapter.setSelected(position, !isSelected);
 		mAdapter.notifyDataSetChanged();
 
-		mActionMenu = new ActionMenu(mContext);
+		mActionMenu = new ActionMenu(mApplicationContext);
 		getActionMenuInflater().inflate(R.menu.allfile_menu, mActionMenu);
 
 		if (mAllLists.get(position).isDir) {
@@ -436,7 +457,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			} else {
 				fileInfo.isDir = false;
 				fileInfo.fileSize = currentFile.length();
-				fileInfo.type = FileManager.getFileType(mContext, currentFile);
+				fileInfo.type = FileManager.getFileType(mApplicationContext, currentFile);
 				if (currentFile.isHidden()) {
 					// do nothing
 				} else {
@@ -465,115 +486,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
-				destroyMenuBar();
-				DeleteTask deleteTask = new DeleteTask(posList);
-				deleteTask.execute();
+				mDeleteHelper.setDeletePathList(mAdapter.getSelectedFilePaths());
+				mDeleteHelper.doDelete();
 				
 				dialog.dismiss();
+				destroyMenuBar();
 			}
 		});
 		deleteDialog.setNegativeButton(R.string.cancel, null);
 		deleteDialog.show();
-	}
-
-	/**
-	 * Delete file task
-	 */
-	private class DeleteTask extends AsyncTask<Void, String, String> {
-		ZyProgressDialog progressDialog = null;
-		List<Integer> positionList = new ArrayList<Integer>();
-
-		DeleteTask(List<Integer> list) {
-			positionList = list;
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-			progressDialog = new ZyProgressDialog(getActivity());
-			progressDialog.setMessage(R.string.deleting);
-			progressDialog.show();
-		}
-
-		@Override
-		protected String doInBackground(Void... params) {
-			List<FileInfo> fileList = mAdapter.getList();
-			List<File> deleteList = new ArrayList<File>();
-			// get delete path list
-			File file = null;
-			FileInfo fileInfo = null;
-			for (int i = 0; i < positionList.size(); i++) {
-				int position = positionList.get(i);
-				fileInfo = fileList.get(position);
-				file = new File(fileInfo.filePath);
-				deleteList.add(file);
-			}
-
-			for (int i = 0; i < deleteList.size(); i++) {
-				doDelete(mContext, deleteList.get(i));
-				int position = positionList.get(i) - i;
-				Message message = mHandler.obtainMessage();
-				message.arg1 = position;
-				message.what = MSG_UPDATE_LIST;
-				message.sendToTarget();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			if (null != progressDialog) {
-				progressDialog.cancel();
-				progressDialog = null;
-			}
-			mNotice.showToast(R.string.operator_over);
-		}
-
-	}
-
-	/**
-	 * do delete file</br> if file is media file(image,audio,video),need delete
-	 * in db
-	 * 
-	 * @param path
-	 * @param type
-	 */
-	public void doDelete(Context context, File file) {
-		if (file.isFile()) {
-			int type = mFileInfoManager.fileFilter(context, file.getAbsolutePath());
-			Log.d(TAG, "doDelete.type:" + type);
-			switch (type) {
-			case FileInfoManager.IMAGE:
-				FileManager.deleteFileInMediaStore(context, ZYConstant.IMAGE_URI, file.getAbsolutePath());
-				break;
-			case FileInfoManager.AUDIO:
-				FileManager.deleteFileInMediaStore(context, ZYConstant.AUDIO_URI, file.getAbsolutePath());
-				break;
-			case FileInfoManager.VIDEO:
-				FileManager.deleteFileInMediaStore(context, ZYConstant.VIDEO_URI, file.getAbsolutePath());
-				break;
-			default:
-				// 普通文件直接删除，不删除数据库，因为在3.0以前，还没有普通文件的数据哭
-				file.delete();
-				break;
-			}
-			return;
-		}
-
-		if (file.isDirectory()) {
-			File[] childFiles = file.listFiles();
-			if (null == childFiles || 0 == childFiles.length) {
-				file.delete();
-				return;
-			}
-			for (File childFile : childFiles) {
-				doDelete(context, childFile);
-			}
-
-			file.delete();
-		}
 	}
 
 	/**
@@ -719,13 +640,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			mTabsHolder.removeView(mBlankTab);
 			View btn = null;
 			if (mTabNameList.isEmpty()) {
-				btn = new Button(mContext);
+				btn = new Button(mApplicationContext);
 				mlp = new LinearLayout.LayoutParams(new ViewGroup.MarginLayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.MATCH_PARENT));
 				mlp.setMargins(0, 0, 0, 0);
 				btn.setLayoutParams(mlp);
 			} else {
-				btn = new Button(mContext);
+				btn = new Button(mApplicationContext);
 
 				((Button) btn).setTextColor(getResources().getColor(R.drawable.path_selector));
 				btn.setBackgroundResource(R.drawable.custom_tab);
@@ -829,16 +750,16 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 		switch (scrollState) {
 		case OnScrollListener.SCROLL_STATE_FLING:
-			Log.d(TAG, "SCROLL_STATE_FLING");
+//			Log.d(TAG, "SCROLL_STATE_FLING");
 			mAdapter.setFlag(false);
 			break;
 		case OnScrollListener.SCROLL_STATE_IDLE:
-			Log.d(TAG, "SCROLL_STATE_IDLE");
+//			Log.d(TAG, "SCROLL_STATE_IDLE");
 			mAdapter.setFlag(true);
 			mAdapter.notifyDataSetChanged();
 			break;
 		case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-			Log.d(TAG, "SCROLL_STATE_TOUCH_SCROLL");
+//			Log.d(TAG, "SCROLL_STATE_TOUCH_SCROLL");
 			mAdapter.setFlag(false);
 			break;
 		default:
@@ -922,6 +843,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			break;
 		case R.id.menu_delete:
 			List<Integer> posList = mAdapter.getSelectedItemsPos();
+			mDeletePosList = mAdapter.getSelectedItemsPos();
 			showDeleteDialog(posList);
 			break;
 		case R.id.menu_select:
@@ -949,14 +871,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			}
 			break;
 		case R.id.menu_cancel:
+			mFileOperationHelper.clear();
 			destroyMenuBar();
 			break;
 		case R.id.menu_more:
-			ActionMenu actionMenu = new ActionMenu(mContext);
+			ActionMenu actionMenu = new ActionMenu(mApplicationContext);
 			actionMenu.addItem(ActionMenu.ACTION_MENU_RENAME, R.drawable.ic_action_rename_enable, R.string.rename);
 			actionMenu.addItem(ActionMenu.ACTION_MENU_INFO, R.drawable.ic_action_info_enable, R.string.menu_info);
 			ZyPopupMenu popupMenu = new ZyPopupMenu(getActivity(), actionMenu);
-			popupMenu.showAsLoaction(mMenuBarView, Gravity.RIGHT | Gravity.BOTTOM, 5, (int) mContext.getResources().getDimension(R.dimen.menubar_height));
+			popupMenu.showAsLoaction(mMenuBarView, Gravity.RIGHT | Gravity.BOTTOM, 5, (int) mApplicationContext.getResources().getDimension(R.dimen.menubar_height));
 			popupMenu.setOnPopupViewListener(new PopupViewClickListener() {
 				@Override
 				public void onActionMenuItemClick(ActionMenuItem item) {
@@ -981,8 +904,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		case R.id.menu_create_folder:
 			final ZyEditDialog editDialog = new ZyEditDialog(getActivity());
 			editDialog.setTitle(R.string.create_folder);
-			editDialog.setEditDialogMsg(mContext.getString(R.string.folder_input));
-			editDialog.setEditStr(mContext.getString(R.string.new_folder));
+			editDialog.setEditDialogMsg(mApplicationContext.getString(R.string.folder_input));
+			editDialog.setEditStr(mApplicationContext.getString(R.string.new_folder));
 			editDialog.selectAll();
 			editDialog.showIME(true);
 			editDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
@@ -1074,20 +997,20 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void startPasteMenu(){
 		mCopyList = mAdapter.getSelectedFileInfos();
 		//update new menu
-		mActionMenu = new ActionMenu(mContext);
+		mActionMenu = new ActionMenu(mApplicationContext);
 		getActionMenuInflater().inflate(R.menu.allfile_menu_paste, mActionMenu);
 		mMenuBarManager.refreshMenus(mActionMenu);
 	}
 	
 	private void onOperationPaste(){
-		showCopyDialog(mContext.getString(R.string.filecopy));
+		showCopyDialog(mApplicationContext.getString(R.string.filecopy));
 		if (!mFileOperationHelper.doCopy(mCurrentPath)) {
 			onFinished();
 		}
 	}
 	
 	private void onOperationCut(){
-		showCopyDialog(mContext.getString(R.string.filecut));
+		showCopyDialog(mApplicationContext.getString(R.string.filecut));
 		if (!mFileOperationHelper.doCut(mCurrentPath)) {
 			onFinished();
 		}
@@ -1140,7 +1063,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		switch (msg) {
 		case FileOperationHelper.MSG_COPY_CUT_TO_CHILD:
 			Message message = mHandler.obtainMessage();
-			message.obj = mContext.getString(R.string.copy_cut_fail);
+			message.obj = mApplicationContext.getString(R.string.copy_cut_fail);
 			message.what = MSG_OPERATION_NOTIFY;
 			message.sendToTarget();
 			break;
@@ -1167,5 +1090,21 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		if (null != mFileOperationHelper) {
 			mFileOperationHelper.cancelOperationListener();
 		}
+		
+		if (null != mDeleteHelper) {
+			mDeleteHelper.cancelDeleteListener();
+		}
+	}
+
+	@Override
+	public void onDeleteFinished() {
+		// TODO Auto-generated method stub
+		Log.d(TAG, "onDeleteFinished");
+		Message message = mHandler.obtainMessage();
+		Bundle bundle = new Bundle();
+		bundle.putIntegerArrayList("position", (ArrayList<Integer>)mDeletePosList);
+		message.setData(bundle);
+		message.what = MSG_UPDATE_LIST;
+		message.sendToTarget();
 	}
 }

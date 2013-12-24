@@ -1,21 +1,25 @@
 package com.zhaoyan.juyou.common;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.MultiMediaScanner;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.ZyProgressDialog;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class MediaDeleteHelper {
+public class FileDeleteHelper {
 	private static final String TAG = "MediaDeleteHelper";
 	
 	private List<String> mCurDelList = new ArrayList<String>();
+	
+	//for mediascanner
+	List<String> mPathList = new ArrayList<String>();
 	
 	private ZyProgressDialog progressDialog = null;
 	
@@ -23,7 +27,7 @@ public class MediaDeleteHelper {
 	private Context mContext;
 	
 	public interface OnDeleteListener{
-		public void onFinished();
+		public void onDeleteFinished();
 	}
 	
 	public void setOnDeleteListener(OnDeleteListener listener){
@@ -36,7 +40,7 @@ public class MediaDeleteHelper {
 		}
 	}
 	
-	public MediaDeleteHelper(Context context){
+	public FileDeleteHelper(Context context){
 		mContext = context;
 	}
 	
@@ -44,7 +48,7 @@ public class MediaDeleteHelper {
 	 * record current operation fileinfos
 	 * @param files
 	 */
-	public void copy(List<String> paths) {
+	public void setDeletePathList(List<String> paths) {
         copyFileList(paths);
     }
 	
@@ -57,7 +61,7 @@ public class MediaDeleteHelper {
         }
     }
 	
-	public void doDelete(final Uri uri){
+	public void doDelete(){
 		asyncExecute(new Runnable() {
 			@Override
 			public void run() {
@@ -65,12 +69,47 @@ public class MediaDeleteHelper {
 					if (mStopDelete) {
 						break;
 					}
-					FileManager.deleteFileInMediaStore(mContext, uri, path);
+					
+					doDeleteFiles(new File(path));
+					
+//					for (int i = 0; i < mPathList.size(); i++) {
+//						Log.d(TAG, "pathList[" + i + "]:" + mPathList.get(i));
+//					}
 				}
 				
+				MultiMediaScanner.scanFiles(mContext, mPathList, null);
 				clear();
 			}
 		});
+	}
+	
+	private void doDeleteFiles(File file){
+		if (file.isFile()) {
+			FileManager.deleteFile(file);
+			mPathList.add(file.getAbsolutePath());
+			return;
+		}else {
+			//dir alse need to update db
+			mPathList.add(file.getAbsolutePath());
+			File[] files = file.listFiles();
+			if (null != files) {
+				//delete child files
+				for(File f : files){
+					if (mStopDelete) {
+						return;
+					}
+					
+					if (f.isDirectory()) {
+						doDeleteFiles(f);
+					}else {
+						FileManager.deleteFile(f);
+						mPathList.add(f.getAbsolutePath());
+					}
+				}
+			}
+			//delete dir
+			FileManager.deleteFile(file);
+		}
 	}
 	
 	private void asyncExecute(Runnable r) {
@@ -90,7 +129,7 @@ public class MediaDeleteHelper {
 				}
 				
 				if (mOnDeleteListener != null) {
-					mOnDeleteListener.onFinished();
+					mOnDeleteListener.onDeleteFinished();
 				}
 				return null;
 			}
@@ -108,6 +147,7 @@ public class MediaDeleteHelper {
 		Log.d(TAG, "clear");
 		synchronized (mCurDelList) {
 			mCurDelList.clear();
+			mPathList.clear();
 		}
 		mStopDelete = false;
 	}

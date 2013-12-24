@@ -34,8 +34,8 @@ import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MediaDeleteHelper;
-import com.zhaoyan.juyou.common.MediaDeleteHelper.OnDeleteListener;
+import com.zhaoyan.juyou.common.FileDeleteHelper;
+import com.zhaoyan.juyou.common.FileDeleteHelper.OnDeleteListener;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.InfoDialog;
@@ -225,16 +225,16 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			public void onClick(Dialog dialog) {
 				List<String> deleteList = mAdapter.getCheckedPathList();
 				
-				MediaDeleteHelper mediaDeleteHelper = new MediaDeleteHelper(mContext);
-				mediaDeleteHelper.copy(deleteList);
+				FileDeleteHelper mediaDeleteHelper = new FileDeleteHelper(mContext);
+				mediaDeleteHelper.setDeletePathList(deleteList);
 				mediaDeleteHelper.setOnDeleteListener(new OnDeleteListener() {
 					@Override
-					public void onFinished() {
+					public void onDeleteFinished() {
 						Log.d(TAG, "onFinished");
 						mHandler.sendMessage(mHandler.obtainMessage(MSG_DELETE_OVER));
 					}
 				});
-				mediaDeleteHelper.doDelete(ZYConstant.AUDIO_URI);
+				mediaDeleteHelper.doDelete();
 				
 				destroyMenuBar();
 				dialog.dismiss();
