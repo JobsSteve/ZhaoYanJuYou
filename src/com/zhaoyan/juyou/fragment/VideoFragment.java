@@ -8,7 +8,6 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,15 +33,15 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.VideoCursorAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
-import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
+import com.zhaoyan.juyou.common.MediaDeleteHelper;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
+import com.zhaoyan.juyou.common.MediaDeleteHelper.OnDeleteListener;
 import com.zhaoyan.juyou.common.VideoGridItem;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
-import com.zhaoyan.juyou.dialog.ZyProgressDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class VideoFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, 
@@ -54,7 +53,6 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 	private VideoCursorAdapter mAdapter;
 	private QueryHandler mQueryHandler = null;
 	
-	private FileInfoManager mFileInfoManager;
 	private Context mContext;
 	
 	private static final String[] PROJECTION = new String[] {MediaStore.Video.Media._ID, 
@@ -63,6 +61,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		MediaColumns.DATE_MODIFIED};
 		
 	private static final int MSG_UPDATE_UI = 0;
+	private static final int MSG_DELETE_OVER = 1;
 	private Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -70,6 +69,11 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 				int size = msg.arg1;
 				count = size;
 				updateTitleNum(-1);
+				break;
+			case MSG_DELETE_OVER:
+				count = mAdapter.getCount();
+				updateTitleNum(-1);
+				mNotice.showToast(R.string.operator_over);
 				break;
 			default:
 				break;
@@ -124,7 +128,6 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		mFileInfoManager = new FileInfoManager();
 		mQueryHandler = new QueryHandler(getActivity().getApplicationContext()
 				.getContentResolver());
 
@@ -243,8 +246,17 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			@Override
 			public void onClick(Dialog dialog) {
 				List<String> deleteList = mAdapter.getCheckedPathList();
-				DeleteTask deleteTask = new DeleteTask(deleteList);
-				deleteTask.execute();
+				
+				MediaDeleteHelper mediaDeleteHelper = new MediaDeleteHelper(mContext);
+				mediaDeleteHelper.copy(deleteList);
+				mediaDeleteHelper.setOnDeleteListener(new OnDeleteListener() {
+					@Override
+					public void onFinished() {
+						Log.d(TAG, "onFinished");
+						mHandler.sendMessage(mHandler.obtainMessage(MSG_DELETE_OVER));
+					}
+				});
+				mediaDeleteHelper.doDelete(ZYConstant.VIDEO_URI);
 				
 				destroyMenuBar();
 				dialog.dismiss();
@@ -253,54 +265,6 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		deleteDialog.setNegativeButton(R.string.cancel, null);
 		deleteDialog.show();
     }
-    
-    /**
-     * Delete file task
-     */
-    private class DeleteTask extends AsyncTask<Void, String, String>{
-    	ZyProgressDialog progressDialog = null;
-    	private List<String> deleteList = new ArrayList<String>();
-    	
-    	DeleteTask(List<String> list){
-    		deleteList = list;
-    	}
-    	
-    	@Override
-    	protected void onPreExecute() {
-    		super.onPreExecute();
-    		progressDialog = new ZyProgressDialog(mContext);
-    		progressDialog.setMessage(R.string.deleting);
-    		progressDialog.show();
-    	}
-    	
-		@Override
-		protected String doInBackground(Void... params) {
-			Log.d(TAG, "doInBackground.size=" + deleteList.size());
-			//start delete file from delete list
-			for (int i = 0; i < deleteList.size(); i++) {
-				doDelete(deleteList.get(i));
-			}
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			if (null != progressDialog) {
-				progressDialog.cancel();
-				progressDialog = null;
-			}
-			mNotice.showToast(R.string.operator_over);
-		}
-    }
-    
-    private void doDelete(String path) {
-		boolean ret = mFileInfoManager.deleteFileInMediaStore(getActivity().getApplicationContext(), ZYConstant.VIDEO_URI, path);
-		if (!ret) {
-			mNotice.showToast(R.string.delete_fail);
-			Log.e(TAG, path + " delete failed");
-		}
-	}
     
     public void updateUI(int num){
 		Message message = mHandler.obtainMessage();

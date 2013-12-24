@@ -546,13 +546,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			Log.d(TAG, "doDelete.type:" + type);
 			switch (type) {
 			case FileInfoManager.IMAGE:
-				mFileInfoManager.deleteFileInMediaStore(context, ZYConstant.IMAGE_URI, file.getAbsolutePath());
+				FileManager.deleteFileInMediaStore(context, ZYConstant.IMAGE_URI, file.getAbsolutePath());
 				break;
 			case FileInfoManager.AUDIO:
-				mFileInfoManager.deleteFileInMediaStore(context, ZYConstant.AUDIO_URI, file.getAbsolutePath());
+				FileManager.deleteFileInMediaStore(context, ZYConstant.AUDIO_URI, file.getAbsolutePath());
 				break;
 			case FileInfoManager.VIDEO:
-				mFileInfoManager.deleteFileInMediaStore(context, ZYConstant.VIDEO_URI, file.getAbsolutePath());
+				FileManager.deleteFileInMediaStore(context, ZYConstant.VIDEO_URI, file.getAbsolutePath());
 				break;
 			default:
 				// 普通文件直接删除，不删除数据库，因为在3.0以前，还没有普通文件的数据哭

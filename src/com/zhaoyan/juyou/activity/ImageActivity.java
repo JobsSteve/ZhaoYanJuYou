@@ -472,7 +472,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
     }
     
     private void doDelete(String path) {
-		boolean ret = mFileInfoManager.deleteFileInMediaStore(getApplicationContext(), ZYConstant.IMAGE_URI, path);
+		boolean ret = FileManager.deleteFileInMediaStore(getApplicationContext(), ZYConstant.IMAGE_URI, path);
 		if (!ret) {
 			Log.e(TAG, path + " delete failed");
 		}
