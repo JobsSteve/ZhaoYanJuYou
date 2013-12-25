@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.file.ZyMediaScanner;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
@@ -35,6 +36,7 @@ public class BaseFragment extends Fragment implements OnMenuItemClickListener{
 	protected ActionMenu mActionMenu;
 	
 	private ActionMenuInflater mActionMenuInflater;
+	
 	/**
 	 * current fragment file size
 	 */
@@ -45,6 +47,7 @@ public class BaseFragment extends Fragment implements OnMenuItemClickListener{
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
 		mNotice = new Notice(mContext);
+		
 		setHasOptionsMenu(true);
 	}
 	

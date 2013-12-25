@@ -8,18 +8,17 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
 import android.provider.MediaStore.MediaColumns;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
+import android.text.TextUtils;
 
+import com.google.protobuf.UnknownFieldSet.Field;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ZYConstant;
-import com.zhaoyan.juyou.dialog.ZyAlertDialog;
 import com.zhaoyan.juyou.dialog.ZyEditDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
@@ -249,6 +248,84 @@ public class FileManager {
 
 	    return false;
 	}
+	
+	public static boolean deleteFile(String path){
+		File file = new File(path);
+		return deleteFile(file);
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 * @param deleteDb true:need delete db,false no
+	 * @return
+	 */
+	public static boolean deleteFile(File file){
+		if (!file.exists()) {
+			Log.d(TAG, "deleteFile error:" + file.getAbsolutePath() + " is not exist");
+			return false;
+		}
+		
+		return file.delete();
+	}
+	
+	/**
+	 * API11 以后多了一个MediaStore.Files这个类，将系统中的所有文件都保存到了一个表files中
+	 * 这样的话，删除也方便 </br>
+	 * 而2.3的话，如果要删除你得去不同的表中删除，比如Audio，Images，Video 3.0以下系统可以使用该方法
+	 * 
+	 * @param path
+	 */
+	public static boolean deleteFileInMediaStore(Context context, Uri uri, String path) {
+		Log.d(TAG, "deleteFileInMediaStore:" + path);
+		if (TextUtils.isEmpty(path)) {
+			Log.e(TAG, "deleteFileInMediaStore path is empty");
+			return false;
+		}
+		
+		deleteFile(path);
+		
+		String where = MediaColumns.DATA + "=?";
+		String[] whereArgs = new String[] { path };
+		ContentResolver cr = context.getContentResolver();
+		try {
+			cr.delete(uri, where, whereArgs);
+		} catch (Exception e) {
+			Log.e(TAG, "Error in delete file in media store:" + e.toString());
+		}
+		
+		return true;
+	}
+
+	/**
+	 * 3.0以上系统，才可以使用该方法，删除多媒体文件
+	 */
+	public boolean deleteFileInMediaStore(Context context, String path) {
+
+		if (TextUtils.isEmpty(path)) {
+			return false;
+		}
+		
+		if (!deleteFile(path)) {
+			return false;
+		}
+		
+		Uri uri = null;
+		// 不能用Files这个类，这个类API11 以后才支持
+		// Uri uri = MediaStore.Files.getContentUri("external");
+		String where = MediaStore.Files.FileColumns.DATA + "=?";
+		String[] whereArgs = new String[] { path };
+		ContentResolver cr = context.getContentResolver();
+		try {
+			cr.delete(uri, where, whereArgs);
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e(TAG, "Error in delete file in media store:" + e.toString());
+		}
+		
+		return true;
+	}
+	
 	
 	/**
 	 * show rename dialog,modify single file,for audio or video

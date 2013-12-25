@@ -1,15 +1,11 @@
 package com.zhaoyan.juyou.dialog;
 
-import java.text.BreakIterator;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.HistoryManager;
 
-import android.R.integer;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -105,7 +101,7 @@ public class CopyMoveDialog extends ZyAlertDialog{
 		mFileSizeBar = (ProgressBar) view.findViewById(R.id.bar_copy_two);
 		mFileSizeBar.setMax(100);
 		
-		setContentView(view);
+		setCustomView(view);
 		super.onCreate(savedInstanceState);
 	}
 	

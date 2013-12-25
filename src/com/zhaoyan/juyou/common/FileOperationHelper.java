@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.ZyMediaScanner;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,7 +21,14 @@ public class FileOperationHelper {
 	 */
 	private List<FileInfo> mCurFilesList = new ArrayList<FileInfo>();
 	
+	/**
+	 * for mediaScanner
+	 */
+	private List<String> pathsList = new ArrayList<String>();
+	
 	private OnOperationListener mOperationListener = null;
+	private ZyMediaScanner mZyMediaScanner = null;
+	private Context mContext;
 	
 	public static final int MSG_COPY_CUT_TO_CHILD = 0;
 	public interface OnOperationListener{
@@ -42,6 +51,12 @@ public class FileOperationHelper {
 		if (null != mOperationListener) {
 			mOperationListener = null;
 		}
+	}
+	
+	public FileOperationHelper(Context context){
+		mContext = context;
+		
+		mZyMediaScanner = new ZyMediaScanner(context);
 	}
 	
 	/**
@@ -80,6 +95,7 @@ public class FileOperationHelper {
 				//count file nums
 				int fileCounts = 0;
 				File file = null;
+				
 				for(FileInfo f : mCurFilesList){
 					file = new File(f.filePath);
 					fileCounts += count(file);
@@ -89,7 +105,7 @@ public class FileOperationHelper {
 				boolean copyToChild = false;
 				for (FileInfo f : mCurFilesList) {
 					if (mStopCopy) {
-						return;
+						break;
 					}
 					
 					if (FileManager.containsPath(f.filePath, _path)) {
@@ -204,6 +220,13 @@ public class FileOperationHelper {
 				int totalred = 0;
 				int byteread = 0;
 				while ((byteread = inputStream.read(buffer)) != -1) {
+					if (mStopCopy) {
+						File file = new File(desPath);
+						if (file.exists()) {
+							file.delete();
+						}
+						break;
+					}
 					totalred += byteread;
 					outputStream.write(buffer, 0, byteread);
 					mOperationListener.onRefreshFiles(null, -1, -1, totalred);
@@ -215,10 +238,12 @@ public class FileOperationHelper {
 				Log.e(TAG, srcPath + " is not exist");
 				return false;
 			}
+			pathsList.add(desPath);
+			
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
-		
 		return true;
 	}
 	
@@ -262,6 +287,7 @@ public class FileOperationHelper {
 					mOperationListener.onRefreshFiles(f.fileName, copyCount, -1, -1);
 					moveFile(f, _path);
 				}
+				
 				if (cut_to_child) {
 					mOperationListener.onNotify(MSG_COPY_CUT_TO_CHILD);
 				}
@@ -283,10 +309,17 @@ public class FileOperationHelper {
         File file = new File(f.filePath);
         String newPath = FileManager.makePath(dest, f.fileName);
         try {
-            return file.renameTo(new File(newPath));
-        } catch (SecurityException e) {
-            Log.e(TAG, "Fail to move file," + e.toString());
-        }
+        	boolean ret = file.renameTo(new File(newPath));
+        	if (ret) {
+        		pathsList.add(file.getAbsolutePath());
+        		pathsList.add(newPath);
+			}
+            return ret;
+        } catch (Exception e){
+        	e.printStackTrace();
+        	Log.e(TAG, "Fail to move file," + e.toString());
+        } 
+        
         return false;
     }
 	
@@ -298,6 +331,11 @@ public class FileOperationHelper {
 				synchronized (mCurFilesList) {
 					_r.run();
 				}
+				
+				String[] filePaths = new String[pathsList.size()];
+				pathsList.toArray(filePaths);
+				mZyMediaScanner.scanFile(filePaths, null);
+				pathsList.clear();
 				
 				if (mOperationListener != null) {
 					mOperationListener.onFinished();

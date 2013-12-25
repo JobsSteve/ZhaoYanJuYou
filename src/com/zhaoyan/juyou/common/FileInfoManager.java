@@ -3,6 +3,7 @@ package com.zhaoyan.juyou.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import android.provider.MediaStore.MediaColumns;
 import android.text.TextUtils;
 
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.MultiMediaScanner;
 import com.zhaoyan.common.file.SingleMediaScanner;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
@@ -42,18 +44,6 @@ public class FileInfoManager {
 	public static final int ARCHIVE = 0x11;
 	public static final int IMAGE = 0x12;
 	public static final int UNKNOW = 0x20;
-	
-	/**
-	 * save num in sharedPrefernce
-	 */
-	//work document
-	public static final String DOC_NUM = "doc_num";
-	//ebook file
-	public static final String EBOOK_NUM = "ebook_num";
-	//app install package
-	public static final String APK_NUM = "app_num";
-	//archive file
-	public static final String ARCHIVE_NUM = "archive_num";
 
 	public FileInfoManager() {
 	}
@@ -187,77 +177,6 @@ public class FileInfoManager {
 		}
 		return false;
 	}
-
-	public boolean deleteFile(String filePath) {
-		File file = new File(filePath);
-		return deleteFile(file);
-	}
-
-	/**
-	 * API11 以后多了一个MediaStore.Files这个类， 应该是Google为了方便管理，将系统中的所有文件都保存到了一个表files中
-	 * 这样的话，删除也方便 而2.3的话，如果要删除你得去不同的表中删除，比如Audio，Images，Video 3.0以下系统可以使用该方法
-	 * 
-	 * @param path
-	 */
-	public boolean deleteFileInMediaStore(Context context, Uri uri, String path) {
-		Log.d(TAG, "deleteFileInMediaStore:" + path);
-		if (TextUtils.isEmpty(path)) {
-			Log.e(TAG, "deleteFileInMediaStore path is empty");
-			return false;
-		}
-		
-		deleteFile(path);
-		
-		String where = MediaColumns.DATA + "=?";
-		String[] whereArgs = new String[] { path };
-		ContentResolver cr = context.getContentResolver();
-		try {
-			cr.delete(uri, where, whereArgs);
-		} catch (Exception e) {
-			// TODO: handle exception
-			Log.e(TAG, "Error in delete file in media store:" + e.toString());
-		}
-		
-		return true;
-	}
-
-	/**
-	 * 3.0以上系统，才可以使用该方法，删除多媒体文件
-	 */
-	public boolean deleteFileInMediaStore(Context context, String path) {
-
-		if (TextUtils.isEmpty(path)) {
-			return false;
-		}
-		
-		if (!deleteFile(path)) {
-			return false;
-		}
-		
-		Uri uri = null;
-		// 不能用Files这个类，这个类API11 以后才支持
-		// Uri uri = MediaStore.Files.getContentUri("external");
-		String where = MediaStore.Files.FileColumns.DATA + "=?";
-		String[] whereArgs = new String[] { path };
-		ContentResolver cr = context.getContentResolver();
-		try {
-			cr.delete(uri, where, whereArgs);
-		} catch (Exception e) {
-			// TODO: handle exception
-			Log.e(TAG, "Error in delete file in media store:" + e.toString());
-		}
-		
-		return true;
-	}
-
-	public boolean deleteFile(File file) {
-		if (!file.exists()) {
-			Log.e(TAG, "file:" + file.getAbsolutePath() + " is not exist");
-			return false;
-		}
-
-		return file.delete();
-	}
 	
 	private int renameFlag = 0;
 	/**
@@ -294,35 +213,10 @@ public class FileInfoManager {
 					renameFlag = 0;
 				}
 				
-				//upate media db
-				int type = FileManager.getFileTypeByName(context, list.get(renameFlag).fileName);
-				if (FileManager.IMAGE == type || FileManager.VIDEO == type
-						|| FileManager.AUDIO == type) {
-					Uri uri = null;
-					switch (type) {
-					case IMAGE:
-						uri = ZYConstant.IMAGE_URI;
-						break;
-					case AUDIO:
-						uri = ZYConstant.AUDIO_URI;
-						break;
-					case VIDEO:
-						uri = ZYConstant.VIDEO_URI;
-						break;
-					}
-					ContentResolver contentResolver = context.getContentResolver();
-					
-					String where = MediaColumns.DATA + "=?";
-					String[] whereArgs = new String[] { oldPath };
-					try {
-						contentResolver.delete(uri, where, whereArgs);
-					} catch (Exception e) {
-						e.printStackTrace();
-						Log.e(TAG, "rename.delete item fail");
-					}
-					
-					new SingleMediaScanner(context, newPath);
-				}
+				List<String> pathsList = new ArrayList<String>();
+				pathsList.add(oldPath);
+				pathsList.add(newPath);
+				MultiMediaScanner.scanFiles(context, pathsList, null);
 			}
 		});		
 		editDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
