@@ -150,6 +150,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				mAdapter.notifyDataSetChanged();
 				break;
 			case MSG_UPDATE_LIST:
+				mNotice.showToast(R.string.operator_over);
 				List<FileInfo> fileList = mAdapter.getList();
 				
 				List<Integer> poslist = new ArrayList<Integer>();
@@ -486,6 +487,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
+				mDeletePosList = mAdapter.getSelectedItemsPos();
+				
 				mDeleteHelper.setDeletePathList(mAdapter.getSelectedFilePaths());
 				mDeleteHelper.doDelete();
 				
@@ -843,7 +846,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			break;
 		case R.id.menu_delete:
 			List<Integer> posList = mAdapter.getSelectedItemsPos();
-			mDeletePosList = mAdapter.getSelectedItemsPos();
 			showDeleteDialog(posList);
 			break;
 		case R.id.menu_select:
@@ -1089,10 +1091,12 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		super.onDestroy();
 		if (null != mFileOperationHelper) {
 			mFileOperationHelper.cancelOperationListener();
+			mFileOperationHelper = null;
 		}
 		
 		if (null != mDeleteHelper) {
 			mDeleteHelper.cancelDeleteListener();
+			mDeleteHelper = null;
 		}
 	}
 
@@ -1100,6 +1104,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void onDeleteFinished() {
 		// TODO Auto-generated method stub
 		Log.d(TAG, "onDeleteFinished");
+		//when delete over,send message to update ui
 		Message message = mHandler.obtainMessage();
 		Bundle bundle = new Bundle();
 		bundle.putIntegerArrayList("position", (ArrayList<Integer>)mDeletePosList);

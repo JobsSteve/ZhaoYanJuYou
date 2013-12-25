@@ -34,6 +34,8 @@ import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileCategoryScanner;
 import com.zhaoyan.juyou.common.FileCategoryScanner.FileCategoryScanListener;
+import com.zhaoyan.juyou.common.FileDeleteHelper.OnDeleteListener;
+import com.zhaoyan.juyou.common.FileDeleteHelper;
 import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
@@ -94,9 +96,28 @@ public class FileCategoryActivity extends BaseActivity implements
 				break;
 			case MSG_UPDATE_LIST:
 				List<FileInfo> fileList = mAdapter.getList();
-				fileList.remove(msg.arg1);
-				mAdapter.notifyDataSetChanged();
 				updateTitleNum(-1, mAdapter.getCount());
+				
+				mNotice.showToast(R.string.operator_over);
+				
+				List<Integer> poslist = new ArrayList<Integer>();
+				Bundle bundle = msg.getData();
+				if (null != bundle) {
+					poslist = bundle.getIntegerArrayList("position");
+//					Log.d(TAG, "poslist.size=" + poslist);
+					int removePosition;
+					for(int i = 0; i < poslist.size() ; i++){
+						//remove from the last item to the first item
+						removePosition = poslist.get(poslist.size() - (i + 1));
+//						Log.d(TAG, "removePosition:" + removePosition);
+						fileList.remove(removePosition);
+						mAdapter.notifyDataSetChanged();
+					}
+					
+					updateTitleNum(-1, fileList.size());
+				}else {
+					Log.e(TAG, "bundle is null");
+				}
 				break;
 
 			default:
@@ -270,8 +291,7 @@ public class FileCategoryActivity extends BaseActivity implements
 			doTransfer();
 			break;
 		case R.id.menu_delete:
-			List<Integer> posList = mAdapter.getSelectedItemsPos();
-			showDeleteDialog(posList);
+			showDeleteDialog();
 			break;
 		case R.id.menu_info:
 			List<FileInfo> list = mAdapter.getSelectedFileInfos();
@@ -388,9 +408,9 @@ public class FileCategoryActivity extends BaseActivity implements
 	/**
 	 * show delete confrim dialog
 	 */
-	public void showDeleteDialog(final List<Integer> posList) {
-		// get name list
+	public void showDeleteDialog() {
 		final List<FileInfo> fileList = mAdapter.getList();
+		final List<Integer> posList = mAdapter.getSelectedItemsPos();
 		
 		ZyDeleteDialog deleteDialog = new ZyDeleteDialog(this);
 		deleteDialog.setTitle(R.string.delete_file);
@@ -404,72 +424,30 @@ public class FileCategoryActivity extends BaseActivity implements
 		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
-				destroyMenuBar();
-				new DeleteTask(posList).execute();
+				FileDeleteHelper deleteHelper = new FileDeleteHelper(FileCategoryActivity.this);
+				deleteHelper.setDeletePathList(mAdapter.getSelectedFilePaths());
+				deleteHelper.setOnDeleteListener(new OnDeleteListener() {
+					@Override
+					public void onDeleteFinished() {
+						//when delete over,send message to update ui
+						Message message = mHandler.obtainMessage();
+						Bundle bundle = new Bundle();
+						bundle.putIntegerArrayList("position", (ArrayList<Integer>)posList);
+						message.setData(bundle);
+						message.what = MSG_UPDATE_LIST;
+						message.sendToTarget();
+					}
+				});
+				deleteHelper.doDelete();
 				
 				dialog.dismiss();
+				destroyMenuBar();
 			}
 		});
 		deleteDialog.setNegativeButton(R.string.cancel, null);
 		deleteDialog.show();
 	}
 
-	/**
-	 * Delete file task
-	 */
-	private class DeleteTask extends AsyncTask<Void, String, String> {
-		ZyProgressDialog progressDialog = null;
-		List<Integer> positionList = new ArrayList<Integer>();
-
-		DeleteTask(List<Integer> list) {
-			positionList = list;
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			progressDialog = new ZyProgressDialog(FileCategoryActivity.this);
-			progressDialog.setMessage(R.string.deleting);
-			progressDialog.show();
-		}
-
-		@Override
-		protected String doInBackground(Void... params) {
-			List<FileInfo> fileList = mAdapter.getList();
-			List<File> deleteList = new ArrayList<File>();
-			// get delete path list
-			File file = null;
-			FileInfo fileInfo = null;
-			for (int i = 0; i < positionList.size(); i++) {
-				int position = positionList.get(i);
-				fileInfo = fileList.get(position);
-				file = new File(fileInfo.filePath);
-				deleteList.add(file);
-			}
-
-			for (int i = 0; i < deleteList.size(); i++) {
-				deleteList.get(i).delete();
-				int position = positionList.get(i) - i;
-				
-				Message message = mHandler.obtainMessage();
-				message.arg1 = position;
-				message.what = MSG_UPDATE_LIST;
-				message.sendToTarget();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			if (null != progressDialog) {
-				progressDialog.cancel();
-				progressDialog = null;
-			}
-			mNotice.showToast(R.string.operator_over);
-		}
-	}
-	
 	@Override
 	public boolean onBackKeyPressed() {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {

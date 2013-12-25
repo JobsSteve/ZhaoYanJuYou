@@ -11,7 +11,8 @@ import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.ImageAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
-import com.zhaoyan.juyou.common.FileInfoManager;
+import com.zhaoyan.juyou.common.FileDeleteHelper;
+import com.zhaoyan.juyou.common.FileDeleteHelper.OnDeleteListener;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.ImageInfo;
 import com.zhaoyan.juyou.common.MenuBarInterface;
@@ -21,7 +22,6 @@ import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
-import com.zhaoyan.juyou.dialog.ZyProgressDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 import android.app.Dialog;
@@ -29,7 +29,6 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -81,7 +80,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	private static final String MIMETYPE_PNG = "image/png";
 	
 	private Notice mNotice = null;
-	private FileInfoManager mFileInfoManager = null;
 	
 	private static final int MSG_UPDATE_UI = 0;
 	private static final int MSG_UPDATE_LIST = 1;
@@ -93,9 +91,26 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 				updateTitleNum(-1, num);
 				break;
 			case MSG_UPDATE_LIST:
-				mPictureItemInfoList.remove(msg.arg1);
-				mAdapter.notifyDataSetChanged();
-				updateTitleNum(-1, mAdapter.getCount());
+				mNotice.showToast(R.string.operator_over);
+				
+				List<Integer> poslist = new ArrayList<Integer>();
+				Bundle bundle = msg.getData();
+				if (null != bundle) {
+					poslist = bundle.getIntegerArrayList("position");
+//					Log.d(TAG, "poslist.size=" + poslist);
+					int removePosition;
+					for(int i = 0; i < poslist.size() ; i++){
+						//remove from the last item to the first item
+						removePosition = poslist.get(poslist.size() - (i + 1));
+//						Log.d(TAG, "removePosition:" + removePosition);
+						mPictureItemInfoList.remove(removePosition);
+						mAdapter.notifyDataSetChanged();
+					}
+					
+					updateTitleNum(-1, mPictureItemInfoList.size());
+				}else {
+					Log.e(TAG, "bundle is null");
+				}
 				break;
 
 			default:
@@ -127,7 +142,6 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		
 		setTitleNumVisible(true);
 		mNotice = new Notice(getApplicationContext());
-		mFileInfoManager = new FileInfoManager();
 	}
 	
 	private void initView(){
@@ -154,6 +168,10 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 				projection, selection, selectionArgs, orderBy);		
 	}
 	
+	/**
+	 * accord bucketName to query images
+	 * @param bucketName the bucketName of the image belong
+	 */
 	public void queryFolderItem(String bucketName){
 		String selection;
 		//do not load png image
@@ -182,7 +200,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			mLoadingBar.setVisibility(View.INVISIBLE);
 			int num = 0;
 			if (null != cursor) {
-				Log.d(TAG, "PictureFragment onQueryComplete.count=" + cursor.getCount()+":"+token);
+				Log.d(TAG, "onQueryComplete.count=" + cursor.getCount());
 				switch (token) {
 				case QUERY_TOKEN_FOLDER:
 					break;
@@ -418,65 +436,30 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		deleteDialog.setPositiveButton(R.string.menu_delete, new OnZyAlertDlgClickListener() {
 			@Override
 			public void onClick(Dialog dialog) {
-				DeleteTask deleteTask = new DeleteTask();
-				deleteTask.execute();
+				final List<Integer> posList = mAdapter.getCheckedPosList();
+				FileDeleteHelper deleteHelper = new FileDeleteHelper(ImageActivity.this);
+				deleteHelper.setDeletePathList(mAdapter.getCheckedPathList());
+				deleteHelper.setOnDeleteListener(new OnDeleteListener() {
+					@Override
+					public void onDeleteFinished() {
+						//when delete over,send message to update ui
+						Message message = mHandler.obtainMessage();
+						Bundle bundle = new Bundle();
+						bundle.putIntegerArrayList("position", (ArrayList<Integer>)posList);
+						message.setData(bundle);
+						message.what = MSG_UPDATE_LIST;
+						message.sendToTarget();
+					}
+				});
+				deleteHelper.doDelete();
 				
 				dialog.dismiss();
+				destroyMenuBar();
 			}
 		});
 		deleteDialog.setNegativeButton(R.string.cancel, null);
 		deleteDialog.show();
     }
-    
-    /**
-     * Delete file task
-     */
-    private class DeleteTask extends AsyncTask<Void, String, String>{
-    	ZyProgressDialog progressDialog = null;
-    	
-    	@Override
-    	protected void onPreExecute() {
-    		super.onPreExecute();
-    		progressDialog = new ZyProgressDialog(ImageActivity.this);
-    		progressDialog.setMessage(R.string.deleting);
-    		progressDialog.show();
-    	}
-    	
-		@Override
-		protected String doInBackground(Void... params) {
-			List<Integer> posList = mAdapter.getCheckedPosList();
-			List<String> selectedPathList = mAdapter.getCheckedPathList();
-			int currentDelPos = -1;
-			for (int i = 0; i < selectedPathList.size(); i++) {
-				doDelete(selectedPathList.get(i));
-				currentDelPos = posList.get(i) - i;
-				Message message = mHandler.obtainMessage();
-				message.arg1 = currentDelPos;
-				message.what = MSG_UPDATE_LIST;
-				message.sendToTarget();
-			}
-			//start delete file from delete list
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			destroyMenuBar();
-			if (null != progressDialog) {
-				progressDialog.cancel();
-				progressDialog = null;
-			}
-			mNotice.showToast(R.string.operator_over);
-		}
-    }
-    
-    private void doDelete(String path) {
-		boolean ret = FileManager.deleteFileInMediaStore(getApplicationContext(), ZYConstant.IMAGE_URI, path);
-		if (!ret) {
-			Log.e(TAG, path + " delete failed");
-		}
-	}
 	
 	@Override
 	public void doCheckAll(){
