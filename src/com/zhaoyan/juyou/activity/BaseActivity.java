@@ -1,6 +1,7 @@
 package com.zhaoyan.juyou.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,15 +26,15 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 	protected View mCustomTitleView;
 	protected TextView mTitleNameView;
 	protected TextView mTitleNumView;
-	
-	//menubar
+
+	// menubar
 	protected View mMenuBarView;
 	protected LinearLayout mMenuHolder;
 	protected MenuBarManager mMenuBarManager;
 	protected ActionMenu mActionMenu;
-	
+
 	private ActionMenuInflater mActionMenuInflater;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,49 +48,55 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 		mTitleNameView = (TextView) mCustomTitleView
 				.findViewById(R.id.tv_title_name);
 		mTitleNameView.setText(titleName);
-		mTitleNumView = (TextView) mCustomTitleView.findViewById(R.id.tv_title_num);
+		mTitleNumView = (TextView) mCustomTitleView
+				.findViewById(R.id.tv_title_num);
 	}
-	
-	protected void initMenuBar(){
+
+	protected void initMenuBar() {
 		mMenuBarView = findViewById(R.id.menubar_bottom);
 		mMenuBarView.setVisibility(View.GONE);
 		mMenuHolder = (LinearLayout) findViewById(R.id.ll_menutabs_holder);
-		
-		mMenuBarManager = new MenuBarManager(getApplicationContext(), mMenuHolder);
+
+		mMenuBarManager = new MenuBarManager(getApplicationContext(),
+				mMenuHolder);
 		mMenuBarManager.setOnMenuItemClickListener(this);
 	}
-	
-	public void startMenuBar(){
+
+	public void startMenuBar() {
 		mMenuBarView.setVisibility(View.VISIBLE);
 		mMenuBarManager.refreshMenus(mActionMenu);
 	}
-	
-	public void destroyMenuBar(){
+
+	public void destroyMenuBar() {
 		mMenuBarView.setVisibility(View.GONE);
 	}
-	
-	protected void setTitleNumVisible(boolean visible){
+
+	protected void setTitleNumVisible(boolean visible) {
 		mTitleNumView.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
-	
+
 	protected void updateTitleNum(int selected, int count) {
 		if (selected == -1) {
 			mTitleNumView.setText(getString(R.string.num_format, count));
-		}else {
-			mTitleNumView.setText(getString(R.string.num_format2, selected, count));
+		} else {
+			mTitleNumView.setText(getString(R.string.num_format2, selected,
+					count));
 		}
 	}
-	
+
 	/**
 	 * Show transport animation.
 	 * 
-	 * @param startViews The transport item image view.
+	 * @param startViews
+	 *            The transport item image view.
 	 */
-	protected void showTransportAnimation(ViewGroup viewGroup, ImageView... startViews) {
+	protected void showTransportAnimation(ViewGroup viewGroup,
+			ImageView... startViews) {
 		Log.d(TAG, "showTransportAnimation");
 		TransportAnimationView transportAnimationView = new TransportAnimationView(
 				getApplicationContext());
-		transportAnimationView.startTransportAnimation(viewGroup, mTitleNameView, startViews);
+		transportAnimationView.startTransportAnimation(viewGroup,
+				mTitleNameView, startViews);
 	}
 
 	protected void finishWithAnimation() {
@@ -104,22 +111,48 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 				finish();
 				overridePendingTransition(0, R.anim.activity_right_out);
 				return true;
-			}else {
+			} else {
 				return false;
 			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
-	public boolean onBackKeyPressed(){
+
+	public boolean onBackKeyPressed() {
 		return true;
 	}
-	
-	protected ActionMenuInflater getActionMenuInflater(){
+
+	protected ActionMenuInflater getActionMenuInflater() {
 		if (null == mActionMenuInflater) {
-			mActionMenuInflater = new ActionMenuInflater(getApplicationContext());
+			mActionMenuInflater = new ActionMenuInflater(
+					getApplicationContext());
 		}
 		return mActionMenuInflater;
+	}
+
+	/**
+	 * start activity by class name
+	 * 
+	 * @param pClass
+	 */
+	protected void openActivity(Class<?> pClass) {
+		openActivity(pClass, null);
+	}
+
+	/**
+	 * start activity by class name & include data
+	 * 
+	 * @param pClass
+	 * @param bundle
+	 */
+	protected void openActivity(Class<?> pClass, Bundle bundle) {
+		Intent intent = new Intent(this, pClass);
+		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		if (bundle != null) {
+			intent.putExtras(bundle);
+		}
+		startActivity(intent);
+		overridePendingTransition(R.anim.activity_right_in, 0);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.zhaoyan.common.net.NetWorkUtil;
-import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.juyou.DirectLogin;
 import com.zhaoyan.juyou.JuYouApplication;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.dialog.LoginProgressDialog;
@@ -117,20 +117,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 	}
 
 	private void loginDirect() {
-		if (UserHelper.loadLocalUser(this) == null) {
-			launchAccountSetting();
-		} else {
-			launchMain();
-		}
+		DirectLogin directLogin = new DirectLogin(mContext);
+		directLogin.login();
+		launchMain();
 		finish();
-	}
-
-	private void launchAccountSetting() {
-		Intent intent = new Intent();
-		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		intent.putExtra(AccountSettingActivity.EXTRA_IS_FISRT_LAUNCH, true);
-		intent.setClass(this, AccountSettingActivity.class);
-		startActivity(intent);
 	}
 
 	private void launchRegisterAccount() {

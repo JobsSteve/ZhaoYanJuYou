@@ -95,6 +95,9 @@
     <string name="unknow">未知</string>
     <string name="wenxi_tip">温馨提示</string>
     
+    <string name="account_setting_head_image">头像</string>
+    <string name="account_setting_name">名字</string>
+    
     <!-- info dialog -->
     <string name="info">属性</string>
     
@@ -348,5 +351,10 @@
      <string name="new_folder">新建文件夹</string>
      <string name="filecopy">文件复制</string>
      <string name="filecut">文件剪切</string>
+     <string name="account_info">账号信息</string>
+     <string name="signature">个性签名</string>
+     <string name="sound">声音</string>
+     <string name="transmit_directory">保存路径</string>
+     <string name="clear_transmit_files">清空传输文件</string>
 
 </resources>

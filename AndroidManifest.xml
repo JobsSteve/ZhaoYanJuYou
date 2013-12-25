@@ -93,8 +93,8 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.FileBrowserActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.Translucent" >
+            android:theme="@style/Theme.Translucent"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.FileCategoryActivity"
@@ -106,8 +106,7 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.ImageActivity"
-            android:theme="@style/Theme.Translucent" 
-            >
+            android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.ImagePagerActivity"
@@ -115,6 +114,14 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.HistoryActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingHeadActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingNameActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
 
