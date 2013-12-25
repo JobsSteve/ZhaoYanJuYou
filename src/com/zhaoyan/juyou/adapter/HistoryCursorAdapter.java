@@ -1,8 +1,6 @@
 package com.zhaoyan.juyou.adapter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -59,9 +57,6 @@ public class HistoryCursorAdapter extends CursorAdapter {
 	private MsgOnClickListener mClickListener = new MsgOnClickListener();
 	private ListView mListView;
 	private UserInfo mLocalUserInfo = null;
-	
-	//wait tranfser name list 
-	private List<String> mWaitNameList = new ArrayList<String>();
 
 	public HistoryCursorAdapter(Context context, ListView listView) {
 		super(context, null, true);

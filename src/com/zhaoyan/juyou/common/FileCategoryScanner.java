@@ -119,9 +119,11 @@ public class FileCategoryScanner {
 			if (files != null) {
 				for (File file : files) {
 					if (file.isDirectory()) {
-						//do not load juyou log file
-						if (!LogFile.LOG_FOLDER_NAME.equals(file.getAbsolutePath())) {
-							scanDir(file);
+						if (!file.isHidden()) {
+							//do not load juyou log file
+							if (!LogFile.LOG_FOLDER_NAME.equals(file.getAbsolutePath())) {
+								scanDir(file);
+							}
 						}
 					} else {
 						categoryFile(file);

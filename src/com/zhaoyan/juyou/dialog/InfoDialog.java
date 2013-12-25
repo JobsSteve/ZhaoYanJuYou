@@ -1,5 +1,6 @@
 package com.zhaoyan.juyou.dialog;
 
+import android.R.bool;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,6 +61,7 @@ public class InfoDialog extends ZyAlertDialog {
 	private static final int MSG_UPDATEUI_MULTI = 0x10;
 	private static final int MSG_UPDATEUI_SINGLE = 0x11;
 	private static final int MSG_UPDATE_TITLE = 0x12;
+	private static final int MSG_SCAN_OVER = 0x13;
 	private Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -67,10 +69,10 @@ public class InfoDialog extends ZyAlertDialog {
 				String sizeInfo = ZYUtils.getFormatSize(mTotalSize);
 				mSizeView.setText(sizeInfo);
 				int folderNum = mFolderNum;
-				if (0 != mFolderNum) {
-					//remove self folder
-					folderNum = mFolderNum - 1;
-				}
+//				if (0 != mFolderNum) {
+//					//remove self folder
+//					folderNum = mFolderNum - 1;
+//				}
 				mIncludeView.setText(mContext.getResources().getString(R.string.info_include_files, mFileNum, folderNum));
 				break;
 			case MSG_UPDATEUI_SINGLE:
@@ -96,6 +98,9 @@ public class InfoDialog extends ZyAlertDialog {
 				break;
 			case MSG_UPDATE_TITLE:
 				mTitleView.setText(mTitle);
+				break;
+			case MSG_SCAN_OVER:
+				mLoadingInfoBar.setVisibility(View.GONE);
 				break;
 			default:
 				break;
@@ -218,8 +223,8 @@ public class InfoDialog extends ZyAlertDialog {
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_TITLE));
 	}
 	
-	public void invisbileLoadBar(){
-		mLoadingInfoBar.setVisibility(View.GONE);
+	public void scanOver(){
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_SCAN_OVER));
 	}
 	
 	@Override

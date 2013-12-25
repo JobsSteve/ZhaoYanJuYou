@@ -197,6 +197,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		
 		mDeleteHelper = new FileDeleteHelper(getActivity());
 		mDeleteHelper.setOnDeleteListener(this);
+		
 		Log.d(TAG, "onCreate.mStatus=" + mStatus);
 	}
 
@@ -435,7 +436,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			if (currentFile.isDirectory()) {
 				fileInfo.isDir = true;
 				fileInfo.fileSize = 0;
-				fileInfo.type = FileInfoManager.UNKNOW;
+				fileInfo.type = FileManager.UNKNOW;
 				//do not count hidden files
 				File[] files = currentFile.listFiles();
 				if (null == files) {

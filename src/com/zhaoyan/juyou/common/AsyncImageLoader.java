@@ -16,6 +16,7 @@ import android.os.Message;
 import android.provider.MediaStore.Images.Thumbnails;
 
 import com.zhaoyan.common.file.APKUtil;
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.BitmapUtilities;
 
 public class AsyncImageLoader {
@@ -36,8 +37,6 @@ public class AsyncImageLoader {
 	}
 	
 	/**
-	 * 方法三
-	 * 也不是很完美，不过现在将就用这个吧
 	 * @param path
 	 * @param type
 	 * @param imageView
@@ -63,7 +62,7 @@ public class AsyncImageLoader {
 		};
 		
 		switch (type) {
-		case FileInfoManager.APK:
+		case FileManager.APK:
 			pool.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -80,7 +79,7 @@ public class AsyncImageLoader {
 				}
 			});
 			break;
-		case FileInfoManager.IMAGE:
+		case FileManager.IMAGE:
 			pool.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -92,7 +91,7 @@ public class AsyncImageLoader {
 				}
 			});
 			break;
-		case FileInfoManager.VIDEO:
+		case FileManager.VIDEO:
 			pool.execute(new Runnable() {
 				@Override
 				public void run() {

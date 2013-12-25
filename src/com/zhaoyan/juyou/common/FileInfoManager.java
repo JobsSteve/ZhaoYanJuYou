@@ -8,20 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
-import android.provider.MediaStore.MediaColumns;
 import android.text.TextUtils;
 
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.file.MultiMediaScanner;
-import com.zhaoyan.common.file.SingleMediaScanner;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
@@ -31,152 +25,6 @@ import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileInfoManager {
 	private static final String TAG = "FileInfoManager";
-	public static final int TEXT = 0x01;
-	public static final int HTML = 0x02;
-	public static final int WORD = 0x03;
-	public static final int EXCEL = 0x04;
-	public static final int PPT = 0x05;
-	public static final int PDF = 0x06;
-	public static final int AUDIO = 0x07;
-	public static final int VIDEO = 0x08;
-	public static final int CHM = 0x09;
-	public static final int APK = 0x10;
-	public static final int ARCHIVE = 0x11;
-	public static final int IMAGE = 0x12;
-	public static final int UNKNOW = 0x20;
-
-	public FileInfoManager() {
-	}
-	
-	// 判断文件类型，根据不同类型设置图标
-		public HistoryInfo getHistoryInfo(Context context, HistoryInfo historyInfo) {
-			HistoryInfo info = historyInfo;
-			Drawable currentIcon = null;
-			// 取得文件路径
-			String filePath = historyInfo.getFile().getAbsolutePath();
-
-			// 根据文件名来判断文件类型，设置不同的图标
-			int result = fileFilter(context, filePath);
-			int fileType = result;
-			switch (result) {
-			case TEXT:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_txt);
-				break;
-			case IMAGE:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_image);
-				break;
-			case AUDIO:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_audio);
-				break;
-			case VIDEO:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_video);
-				break;
-			case WORD:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_doc);
-				break;
-			case PPT:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_ppt);
-				break;
-			case EXCEL:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_xls);
-				break;
-			case PDF:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_pdf);
-				break;
-			case ARCHIVE:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_rar);
-				break;
-			case APK:
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_apk);
-				break;
-			default:
-				// 默认
-				currentIcon = context.getResources().getDrawable(
-						R.drawable.icon_file);
-				break;
-			}
-			info.setFileType(fileType);
-			return info;
-		}
-
-	public int fileFilter(Context context, String filepath) {
-		// 首先取得文件名
-		String fileName = new File(filepath).getName();
-		int ret;
-
-		if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_ebook))) {
-			// text
-			ret = TEXT;
-		}
-		// else if (checkEndsWithInStringArray(fileName,
-		// context.getResources().getStringArray(R.array.fileEndingWebText))) {
-		// //html ...
-		// ret = HTML;
-		// }
-		else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_image))) {
-			// Images
-			ret = IMAGE;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_audio))) {
-			// audios
-			ret = AUDIO;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_video))) {
-			// videos
-			ret = VIDEO;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_apk))) {
-			// apk
-			ret = APK;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_word))) {
-			// word
-			ret = WORD;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_ppt))) {
-			// ppt
-			ret = PPT;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_excel))) {
-			// excel
-			ret = EXCEL;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_archive))) {
-			// packages
-			ret = ARCHIVE;
-		} else if (checkEndsWithInStringArray(fileName, context.getResources()
-				.getStringArray(R.array.ext_pdf))) {
-			// pdf
-			ret = PDF;
-		} else {
-			ret = UNKNOW;
-		}
-
-		return ret;
-	}
-
-	// 通过文件名判断是什么类型的文件
-	private boolean checkEndsWithInStringArray(String checkItsEnd,
-			String[] fileEndings) {
-		String str = checkItsEnd.toLowerCase();
-		for (String aEnd : fileEndings) {
-			if (str.endsWith(aEnd))
-				return true;
-		}
-		return false;
-	}
 	
 	private int renameFlag = 0;
 	/**
@@ -248,6 +96,11 @@ public class FileInfoManager {
 			return newFile.getAbsolutePath();
 	}
 	
+	/**
+	 * show file info dialog
+	 * @param context
+	 * @param list 
+	 */
 	public void showInfoDialog(Context context, List<FileInfo> list){
 		GetFileSizeTask task = new GetFileSizeTask(context, list);
 		task.execute();
@@ -342,7 +195,7 @@ public class FileInfoManager {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			Log.d(TAG, "onPostExecute.");
-			infoDialog.invisbileLoadBar();
+			infoDialog.scanOver();
 		}
 		
 		private void getFileSize(File file){
