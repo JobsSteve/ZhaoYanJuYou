@@ -117,6 +117,9 @@ public class AccountSettingActivity extends BaseActivity implements
 		case R.id.rl_as_name:
 			openActivity(AccountSettingNameActivity.class);
 			break;
+		case R.id.rl_as_account_info:
+			openActivity(AccountSettingAccountInfoActivity.class);
+			break;
 		default:
 			break;
 		}

@@ -356,5 +356,12 @@
      <string name="sound">声音</string>
      <string name="transmit_directory">保存路径</string>
      <string name="clear_transmit_files">清空传输文件</string>
+     <string name="account_setting_account_zhaoyan">朝颜账号</string>
+     <string name="account_setting_account_phone">手机号</string>
+     <string name="account_setting_account_email">邮件地址</string>
+     <string name="account_setting_account_qq">QQ号</string>
+     <string name="account_setting_account_renren">人人账号</string>
+     <string name="account_setting_account_weibo_sina">新浪微博</string>
+     <string name="account_setting_account_weibo_tencent">腾讯微博</string>
 
 </resources>

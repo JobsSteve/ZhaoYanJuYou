@@ -124,6 +124,10 @@
             android:name="com.zhaoyan.juyou.activity.AccountSettingNameActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingAccountInfoActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
 
         <service android:name="com.zhaoyan.communication.LoginService" >
         </service>
