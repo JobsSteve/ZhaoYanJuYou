@@ -1,16 +1,22 @@
 package com.zhaoyan.juyou.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.juyou.AccountHelper;
+import com.zhaoyan.juyou.AccountInfo;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.ZYConstant;
 
 public class AccountSettingSignatureActivity extends BaseActivity implements
 		OnClickListener {
@@ -35,7 +41,10 @@ public class AccountSettingSignatureActivity extends BaseActivity implements
 	}
 
 	private void loadSignature() {
-
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
+		String signature = accountInfo.getSignature();
+		mSignaturEditText.setText(signature);
+		mSignaturEditText.setSelection(mSignaturEditText.length());
 	}
 
 	private void initView() {
@@ -46,7 +55,6 @@ public class AccountSettingSignatureActivity extends BaseActivity implements
 
 		mSignaturEditText = (EditText) findViewById(R.id.et_as_signature);
 		mSignaturEditText.addTextChangedListener(mTextWatcher);
-		mSignaturEditText.setSelection(mSignaturEditText.length());
 
 		mSignatureWordCount = (TextView) findViewById(R.id.tv_as_signature_wordcount);
 		setLeftWordCount();
@@ -95,16 +103,31 @@ public class AccountSettingSignatureActivity extends BaseActivity implements
 	}
 
 	private void cancelAndQuit() {
+		hideInputMethodManager();
 		finishWithAnimation();
 	}
 
 	private void saveAndQuit() {
+		hideInputMethodManager();
 		saveSignature();
+		
+		Intent intent = new Intent(ZYConstant.CURRENT_ACCOUNT_CHANGED_ACTION);
+		sendBroadcast(intent);
+		
 		finishWithAnimation();
 	}
 
 	private void saveSignature() {
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
+		accountInfo.setSignature(mSignaturEditText.getText().toString());
+		AccountHelper.saveCurrentAccount(this, accountInfo);
+		mNotice.showToast(R.string.account_setting_saved_message);
+	}
 
+	private void hideInputMethodManager() {
+		InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(
+				mSignaturEditText.getWindowToken(), 0);
 	}
 
 	private TextWatcher mTextWatcher = new TextWatcher() {

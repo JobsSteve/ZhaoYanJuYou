@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -68,6 +69,13 @@ public class AccountSettingActivity extends BaseActivity implements
 		}
 
 		mNameTextView.setText(accountInfo.getUserName());
+		
+		String signature = accountInfo.getSignature();
+		if (!TextUtils.isEmpty(signature)) {
+			mSignatureTextView.setText(signature);
+		}else {
+			mSignatureTextView.setText(R.string.account_setting_not_set);
+		}
 	}
 
 	private void releaseHeadBitmap() {
