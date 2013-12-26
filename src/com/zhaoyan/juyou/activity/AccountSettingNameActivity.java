@@ -1,10 +1,12 @@
 package com.zhaoyan.juyou.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -68,12 +70,20 @@ public class AccountSettingNameActivity extends BaseActivity implements
 	}
 
 	private void cancelAndQuit() {
+		hideInputMethodManager();
 		finishWithAnimation();
 	}
 
 	private void saveAndQuit() {
+		hideInputMethodManager();
 		saveAccount();
 		finishWithAnimation();
+	}
+
+	private void hideInputMethodManager() {
+		InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(
+				mNickNameEditText.getWindowToken(), 0);
 	}
 
 	private void saveAccount() {
