@@ -15,6 +15,7 @@ import android.provider.MediaStore.MediaColumns;
 import android.text.TextUtils;
 
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.ZyEditDialog;
@@ -343,6 +344,15 @@ public class FileManager {
 			@Override
 			public void onClick(Dialog dialog) {
 				String newName = editDialog.getEditTextStr();
+				//verify name's format
+				String ret = ZYUtils.FileNameFormatVerify(context, newName);
+				if (null != ret) {
+					editDialog.showTipMessage(true, ret);
+					return;
+				}else {
+					editDialog.showTipMessage(false, null);
+				}
+				
 				Uri uri = null;
 				ContentResolver contentResolver = context.getContentResolver();
 				ContentValues values = null;

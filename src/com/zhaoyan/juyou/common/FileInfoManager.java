@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.file.MultiMediaScanner;
@@ -45,6 +46,16 @@ public class FileInfoManager {
 			@Override
 			public void onClick(Dialog dialog) {
 				String newName = editDialog.getEditTextStr();
+				//verify name format
+				String tipMsg = ZYUtils.FileNameFormatVerify(context, newName);
+				if (null != tipMsg) {
+					editDialog.showTipMessage(true,tipMsg);
+					return;
+				}else {
+					editDialog.showTipMessage(false,tipMsg);
+				}
+				//verify name format
+				
 				String oldPath = list.get(renameFlag).filePath;
 				list.get(renameFlag).fileName = newName;
 				list.get(renameFlag).filePath = rename(

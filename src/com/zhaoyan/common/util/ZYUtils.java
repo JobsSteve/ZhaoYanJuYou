@@ -21,10 +21,13 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
+import com.zhaoyan.juyou.common.ZYConstant;
 
 public class ZYUtils {
 	private static final String TAG = "ZYUtils";
@@ -223,5 +226,46 @@ public class ZYUtils {
 				}
 			}
 		}, 500);
+	}
+	
+	/**
+	 * force show virtual menu key </br>
+	 * must call after setContentView() 
+	 * @param window you can use getWindow()
+	 */
+	public static void forceShowMenuKey(Window window){
+		try {
+			window.addFlags(WindowManager.LayoutParams.class.getField("FLAG_NEEDS_MENU_KEY").getInt(null));
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * verify the file name's format is correct
+	 * @param context  for getResource
+	 * @param name the name need to verify
+	 * @return null:the filename's format is correct,else return the error message
+	 */
+	public static String FileNameFormatVerify(Context context, String name){
+		if (name.equals(".")) {
+			return context.getString(R.string.file_rename_error_2, ".");
+		}else if (name.equals("..")) {
+			return context.getString(R.string.file_rename_error_2, "..");
+		}else {
+			for (int i = 0; i < ZYConstant.ERROR_NAME_STRS.length; i++) {
+				if (name.indexOf(ZYConstant.ERROR_NAME_STRS[i]) >= 0) {
+					return context.getString(R.string.file_rename_error_1, ZYConstant.ERROR_NAME_STRS[i]);
+				}
+			}
+		}
+		return null;
 	}
 }

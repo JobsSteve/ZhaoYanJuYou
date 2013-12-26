@@ -36,6 +36,7 @@ import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.common.view.ZyPopupMenu;
 import com.zhaoyan.common.view.ZyPopupMenu.PopupViewClickListener;
@@ -915,6 +916,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				@Override
 				public void onClick(Dialog dialog) {
 					String folderName = editDialog.getEditTextStr();
+					//verify name's format
+					String ret = ZYUtils.FileNameFormatVerify(mContext, folderName);
+					if (null != ret) {
+						editDialog.showTipMessage(true, ret);
+						return;
+					}else {
+						editDialog.showTipMessage(false, null);
+					}
+					
 					String newPath = mCurrentPath + File.separator + folderName;
 					File file = new File(newPath);
 					if (file.exists()) {

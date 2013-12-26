@@ -10,6 +10,8 @@ import android.provider.MediaStore;
 
 public class ZYConstant {
 	public static final int REQUEST_FOR_MODIFY_NAME = 0x12;
+	
+	public static final String[] ERROR_NAME_STRS = {":","<",">","\\","|","?","/"};
 
 	// context action menu id
 
