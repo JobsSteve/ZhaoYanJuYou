@@ -366,5 +366,9 @@
      <string name="account_setting_signature_hint">请输入个性签名</string>
      <string name="account_setting_not_set">未设置</string>
      <string name="wo_account_tourist">游客登录</string>
+     <string name="account_setting_head_title">设置头像</string>
+     <string name="account_setting_name_titile">设置名字</string>
+     <string name="account_setting_account_info_title">设置账号信息</string>
+     <string name="account_setting_signature_title">设置签名</string>
 
 </resources>

@@ -16,7 +16,7 @@ public class AccountSettingAccountInfoActivity extends BaseActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account_setting_account_info);
 
-		initTitle(R.string.account_setting);
+		initTitle(R.string.account_setting_account_info_title);
 		initView();
 	}
 

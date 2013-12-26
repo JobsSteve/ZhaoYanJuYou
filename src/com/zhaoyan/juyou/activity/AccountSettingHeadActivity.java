@@ -63,7 +63,7 @@ public class AccountSettingHeadActivity extends BaseActivity implements
 
 		mNotice = new Notice(this);
 
-		initTitle(R.string.account_setting);
+		initTitle(R.string.account_setting_head_title);
 		initView();
 
 		loadUserHead();

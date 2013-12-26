@@ -33,7 +33,7 @@ public class AccountSettingNameActivity extends BaseActivity implements
 		setContentView(R.layout.account_setting_name);
 		mNotice = new Notice(this);
 
-		initTitle(R.string.account_setting);
+		initTitle(R.string.account_setting_name_titile);
 		initView();
 
 		setAccountInfo();
