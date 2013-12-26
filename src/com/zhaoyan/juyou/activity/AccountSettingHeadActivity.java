@@ -6,6 +6,8 @@ import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
+import com.zhaoyan.juyou.AccountHelper;
+import com.zhaoyan.juyou.AccountInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HeadChooseAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
@@ -68,25 +70,18 @@ public class AccountSettingHeadActivity extends BaseActivity implements
 	}
 
 	private void loadUserHead() {
-		UserInfo userInfo = UserHelper.loadLocalUser(this);
-
-		if (userInfo == null) {
-			mCurrentHeadId = 0;
-			mHeadImageView.setImageResource(mHeadImages[mCurrentHeadId]);
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
+		int headId = accountInfo.getHeadId();
+		mCurrentHeadId = headId;
+		if (headId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			releaseHeadBitmap();
+			mHeadBitmap = accountInfo.getHeadBitmap();
+			BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(),
+					mHeadBitmap);
+			mHeadImageView.setImageDrawable(bitmapDrawable);
 		} else {
-			// There is local user.
-			int headId = userInfo.getHeadId();
-			mCurrentHeadId = headId;
-			if (headId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
-				releaseHeadBitmap();
-				mHeadBitmap = userInfo.getHeadBitmap();
-				BitmapDrawable bitmapDrawable = new BitmapDrawable(
-						getResources(), mHeadBitmap);
-				mHeadImageView.setImageDrawable(bitmapDrawable);
-			} else {
-				mHeadImageView.setImageResource(UserHelper
-						.getHeadImageResource(headId));
-			}
+			mHeadImageView.setImageResource(UserHelper
+					.getHeadImageResource(headId));
 		}
 	}
 
@@ -133,18 +128,25 @@ public class AccountSettingHeadActivity extends BaseActivity implements
 	}
 
 	private void saveAccount() {
-		UserInfo userInfo = UserHelper.loadLocalUser(this);
-		// head id
-		userInfo.setHeadId(mCurrentHeadId);
-		if (mCurrentHeadId == UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
+		// Account info
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
+		accountInfo.setHeadId(mCurrentHeadId);
+		if (mCurrentHeadId == AccountInfo.HEAD_ID_NOT_PRE_INSTALL) {
 			if (mHeadBitmap != null) {
-				userInfo.setHeadBitmap(mHeadBitmap);
+				accountInfo.setHeadBitmap(mHeadBitmap);
 			} else {
 				Log.e(TAG, "saveAccount error. can not find head.");
 			}
 		} else {
-			userInfo.setHeadBitmap(null);
+			accountInfo.setHeadBitmap(null);
 		}
+		AccountHelper.saveCurrentAccount(this, accountInfo);
+
+		// User info
+		UserInfo userInfo = UserHelper.loadLocalUser(this);
+		// head id
+		userInfo.setHeadId(accountInfo.getHeadId());
+		userInfo.setHeadBitmapData(accountInfo.getHeadData());
 		// Save to database
 		UserHelper.saveLocalUser(this, userInfo);
 
@@ -153,7 +155,7 @@ public class AccountSettingHeadActivity extends BaseActivity implements
 		userManager.setLocalUser(userInfo.getUser());
 
 		// Send broadcast
-		Intent intent = new Intent(ZYConstant.LOCAL_USER_INFO_CHANGED_ACTION);
+		Intent intent = new Intent(ZYConstant.CURRENT_ACCOUNT_CHANGED_ACTION);
 		sendBroadcast(intent);
 
 		mNotice.showToast(R.string.account_setting_saved_message);

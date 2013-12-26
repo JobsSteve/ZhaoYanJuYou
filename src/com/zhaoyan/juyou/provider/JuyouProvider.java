@@ -31,6 +31,9 @@ public class JuyouProvider extends ContentProvider {
 	public static final int USER_COLLECTION = 30;
 	public static final int USER_SINGLE = 31;
 
+	public static final int ACCOUNT_COLLECTION = 40;
+	public static final int ACCOUNT_SINGLE = 41;
+
 	public static final UriMatcher uriMatcher;
 
 	static {
@@ -51,6 +54,9 @@ public class JuyouProvider extends ContentProvider {
 
 		uriMatcher.addURI(JuyouData.AUTHORITY, "user", USER_COLLECTION);
 		uriMatcher.addURI(JuyouData.AUTHORITY, "user/#", USER_SINGLE);
+
+		uriMatcher.addURI(JuyouData.AUTHORITY, "account", ACCOUNT_COLLECTION);
+		uriMatcher.addURI(JuyouData.AUTHORITY, "account/#", ACCOUNT_SINGLE);
 	}
 
 	@Override
@@ -103,6 +109,14 @@ public class JuyouProvider extends ContentProvider {
 		case USER_COLLECTION:
 			table = JuyouData.User.TABLE_NAME;
 			break;
+		case ACCOUNT_SINGLE:
+			table = JuyouData.Account.TABLE_NAME;
+			selection = "_id=" + uri.getPathSegments().get(1);
+			selectionArgs = null;
+			break;
+		case ACCOUNT_COLLECTION:
+			table = JuyouData.Account.TABLE_NAME;
+			break;
 		default:
 			throw new IllegalArgumentException("UnKnow Uri:" + uri);
 		}
@@ -131,6 +145,10 @@ public class JuyouProvider extends ContentProvider {
 			return JuyouData.User.CONTENT_TYPE;
 		case USER_SINGLE:
 			return JuyouData.User.CONTENT_TYPE_ITEM;
+		case ACCOUNT_COLLECTION:
+			return JuyouData.Account.CONTENT_TYPE;
+		case ACCOUNT_SINGLE:
+			return JuyouData.Account.CONTENT_TYPE_ITEM;
 		default:
 			throw new IllegalArgumentException("Unkonw uri:" + uri);
 		}
@@ -166,6 +184,12 @@ public class JuyouProvider extends ContentProvider {
 		case USER_COLLECTION:
 			table = JuyouData.User.TABLE_NAME;
 			contentUri = JuyouData.User.CONTENT_URI;
+			break;
+
+		case ACCOUNT_SINGLE:
+		case ACCOUNT_COLLECTION:
+			table = JuyouData.Account.TABLE_NAME;
+			contentUri = JuyouData.Account.CONTENT_URI;
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow uri:" + uri);
@@ -221,6 +245,14 @@ public class JuyouProvider extends ContentProvider {
 		case USER_COLLECTION:
 			qb.setTables(JuyouData.User.TABLE_NAME);
 			break;
+		case ACCOUNT_SINGLE:
+			qb.setTables(JuyouData.Account.TABLE_NAME);
+			qb.appendWhere("_id=" + uri.getPathSegments().get(1));
+			break;
+		case ACCOUNT_COLLECTION:
+			qb.setTables(JuyouData.Account.TABLE_NAME);
+			break;
+
 		default:
 			throw new IllegalArgumentException("Unknow uri:" + uri);
 		}
@@ -277,7 +309,14 @@ public class JuyouProvider extends ContentProvider {
 		case USER_COLLECTION:
 			table = JuyouData.User.TABLE_NAME;
 			break;
-
+		case ACCOUNT_SINGLE:
+			table = JuyouData.Account.TABLE_NAME;
+			selection = "_id=" + uri.getPathSegments().get(1);
+			selectionArgs = null;
+			break;
+		case ACCOUNT_COLLECTION:
+			table = JuyouData.Account.TABLE_NAME;
+			break;
 		default:
 			throw new UnsupportedOperationException("Cannot update uri:" + uri);
 		}
@@ -338,6 +377,24 @@ public class JuyouProvider extends ContentProvider {
 					+ JuyouData.User.STATUS + " INTEGER, "
 					+ JuyouData.User.TYPE + " INTEGER, " + JuyouData.User.SSID
 					+ " TEXT, " + JuyouData.User.NETWORK + " INTEGER);");
+
+			// create account table
+			db.execSQL("create table " + JuyouData.Account.TABLE_NAME
+					+ " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, "
+					+ JuyouData.Account.USER_NAME + " TEXT, "
+					+ JuyouData.Account.HEAD_ID + " INTEGER, "
+					+ JuyouData.Account.HEAD_DATA + " BLOB, "
+					+ JuyouData.Account.ACCOUNT_ZHAOYAN + " TEXT, "
+					+ JuyouData.Account.PHONE_NUMBER + " TEXT, "
+					+ JuyouData.Account.EMAIL + " TEXT, "
+					+ JuyouData.Account.ACCOUNT_QQ + " TEXT, "
+					+ JuyouData.Account.ACCOUNT_RENREN + " TEXT, "
+					+ JuyouData.Account.ACCOUNT_SINA_WEIBO + " TEXT, "
+					+ JuyouData.Account.ACCOUNT_TENCENT_WEIBO + " TEXT, "
+					+ JuyouData.Account.SIGNATURE + " TEXT, "
+					+ JuyouData.Account.LOGIN_STATUS + " INTEGER, "
+					+ JuyouData.Account.TOURIST_ACCOUNT + " INTEGER, "
+					+ JuyouData.Account.LAST_LOGIN_TIME + " LONG);");
 		}
 
 		@Override
@@ -348,6 +405,7 @@ public class JuyouProvider extends ContentProvider {
 			db.execSQL("DROP TABLE IF EXISTS "
 					+ JuyouData.TrafficStaticsTX.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + JuyouData.User.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + JuyouData.Account.TABLE_NAME);
 			onCreate(db);
 		}
 

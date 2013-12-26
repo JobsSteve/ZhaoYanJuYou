@@ -77,13 +77,20 @@ public class JuYouApplication extends Application {
 		SocketCommunicationManager.getInstance().release();
 		// Release TrafficStatics
 		TrafficStatics.getInstance().quit();
+		// Logout account
+		logoutAccount(context);
 		// Stop record log and close log file.
 		Log.stopAndSave();
 		releaseStaticInstance(context);
 	}
 
+	private static void logoutAccount(Context context) {
+		AccountHelper.logoutCurrentAccount(context);
+	}
+
 	private static void logout(Context context) {
-		ProtocolCommunication protocolCommunication =ProtocolCommunication.getInstance();
+		ProtocolCommunication protocolCommunication = ProtocolCommunication
+				.getInstance();
 		protocolCommunication.logout();
 	}
 

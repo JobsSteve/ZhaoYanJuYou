@@ -12,6 +12,8 @@ import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.communication.UserHelper;
 import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.communication.UserManager;
+import com.zhaoyan.juyou.AccountHelper;
+import com.zhaoyan.juyou.AccountInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ZYConstant;
 
@@ -32,13 +34,13 @@ public class AccountSettingNameActivity extends BaseActivity implements
 		initTitle(R.string.account_setting);
 		initView();
 
-		setUserInfo();
+		setAccountInfo();
 	}
 
-	private void setUserInfo() {
-		UserInfo userInfo = UserHelper.loadLocalUser(this);
+	private void setAccountInfo() {
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
 
-		String name = userInfo.getUser().getUserName();
+		String name = accountInfo.getUserName();
 		mNickNameEditText.setText(name);
 	}
 
@@ -77,16 +79,20 @@ public class AccountSettingNameActivity extends BaseActivity implements
 	private void saveAccount() {
 		String name = mNickNameEditText.getText().toString();
 		if (!TextUtils.isEmpty(name)) {
+			// save account
+			AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
+			accountInfo.setUserName(name);
+			AccountHelper.saveCurrentAccount(this, accountInfo);
+			// save user info
 			UserInfo userInfo = UserHelper.loadLocalUser(this);
 			userInfo.getUser().setUserName(name);
-			// Save to database
 			UserHelper.saveLocalUser(this, userInfo);
 			// Update UserManager.
 			UserManager userManager = UserManager.getInstance();
 			userManager.setLocalUser(userInfo.getUser());
 			// Send broadcast
 			Intent intent = new Intent(
-					ZYConstant.LOCAL_USER_INFO_CHANGED_ACTION);
+					ZYConstant.CURRENT_ACCOUNT_CHANGED_ACTION);
 			sendBroadcast(intent);
 
 			mNotice.showToast(R.string.account_setting_saved_message);

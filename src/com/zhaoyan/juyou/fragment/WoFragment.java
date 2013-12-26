@@ -15,8 +15,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zhaoyan.communication.UserHelper;
-import com.zhaoyan.communication.UserInfo;
+import com.zhaoyan.juyou.AccountHelper;
+import com.zhaoyan.juyou.AccountInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AccountSettingActivity;
 import com.zhaoyan.juyou.activity.TrafficStatisticsActivity;
@@ -24,7 +24,7 @@ import com.zhaoyan.juyou.common.ZYConstant;
 
 public class WoFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "WoFragment";
-	private View mUserInfoSettingView;
+	private View mAccountInfoSettingView;
 	private Bitmap mHeadBitmap;
 	private ImageView mHeadImageView;
 	private TextView mNickNameTextView;
@@ -32,8 +32,8 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 	private View mQuitView;
 
 	private Handler mHandler;
-	private static final int MSG_UPDATE_USER_INFO = 1;
-	private BroadcastReceiver mUserInfoBroadcastReceiver;
+	private static final int MSG_UPDATE_ACCOUNT_INFO = 1;
+	private BroadcastReceiver mAccountInfoBroadcastReceiver;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,21 +42,21 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 				.inflate(R.layout.wo_fragment, container, false);
 		initTitle(rootView, R.string.wo);
 		initView(rootView);
-		updateUserInfo();
+		updateAccountInfo();
 
 		mHandler = new UiHandler();
 
-		mUserInfoBroadcastReceiver = new UserInfoBroadcastReceiver();
+		mAccountInfoBroadcastReceiver = new UserInfoBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(ZYConstant.LOCAL_USER_INFO_CHANGED_ACTION);
-		getActivity()
-				.registerReceiver(mUserInfoBroadcastReceiver, intentFilter);
+		intentFilter.addAction(ZYConstant.CURRENT_ACCOUNT_CHANGED_ACTION);
+		getActivity().registerReceiver(mAccountInfoBroadcastReceiver,
+				intentFilter);
 		return rootView;
 	}
 
 	private void initView(View rootView) {
-		mUserInfoSettingView = rootView.findViewById(R.id.rl_wo_head_name);
-		mUserInfoSettingView.setOnClickListener(this);
+		mAccountInfoSettingView = rootView.findViewById(R.id.rl_wo_head_name);
+		mAccountInfoSettingView.setOnClickListener(this);
 		mQuitView = rootView.findViewById(R.id.ll_wo_quit);
 		mQuitView.setOnClickListener(this);
 
@@ -70,19 +70,19 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 		mAccountTextView = (TextView) rootView.findViewById(R.id.tv_wo_account);
 	}
 
-	private void updateUserInfo() {
-		UserInfo userInfo = UserHelper.loadLocalUser(mContext);
-		int headId = userInfo.getHeadId();
-		if (headId != UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
-			mHeadImageView.setImageResource(UserHelper
+	private void updateAccountInfo() {
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(mContext);
+		int headId = accountInfo.getHeadId();
+		if (headId != AccountInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			mHeadImageView.setImageResource(AccountHelper
 					.getHeadImageResource(headId));
 		} else {
 			releaseHeadBitmap();
-			mHeadBitmap = userInfo.getHeadBitmap();
+			mHeadBitmap = accountInfo.getHeadBitmap();
 			mHeadImageView.setImageBitmap(mHeadBitmap);
 		}
 
-		mNickNameTextView.setText(userInfo.getUser().getUserName());
+		mNickNameTextView.setText(accountInfo.getUserName());
 	}
 
 	private void releaseHeadBitmap() {
@@ -97,7 +97,7 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 	public void onDestroyView() {
 		super.onDestroyView();
 		releaseHeadBitmap();
-		getActivity().unregisterReceiver(mUserInfoBroadcastReceiver);
+		getActivity().unregisterReceiver(mAccountInfoBroadcastReceiver);
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			mHandler.obtainMessage(MSG_UPDATE_USER_INFO).sendToTarget();
+			mHandler.obtainMessage(MSG_UPDATE_ACCOUNT_INFO).sendToTarget();
 		}
 	}
 
@@ -134,8 +134,8 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case MSG_UPDATE_USER_INFO:
-				updateUserInfo();
+			case MSG_UPDATE_ACCOUNT_INFO:
+				updateAccountInfo();
 				break;
 
 			default:

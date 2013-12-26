@@ -13,8 +13,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zhaoyan.communication.UserHelper;
-import com.zhaoyan.communication.UserInfo;
+import com.zhaoyan.juyou.AccountHelper;
+import com.zhaoyan.juyou.AccountInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ZYConstant;
 
@@ -32,10 +32,10 @@ public class AccountSettingActivity extends BaseActivity implements
 	private TextView mClearTransmitFilesTextView;
 
 	private Handler mHandler;
-	private static final int MSG_UPDATE_USER_INFO = 1;
+	private static final int MSG_UPDATE_ACCOUNT_INFO = 1;
 	private Bitmap mHeadBitmap;
 
-	private BroadcastReceiver mUserInfoBroadcastReceiver;
+	private BroadcastReceiver mAccountInfoBroadcastReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,29 +45,29 @@ public class AccountSettingActivity extends BaseActivity implements
 		initTitle(R.string.account_setting);
 		initView();
 
-		loadUserInfo();
+		loadCurrentAccount();
 
 		mHandler = new UiHandler();
 
-		mUserInfoBroadcastReceiver = new UserInfoBroadcastReceiver();
+		mAccountInfoBroadcastReceiver = new AccountInfoBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(ZYConstant.LOCAL_USER_INFO_CHANGED_ACTION);
-		registerReceiver(mUserInfoBroadcastReceiver, intentFilter);
+		intentFilter.addAction(ZYConstant.CURRENT_ACCOUNT_CHANGED_ACTION);
+		registerReceiver(mAccountInfoBroadcastReceiver, intentFilter);
 	}
 
-	private void loadUserInfo() {
-		UserInfo userInfo = UserHelper.loadLocalUser(this);
-		int headId = userInfo.getHeadId();
-		if (headId != UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
-			mHeadImageView.setImageResource(UserHelper
+	private void loadCurrentAccount() {
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
+		int headId = accountInfo.getHeadId();
+		if (headId != AccountInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			mHeadImageView.setImageResource(AccountHelper
 					.getHeadImageResource(headId));
 		} else {
 			releaseHeadBitmap();
-			mHeadBitmap = userInfo.getHeadBitmap();
+			mHeadBitmap = accountInfo.getHeadBitmap();
 			mHeadImageView.setImageBitmap(mHeadBitmap);
 		}
 
-		mNameTextView.setText(userInfo.getUser().getUserName());
+		mNameTextView.setText(accountInfo.getUserName());
 	}
 
 	private void releaseHeadBitmap() {
@@ -132,14 +132,14 @@ public class AccountSettingActivity extends BaseActivity implements
 	protected void onDestroy() {
 		super.onDestroy();
 		releaseHeadBitmap();
-		unregisterReceiver(mUserInfoBroadcastReceiver);
+		unregisterReceiver(mAccountInfoBroadcastReceiver);
 	}
 
-	private class UserInfoBroadcastReceiver extends BroadcastReceiver {
+	private class AccountInfoBroadcastReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			mHandler.obtainMessage(MSG_UPDATE_USER_INFO).sendToTarget();
+			mHandler.obtainMessage(MSG_UPDATE_ACCOUNT_INFO).sendToTarget();
 		}
 	}
 
@@ -147,8 +147,8 @@ public class AccountSettingActivity extends BaseActivity implements
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case MSG_UPDATE_USER_INFO:
-				loadUserInfo();
+			case MSG_UPDATE_ACCOUNT_INFO:
+				loadCurrentAccount();
 				break;
 
 			default:
