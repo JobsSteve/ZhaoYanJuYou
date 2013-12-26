@@ -38,7 +38,7 @@ public class ConnectedInfoFragment extends ListFragment implements
 			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
 			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
 			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE,
-			JuyouData.User.SSID };
+			JuyouData.User.SSID, JuyouData.User.SIGNATURE };
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,

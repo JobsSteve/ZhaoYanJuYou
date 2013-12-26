@@ -25,6 +25,9 @@ public class UserInfoUtil {
 		}
 		userInfoBuilder.setStatus(userInfo.getStatus());
 		userInfoBuilder.setNetworkType(userInfo.getNetworkType());
+		if (userInfo.getSignature() != null) {
+			userInfoBuilder.setSignature(userInfo.getSignature());
+		}
 		return userInfoBuilder.build();
 	}
 
@@ -41,6 +44,7 @@ public class UserInfoUtil {
 		userInfo.setSsid(pbUserInfo.getSsid());
 		userInfo.setStatus(pbUserInfo.getStatus());
 		userInfo.setNetworkType(pbUserInfo.getNetworkType());
+		userInfo.setSignature(pbUserInfo.getSignature());
 		return userInfo;
 	}
 }

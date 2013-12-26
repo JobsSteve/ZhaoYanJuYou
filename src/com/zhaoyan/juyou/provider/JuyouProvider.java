@@ -376,7 +376,8 @@ public class JuyouProvider extends ContentProvider {
 					+ JuyouData.User.IP_ADDR + " TEXT, "
 					+ JuyouData.User.STATUS + " INTEGER, "
 					+ JuyouData.User.TYPE + " INTEGER, " + JuyouData.User.SSID
-					+ " TEXT, " + JuyouData.User.NETWORK + " INTEGER);");
+					+ " TEXT, " + JuyouData.User.NETWORK + " INTEGER, "
+					+ JuyouData.User.SIGNATURE + " TEXT);");
 
 			// create account table
 			db.execSQL("create table " + JuyouData.Account.TABLE_NAME

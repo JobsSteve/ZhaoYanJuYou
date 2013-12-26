@@ -179,6 +179,11 @@ public class JuyouData {
 		public static final String NETWORK = "network_type";
 		public static final int NETWORK_AP = 1;
 		public static final int NETWORK_WIFI = 2;
+		
+		/**
+		 * Signature, type:string
+		 */
+		public static final String SIGNATURE = "signature";
 
 		/** order by DATE DESC */
 		public static final String SORT_ORDER_DEFAULT = USER_ID + " ASC";

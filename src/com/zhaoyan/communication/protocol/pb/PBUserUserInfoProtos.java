@@ -115,6 +115,21 @@ public final class PBUserUserInfoProtos {
      * <code>optional int32 networkType = 9;</code>
      */
     int getNetworkType();
+
+    // optional string signature = 10;
+    /**
+     * <code>optional string signature = 10;</code>
+     */
+    boolean hasSignature();
+    /**
+     * <code>optional string signature = 10;</code>
+     */
+    java.lang.String getSignature();
+    /**
+     * <code>optional string signature = 10;</code>
+     */
+    com.google.protobuf.ByteString
+        getSignatureBytes();
   }
   /**
    * Protobuf type {@code com.zhaoyan.juyou.PBUserInfo}
@@ -210,6 +225,11 @@ public final class PBUserUserInfoProtos {
             case 72: {
               bitField0_ |= 0x00000100;
               networkType_ = input.readInt32();
+              break;
+            }
+            case 82: {
+              bitField0_ |= 0x00000200;
+              signature_ = input.readBytes();
               break;
             }
           }
@@ -477,6 +497,49 @@ public final class PBUserUserInfoProtos {
       return networkType_;
     }
 
+    // optional string signature = 10;
+    public static final int SIGNATURE_FIELD_NUMBER = 10;
+    private java.lang.Object signature_;
+    /**
+     * <code>optional string signature = 10;</code>
+     */
+    public boolean hasSignature() {
+      return ((bitField0_ & 0x00000200) == 0x00000200);
+    }
+    /**
+     * <code>optional string signature = 10;</code>
+     */
+    public java.lang.String getSignature() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          signature_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string signature = 10;</code>
+     */
+    public com.google.protobuf.ByteString
+        getSignatureBytes() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        signature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
       userId_ = 0;
       userName_ = "";
@@ -487,6 +550,7 @@ public final class PBUserUserInfoProtos {
       ssid_ = "";
       status_ = 0;
       networkType_ = 0;
+      signature_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -526,6 +590,9 @@ public final class PBUserUserInfoProtos {
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         output.writeInt32(9, networkType_);
+      }
+      if (((bitField0_ & 0x00000200) == 0x00000200)) {
+        output.writeBytes(10, getSignatureBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -571,6 +638,10 @@ public final class PBUserUserInfoProtos {
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(9, networkType_);
+      }
+      if (((bitField0_ & 0x00000200) == 0x00000200)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(10, getSignatureBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -706,6 +777,8 @@ public final class PBUserUserInfoProtos {
         bitField0_ = (bitField0_ & ~0x00000080);
         networkType_ = 0;
         bitField0_ = (bitField0_ & ~0x00000100);
+        signature_ = "";
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
 
@@ -770,6 +843,10 @@ public final class PBUserUserInfoProtos {
           to_bitField0_ |= 0x00000100;
         }
         result.networkType_ = networkType_;
+        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+          to_bitField0_ |= 0x00000200;
+        }
+        result.signature_ = signature_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -818,6 +895,11 @@ public final class PBUserUserInfoProtos {
         }
         if (other.hasNetworkType()) {
           setNetworkType(other.getNetworkType());
+        }
+        if (other.hasSignature()) {
+          bitField0_ |= 0x00000200;
+          signature_ = other.signature_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1269,6 +1351,80 @@ public final class PBUserUserInfoProtos {
         return this;
       }
 
+      // optional string signature = 10;
+      private java.lang.Object signature_ = "";
+      /**
+       * <code>optional string signature = 10;</code>
+       */
+      public boolean hasSignature() {
+        return ((bitField0_ & 0x00000200) == 0x00000200);
+      }
+      /**
+       * <code>optional string signature = 10;</code>
+       */
+      public java.lang.String getSignature() {
+        java.lang.Object ref = signature_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          signature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string signature = 10;</code>
+       */
+      public com.google.protobuf.ByteString
+          getSignatureBytes() {
+        java.lang.Object ref = signature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          signature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string signature = 10;</code>
+       */
+      public Builder setSignature(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000200;
+        signature_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string signature = 10;</code>
+       */
+      public Builder clearSignature() {
+        bitField0_ = (bitField0_ & ~0x00000200);
+        signature_ = getDefaultInstance().getSignature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string signature = 10;</code>
+       */
+      public Builder setSignatureBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000200;
+        signature_ = value;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:com.zhaoyan.juyou.PBUserInfo)
     }
 
@@ -1294,13 +1450,14 @@ public final class PBUserUserInfoProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\017user_info.proto\022\021com.zhaoyan.juyou\"\256\001\n" +
+      "\n\017user_info.proto\022\021com.zhaoyan.juyou\"\301\001\n" +
       "\nPBUserInfo\022\016\n\006userId\030\001 \001(\005\022\020\n\010userName\030" +
       "\002 \001(\t\022\023\n\013headImageId\030\003 \001(\005\022\025\n\rheadImageD" +
       "ata\030\004 \001(\014\022\021\n\tipAddress\030\005 \001(\t\022\014\n\004type\030\006 \001" +
       "(\005\022\014\n\004ssid\030\007 \001(\t\022\016\n\006status\030\010 \001(\005\022\023\n\013netw" +
-      "orkType\030\t \001(\005B=\n%com.zhaoyan.communicati" +
-      "on.protocol.pbB\024PBUserUserInfoProtos"
+      "orkType\030\t \001(\005\022\021\n\tsignature\030\n \001(\tB=\n%com." +
+      "zhaoyan.communication.protocol.pbB\024PBUse" +
+      "rUserInfoProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1312,7 +1469,7 @@ public final class PBUserUserInfoProtos {
           internal_static_com_zhaoyan_juyou_PBUserInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_zhaoyan_juyou_PBUserInfo_descriptor,
-              new java.lang.String[] { "UserId", "UserName", "HeadImageId", "HeadImageData", "IpAddress", "Type", "Ssid", "Status", "NetworkType", });
+              new java.lang.String[] { "UserId", "UserName", "HeadImageId", "HeadImageData", "IpAddress", "Type", "Ssid", "Status", "NetworkType", "Signature", });
           return null;
         }
       };

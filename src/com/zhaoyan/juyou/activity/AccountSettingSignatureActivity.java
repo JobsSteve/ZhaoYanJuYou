@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.communication.UserHelper;
+import com.zhaoyan.communication.UserInfo;
 import com.zhaoyan.juyou.AccountHelper;
 import com.zhaoyan.juyou.AccountInfo;
 import com.zhaoyan.juyou.R;
@@ -110,10 +112,10 @@ public class AccountSettingSignatureActivity extends BaseActivity implements
 	private void saveAndQuit() {
 		hideInputMethodManager();
 		saveSignature();
-		
+
 		Intent intent = new Intent(ZYConstant.CURRENT_ACCOUNT_CHANGED_ACTION);
 		sendBroadcast(intent);
-		
+
 		finishWithAnimation();
 	}
 
@@ -121,6 +123,11 @@ public class AccountSettingSignatureActivity extends BaseActivity implements
 		AccountInfo accountInfo = AccountHelper.getCurrentAccount(this);
 		accountInfo.setSignature(mSignaturEditText.getText().toString());
 		AccountHelper.saveCurrentAccount(this, accountInfo);
+
+		UserInfo userInfo = UserHelper.loadLocalUser(this);
+		userInfo.setSignature(mSignaturEditText.getText().toString());
+		UserHelper.saveLocalUser(this, userInfo);
+
 		mNotice.showToast(R.string.account_setting_saved_message);
 	}
 
