@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StatFs;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhaoyan.common.file.FileManager;
-import com.zhaoyan.common.file.MultiMediaScanner;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
@@ -47,6 +47,7 @@ import com.zhaoyan.juyou.adapter.FileInfoAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter.ViewHolder;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.FileHomeInfo;
 import com.zhaoyan.juyou.common.FileIconHelper;
 import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
@@ -96,7 +97,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	private List<FileInfo> mFolderLists = new ArrayList<FileInfo>();
 	// save files
 	private List<FileInfo> mFileLists = new ArrayList<FileInfo>();
-	private List<Integer> mHomeList = new ArrayList<Integer>();
+	
+	private List<FileHomeInfo> mHomeInfoList = new ArrayList<FileHomeInfo>();
 	
 	//copy or cut file path list
 	private List<FileInfo> mCopyList = new ArrayList<FileInfo>();
@@ -119,9 +121,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	// context menu
 	// save current sdcard type
-	private static int storge_type = -1;
-	// save current sdcard type path
-	private String mCurrent_root_path;
+	private int storge_type = -1;
+	// save current root path
+	private String mRootPath;
 
 	private SharedPreferences sp = null;
 
@@ -177,7 +179,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				mHomeAdapter.notifyDataSetChanged();
 				break;
 			case MSG_REFRESH:
-				browserTo(new File(mCurrentPath));
+				refreshUI();
 				break;
 			case MSG_OPERATION_OVER:
 				destroyMenuBar();
@@ -254,22 +256,46 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		sdcard_path = sp.getString(SharedPreferenceUtil.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
 		internal_path = sp.getString(SharedPreferenceUtil.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
 		Log.d(TAG, "sdcard_path:" + sdcard_path + "\n," + "internal_path:" + internal_path);
-
-		mHomeList.clear();
+		
+		mHomeInfoList.clear();
 		// init
-		if (!MountManager.NO_INTERNAL_SDCARD.equals(internal_path)) {
-			mHomeList.add(INTERNAL);
+		FileHomeInfo homeInfo = null;
+		StatFs stat = null;
+		if (MountManager.isInternalExist(internal_path)) {
+			homeInfo = new FileHomeInfo();
+			homeInfo.setStorageId(INTERNAL);
+			homeInfo.setRootPath(internal_path);
+			
+			stat = new StatFs(internal_path);
+			long blocksize = stat.getBlockSize();
+			long availableblocks = stat.getAvailableBlocks();
+			long totalBlocks = stat.getBlockCount();
+			homeInfo.setAvailableSize(availableblocks * blocksize);
+			homeInfo.setTotalSize(totalBlocks * blocksize);
+			
+			mHomeInfoList.add(homeInfo);
 		}
 
 		if (!MountManager.NO_EXTERNAL_SDCARD.equals(sdcard_path)) {
-			mHomeList.add(SDCARD);
+			homeInfo = new FileHomeInfo();
+			homeInfo.setStorageId(SDCARD);
+			homeInfo.setRootPath(sdcard_path);
+			
+			stat = new StatFs(sdcard_path);
+			long blocksize = stat.getBlockSize();
+			long availableblocks = stat.getAvailableBlocks();
+			long totalBlocks = stat.getBlockCount();
+			homeInfo.setAvailableSize(availableblocks * blocksize);
+			homeInfo.setTotalSize(totalBlocks * blocksize);
+			
+			mHomeInfoList.add(homeInfo);
 		}
 
-		mHomeAdapter = new FileHomeAdapter(mApplicationContext, mHomeList);
+		mHomeAdapter = new FileHomeAdapter(mApplicationContext, mHomeInfoList);
 		mIconHelper = new FileIconHelper(mApplicationContext);
 		mAdapter = new FileInfoAdapter(mApplicationContext, mAllLists, mIconHelper);
 
-		if (mHomeList.size() <= 0) {
+		if (mHomeInfoList.size() <= 0) {
 			mNavBarLayout.setVisibility(View.GONE);
 			mListViewTip.setVisibility(View.VISIBLE);
 			mListViewTip.setText(R.string.no_sdcard);
@@ -306,20 +332,13 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if (STATUS_HOME == mStatus) {
-			int type = mHomeList.get(position);
+			storge_type = mHomeInfoList.get(position).getStorageId();
 			mNavBarLayout.setVisibility(View.VISIBLE);
 			mStatus = STATUS_FILE;
+			mRootPath = mHomeInfoList.get(position).getRootPath();
+			
 			setAdapter(mAllLists);
-			switch (type) {
-			case INTERNAL:
-				doInternal();
-				break;
-			case SDCARD:
-				doSdcard();
-				break;
-			default:
-				break;
-			}
+			browserTo(new File(mRootPath));
 		} else {
 			if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 				mAdapter.setSelected(position);
@@ -621,7 +640,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			curFilePath = initFileInfo;
 
 			if (curFilePath != null) {
-				String[] result = MountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
+				String[] result = MountManager.getShowPath(mRootPath, curFilePath).split(MountManager.SEPERATOR);
 				for (String string : result) {
 					// add string to tab
 					addTab(string);
@@ -721,15 +740,15 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				// mTabsHolder.addView(mBlankTab);
 
 				if (id == 0) {
-					curFilePath = mCurrent_root_path;
+					curFilePath = mRootPath;
 				} else {
-					String[] result = MountManager.getShowPath(mCurrent_root_path, curFilePath).split(MountManager.SEPERATOR);
+					String[] result = MountManager.getShowPath(mRootPath, curFilePath).split(MountManager.SEPERATOR);
 					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i <= id; i++) {
 						sb.append(MountManager.SEPERATOR);
 						sb.append(result[i]);
 					}
-					curFilePath = mCurrent_root_path + sb.toString();
+					curFilePath = mRootPath + sb.toString();
 				}
 
 				int top = -1;
@@ -748,26 +767,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			}
 		}
 		// end tab manager
-	}
-
-	public void doInternal() {
-		storge_type = MountManager.INTERNAL;
-		if (MountManager.NO_INTERNAL_SDCARD.equals(internal_path)) {
-			// 没有外部&内部sdcard
-			return;
-		}
-		mCurrent_root_path = internal_path;
-		browserTo(new File(mCurrent_root_path));
-	}
-
-	public void doSdcard() {
-		storge_type = MountManager.SDCARD;
-		mCurrent_root_path = sdcard_path;
-		if (mCurrent_root_path == null) {
-			Log.e(TAG, "MountManager.SDCARD_PATH = null.");
-			return;
-		}
-		browserTo(new File(mCurrent_root_path));
 	}
 
 	@Override
@@ -812,7 +811,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		mNavBarLayout.setVisibility(View.GONE);
 
 		mStatus = STATUS_HOME;
-		updateUI(mHomeList.size());
+		updateUI(mHomeInfoList.size());
 		mListView.setAdapter(mHomeAdapter);
 		mHomeAdapter.notifyDataSetChanged();
 	}
@@ -834,7 +833,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			return true;
 		case STATUS_FILE:
 			// if is root path,back to Home view
-			if (mCurrent_root_path.equals(mCurrentPath)) {
+			if (isRootPath()) {
 				goToHome();
 			} else {
 				NavigationRecord navRecord = mFileInfoManager.getPrevNavigation();
@@ -957,7 +956,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 						if (!file.mkdir()) {
 							mNotice.showToast(R.string.folder_create_failed);
 						}else {
-							browserTo(new File(mCurrentPath));
+							refreshUI();
 						}
 					}
 					dialog.dismiss();
@@ -1146,5 +1145,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		message.setData(bundle);
 		message.what = MSG_UPDATE_LIST;
 		message.sendToTarget();
+	}
+	
+	private boolean isRootPath(){
+		return mRootPath.equals(mCurrentPath);
 	}
 }

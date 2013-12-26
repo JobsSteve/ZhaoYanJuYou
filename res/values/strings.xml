@@ -351,5 +351,8 @@
      
      <string name="file_rename_error_1">命名错误：文件名不能包含“%1s”</string>
      <string name="file_rename_error_2">命名错误：文件名不能是“%1s”</string>
+     
+     <string name="storage_available">可用空间 %1s</string>
+     <string name="storage_total">总容量 %1s</string>
 
 </resources>

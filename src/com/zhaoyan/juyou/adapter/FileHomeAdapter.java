@@ -3,7 +3,9 @@ package com.zhaoyan.juyou.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.FileHomeInfo;
 import com.zhaoyan.juyou.fragment.FileBrowserFragment;
 
 import android.content.Context;
@@ -16,12 +18,14 @@ import android.widget.TextView;
 
 public class FileHomeAdapter extends BaseAdapter {
 	private static final String TAG = "FileHomeAdapter";
-	private List<Integer> homeList = new ArrayList<Integer>();
+	private List<FileHomeInfo> homeList = new ArrayList<FileHomeInfo>();
 	private LayoutInflater mInflater = null;
+	private Context mContext;
 
-	public FileHomeAdapter(Context context, List<Integer> homeList) {
+	public FileHomeAdapter(Context context, List<FileHomeInfo> homeList) {
 		mInflater = LayoutInflater.from(context);
 		this.homeList = homeList;
+		mContext = context;
 	}
 
 	@Override
@@ -40,43 +44,33 @@ public class FileHomeAdapter extends BaseAdapter {
 		return null;
 	}
 
-	class ViewHolder {
-		ImageView iconView;
-		TextView nameView;
-		TextView dateAndSizeView;
-	}
-
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View view = null;
-		ViewHolder holder = null;
 
 		if (null == convertView || null == convertView.getTag()) {
-			holder = new ViewHolder();
-			view = mInflater.inflate(R.layout.file_item, parent, false);
-			holder.iconView = (ImageView) view
-					.findViewById(R.id.file_icon_imageview);
-			holder.nameView = (TextView) view
-					.findViewById(R.id.tv_filename);
-			holder.dateAndSizeView = (TextView) view
-					.findViewById(R.id.tv_fileinfo);
-			holder.dateAndSizeView.setVisibility(View.GONE);
-			view.setTag(holder);
+			view = mInflater.inflate(R.layout.file_home_item, parent, false);
 		} else {
 			view = convertView;
-			holder = (ViewHolder) view.getTag();
 		}
+		
+		ImageView imageView = (ImageView) view.findViewById(R.id.iv_home_icon);
+		TextView titleView = (TextView) view.findViewById(R.id.tv_home_title);
+		TextView availableView = (TextView) view.findViewById(R.id.tv_available_size);
+		TextView totalView = (TextView) view.findViewById(R.id.tv_total_size);
 
-		switch (homeList.get(position)) {
+		switch (homeList.get(position).getStorageId()) {
 		case FileBrowserFragment.INTERNAL:
-			holder.iconView.setImageResource(R.drawable.storage_internal_n);
-			holder.nameView.setText(R.string.internal_sdcard);
+			imageView.setImageResource(R.drawable.storage_internal_n);
+			titleView.setText(R.string.internal_sdcard);
 			break;
 		case FileBrowserFragment.SDCARD:
-			holder.iconView.setImageResource(R.drawable.storage_sd_card_n);
-			holder.nameView.setText(R.string.sdcard);
+			imageView.setImageResource(R.drawable.storage_sd_card_n);
+			titleView.setText(R.string.sdcard);
 			break;
 		}
+		availableView.setText(mContext.getString(R.string.storage_available, ZYUtils.getFormatSize(homeList.get(position).getAvailableSize())));
+		totalView.setText(mContext.getString(R.string.storage_total, ZYUtils.getFormatSize(homeList.get(position).getTotalSize())));
 
 		return view;
 	}
