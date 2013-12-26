@@ -21,6 +21,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AccountSettingActivity;
 import com.zhaoyan.juyou.activity.TrafficStatisticsActivity;
 import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 public class WoFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "WoFragment";
@@ -83,6 +84,13 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 		}
 
 		mNickNameTextView.setText(accountInfo.getUserName());
+		
+		int touristAccount = accountInfo.getTouristAccount();
+		if (touristAccount == JuyouData.Account.TOURIST_ACCOUNT_TRUE) {
+			mAccountTextView.setText(R.string.wo_account_tourist);
+		} else {
+			mAccountTextView.setText(accountInfo.getAccountZhaoyan());
+		}
 	}
 
 	private void releaseHeadBitmap() {
