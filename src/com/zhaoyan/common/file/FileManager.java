@@ -325,6 +325,18 @@ public class FileManager {
 		return true;
 	}
 	
+	/**
+	 * rename the file
+	 * @param oldFile
+	 * @param newName
+	 */
+	public static String rename(File oldFile, String newName){
+			String parentPath = oldFile.getParent(); // 取得上一级目录
+			File newFile = new File(parentPath + "/" + newName);
+			oldFile.renameTo(newFile);
+			return newFile.getAbsolutePath();
+	}
+	
 	
 	/**
 	 * show rename dialog,modify single file,for audio or video

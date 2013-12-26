@@ -26,15 +26,12 @@ import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileInfoManager {
 	private static final String TAG = "FileInfoManager";
-	
+
 	private int renameFlag = 0;
 	/**
 	 * show rename dialog
 	 * 
-	 * @param fileInfo
-	 *            the file info
-	 * @param position
-	 *            the click position
+	 * @param list file list for rename
 	 */
 	public void showRenameDialog(final Context context, final List<FileInfo> list) {
 		final ZyEditDialog editDialog = new ZyEditDialog(context);
@@ -47,7 +44,7 @@ public class FileInfoManager {
 			public void onClick(Dialog dialog) {
 				String newName = editDialog.getEditTextStr();
 				//verify name format
-				String tipMsg = ZYUtils.FileNameFormatVerify(context, newName);
+				String tipMsg = ZYUtils.FileNameFormatVerify(context.getApplicationContext(), newName);
 				if (null != tipMsg) {
 					editDialog.showTipMessage(true,tipMsg);
 					return;
@@ -58,7 +55,7 @@ public class FileInfoManager {
 				
 				String oldPath = list.get(renameFlag).filePath;
 				list.get(renameFlag).fileName = newName;
-				list.get(renameFlag).filePath = rename(
+				list.get(renameFlag).filePath = FileManager.rename(
 						new File(list.get(renameFlag).filePath),
 						newName);
 				String newPath = list.get(renameFlag).filePath;
@@ -75,7 +72,7 @@ public class FileInfoManager {
 				List<String> pathsList = new ArrayList<String>();
 				pathsList.add(oldPath);
 				pathsList.add(newPath);
-				MultiMediaScanner.scanFiles(context, pathsList, null);
+				MultiMediaScanner.scanFiles(context.getApplicationContext(), pathsList, null);
 			}
 		});		
 		editDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
@@ -93,18 +90,6 @@ public class FileInfoManager {
 			}
 		});
 		editDialog.show();
-	}
-	
-	/**
-	 * rename the file
-	 * @param oldFile
-	 * @param newName
-	 */
-	public String rename(File oldFile, String newName){
-			String parentPath = oldFile.getParent(); // 取得上一级目录
-			File newFile = new File(parentPath + "/" + newName);
-			oldFile.renameTo(newFile);
-			return newFile.getAbsolutePath();
 	}
 	
 	/**

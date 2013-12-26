@@ -33,6 +33,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.MultiMediaScanner;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
@@ -419,6 +420,28 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			Log.e(TAG, "It is a file");
 		}
 	}
+	
+	//test
+	public void refreshUI(){
+//		Log.d(TAG, "refreshUI:" + mCurrentPath);
+		int firstVisbilePos = mListView.getFirstVisiblePosition();
+//		Log.d(TAG, "refreshUi.firstVisbilePos="  + firstVisbilePos);
+		clearList();
+
+		File file = new File(mCurrentPath);
+		fillList(file.listFiles());
+
+		// sort
+		Collections.sort(mFolderLists, NAME_COMPARATOR);
+		Collections.sort(mFileLists, NAME_COMPARATOR);
+
+		mAllLists.addAll(mFolderLists);
+		mAllLists.addAll(mFileLists);
+
+		mListView.setSelection(firstVisbilePos);
+		mAdapter.notifyDataSetChanged();
+	}
+	//test
 
 	private void clearList() {
 		mAllLists.clear();
@@ -721,7 +744,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				updateHomeButton(type);
 			} else {
 				// Refresh current page
-				browserTo(new File(mCurrentPath));
+				refreshUI();
 			}
 		}
 		// end tab manager
@@ -890,8 +913,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 					switch (item.getItemId()) {
 					case ActionMenu.ACTION_MENU_RENAME:
 						List<FileInfo> renameList = mAdapter.getSelectedFileInfos();
-						mFileInfoManager.showRenameDialog(getActivity(), renameList);
+						mFileInfoManager.showRenameDialog(mContext, renameList);
 						mAdapter.notifyDataSetChanged();
+						
 						destroyMenuBar();
 						break;
 					case ActionMenu.ACTION_MENU_INFO:

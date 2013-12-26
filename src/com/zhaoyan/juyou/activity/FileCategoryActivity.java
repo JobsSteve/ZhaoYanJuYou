@@ -7,7 +7,6 @@ import java.util.Vector;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,9 +23,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.file.FileManager;
+import com.zhaoyan.common.file.MultiMediaScanner;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter.ViewHolder;
@@ -44,7 +46,7 @@ import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
-import com.zhaoyan.juyou.dialog.ZyProgressDialog;
+import com.zhaoyan.juyou.dialog.ZyEditDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileCategoryActivity extends BaseActivity implements
