@@ -12,6 +12,7 @@ message PBUserInfo {
 	optional string ssid = 7;
 	optional int32 status = 8;
 	optional int32 networkType = 9;
+	optional string signature = 10;
 }
 
 

@@ -54,13 +54,9 @@ public class ConnectedUserAdapter extends CursorAdapter {
 						.getHeadImageResource(headId));
 			}
 
-			// status
-			int status = cursor.getInt(cursor.getColumnIndex(JuyouData.User.STATUS));
-			if (status == JuyouData.User.STATUS_SERVER_CREATED) {
-				holder.userStatus.setText(R.string.network_creator);
-			} else if (status == JuyouData.User.STATUS_CONNECTED) {
-				holder.userStatus.setText(R.string.connected);
-			}
+			// signature
+			String signature = cursor.getString(cursor.getColumnIndex(JuyouData.User.SIGNATURE));
+			holder.userSignature.setText(signature);
 		}
 	}
 
@@ -71,7 +67,7 @@ public class ConnectedUserAdapter extends CursorAdapter {
 
 		holder.userIcon = (ImageView) view.findViewById(R.id.iv_cii_user_icon);
 		holder.userName = (TextView) view.findViewById(R.id.tv_cii_user_name);
-		holder.userStatus = (TextView) view.findViewById(R.id.tv_cii_user_status);
+		holder.userSignature = (TextView) view.findViewById(R.id.tv_cii_user_signature);
 		view.setTag(holder);
 		return view;
 	}
@@ -79,6 +75,6 @@ public class ConnectedUserAdapter extends CursorAdapter {
 	private class ViewHolder {
 		ImageView userIcon;
 		TextView userName;
-		TextView userStatus;
+		TextView userSignature;
 	}
 }

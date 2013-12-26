@@ -167,8 +167,8 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 	@Override
 	public void OnCommunicationLost(SocketCommunication communication) {
 		Log.d(TAG, "OnCommunicationLost " + communication);
-		CommunicationRecovery recovery = new CommunicationRecovery(mContext);
-		recovery.getLastSatus();
+//		CommunicationRecovery recovery = new CommunicationRecovery(mContext);
+//		recovery.getLastSatus();
 		
 		mCommunications.remove(communication);
 		if (mCommunications.isEmpty()) {
@@ -188,7 +188,7 @@ public class SocketCommunicationManager implements OnClientConnectedListener,
 			stopScreenMonitor();
 		}
 		
-		recovery.attemptRecovery();
+//		recovery.attemptRecovery();
 	}
 
 	private void startScreenMonitor() {

@@ -22,9 +22,18 @@ public class UserInfo implements Serializable {
 	private String mSsid;
 	private int mStatus;
 	private int mNetworkType;
+	private String mSignature;
 
 	public UserInfo() {
 
+	}
+
+	public void setSignature(String signature) {
+		mSignature = signature;
+	}
+
+	public String getSignature() {
+		return mSignature;
 	}
 
 	public void setNetworkType(int type) {

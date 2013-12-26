@@ -1,9 +1,13 @@
 package com.zhaoyan.juyou.fragment;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,21 +15,26 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zhaoyan.communication.UserHelper;
-import com.zhaoyan.communication.UserInfo;
+import com.zhaoyan.juyou.AccountHelper;
+import com.zhaoyan.juyou.AccountInfo;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AccountSettingActivity;
 import com.zhaoyan.juyou.activity.TrafficStatisticsActivity;
+import com.zhaoyan.juyou.common.ZYConstant;
+import com.zhaoyan.juyou.provider.JuyouData;
 
 public class WoFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "WoFragment";
-	private View mUserInfoSettingView;
+	private View mAccountInfoSettingView;
 	private Bitmap mHeadBitmap;
 	private ImageView mHeadImageView;
 	private TextView mNickNameTextView;
 	private TextView mAccountTextView;
 	private View mQuitView;
-	private static final int REQUEST_SET_USER_INFO = 1;
+
+	private Handler mHandler;
+	private static final int MSG_UPDATE_ACCOUNT_INFO = 1;
+	private BroadcastReceiver mAccountInfoBroadcastReceiver;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,13 +43,21 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 				.inflate(R.layout.wo_fragment, container, false);
 		initTitle(rootView, R.string.wo);
 		initView(rootView);
-		updateUserInfo();
+		updateAccountInfo();
+
+		mHandler = new UiHandler();
+
+		mAccountInfoBroadcastReceiver = new UserInfoBroadcastReceiver();
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(ZYConstant.CURRENT_ACCOUNT_CHANGED_ACTION);
+		getActivity().registerReceiver(mAccountInfoBroadcastReceiver,
+				intentFilter);
 		return rootView;
 	}
 
 	private void initView(View rootView) {
-		mUserInfoSettingView = rootView.findViewById(R.id.rl_wo_head_name);
-		mUserInfoSettingView.setOnClickListener(this);
+		mAccountInfoSettingView = rootView.findViewById(R.id.rl_wo_head_name);
+		mAccountInfoSettingView.setOnClickListener(this);
 		mQuitView = rootView.findViewById(R.id.ll_wo_quit);
 		mQuitView.setOnClickListener(this);
 
@@ -54,19 +71,26 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 		mAccountTextView = (TextView) rootView.findViewById(R.id.tv_wo_account);
 	}
 
-	private void updateUserInfo() {
-		UserInfo userInfo = UserHelper.loadLocalUser(mContext);
-		int headId = userInfo.getHeadId();
-		if (headId != UserInfo.HEAD_ID_NOT_PRE_INSTALL) {
-			mHeadImageView.setImageResource(UserHelper
+	private void updateAccountInfo() {
+		AccountInfo accountInfo = AccountHelper.getCurrentAccount(mContext);
+		int headId = accountInfo.getHeadId();
+		if (headId != AccountInfo.HEAD_ID_NOT_PRE_INSTALL) {
+			mHeadImageView.setImageResource(AccountHelper
 					.getHeadImageResource(headId));
 		} else {
 			releaseHeadBitmap();
-			mHeadBitmap = userInfo.getHeadBitmap();
+			mHeadBitmap = accountInfo.getHeadBitmap();
 			mHeadImageView.setImageBitmap(mHeadBitmap);
 		}
 
-		mNickNameTextView.setText(userInfo.getUser().getUserName());
+		mNickNameTextView.setText(accountInfo.getUserName());
+		
+		int touristAccount = accountInfo.getTouristAccount();
+		if (touristAccount == JuyouData.Account.TOURIST_ACCOUNT_TRUE) {
+			mAccountTextView.setText(R.string.wo_account_tourist);
+		} else {
+			mAccountTextView.setText(accountInfo.getAccountZhaoyan());
+		}
 	}
 
 	private void releaseHeadBitmap() {
@@ -81,18 +105,14 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 	public void onDestroyView() {
 		super.onDestroyView();
 		releaseHeadBitmap();
+		getActivity().unregisterReceiver(mAccountInfoBroadcastReceiver);
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.rl_wo_head_name:
-			Intent intent = new Intent(getActivity(),
-					AccountSettingActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			startActivityForResult(intent, REQUEST_SET_USER_INFO);
-			getActivity()
-					.overridePendingTransition(R.anim.activity_right_in, 0);
+			openActivity(AccountSettingActivity.class);
 			break;
 		case R.id.rl_wo_traffic_statistics:
 			openActivity(TrafficStatisticsActivity.class);
@@ -106,23 +126,30 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 		}
 	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case REQUEST_SET_USER_INFO:
-			if (resultCode == Activity.RESULT_OK) {
-				updateUserInfo();
-			}
-			break;
-
-		default:
-			break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
 	private void quit() {
 		getActivity().finish();
+	}
+
+	private class UserInfoBroadcastReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			mHandler.obtainMessage(MSG_UPDATE_ACCOUNT_INFO).sendToTarget();
+		}
+	}
+
+	private class UiHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case MSG_UPDATE_ACCOUNT_INFO:
+				updateAccountInfo();
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 
 }

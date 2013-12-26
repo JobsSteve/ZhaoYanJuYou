@@ -24,13 +24,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/tv_cii_user_status"
+            android:id="@+id/tv_cii_user_signature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:singleLine="false"
             android:textColor="#696969"
             android:textSize="12sp" />
     </LinearLayout>

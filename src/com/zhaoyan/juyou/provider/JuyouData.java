@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class JuyouData {
 	public static final String DATABASE_NAME = "juyou.db";
-	public static final int DATABASE_VERSION = 5;
+	public static final int DATABASE_VERSION = 6;
 
 	public static final String AUTHORITY = "com.zhaoyan.juyou.provider.JuyouProvider";
 
@@ -179,8 +179,97 @@ public class JuyouData {
 		public static final String NETWORK = "network_type";
 		public static final int NETWORK_AP = 1;
 		public static final int NETWORK_WIFI = 2;
+		
+		/**
+		 * Signature, type:string
+		 */
+		public static final String SIGNATURE = "signature";
 
 		/** order by DATE DESC */
 		public static final String SORT_ORDER_DEFAULT = USER_ID + " ASC";
+	}
+
+	/**
+	 * table account
+	 */
+	public static final class Account implements BaseColumns {
+		public static final String TABLE_NAME = "account";
+		public static final Uri CONTENT_URI = Uri.parse("content://"
+				+ AUTHORITY + "/account");
+		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/account";
+		public static final String CONTENT_TYPE_ITEM = "vnd.android.cursor.item/account";
+
+		/**
+		 * user name, type:string
+		 */
+		public static final String USER_NAME = "name";
+		/**
+		 * preinstall head picture ID, type:int
+		 */
+		public static final String HEAD_ID = "head_id";
+		/**
+		 * head picture, type:blob
+		 */
+		public static final String HEAD_DATA = "head";
+
+		/**
+		 * Account of zhaoyan, type:string
+		 */
+		public static final String ACCOUNT_ZHAOYAN = "account_zhaoyan";
+
+		/**
+		 * phone number, type:string
+		 */
+		public static final String PHONE_NUMBER = "phone";
+
+		/**
+		 * Email, type:string
+		 */
+		public static final String EMAIL = "email";
+		/**
+		 * Account of qq, type:string
+		 */
+		public static final String ACCOUNT_QQ = "account_qq";
+		/**
+		 * Account of renren, type:string
+		 */
+		public static final String ACCOUNT_RENREN = "account_renren";
+		/**
+		 * Account of sina weibo, type:string
+		 */
+		public static final String ACCOUNT_SINA_WEIBO = "account_sina_weibo";
+		/**
+		 * Account of tencent weibo, type:string
+		 */
+		public static final String ACCOUNT_TENCENT_WEIBO = "account_tencent_weibo";
+
+		/**
+		 * Signature, type:string
+		 */
+		public static final String SIGNATURE = "signature";
+		/**
+		 * Login status, type:int
+		 */
+		public static final String LOGIN_STATUS = "login_status";
+		public static final int LOGIN_STATUS_NOT_LOGIN = 0;
+		public static final int LOGIN_STATUS_LOGIN = 1;
+
+		/**
+		 * Last login time, type:long
+		 */
+		public static final String LAST_LOGIN_TIME = "last_login_time";
+
+		/**
+		 * Tourist account or not, type:int
+		 */
+		public static final String TOURIST_ACCOUNT = "tourist_account";
+		public static final int TOURIST_ACCOUNT_TRUE = 1;
+		public static final int TOURIST_ACCOUNT_FALSE = 0;
+
+		/** order by _id ASC */
+		public static final String SORT_ORDER_DEFAULT = _ID + " ASC";
+		/** order by last_login_time DESC */
+		public static final String SORT_ORDER_LOGIN_TIME = LAST_LOGIN_TIME
+				+ " DESC";
 	}
 }

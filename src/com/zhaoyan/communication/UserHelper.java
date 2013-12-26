@@ -26,7 +26,8 @@ public class UserHelper {
 			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
 			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
 			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE,
-			JuyouData.User.SSID, JuyouData.User.NETWORK };
+			JuyouData.User.SSID, JuyouData.User.NETWORK,
+			JuyouData.User.SIGNATURE };
 
 	public static final int getHeadImageResource(int headId) {
 		return HEAD_IMAGES[headId];
@@ -73,6 +74,9 @@ public class UserHelper {
 				.getInt(cursor.getColumnIndex(JuyouData.User.STATUS));
 		int networkType = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.User.NETWORK));
+		String signature = cursor.getString(cursor
+				.getColumnIndex(JuyouData.User.SIGNATURE));
+
 		userInfo.setHeadId(headID);
 		userInfo.setHeadBitmapData(headData);
 		userInfo.setType(type);
@@ -80,6 +84,7 @@ public class UserHelper {
 		userInfo.setSsid(ssid);
 		userInfo.setStatus(status);
 		userInfo.setNetworkType(networkType);
+		userInfo.setSignature(signature);
 		return userInfo;
 	}
 
@@ -227,6 +232,7 @@ public class UserHelper {
 		values.put(JuyouData.User.SSID, userInfo.getSsid());
 		values.put(JuyouData.User.STATUS, userInfo.getStatus());
 		values.put(JuyouData.User.NETWORK, userInfo.getNetworkType());
+		values.put(JuyouData.User.SIGNATURE, userInfo.getSignature());
 		return values;
 	}
 
