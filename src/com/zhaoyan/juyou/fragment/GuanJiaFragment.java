@@ -1,9 +1,5 @@
 package com.zhaoyan.juyou.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,14 +22,10 @@ import com.zhaoyan.juyou.activity.AudioActivity;
 import com.zhaoyan.juyou.activity.ConnectFriendsActivity;
 import com.zhaoyan.juyou.activity.FileCategoryActivity;
 import com.zhaoyan.juyou.activity.FileBrowserActivity;
-import com.zhaoyan.juyou.activity.GameActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.ImageActivity;
 import com.zhaoyan.juyou.activity.InviteActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
-import com.zhaoyan.juyou.common.ActionMenu;
-import com.zhaoyan.juyou.dialog.MultiChoiceDialog;
-import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "GuanJiaFragment";
@@ -153,10 +144,14 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			openActivity(VideoActivity.class);
 			break;
 		case R.id.rl_guanjia_application:
-			openActivity(AppActivity.class);
+			Bundle appBundle = new Bundle();
+			appBundle.putInt(AppActivity.APP_TYPE, AppActivity.TYPE_APP);
+			openActivity(AppActivity.class, appBundle);
 			break;
 		case R.id.rl_guanjia_game:
-			openActivity(GameActivity.class);
+			Bundle gameBundle = new Bundle();
+			gameBundle.putInt(AppActivity.APP_TYPE, AppActivity.TYPE_GAME);
+			openActivity(AppActivity.class, gameBundle);
 			break;
 		case R.id.rl_guanjia_file_all:
 			openActivity(FileBrowserActivity.class);

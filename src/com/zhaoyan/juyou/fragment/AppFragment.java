@@ -1,19 +1,26 @@
 package com.zhaoyan.juyou.fragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Dialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.pm.PackageManager;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +31,11 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.dreamlink.communication.lib.util.Notice;
+import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.adapter.AppCursorAdapter;
 import com.zhaoyan.juyou.adapter.AppCursorAdapter.ViewHolder;
 import com.zhaoyan.juyou.common.ActionMenu;
@@ -35,21 +45,41 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.AppDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
+import com.zhaoyan.juyou.notification.NotificationMgr;
 import com.zhaoyan.juyou.provider.AppData;
 
 /**
  * use this to load app
  */
-public class AppFragment extends AppBaseFragment implements OnItemClickListener, OnItemLongClickListener,
+public class AppFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener,
 		 MenuBarInterface {
 	private static final String TAG = "AppFragment";
 	
+	private GridView mGridView;
+	private ProgressBar mLoadingBar;
+
+	private AppCursorAdapter mAdapter = null;
+	
+	private AppDialog mAppDialog = null;
+	private List<String> mUninstallList = null;
+	private PackageManager pm = null;
+	private Notice mNotice = null;
+	private static final int REQUEST_CODE_UNINSTALL = 0x101;
+	
 	private QueryHandler mQueryHandler;
 	
-	private static final int MSG_UPDATE_UI = 0;
-	private static final int MSG_UPDATE_LIST= 1;
+	private int mType = -1;
+	
+	private NotificationMgr mNotificationMgr;
+	private boolean mIsBackupHide = false;
+	
+	private static final int MSG_TOAST = 0;
+	private static final int MSG_BACKUPING = 1;
+	private static final int MSG_BACKUP_OVER = 3;
+	private static final int MSG_UPDATE_UI = 4;
+	private static final int MSG_UPDATE_LIST= 5;
 	private Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -62,22 +92,53 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 				Intent intent = new Intent(AppManager.ACTION_REFRESH_APP);
 				mContext.sendBroadcast(intent);
 				break;
-
+			case MSG_TOAST:
+				String message = (String) msg.obj;
+				mNotice.showToast(message);
+				break;
+			case MSG_BACKUPING:
+				int progress = msg.arg1;
+				int max = msg.arg2;
+				String name = (String) msg.obj;
+				mNotificationMgr.updateBackupNotification(progress, max, name);
+				break;
+			case MSG_BACKUP_OVER:
+				long duration = (Long) msg.obj;
+				mNotificationMgr.appBackupOver(duration);
+				break;
 			default:
 				break;
 			}
 		};
 	};
 	
+	public static AppFragment newInstance(int type){
+		AppFragment f = new AppFragment();
+		Bundle args = new Bundle();
+		args.putInt(AppActivity.APP_TYPE, type);
+		f.setArguments(args);
+		
+		return f;
+	}
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mAppId = getArguments() != null ? getArguments().getInt(Extra.APP_ID) : 1;
+		mType = getArguments() != null ? getArguments().getInt(AppActivity.APP_TYPE) : AppActivity.TYPE_APP;
+		if (null != savedInstanceState) {
+			mType = savedInstanceState.getInt(AppActivity.APP_TYPE);
+		}
+		
+		mNotice = new Notice(getActivity().getApplicationContext());
+		pm = getActivity().getPackageManager();
+		
+		mNotificationMgr = new NotificationMgr(getActivity().getApplicationContext());
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
+		outState.putInt(AppActivity.APP_TYPE, mType);
 	}
 	
 	@Override
@@ -93,7 +154,12 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mGridView = (GridView) rootView.findViewById(R.id.app_normal_gridview);
 		mLoadingBar = (ProgressBar) rootView.findViewById(R.id.app_progressbar);
 		
-		initTitle(rootView.findViewById(R.id.rl_ui_app), R.string.app);
+		if (isGameUI()) {
+			initTitle(rootView.findViewById(R.id.rl_ui_app), R.string.game);
+		}else {
+			initTitle(rootView.findViewById(R.id.rl_ui_app), R.string.app);
+		}
+		
 		initMenuBar(rootView);
 		
 		mQueryHandler = new QueryHandler(getActivity().getApplicationContext().getContentResolver());
@@ -119,7 +185,13 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		mLoadingBar.setVisibility(View.VISIBLE);
 		//查询类型为应用的所有数据
 		String selectionString = AppData.App.TYPE + "=?" ;
-    	String args[] = {"" + AppManager.NORMAL_APP};
+		String[] args = new String[1];
+		if (isGameUI()) {
+			args[0] = "" + AppManager.GAME_APP;
+		}else {
+			args[0] = "" + AppManager.NORMAL_APP;
+		}
+		
 		mQueryHandler.startQuery(11, null, AppData.App.CONTENT_URI, PROJECTION, selectionString, args, AppData.App.SORT_ORDER_LABEL);
 	}
 	
@@ -158,10 +230,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			mAdapter.setChecked(position);
 			mAdapter.notifyDataSetChanged();
 			
-			int selectedCount = mAdapter.getCheckedCount();
-			updateTitleNum(selectedCount);
 			updateMenuBar();
-			mMenuBarManager.refreshMenus(mActionMenu);
 		} else {
 			Cursor cursor = mAdapter.getCursor();
 			cursor.moveToPosition(position);
@@ -193,12 +262,16 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			updateTitleNum(1);
 		}
 		
-		boolean isChecked = mAdapter.isChecked(position);
-		mAdapter.setChecked(position, !isChecked);
+		mAdapter.setChecked(position);
 		mAdapter.notifyDataSetChanged();
 		
 		mActionMenu = new ActionMenu(getActivity().getApplicationContext());
-		getActionMenuInflater().inflate(R.menu.app_menu, mActionMenu);
+		if (isGameUI()) {
+			getActionMenuInflater().inflate(R.menu.game_menu, mActionMenu);
+		}else {
+			getActionMenuInflater().inflate(R.menu.app_menu, mActionMenu);
+		}
+		
 		startMenuBar();
 		return true;
 	}
@@ -233,7 +306,6 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			destroyMenuBar();
 			return false;
 		}
-		
 		return true;
 	}
 
@@ -338,7 +410,7 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			for (int i = 0; i < pkgList.size(); i++) {
 				label = AppManager.getAppLabel(pkgList.get(i), pm);
 				dialog.updateUI(i + 1, label);
-				moveToGame(pkgList.get(i));
+				doMoveTo(pkgList.get(i));
 			}
 			return null;
 		}
@@ -351,6 +423,14 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 				dialog = null;
 			}
 			notifyUpdateUI();
+		}
+	}
+	
+	private void doMoveTo(String packageName){
+		if (isGameUI()) {
+			moveToApp(packageName);
+		}else {
+			moveToGame(packageName);
 		}
 	}
 	
@@ -375,6 +455,24 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 		contentResolver.insert(AppData.AppGame.CONTENT_URI, values);
 	}
 	
+	private void moveToApp(String packageName){
+//		Log.d(TAG, "moveToApp:" + packageName);
+		//move to app
+		//1，删除game表中的数据
+		//2，将app表中的type改为app
+		//3，通知AppFragment
+		//4，重新查询数据库
+		ContentResolver contentResolver = getActivity().getContentResolver();
+		Uri uri = Uri.parse(AppData.AppGame.CONTENT_URI + "/" + packageName);
+		contentResolver.delete(uri, null, null);
+		
+		//update db
+		ContentValues values = new ContentValues();
+		values.put(AppData.App.TYPE, AppManager.NORMAL_APP);
+		contentResolver.update(AppData.App.CONTENT_URI, values, 
+				AppData.App.PKG_NAME + "='" + packageName + "'", null);
+	}
+	
 	@Override
 	public void doCheckAll(){
 		int selectedCount1 = mAdapter.getCheckedCount();
@@ -384,7 +482,6 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
 			mAdapter.checkedAll(false);
 		}
 		updateMenuBar();
-		mMenuBarManager.refreshMenus(mActionMenu);
 		mAdapter.notifyDataSetChanged();
 	}
 	
@@ -431,6 +528,201 @@ public class AppFragment extends AppBaseFragment implements OnItemClickListener,
         	mActionMenu.findItem(R.id.menu_uninstall).setEnable(true);
         	mActionMenu.findItem(R.id.menu_move_app).setEnable(true);
         	mActionMenu.findItem(R.id.menu_app_info).setEnable(false);
+		}
+		
+		mMenuBarManager.refreshMenus(mActionMenu);
+	}
+	
+	protected void uninstallApp(){
+		if (mUninstallList.size() <= 0) {
+			mUninstallList = null;
+			
+			if (null != mAppDialog) {
+				mAppDialog.cancel();
+				mAppDialog = null;
+			}
+			return;
+		}
+		String uninstallPkg = mUninstallList.get(0);
+		mAppDialog.updateUI(mAppDialog.getMax() - mUninstallList.size() + 1, 
+				AppManager.getAppLabel(uninstallPkg, pm));
+		Uri packageUri = Uri.parse("package:" + uninstallPkg);
+		Intent deleteIntent = new Intent();
+		deleteIntent.setAction(Intent.ACTION_DELETE);
+		deleteIntent.setData(packageUri);
+		startActivityForResult(deleteIntent, REQUEST_CODE_UNINSTALL);
+		mUninstallList.remove(0);
+	}
+    
+    @SuppressWarnings("unchecked")
+	protected void showBackupDialog(List<String> packageList){
+//    	Log.d(TAG, "Environment.getExternalStorageState():" + Environment.getExternalStorageState());
+    	String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+    	if (path.isEmpty()) {
+    		mNotice.showToast(R.string.no_sdcard);
+			return;
+		}
+    	
+    	File file = new File(path);
+    	if (null == file.listFiles() || file.listFiles().length < 0) {
+    		mNotice.showToast(R.string.no_sdcard);
+			return;
+		}
+    	
+    	final BackupAsyncTask task = new BackupAsyncTask();
+    	
+    	mAppDialog = new AppDialog(getActivity(), packageList.size());
+    	mAppDialog.setTitle(R.string.backup_app);
+    	mAppDialog.setPositiveButton(R.string.hide, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				mIsBackupHide = true;
+				mNotificationMgr.startBackupNotification();
+				updateNotification(task.currentProgress, task.size, task.currentAppLabel);
+				dialog.dismiss();
+			}
+		});
+    	mAppDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				Log.d(TAG, "showBackupDialog.onCancel");
+				if (null != task) {
+					task.cancel(true);
+				}
+				dialog.dismiss();
+			}
+		});
+    	mAppDialog.show();
+		task.execute(packageList);
+    }
+    
+    private class BackupAsyncTask extends AsyncTask<List<String>, Integer, Void>{
+    	public int currentProgress = 0;
+    	public int size = 0;
+    	public String currentAppLabel;
+    	private long startTime = 0;
+    	private long endTime = 0;
+    	
+		@Override
+		protected Void doInBackground(List<String>... params) {
+			startTime = System.currentTimeMillis();
+			size = params[0].size();
+			File file = new File(ZYConstant.JUYOU_BACKUP_FOLDER); 
+			if (!file.exists()){
+				boolean ret = file.mkdirs();
+				if (!ret) {
+					Log.e(TAG, "create file fail:" + file.getAbsolutePath());
+					return null;
+				}
+			}
+			
+			String label = "";
+			String version = "";
+			String sourceDir = "";
+			String packageName = "";
+			for (int i = 0; i < size; i++) {
+				if (isCancelled()) {
+					Log.d(TAG, "doInBackground.isCancelled");
+					return null;
+				}
+				packageName = params[0].get(i);
+				label = AppManager.getAppLabel(packageName, pm);
+				version = AppManager.getAppVersion(packageName, pm);
+				sourceDir = AppManager.getAppSourceDir(packageName, pm);
+				
+				currentAppLabel = label;
+				currentProgress = i + 1;
+				
+				mAppDialog.updateName(label);
+				String desPath = ZYConstant.JUYOU_BACKUP_FOLDER + "/" + label + "_" + version + ".apk";
+				if (!new File(desPath).exists()) {
+					boolean ret = FileManager.copyFile(sourceDir, desPath);
+					if (!ret) {
+						Message message = mHandler.obtainMessage();
+						message.obj = getString(R.string.backup_fail, label);
+						message.what = MSG_TOAST;
+						message.sendToTarget();
+					}
+				}
+				mAppDialog.updateProgress(i + 1);
+				if (mIsBackupHide) {
+					updateNotification(currentProgress, size, currentAppLabel);
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			Log.d(TAG, "onPostExecute");
+			
+			if (null != mAppDialog && mAppDialog.isShowing()) {
+				mAppDialog.cancel();
+				mAppDialog = null;
+			}
+			mNotice.showToast(R.string.backup_over);
+			endTime = System.currentTimeMillis();
+			if (mIsBackupHide) {
+				mIsBackupHide = false;
+				
+				Message message = mHandler.obtainMessage();
+				message.obj = endTime - startTime;
+				message.what = MSG_BACKUP_OVER;
+				message.sendToTarget();
+			}
+		}
+    }
+    
+    protected void showUninstallDialog(){
+    	mAppDialog = new AppDialog(getActivity(), mUninstallList.size());
+		mAppDialog.setTitle(R.string.handling);
+		mAppDialog.setNegativeButton(R.string.cancel, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				if (null != mUninstallList) {
+					mUninstallList.clear();
+					mUninstallList = null;
+				}
+				dialog.dismiss();
+			}
+		});
+		mAppDialog.show();
+    }
+    
+    public void updateNotification(int progress, int max, String name){
+    	Message message = mHandler.obtainMessage();
+    	message.arg1 = progress;
+    	message.arg2 = max;
+    	message.obj = name;
+    	message.what = MSG_BACKUPING;
+    	message.sendToTarget();
+    }
+    
+    public void showInstalledAppDetails(String packageName){
+		Intent intent = new Intent();
+		final int apiLevel = Build.VERSION.SDK_INT;
+		if (apiLevel >= Build.VERSION_CODES.GINGERBREAD) {
+			intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+			Uri uri = Uri.fromParts("package", packageName, null);
+			intent.setData(uri);
+		}else {
+			intent.setAction(Intent.ACTION_VIEW);
+			intent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
+			intent.putExtra("pkg", packageName);
+		}
+		startActivity(intent);
+	}
+    
+    private boolean isGameUI(){
+    	return AppActivity.TYPE_GAME == mType;
+    }
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (REQUEST_CODE_UNINSTALL == requestCode) {
+			uninstallApp();
 		}
 	}
 }

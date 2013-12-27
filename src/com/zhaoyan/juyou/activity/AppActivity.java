@@ -10,13 +10,24 @@ import android.view.Window;
 
 public class AppActivity extends FragmentActivity{
 	private AppFragment mAppFragment;
+	public static final String APP_TYPE = "app_type";
+	public static final int TYPE_APP = 0;
+	public static final int TYPE_GAME = 1;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mAppFragment= new AppFragment();
+		
+		Bundle bundle = getIntent().getExtras();
+		int type = TYPE_APP;
+		if (null != bundle) {
+			type = bundle.getInt(AppActivity.APP_TYPE);
+		}
+		
+		mAppFragment= AppFragment.newInstance(type);
+		
 		getSupportFragmentManager().beginTransaction().replace(
 				android.R.id.content, mAppFragment).commit();
 	}
