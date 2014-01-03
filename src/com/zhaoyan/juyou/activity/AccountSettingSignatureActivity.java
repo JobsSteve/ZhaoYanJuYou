@@ -155,15 +155,17 @@ public class AccountSettingSignatureActivity extends BaseActivity implements
 
 		@Override
 		public void afterTextChanged(Editable s) {
-			mStart = mSignaturEditText.getSelectionStart();
-			mEnd = mSignaturEditText.getSelectionEnd();
+			if (calculateWordCount(s.toString()) > MAX_SIGNATURE_WORD_COUNT) {
+				mStart = mSignaturEditText.getSelectionStart();
+				mEnd = mSignaturEditText.getSelectionEnd();
 
-			while (calculateWordCount(s.toString()) > MAX_SIGNATURE_WORD_COUNT) {
-				s.delete(mStart - 1, mEnd);
-				mStart--;
-				mEnd--;
+				while (calculateWordCount(s.toString()) > MAX_SIGNATURE_WORD_COUNT) {
+					s.delete(mStart - 1, mEnd);
+					mStart--;
+					mEnd--;
+				}
+				mSignaturEditText.setSelection(mSignaturEditText.length());
 			}
-			mSignaturEditText.setSelection(mSignaturEditText.length());
 			setLeftWordCount();
 		}
 	};
