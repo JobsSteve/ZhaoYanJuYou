@@ -24,7 +24,7 @@ import com.zhaoyan.communication.UserManager;
 import com.zhaoyan.communication.UserManager.OnUserChangedListener;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.ConnectFriendsActivity;
-import com.zhaoyan.juyou.activity.InviteActivity;
+import com.zhaoyan.juyou.wxapi.WXEntryActivity;
 
 public class JuYouFragment extends BaseFragment implements OnClickListener,
 		OnUserChangedListener {
@@ -138,7 +138,7 @@ public class JuYouFragment extends BaseFragment implements OnClickListener,
 					.overridePendingTransition(R.anim.activity_right_in, 0);
 			break;
 		case R.id.rl_juyou_invite:
-			intent.setClass(getActivity(), InviteActivity.class);
+			intent.setClass(getActivity(), WXEntryActivity.class);
 			startActivity(intent);
 			getActivity()
 					.overridePendingTransition(R.anim.activity_right_in, 0);

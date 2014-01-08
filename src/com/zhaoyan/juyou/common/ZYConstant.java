@@ -12,6 +12,24 @@ public class ZYConstant {
 	public static final int REQUEST_FOR_MODIFY_NAME = 0x12;
 	
 	public static final String[] ERROR_NAME_STRS = {":","<",">","\\","|","?","/"};
+	public static final String SHARE_STRING = "Download JUYOU URL!!!";
+	// Tencent WeiXin APP ID
+	public static final String TT_WX_APP_ID = "wx87ca584fc3460af4";
+	// WeiXin Moments Version
+	public static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
+	
+	// Sina WeiBo APP ID
+	public static final String SINA_WB_APP_KEY = "3668686956";
+	// Sina WeiBo Redirect URL
+	public static final String SINA_WB_REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
+	// Sina WeiBo SCOPE
+	public static final String SINA_WB_SCOPE = 
+            "email,direct_messages_read,direct_messages_write,"
+            + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
+            + "follow_app_official_microblog," + "invitation_write";
+	
+	// Tencent QQ APP ID
+	public static String TENCENT_QQ_APP_ID="100577349";
 
 	// context action menu id
 

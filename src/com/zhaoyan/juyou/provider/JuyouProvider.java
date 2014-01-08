@@ -372,6 +372,7 @@ public class JuyouProvider extends ContentProvider {
 					+ JuyouData.User.USER_NAME + " TEXT, "
 					+ JuyouData.User.USER_ID + " INTEGER, "
 					+ JuyouData.User.HEAD_ID + " INTEGER, "
+					+ JuyouData.User.THIRD_LOGIN + " INTEGER, "
 					+ JuyouData.User.HEAD_DATA + " BLOB, "
 					+ JuyouData.User.IP_ADDR + " TEXT, "
 					+ JuyouData.User.STATUS + " INTEGER, "

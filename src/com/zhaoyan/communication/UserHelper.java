@@ -24,7 +24,7 @@ public class UserHelper {
 
 	private static final String[] PROJECTION = { JuyouData.User._ID,
 			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
-			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
+			JuyouData.User.HEAD_ID, JuyouData.User.THIRD_LOGIN, JuyouData.User.HEAD_DATA,
 			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE,
 			JuyouData.User.SSID, JuyouData.User.NETWORK,
 			JuyouData.User.SIGNATURE };
@@ -63,6 +63,8 @@ public class UserHelper {
 
 		int headID = cursor.getInt(cursor
 				.getColumnIndex(JuyouData.User.HEAD_ID));
+		int thirdLogin = cursor.getInt(cursor
+				.getColumnIndex(JuyouData.User.THIRD_LOGIN));
 		byte[] headData = cursor.getBlob(cursor
 				.getColumnIndex(JuyouData.User.HEAD_DATA));
 		int type = cursor.getInt(cursor.getColumnIndex(JuyouData.User.TYPE));
@@ -78,6 +80,7 @@ public class UserHelper {
 				.getColumnIndex(JuyouData.User.SIGNATURE));
 
 		userInfo.setHeadId(headID);
+		userInfo.setThirdLogin(thirdLogin);
 		userInfo.setHeadBitmapData(headData);
 		userInfo.setType(type);
 		userInfo.setIpAddress(ipAddress);
@@ -219,6 +222,7 @@ public class UserHelper {
 		values.put(JuyouData.User.USER_ID, userInfo.getUser().getUserID());
 		values.put(JuyouData.User.USER_NAME, userInfo.getUser().getUserName());
 		values.put(JuyouData.User.HEAD_ID, userInfo.getHeadId());
+		values.put(JuyouData.User.THIRD_LOGIN, userInfo.getThirdLogin());
 
 		byte[] headBitmapData = userInfo.getHeadBitmapData();
 		if (headBitmapData == null) {

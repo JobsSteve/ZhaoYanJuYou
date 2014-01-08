@@ -24,8 +24,9 @@ import com.zhaoyan.juyou.activity.FileCategoryActivity;
 import com.zhaoyan.juyou.activity.FileBrowserActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.ImageActivity;
-import com.zhaoyan.juyou.activity.InviteActivity;
+// import com.zhaoyan.juyou.activity.InviteActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
+import com.zhaoyan.juyou.wxapi.WXEntryActivity;
 
 public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "GuanJiaFragment";
@@ -182,7 +183,7 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			openActivity(ImageActivity.class, galleryBundle);
 			break;
 		case R.id.rl_guanjia_invite:
-			openActivity(InviteActivity.class);
+			openActivity(WXEntryActivity.class);
 			break;
 			
 		case R.id.rl_guanjia_connect:

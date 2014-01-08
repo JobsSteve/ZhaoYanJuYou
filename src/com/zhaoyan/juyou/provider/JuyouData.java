@@ -145,6 +145,10 @@ public class JuyouData {
 		 */
 		public static final String HEAD_ID = "head_id";
 		/**
+		 * Third Login, eg: Sina WeiBo or QQ, type:int
+		 */
+		public static final String THIRD_LOGIN = "third_login";
+		/**
 		 * head picture, type:blob
 		 */
 		public static final String HEAD_DATA = "head";

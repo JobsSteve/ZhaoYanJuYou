@@ -350,5 +350,12 @@
     <string name="account_setting_account_zhaoyan_title">设置朝颜账号</string>
     <string name="zhaoyan_account_edit_message_too_short">账号长度至少6位</string>
     <string name="zhaoyan_account_edit_message_begin_with_letter">账号必须以字母开头</string>
+    
+    <!-- For Tencent WeiXin -->
+    <string name="errcode_success">发送成功</string>
+	<string name="errcode_cancel">发送取消</string>
+	<string name="errcode_deny">发送被拒绝</string>
+	<string name="errcode_unknown">发送返回</string>
+	<string name="please_install_weixin">请安装微信客户端</string>
 
 </resources>

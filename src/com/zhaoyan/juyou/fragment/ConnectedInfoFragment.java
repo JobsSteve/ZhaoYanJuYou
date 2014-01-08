@@ -36,7 +36,7 @@ public class ConnectedInfoFragment extends ListFragment implements
 
 	protected static final String[] PROJECTION = { JuyouData.User._ID,
 			JuyouData.User.USER_NAME, JuyouData.User.USER_ID,
-			JuyouData.User.HEAD_ID, JuyouData.User.HEAD_DATA,
+			JuyouData.User.HEAD_ID, JuyouData.User.THIRD_LOGIN, JuyouData.User.HEAD_DATA,
 			JuyouData.User.IP_ADDR, JuyouData.User.STATUS, JuyouData.User.TYPE,
 			JuyouData.User.SSID, JuyouData.User.SIGNATURE };
 

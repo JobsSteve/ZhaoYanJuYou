@@ -17,6 +17,7 @@ public class UserInfo implements Serializable {
 	private User mUser;
 	private byte[] mHeadBitmapData;
 	private int mHeadId = 0;
+	private int mThirdLogin = 0;
 	private String mIpAddress;
 	private int mType;
 	private String mSsid;
@@ -96,6 +97,14 @@ public class UserInfo implements Serializable {
 	public void setHeadId(int id) {
 		mHeadId = id;
 	}
+	
+	public int getThirdLogin() {
+		return mThirdLogin;
+	}
+
+	public void setThirdLogin(int id) {
+		mThirdLogin = id;
+	}
 
 	public User getUser() {
 		return mUser;
@@ -132,7 +141,7 @@ public class UserInfo implements Serializable {
 	@Override
 	public String toString() {
 		return "UserInfo [mUser=" + mUser + ", mHeadBitmapData="
-				+ mHeadBitmapData + ", mHeadId=" + mHeadId + ", mIpAddress="
+				+ mHeadBitmapData + ", mHeadId=" + mHeadId + ", mThirdLogin=" + mThirdLogin + ", mIpAddress="
 				+ mIpAddress + ", mType=" + mType + ", mSsid=" + mSsid
 				+ ", mStatus=" + mStatus + ", mNetworkType=" + mNetworkType
 				+ "]";
