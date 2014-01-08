@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Button
+        android:id="@+id/btn_search_searching_create"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/btn_selector"
+        android:padding="10dp"
+        android:text="@string/create_server" />
+
+    <Button
+        android:id="@+id/btn_search_searching_search"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btn_search_searching_create"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/btn_selector"
+        android:padding="10dp"
+        android:text="@string/search_connect" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_search_searching_search"
+        android:layout_marginBottom="5dp" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/tv_search_result_none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_search_searching_search"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:text="@string/search_result_none"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/ll_search_searching"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/loading_progressbar" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/searching" />
+    </LinearLayout>
+
+</RelativeLayout>

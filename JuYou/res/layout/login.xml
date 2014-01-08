@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#5d91be" >
+
+    <com.zhaoyan.common.view.AspectRatioImageView
+        android:id="@+id/iv_login_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true" />
+
+    <HorizontalScrollView
+        android:id="@+id/hsv_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_login_top"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_login_weixin"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/login_weixin_btn_selector" >
+            </Button>
+
+            <Button
+                android:id="@+id/btn_login_tencent_weibo"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_tencent_weibo_btn_selector" >
+            </Button>
+
+            <Button
+                android:id="@+id/btn_login_sina_weibo"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_sina_weibo_btn_selector" >
+            </Button>
+
+            <Button
+                android:id="@+id/btn_login_qq"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_qq_btn_selector" >
+            </Button>
+
+            <Button
+                android:id="@+id/btn_login_renren"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/login_renren_btn_selector" >
+            </Button>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/hsv_login"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="#40000000" />
+
+    <LinearLayout
+        android:id="@+id/ll_input"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/line"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="40.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginRight="10.0dip" >
+
+            <EditText
+                android:id="@+id/et_account"
+                style="@style/login_input"
+                android:hint="@string/input_hint_account"
+                android:inputType="textEmailAddress"
+                android:maxLength="50" >
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/tv_account"
+                style="@style/login_label"
+                android:layout_alignBottom="@id/et_account"
+                android:layout_alignTop="@id/et_account"
+                android:text="@string/label_account" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginRight="10.0dip"
+            android:layout_marginTop="5.0dip" >
+
+            <EditText
+                android:id="@+id/et_psw"
+                style="@style/login_input"
+                android:inputType="textPassword"
+                android:maxLength="50" />
+
+            <TextView
+                android:id="@+id/tv_psw"
+                style="@style/login_label"
+                android:layout_alignBottom="@id/et_psw"
+                android:layout_alignTop="@id/et_psw"
+                android:text="@string/label_psw" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_input"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="0dp"
+            android:layout_height="35.0dip"
+            android:layout_weight="1"
+            android:background="@drawable/btn_selector"
+            android:text="@string/btn_register"
+            android:textColor="@color/button_text_selector"
+            android:textSize="16.0sp" />
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="0dp"
+            android:layout_height="35.0dip"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_selector"
+            android:text="@string/btn_login"
+            android:textColor="@color/button_text_selector"
+            android:textSize="16.0sp" />
+
+        <Button
+            android:id="@+id/btn_login_direct"
+            android:layout_width="0dp"
+            android:layout_height="35.0dip"
+            android:layout_marginLeft="15.0dip"
+            android:layout_weight="1"
+            android:background="@drawable/btn_selector"
+            android:text="@string/btn_login_direct"
+            android:textColor="@color/button_text_selector"
+            android:textSize="16.0sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_login_copyright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="@string/copyright_zhaoyan_tech_eng"
+        android:textColor="#e6e6e7"
+        android:textSize="12sp" >
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tv_login_copyright"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:text="@string/copyright_zhaoyan_tech_cn"
+        android:textColor="#404040"
+        android:textSize="16sp" >
+    </TextView>
+
+</RelativeLayout>

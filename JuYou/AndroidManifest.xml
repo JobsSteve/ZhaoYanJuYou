@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zhaoyan.juyou"
+    android:versionCode="1"
+    android:versionName="1.0.7_20131212" >
+
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+
+    <application
+        android:name="com.zhaoyan.juyou.JuYouApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/app_logo"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.zhaoyan.juyou.activity.WelcomeActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.PreviewPagesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingActivity"
+            android:theme="@style/Theme.Translucent"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.InviteActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Translucent" >
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.weibo.sdk.android.component.PublishActivity"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name="com.tencent.weibo.sdk.android.component.GeneralInterfaceActivity"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name="com.tencent.weibo.sdk.android.component.ConversationActivity"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name="com.tencent.weibo.sdk.android.component.FriendActivity"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity android:name="com.tencent.weibo.sdk.android.component.Authorize" >
+        </activity>
+        <activity android:name="com.tencent.weibo.sdk.android.component.GeneralDataShowActivity" >
+        </activity>
+        <activity android:name="com.tencent.weibo.sdk.android.component.ReAddActivity" >
+        </activity>
+   		<activity android:name="com.tencent.connect.common.AssistActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent100577349" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.InviteBluetoothActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.InviteHttpActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.ConnectFriendsActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.RegisterAccountActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AudioActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.VideoActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AppActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.GameActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.FileBrowserActivity"
+            android:theme="@style/Theme.Translucent"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.FileCategoryActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.TrafficStatisticsActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.ImageActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.ImagePagerActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.HistoryActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingHeadActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingNameActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingAccountInfoActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingSignatureActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AccountSettingAccountZhaoyanActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+
+        <service android:name="com.zhaoyan.communication.LoginService" >
+        </service>
+        <service android:name="com.zhaoyan.communication.FileTransferService" >
+            <meta-data
+                android:name="app_id"
+                android:value="111" />
+        </service>
+        <service android:name="com.zhaoyan.communication.ScreenMonitor" >
+        </service>
+
+        <provider
+            android:name="com.zhaoyan.juyou.provider.JuyouProvider"
+            android:authorities="com.zhaoyan.juyou.provider.JuyouProvider"
+            android:exported="false" >
+        </provider>
+        <provider
+            android:name="com.zhaoyan.juyou.provider.AppProvider"
+            android:authorities="com.zhaoyan.juyou.provider.AppProvider"
+            android:exported="false" >
+        </provider>
+    </application>
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+</manifest>

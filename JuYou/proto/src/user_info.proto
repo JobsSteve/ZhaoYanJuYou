@@ -1,0 +1,18 @@
+package com.zhaoyan.juyou;
+
+option java_package = "com.zhaoyan.communication.protocol.pb";
+option java_outer_classname = "PBUserUserInfoProtos";
+message PBUserInfo {
+	optional int32 userId = 1;
+	optional string userName = 2;
+	optional int32 headImageId = 3;
+	optional bytes headImageData = 4;
+	optional string ipAddress = 5;
+	optional int32 type = 6;
+	optional string ssid = 7;
+	optional int32 status = 8;
+	optional int32 networkType = 9;
+	optional string signature = 10;
+}
+
+

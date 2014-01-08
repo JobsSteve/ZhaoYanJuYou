@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhaoyan.common.view.RightSlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/activity_background"
+        android:orientation="vertical" >
+
+        <include layout="@layout/title" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20.0dip"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16.0dip"
+                    android:orientation="horizontal" >
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal" >
+
+                        <ImageView
+                            android:id="@+id/iv_as_head"
+                            android:layout_width="78.0dip"
+                            android:layout_height="78.0dip"
+                            android:layout_gravity="center"
+                            android:src="@drawable/head1" />
+
+                        <ImageView
+                            android:layout_width="88.0dip"
+                            android:layout_height="88.0dip"
+                            android:layout_gravity="center"
+                            android:src="@drawable/head_big_cover_normal" />
+                    </FrameLayout>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/setting_item_arrow" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btn_capture_head"
+                    android:layout_width="88.0dip"
+                    android:layout_height="48.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="10.0dip"
+                    android:background="@drawable/btn_selector"
+                    android:src="@drawable/head_capture" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_as_select_head"
+                android:layout_width="180.0dip"
+                android:layout_height="180.0dip" >
+
+                <LinearLayout
+                    android:layout_width="180.0dip"
+                    android:layout_height="180.0dip"
+                    android:orientation="vertical" >
+
+                    <GridView
+                        android:id="@+id/gv_as_choose_head"
+                        android:layout_width="160.0dip"
+                        android:layout_height="160.0dip"
+                        android:layout_marginLeft="11.0dip"
+                        android:layout_marginTop="11.0dip"
+                        android:background="@drawable/head_choose_grid_bg_normal"
+                        android:cacheColorHint="#00000000"
+                        android:horizontalSpacing="3.0dip"
+                        android:listSelector="#00000000"
+                        android:numColumns="3"
+                        android:verticalSpacing="3.0dip" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="3.0dip"
+                    android:background="@color/activity_background"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="5.0dip"
+                    android:paddingRight="5.0dip"
+                    android:text="@string/select_head"
+                    android:textColor="#ff59616b"
+                    android:textSize="12.0sp" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <include layout="@layout/account_setting_save_cancel_button" />
+    </LinearLayout>
+
+</com.zhaoyan.common.view.RightSlideLayout>

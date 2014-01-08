@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:padding="3dp"
+    >
+    
+    <ImageView
+        android:id="@+id/iv_video_icon"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_video_iv" />
+    
+<!--     <ImageView  -->
+<!--         android:id="@+id/iv_select" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:background="@drawable/item_checked" -->
+<!--         android:layout_marginTop="5dp" -->
+<!--         android:layout_marginLeft="5dp" -->
+<!--         android:visibility="gone" -->
+<!--         /> -->
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="15dp"
+        android:layout_gravity="bottom"
+        android:background="#cca3a3a3" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/video_cam"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+             />
+
+        <TextView
+            android:id="@+id/tv_video_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textSize="12sp"
+            android:layout_centerVertical="true"
+            android:textIsSelectable="false"
+            android:layout_marginRight="5dp"
+            />
+    </RelativeLayout>
+
+</FrameLayout>

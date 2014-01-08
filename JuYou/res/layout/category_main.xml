@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhaoyan.common.view.RightSlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rl_Category_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activity_background" >
+
+        <include
+            android:id="@+id/title"
+            layout="@layout/title" />
+
+        <!-- 文件列表布局 -->
+        <RelativeLayout
+            android:id="@+id/filelist_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/title" 
+            >
+
+            <ListView
+                android:id="@+id/lv_Category"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_above="@+id/bottom"
+                android:cacheColorHint="#00000000"
+                android:fastScrollEnabled="true" />
+
+            <TextView
+                android:id="@+id/tv_Category_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bar_loading_Category"
+                android:layout_centerInParent="true"
+                android:visibility="invisible" />
+
+            <ProgressBar
+                android:id="@+id/bar_loading_Category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminateDrawable="@drawable/loading_progressbar"
+                android:visibility="invisible" />
+
+            <RelativeLayout
+                android:id="@+id/bottom"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:visibility="visible" >
+                <include
+                    android:id="@+id/menubar_bottom"
+                    layout="@layout/menubar_bottom" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</com.zhaoyan.common.view.RightSlideLayout>

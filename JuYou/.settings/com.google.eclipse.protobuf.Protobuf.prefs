@@ -1,0 +1,9 @@
+compiler.enableProjectSettings=true
+compiler.javaOutputDirectory=src
+compiler.protocFilePath=D\:\\workspace\\workspace_git\\ZhaoYanJuYou\\proto\\tool\\protoc.exe
+compiler.useProtocInCustomPath=true
+compiler.useProtocInSystemPath=false
+eclipse.preferences.version=1
+paths.directoryPaths=${workspace_loc\:/${project}/proto/src}
+paths.filesInMultipleDirectories=true
+paths.filesInOneDirectoryOnly=false

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    >
+    
+    <TextView 
+        android:id="@+id/tv_editdialog_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dialog_left_margin"
+        android:layout_marginRight="@dimen/dialog_right_margin"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        />
+    
+    <EditText 
+        android:id="@+id/et_dialog"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dialog_left_margin"
+        android:layout_marginRight="@dimen/dialog_right_margin"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/black"
+        android:textCursorDrawable="@drawable/text_cursor"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        />
+    <TextView 
+        android:id="@+id/tv_editdialog_tip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dialog_left_margin"
+        android:layout_marginRight="@dimen/dialog_right_margin"
+        android:textColor="#f00"
+        android:visibility="gone"
+        />
+
+</LinearLayout>

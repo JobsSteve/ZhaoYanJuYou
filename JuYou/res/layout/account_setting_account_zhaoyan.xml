@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhaoyan.common.view.RightSlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/activity_background"
+        android:orientation="vertical" >
+
+        <include layout="@layout/title" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="15dp" >
+
+            <TextView
+                android:id="@+id/tv_asai_zhaoyan_input_limit"
+                style="@style/edit_text_input_limit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/ll_input"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical" >
+
+                <EditText
+                    android:id="@+id/et_asai_zhaoyan"
+                    style="@style/edit_text"
+                    android:hint="@string/hint_asai_zhaoyan"
+                    android:maxLength="50" >
+
+                    <requestFocus />
+                </EditText>
+            </LinearLayout>
+
+            <include layout="@layout/account_setting_save_cancel_button" />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.zhaoyan.common.view.RightSlideLayout>

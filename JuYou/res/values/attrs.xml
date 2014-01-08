@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- define some attrs -->
+    <attr name="zyId" format="reference" />
+    <attr name="zyTitle" format="string|reference" />
+    <attr name="zyIconEnable" format="reference" />
+    <attr name="zyIconDisable" format="reference" />
+    <attr name="zyEnabled" format="boolean" />
+
+    <!-- Base attributes that are available to all Item objects. -->
+    <declare-styleable name="ZyMenuItem">
+        <!-- The ID of the item. -->
+        <attr name="zyId" />
+        <!-- The title associated with the item. -->
+        <attr name="zyTitle" />
+        <!-- the icon menu enable -->
+        <attr name="zyIconEnable" />
+        <!-- the icon menu disable -->
+        <attr name="zyIconDisable" />
+        <!-- Whether the item is enabled. -->
+        <attr name="zyEnabled" />
+    </declare-styleable>
+
+</resources>

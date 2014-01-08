@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+     xmlns:zhaoyan="http://schemas.android.com/apk/res/com.zhaoyan.juyou" 
+    >
+    <item 
+        zhaoyan:zyId="@+id/menu_send"
+        zhaoyan:zyTitle="@string/menu_send"
+        zhaoyan:zyIconEnable="@drawable/ic_action_send_enable"
+        zhaoyan:zyIconDisable="@drawable/ic_action_send_disable"
+        zhaoyan:zyEnabled="true"
+        />
+    
+     <item 
+        zhaoyan:zyId="@+id/menu_copy"
+        zhaoyan:zyTitle="@string/copy"
+        zhaoyan:zyIconEnable="@drawable/ic_action_copy_enable"
+        zhaoyan:zyIconDisable="@drawable/ic_action_copy_disable"
+        zhaoyan:zyEnabled="true"
+        />
+     
+      <item 
+        zhaoyan:zyId="@+id/menu_cut"
+        zhaoyan:zyTitle="@string/cut"
+        zhaoyan:zyIconEnable="@drawable/ic_action_cut_enable"
+        zhaoyan:zyIconDisable="@drawable/ic_action_cut_disable"
+        zhaoyan:zyEnabled="true"
+        />
+    
+    <item 
+        zhaoyan:zyId="@+id/menu_delete"
+        zhaoyan:zyTitle="@string/menu_delete"
+        zhaoyan:zyIconEnable="@drawable/ic_action_delete_enable"
+        zhaoyan:zyIconDisable="@drawable/ic_action_delete_disable"
+        zhaoyan:zyEnabled="true"
+        />
+    
+    <item 
+        zhaoyan:zyId="@+id/menu_select"
+        zhaoyan:zyTitle="@string/select_all"
+        zhaoyan:zyIconEnable="@drawable/ic_aciton_select"
+        zhaoyan:zyIconDisable="@drawable/ic_aciton_select"
+        zhaoyan:zyEnabled="true"
+        />
+    
+    <item 
+        zhaoyan:zyId="@+id/menu_more"
+        zhaoyan:zyTitle="@string/menu_more"
+        zhaoyan:zyIconEnable="@drawable/ic_action_overflow_enable"
+        zhaoyan:zyIconDisable="@drawable/ic_action_overflow_disable"
+        zhaoyan:zyEnabled="true"
+        />
+</menu>

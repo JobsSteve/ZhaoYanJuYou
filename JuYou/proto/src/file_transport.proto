@@ -1,0 +1,27 @@
+package com.zhaoyan.juyou;
+
+option java_package = "com.zhaoyan.communication.protocol.pb";
+option java_outer_classname = "PBFileTransportProtos";
+message PBSendFile {
+	required int32 sendUserId = 1;
+	required int32 recieveUserId = 2;
+	required int32 appId = 3;
+	optional bytes serverAddress = 4;
+	optional int32 serverPort = 5;
+	optional PBFileInfo fileInfo = 6;
+}
+
+message PBFileInfo {
+	required string filePath = 1;
+	required string fileName = 2;
+	required int64 fileSize = 3;
+	optional bytes fileIcon = 4;
+}
+
+message PBCancelSendFile {
+	required int32 receiveUserId = 1;
+}
+
+message PBCancelReceiveFile {
+	required int32 sendUserId = 1;
+}

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhaoyan.common.view.RightSlideLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activity_background"
+        android:orientation="vertical" >
+
+        <include layout="@layout/title" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/rl_asai_zhaoyan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/setting_item_bg"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/tv_asai_zhaoyan_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/account_setting_account_zhaoyan"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_asai_zhaoyan_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:id="@+id/tv_asai_zhaoyan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/iv_asai_zhaoyan_arrow"
+                        android:layout_toRightOf="@id/tv_asai_zhaoyan_title"
+                        android:gravity="right"
+                        android:textColor="@color/white_gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_asai_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/setting_item_bg_top"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/tv_asai_phone_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/account_setting_account_phone"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_asai_phone_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:id="@+id/tv_asai_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/iv_asai_phone_arrow"
+                        android:layout_toRightOf="@id/tv_asai_phone_title"
+                        android:gravity="right"
+                        android:textColor="@color/white_gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_asai_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/setting_item_bg_bottom"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/tv_asai_email_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/account_setting_account_email"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_asai_email_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:id="@+id/tv_asai_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/iv_asai_email_arrow"
+                        android:layout_toRightOf="@id/tv_asai_email_title"
+                        android:gravity="right"
+                        android:textColor="@color/white_gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_asai_qq"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/setting_item_bg_top"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/tv_asai_qq_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/account_setting_account_qq"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_asai_qq_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:id="@+id/tv_asai_qq"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/iv_asai_qq_arrow"
+                        android:layout_toRightOf="@id/tv_asai_qq_title"
+                        android:gravity="right"
+                        android:textColor="@color/white_gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_asai_renren"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/setting_item_bg_middle"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/tv_asai_renren_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/account_setting_account_renren"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_asai_renren_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:id="@+id/tv_asai_renren"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/iv_asai_renren_arrow"
+                        android:layout_toRightOf="@id/tv_asai_renren_title"
+                        android:gravity="right"
+                        android:textColor="@color/white_gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_asai_weibo_sina"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/setting_item_bg_middle"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/tv_asai_weibo_sina_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/account_setting_account_weibo_sina"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_asai_weibo_sina_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:id="@+id/tv_asai_weibo_sina"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/iv_asai_weibo_sina_arrow"
+                        android:layout_toRightOf="@id/tv_asai_weibo_sina_title"
+                        android:gravity="right"
+                        android:textColor="@color/white_gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_asai_weibo_tencent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/setting_item_bg_bottom"
+                    android:clickable="true"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/tv_asai_weibo_tencent_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/account_setting_account_weibo_tencent"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_asai_weibo_tencent_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/setting_item_arrow" />
+
+                    <TextView
+                        android:id="@+id/tv_asai_weibo_tencent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/iv_asai_weibo_tencent_arrow"
+                        android:layout_toRightOf="@id/tv_asai_weibo_tencent_title"
+                        android:gravity="right"
+                        android:textColor="@color/white_gray" />
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</com.zhaoyan.common.view.RightSlideLayout>

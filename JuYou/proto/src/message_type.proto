@@ -1,0 +1,23 @@
+package com.zhaoyan.juyou;
+
+option java_package = "com.zhaoyan.communication.protocol.pb";
+option java_outer_classname = "PBBaseProtos";
+message PBBase {
+	required PBType type = 1;
+	optional bytes message = 2;
+}
+
+enum PBType {
+	LOGIN_REQUEST = 100;
+	LOGIN_RESPOND = 101;
+	LOGOUT_CLIENT = 102;
+	LOGOUT_SERVER = 103;
+	UPDATE_USER_ID = 200;
+	UPDATE_USER_INFO = 201;
+	SEND_MESSAGE_TO_SINGLE = 300;
+	SEND_MESSAGE_TO_ALL = 301;
+	FILE_TRANSPORT_SEND = 400;
+	FILE_TRANSPORT_CANCEL_SEND = 401;
+	FILE_TRANSPORT_CANCEL_RECEIVE = 402;
+	HEART_BEAT = 500;
+}
