@@ -351,7 +351,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 				String name = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
 				long date = cursor.getLong(cursor
 						.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED));
-				
+				date = date * 1000L;
 				String videoType = FileManager.getExtFromFilename(name);
 				if ("".equals(videoType)) {
 					videoType = mContext.getResources().getString(R.string.unknow);

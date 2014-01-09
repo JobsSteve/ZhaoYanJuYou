@@ -338,6 +338,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				final String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
 				long date = cursor.getLong(cursor
 						.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED));
+				date = date * 1000L;
 				String displayName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
 				
 				String musicType = FileManager.getExtFromFilename(displayName);
