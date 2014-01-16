@@ -136,8 +136,10 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	 * Query Audio from Audio DB
 	 */
 	public void query() {
+		//just show music files
+		String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
 		mQueryHandler.startQuery(0, null, ZYConstant.AUDIO_URI,
-				PROJECTION, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+				PROJECTION, selection, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 	}
 	
 	// query db
