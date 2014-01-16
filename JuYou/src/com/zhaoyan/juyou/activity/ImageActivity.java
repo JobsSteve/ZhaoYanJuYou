@@ -300,7 +300,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doCheckAll();
+			//do nothing
+			//doCheckAll();
 			return true;
 		}else {
 			mAdapter.changeMode(ActionMenu.MODE_EDIT);

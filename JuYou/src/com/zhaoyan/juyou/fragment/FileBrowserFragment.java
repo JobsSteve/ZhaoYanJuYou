@@ -375,7 +375,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		}
 
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doCheckAll();
+			//do nothing
+			//doCheckAll();
 			return true;
 		} else if (mAdapter.isMode(ActionMenu.MODE_COPY)
 				|| mAdapter.isMode(ActionMenu.MODE_CUT)) {

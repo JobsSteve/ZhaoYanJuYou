@@ -255,7 +255,8 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			final int position, long id) {
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
-			doCheckAll();
+			//do nothing
+			//doCheckAll();
 			return true;
 		} else {
 			mAdapter.changeMode(ActionMenu.MODE_EDIT);
