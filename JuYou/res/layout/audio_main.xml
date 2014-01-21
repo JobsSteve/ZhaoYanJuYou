@@ -31,6 +31,26 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:indeterminateDrawable="@drawable/loading_progressbar" />
+        
+        <TextView
+            android:id="@+id/tv_toast"
+            android:layout_width="80.0dip"
+            android:layout_height="80.0dip"
+            android:layout_centerInParent="true"
+            android:background="@drawable/setting_item_bg_pressed"
+            android:gravity="center"
+            android:textColor="#ffffffff"
+            android:textSize="30.0dip"
+            android:visibility="invisible" />
+
+        <com.zhaoyan.common.view.SideBar
+            android:id="@+id/sidrbar"
+            android:layout_width="30.0dip"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_above="@+id/bottom"
+            android:layout_below="@+id/title"
+             />
 
         <RelativeLayout
             android:id="@+id/bottom"

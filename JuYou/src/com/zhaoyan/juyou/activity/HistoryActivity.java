@@ -29,9 +29,7 @@ import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.communication.FileTransferService;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.HistoryCursorAdapter;
-import com.zhaoyan.juyou.common.HistoryManager;
 import com.zhaoyan.juyou.provider.JuyouData;
-import com.zhaoyan.juyou.provider.JuyouData.History;
 
 public class HistoryActivity extends BaseActivity implements OnScrollListener,
 		OnItemClickListener {

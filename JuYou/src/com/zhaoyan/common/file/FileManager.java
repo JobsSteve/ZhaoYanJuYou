@@ -346,7 +346,7 @@ public class FileManager {
 	 * @param position
 	 *            the click position
 	 */
-	public static void showModifyDialog(final Context context, final int id, final int mediaType, String oldName) {
+	public static void showModifyDialog(final Context context, final long id, final int mediaType, String oldName) {
 		final ZyEditDialog editDialog = new ZyEditDialog(context);
 		editDialog.setTitle(R.string.info_modify_music_name);
 		editDialog.setEditStr(oldName);

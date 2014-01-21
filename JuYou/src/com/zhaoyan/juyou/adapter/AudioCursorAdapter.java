@@ -15,14 +15,17 @@ import android.widget.TextView;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.CharacterParser;
 
 public class AudioCursorAdapter extends BaseCursorAdapter {
 	private static final String TAG = "AudioCursorAdapter";
 	private LayoutInflater mInflater = null;
+	private CharacterParser mCharacterParser;
 
 	public AudioCursorAdapter(Context context) {
 		super(context, null, true);
 		mInflater = LayoutInflater.from(context);
+		mCharacterParser = CharacterParser.getInstance();
 	}
 	
 	@Override
@@ -79,6 +82,7 @@ public class AudioCursorAdapter extends BaseCursorAdapter {
 		holder.timeView = (TextView) view.findViewById(R.id.audio_time);
 		holder.artistView = (TextView) view.findViewById(R.id.audio_artist);
 		holder.sizeView = (TextView) view.findViewById(R.id.audio_size);
+		holder.sortView = (TextView) view.findViewById(R.id.tv_selection);
 		
 		view.setTag(holder);
 		return view;
@@ -90,6 +94,7 @@ public class AudioCursorAdapter extends BaseCursorAdapter {
 		TextView timeView;
 		TextView artistView;
 		TextView sizeView;
+		TextView sortView;
 	}
 
 }

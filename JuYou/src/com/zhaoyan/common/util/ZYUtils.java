@@ -20,6 +20,7 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -267,5 +268,22 @@ public class ZYUtils {
 			}
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static class ViewHolder{
+	    public static <T extends View> T get(View view,int id){
+			SparseArray<View> viewHolder = (SparseArray<View>) view.getTag();
+	        if(viewHolder == null){
+	            viewHolder = new SparseArray<View>();
+	            view.setTag(viewHolder);
+	        }
+	        View childView = viewHolder.get(id);
+	        if(childView == null){
+	            childView = view.findViewById(id);
+	            viewHolder.put(id,childView);   
+	        }
+	        return (T) childView;
+	    }
 	}
 }

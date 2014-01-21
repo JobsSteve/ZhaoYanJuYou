@@ -107,6 +107,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		mGridView = (GridView) rootView.findViewById(R.id.video_gridview);
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
+		mGridView.setDrawSelectorOnTop(true);
 		mGridView.setOnScrollListener(this);
 		mLoadingBar = (ProgressBar) rootView.findViewById(R.id.bar_video_loading);
 		mAdapter = new VideoCursorAdapter(mContext);

@@ -2,6 +2,7 @@ package com.zhaoyan.juyou.activity;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.fragment.AudioFragment;
+import com.zhaoyan.juyou.fragment.AudioFragment2;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -10,22 +11,24 @@ import android.view.Window;
 
 public class AudioActivity extends FragmentActivity{
 	private AudioFragment mAudioFragment;
+	private AudioFragment2 mAudioFragment2;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mAudioFragment= new AudioFragment();
+//		mAudioFragment= new AudioFragment();
+		mAudioFragment2 = new AudioFragment2();
 		getSupportFragmentManager().beginTransaction().replace(
-				android.R.id.content, mAudioFragment).commit();
+				android.R.id.content, mAudioFragment2).commit();
 	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			boolean ret = mAudioFragment.onBackPressed();
+			boolean ret = mAudioFragment2.onBackPressed();
 			if (ret) {
 				finish();
 				overridePendingTransition(0, R.anim.activity_right_out);

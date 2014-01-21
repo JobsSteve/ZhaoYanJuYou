@@ -1,12 +1,17 @@
 package com.zhaoyan.juyou.common;
 
+import java.util.Comparator;
+
 import com.zhaoyan.common.util.ZYUtils;
+import com.zhaoyan.juyou.common.FileInfo.NameComparator;
 
 import android.graphics.Bitmap;
 
 public class MediaInfo {
 	//db id
 	private long id;
+	/**media title*/
+	private String title;
 	/**media file name*/
 	private String displayName;
 	/**artist*/
@@ -27,12 +32,20 @@ public class MediaInfo {
 	private long date;
 	/**image folder*/
 	private String folder;
+	/**for sort*/
+	private String sortLetter;
 	
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
+	}
+	public void setTitle(String title){
+		this.title = title;
+	}
+	public String getTitle(){
+		return title;
 	}
 	public String getDisplayName() {
 		return displayName;
@@ -104,7 +117,12 @@ public class MediaInfo {
 	public void setFolder(String folder) {
 		this.folder = folder;
 	}
-	
+	public String getSortLetter(){
+		return sortLetter;
+	}
+	public void setSortLetter(String letter){
+		this.sortLetter = letter;
+	}
     public String formatTime() {  
     	return ZYUtils.mediaTimeFormat(duration);
     }  
@@ -115,5 +133,24 @@ public class MediaInfo {
 	
 	public String getFormatDate(){
 		return ZYUtils.getFormatDate(date);
+	}
+	
+	private static class NameComparator implements Comparator<MediaInfo> {
+		@Override
+		public int compare(MediaInfo lhs, MediaInfo rhs) {
+			if (lhs.getSortLetter().equals("@")
+					|| rhs.getSortLetter().equals("#")) {
+				return -1;
+			} else if (lhs.getSortLetter().equals("#")
+					|| rhs.getSortLetter().equals("@")) {
+				return 1;
+			} else {
+				return lhs.getSortLetter().compareTo(rhs.getSortLetter());
+			}
+		}
+	};
+	
+	public static Comparator<MediaInfo> getNameComparator() {
+		return new NameComparator();
 	}
 }
