@@ -1,6 +1,7 @@
 package com.zhaoyan.juyou.adapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -11,17 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.MediaInfo;
 
-public class AudioListAdapter extends BaseAdapter implements SelectInterface{
+public class AudioListAdapter extends BaseAdapter implements SelectInterface, SectionIndexer{
 	private static final String TAG = "AudioListAdapter";
 	private LayoutInflater mInflater = null;
 	private List<MediaInfo> mDataList;
+	private HashMap<String, Integer> mAlphaIndexer;
+	private String[] mSections;
 	
 	/**save status of item selected*/
 	private SparseBooleanArray mCheckArray;
@@ -32,6 +37,18 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 		mInflater = LayoutInflater.from(context);
 		mDataList = itemList;
 		mCheckArray = new SparseBooleanArray();
+		
+		mAlphaIndexer = new HashMap<String, Integer>();
+		
+	}
+	
+	public void initIndexer(){
+		mSections = new String[mDataList.size()];
+		for (int i = 0; i < mDataList.size(); i++) {
+			String sortLetter = mDataList.get(i).getSortLetter();
+			mAlphaIndexer.put(sortLetter, i);
+			mSections[i] = sortLetter;
+		}
 	}
 	
 	@Override
@@ -42,13 +59,13 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 	@Override
 	public Object getItem(int position) {
 		// TODO Auto-generated method stub
-		return null;
+		return mDataList.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
 		// TODO Auto-generated method stub
-		return 0;
+		return position;
 	}
 
 	@Override
@@ -79,17 +96,13 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 		holder.timeView.setText(ZYUtils.mediaTimeFormat(mDataList.get(position).getDuration()));
 		
 		String sortLetter = mDataList.get(position).getSortLetter();
-		if (position == 0) {
+		String preLetter = (position - 1) >= 0 ? 
+				mDataList.get(position - 1).getSortLetter() : " ";
+		if (sortLetter.equals(preLetter)) {
+			holder.sortView.setVisibility(View.GONE);
+		} else {
 			holder.sortView.setVisibility(View.VISIBLE);
 			holder.sortView.setText(sortLetter);
-		} else {
-			String preLetter = mDataList.get(position - 1).getSortLetter();
-			if (sortLetter.equals(preLetter)) {
-				holder.sortView.setVisibility(View.GONE);
-			} else {
-				holder.sortView.setVisibility(View.VISIBLE);
-				holder.sortView.setText(sortLetter);
-			}
 		}
 				
 		return view;
@@ -195,25 +208,24 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 	public void setIdleFlag(boolean flag) {
 	}
 	
-	/**
-	 * 根据ListView的当前位置获取分类的首字母的Char ascii值
-	 */
+	@Override
 	public int getSectionForPosition(int position) {
-		return mDataList.get(position).getSortLetter().charAt(0);
+		return 0;
 	}
 
-	/**
-	 * 根据分类的首字母的Char ascii值获取其第一次出现该首字母的位置
-	 */
+	@Override
 	public int getPositionForSection(int section) {
-		for (int i = 0; i < getCount(); i++) {
-			String sortStr = mDataList.get(i).getSortLetter();
-			char firstChar = sortStr.toUpperCase().charAt(0);
-			if (firstChar == section) {
-				return i;
-			}
-		}
-		return -1;
+//		String later = section - 2 >= 0 ? mSections[section - 2] :mSections[section];
+		String later = mSections[section];
+		int position = mAlphaIndexer.get(later);
+//		Log.d(TAG, "getPositionForSection:" + section + "," + later + ","+ position);
+		return position;
+	}
+
+	@Override
+	public Object[] getSections() {
+		// TODO Auto-generated method stub
+		return mSections;
 	}
 	
 }

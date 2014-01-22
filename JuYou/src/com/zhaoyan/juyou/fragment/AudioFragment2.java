@@ -250,6 +250,7 @@ public class AudioFragment2 extends BaseFragment implements OnItemClickListener,
 					cursor.close();
 				}
 				num = mAudioLists.size();
+				mAdapter.initIndexer();
 				mAdapter.notifyDataSetChanged();
 				mAdapter.checkedAll(false);
 			}
