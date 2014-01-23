@@ -43,6 +43,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.AbsListView.OnScrollListener;
 
@@ -56,6 +57,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	private int mImageType = -1;
 	
 	private GridView mGridView;
+	private ListView mListView;
+	
 	private ProgressBar mLoadingBar;
 	private ViewGroup mViewGroup;
 	
@@ -150,10 +153,25 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		mGridView.setOnScrollListener(this);
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
+		
+		mListView = (ListView) findViewById(R.id.lv_picture_item);
+		mListView.setOnScrollListener(this);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
+		
 		mLoadingBar = (ProgressBar) findViewById(R.id.bar_loading_image);
 		
-		mAdapter = new ImageAdapter(getApplicationContext(), mPictureItemInfoList);
-		mGridView.setAdapter(mAdapter);
+		mAdapter = new ImageAdapter(getApplicationContext(), mViewType, mPictureItemInfoList);
+		
+		if (isListView()) {
+			mListView.setVisibility(View.VISIBLE);
+			mGridView.setVisibility(View.GONE);
+			mListView.setAdapter(mAdapter);
+		} else {
+			mListView.setVisibility(View.GONE);
+			mGridView.setVisibility(View.VISIBLE);
+			mGridView.setAdapter(mAdapter);
+		}
 		
 		initMenuBar();
 	}
@@ -214,7 +232,7 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 							String name = 
 								cursor.getString(cursor.getColumnIndex(MediaColumns.DISPLAY_NAME));
 
-							imageInfo.setImage_id(id);
+							imageInfo.setImageId(id);
 							imageInfo.setPath(url);
 							imageInfo.setDisplayName(name);
 

@@ -60,7 +60,6 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 		
 		sp = SharedPreferenceUtil.getSharedPreference(mContext);
 		mCurrentType = sp.getInt(Extra.View_TYPE, Extra.VIEW_TYPE_DEFAULT);
-		
 		initTitle(rootView, R.string.wo);
 		initView(rootView);
 		updateAccountInfo();
@@ -166,7 +165,7 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 						mCurrentType = Extra.VIEW_TYPE_GRID;
 						break;
 					}
-					editor.putInt(Extra.View_TYPE, Extra.VIEW_TYPE_DEFAULT);
+					editor.putInt(Extra.View_TYPE, mCurrentType);
 					editor.commit();
 					setViewTypeText(mCurrentType);
 					dialog.dismiss();

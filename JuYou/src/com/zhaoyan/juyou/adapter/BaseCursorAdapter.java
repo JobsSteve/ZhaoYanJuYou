@@ -13,16 +13,24 @@ import android.view.ViewGroup;
 
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
+import com.zhaoyan.juyou.common.ZYConstant.Extra;
 
 public class BaseCursorAdapter extends CursorAdapter implements SelectInterface {
 	private static final String TAG = "BaseCursorAdapter";
 	protected int mMenuMode = ActionMenu.MODE_NORMAL;
 	protected SparseBooleanArray mCheckArray = null;
+	
+	//当前视图
+	protected int mViewType = Extra.VIEW_TYPE_DEFAULT;
 
 	public BaseCursorAdapter(Context context, Cursor c, boolean autoRequery) {
 		super(context, c, autoRequery);
 		mCheckArray = new SparseBooleanArray();
 		// TODO Auto-generated constructor stub
+	}
+	
+	public void setCurrentViewType(int view_type){
+		mViewType = view_type;
 	}
 	
 	public void updateViewBackground(boolean selected, int position, View view){

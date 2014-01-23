@@ -9,6 +9,7 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.pm.PackageManager;
 import android.content.Intent;
@@ -29,11 +30,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.SharedPreferenceUtil;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.adapter.AppCursorAdapter;
@@ -45,6 +48,7 @@ import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
+import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.dialog.AppDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.notification.NotificationMgr;
@@ -58,6 +62,7 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 	private static final String TAG = "AppFragment";
 	
 	private GridView mGridView;
+	private ListView mListView;
 	private ProgressBar mLoadingBar;
 
 	private AppCursorAdapter mAdapter = null;
@@ -70,7 +75,7 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 	
 	private QueryHandler mQueryHandler;
 	
-	private int mType = -1;
+	private int mAppType = -1;
 	
 	private NotificationMgr mNotificationMgr;
 	private boolean mIsBackupHide = false;
@@ -123,22 +128,24 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mType = getArguments() != null ? getArguments().getInt(AppActivity.APP_TYPE) : AppActivity.TYPE_APP;
+		mAppType = getArguments() != null ? getArguments().getInt(AppActivity.APP_TYPE) : AppActivity.TYPE_APP;
 		if (null != savedInstanceState) {
-			mType = savedInstanceState.getInt(AppActivity.APP_TYPE);
+			mAppType = savedInstanceState.getInt(AppActivity.APP_TYPE);
 		}
 		
 		mNotice = new Notice(getActivity().getApplicationContext());
 		pm = getActivity().getPackageManager();
 		
 		mNotificationMgr = new NotificationMgr(getActivity().getApplicationContext());
+		
+		Log.d(TAG, "onCreate.mViewType=" + mViewType);
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
-		outState.putInt(AppActivity.APP_TYPE, mType);
+		outState.putInt(AppActivity.APP_TYPE, mAppType);
 	}
 	
 	@Override
@@ -151,7 +158,17 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.app_main, container, false);
 		
-		mGridView = (GridView) rootView.findViewById(R.id.app_normal_gridview);
+		mGridView = (GridView) rootView.findViewById(R.id.app_gridview);
+		mListView = (ListView) rootView.findViewById(R.id.app_listview);
+		Log.d(TAG, "onCreateView.mViewType=" + mViewType);
+		if (Extra.VIEW_TYPE_LIST == mViewType) {
+			mListView.setVisibility(View.VISIBLE);
+			mGridView.setVisibility(View.GONE);
+		} else {
+			mListView.setVisibility(View.GONE);
+			mGridView.setVisibility(View.VISIBLE);
+		}
+		
 		mLoadingBar = (ProgressBar) rootView.findViewById(R.id.app_progressbar);
 		
 		if (isGameUI()) {
@@ -167,12 +184,17 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 		mGridView.setOnItemClickListener(this);
 		mGridView.setOnItemLongClickListener(this);
 		
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
+		
 		return rootView;
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		mAdapter = new AppCursorAdapter(getActivity().getApplicationContext());
+		mAdapter.setCurrentViewType(mViewType);
+		
 		query();
 		super.onActivityCreated(savedInstanceState);
 	}
@@ -211,7 +233,12 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 			if (null != cursor && cursor.getCount() > 0) {
 				Log.d(TAG, "onQueryComplete.count=" + cursor.getCount());
 				mAdapter.changeCursor(cursor);
-				mGridView.setAdapter(mAdapter);
+				if (Extra.VIEW_TYPE_LIST == mViewType) {
+					mListView.setAdapter(mAdapter);
+				} else {
+					mGridView.setAdapter(mAdapter);
+				}
+				
 				mAdapter.checkedAll(false);
 				message.arg1 = cursor.getCount();
 			} else {
@@ -716,7 +743,7 @@ public class AppFragment extends BaseFragment implements OnItemClickListener, On
 	}
     
     private boolean isGameUI(){
-    	return AppActivity.TYPE_GAME == mType;
+    	return AppActivity.TYPE_GAME == mAppType;
     }
 	
 	@Override

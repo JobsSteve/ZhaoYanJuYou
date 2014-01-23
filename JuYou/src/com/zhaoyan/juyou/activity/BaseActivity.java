@@ -2,6 +2,7 @@ package com.zhaoyan.juyou.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -12,12 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.SharedPreferenceUtil;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenuInflater;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.ActionMenuInterface.OnMenuItemClickListener;
+import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.common.MenuBarManager;
 
 public class BaseActivity extends Activity implements OnMenuItemClickListener {
@@ -34,11 +37,17 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 	protected ActionMenu mActionMenu;
 
 	private ActionMenuInflater mActionMenuInflater;
+	
+	//视图模式
+	protected int mViewType = Extra.VIEW_TYPE_DEFAULT;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		SharedPreferences sp = SharedPreferenceUtil.getSharedPreference(getApplicationContext());
+		mViewType = sp.getInt(Extra.View_TYPE, Extra.VIEW_TYPE_DEFAULT);
 	}
 
 	protected void initTitle(int titleName) {
@@ -158,5 +167,9 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 	@Override
 	public void onMenuItemClick(ActionMenuItem item) {
 		// TODO Auto-generated method stub
+	}
+	
+	public boolean isListView(){
+		return Extra.VIEW_TYPE_LIST == mViewType;
 	}
 }

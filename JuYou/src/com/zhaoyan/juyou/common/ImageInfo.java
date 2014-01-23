@@ -43,11 +43,11 @@ public class ImageInfo implements Parcelable{
 		readFromParcel(in);
 	}
 	
-	public long getImage_id() {
+	public long getImageId() {
 		return image_id;
 	}
 	
-	public void setImage_id(long image_id) {
+	public void setImageId(long image_id) {
 		this.image_id = image_id;
 	}
 	

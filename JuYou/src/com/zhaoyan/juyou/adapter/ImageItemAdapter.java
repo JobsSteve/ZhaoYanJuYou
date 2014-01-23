@@ -177,7 +177,7 @@ public class ImageItemAdapter extends BaseAdapter {
 			return view;
 		}
 	*/	
-		long id = mDataList.get(position).getImage_id();
+		long id = mDataList.get(position).getImageId();
 		if (mIdleFlag) {
 			int count = lstPosition.size();
 			if (USE_VIEW_CACHE) {
@@ -194,9 +194,9 @@ public class ImageItemAdapter extends BaseAdapter {
 						lstLoadedBitmap.remove(0);
 						lstLoadedBitmap.remove(0);
 						if (endPos + 1 < total) {
-							view = mInflater.inflate(R.layout.image_item, null);
+							view = mInflater.inflate(R.layout.image_item_grid, null);
 							ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
-							long addedId = mDataList.get(endPos+1).getImage_id();
+							long addedId = mDataList.get(endPos+1).getImageId();
 							pictureLoader.loadBitmap(addedId, imageView);
 							lstPosition.add(position);
 							lstView.add(view);
@@ -206,9 +206,9 @@ public class ImageItemAdapter extends BaseAdapter {
 						lstPosition.remove(count-1);	//ɾ���������������ǰ��һ��
 						lstPosition.remove(count-2);
 						if (startPos - 1 > 0) {
-							view = mInflater.inflate(R.layout.image_item, null);
+							view = mInflater.inflate(R.layout.image_item_grid, null);
 							ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
-							long addedId = mDataList.get(startPos-1).getImage_id();
+							long addedId = mDataList.get(startPos-1).getImageId();
 							pictureLoader.loadBitmap(addedId, imageView);
 							lstPosition.add(0,position);
 							lstView.add(0,view);
@@ -222,7 +222,7 @@ public class ImageItemAdapter extends BaseAdapter {
 				}		
 
 				if (lstPosition.contains(position) == false) {
-					view = mInflater.inflate(R.layout.image_item, null);
+					view = mInflater.inflate(R.layout.image_item_grid, null);
 					ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
 					pictureLoader.loadBitmap(id, imageView);
 					lstPosition.add(position);//���������	
@@ -239,7 +239,7 @@ public class ImageItemAdapter extends BaseAdapter {
 				if (convertView != null) {
 					view = convertView;
 				} else {
-					view = mInflater.inflate(R.layout.image_item, null);
+					view = mInflater.inflate(R.layout.image_item_grid, null);
 				}
 				CheckableImageView imageView = (CheckableImageView) view.findViewById(R.id.iv_image_item);
 				pictureLoader.loadBitmap(id, imageView);
@@ -249,7 +249,7 @@ public class ImageItemAdapter extends BaseAdapter {
 		} else {
 			if (USE_VIEW_CACHE) {
 				if (lstPosition.contains(position) == false) {
-					view = mInflater.inflate(R.layout.image_item, null);		
+					view = mInflater.inflate(R.layout.image_item_grid, null);		
 					ImageView imageView = (ImageView) view.findViewById(R.id.iv_image_item);
 					lstPosition.add(position);
 					lstView.add(view);
@@ -261,7 +261,7 @@ public class ImageItemAdapter extends BaseAdapter {
 				if (convertView != null) {
 					view = convertView;
 				} else {
-					view = mInflater.inflate(R.layout.image_item, null);
+					view = mInflater.inflate(R.layout.image_item_grid, null);
 				}
 				CheckableImageView imageView = (CheckableImageView) view.findViewById(R.id.iv_image_item);
 				if (AsyncPictureLoader.bitmapCaches.size() >0 &&

@@ -95,7 +95,6 @@ public class BitmapUtilities {
 	 * @return
 	 */
 	public static Bitmap toRoundBitmap(Bitmap bitmap) {
-		System.out.println("toRoundBitmap");
 		int width = bitmap.getWidth();
 		int height = bitmap.getHeight();
 		float roundPx;
@@ -159,7 +158,6 @@ public class BitmapUtilities {
 	 * @return
 	 */
 	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {  
-		System.out.println("getRoundedCornerBitmap");
 	    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),  
 	        bitmap.getHeight(), Config.ARGB_8888);  
 	    Canvas canvas = new Canvas(output);  

@@ -2,6 +2,7 @@ package com.zhaoyan.juyou.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -12,12 +13,14 @@ import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
 import com.zhaoyan.common.file.ZyMediaScanner;
+import com.zhaoyan.common.util.SharedPreferenceUtil;
 import com.zhaoyan.common.view.TransportAnimationView;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.ActionMenuInflater;
 import com.zhaoyan.juyou.common.ActionMenuInterface.OnMenuItemClickListener;
+import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.common.MenuBarManager;
 
 public class BaseFragment extends Fragment implements OnMenuItemClickListener{
@@ -42,12 +45,20 @@ public class BaseFragment extends Fragment implements OnMenuItemClickListener{
 	 */
 	protected int count = 0;
 	
+	//视图模式
+	protected int mViewType = Extra.VIEW_TYPE_DEFAULT;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
 		mNotice = new Notice(mContext);
 		
+		//get View Type
+		SharedPreferences sp = SharedPreferenceUtil
+				.getSharedPreference(getActivity().getApplicationContext());
+		mViewType = sp.getInt(Extra.View_TYPE, Extra.VIEW_TYPE_DEFAULT);
+				
 		setHasOptionsMenu(true);
 	}
 	

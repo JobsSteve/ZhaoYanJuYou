@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.provider.AppData;
 
 public class AppCursorAdapter extends BaseCursorAdapter {
@@ -128,7 +129,12 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 	
 	@Override
 	public View newView(Context arg0, Cursor cursor, ViewGroup arg2) {
-		View view  = inflater.inflate(R.layout.app_item, null);
+		View view  = null;
+		if (Extra.VIEW_TYPE_LIST == mViewType) {
+			view = inflater.inflate(R.layout.app_item_list, null);
+		} else {
+			view = inflater.inflate(R.layout.app_item_grid, null);
+		}
 		ViewHolder holder = new ViewHolder();
 		
 		holder.iconView = (ImageView) view.findViewById(R.id.app_icon_text_view);

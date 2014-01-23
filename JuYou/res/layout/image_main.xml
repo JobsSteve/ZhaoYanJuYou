@@ -38,6 +38,16 @@
             android:verticalSpacing="4dip"
             android:fastScrollEnabled="true"
             android:visibility="visible" />
+        
+        <ListView 
+            android:id="@+id/lv_picture_item"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/title"
+            android:layout_above="@+id/bottom"
+            android:fastScrollEnabled="true"
+            android:visibility="gone"
+            ></ListView>
 
         <ProgressBar
             android:id="@+id/bar_loading_image"
