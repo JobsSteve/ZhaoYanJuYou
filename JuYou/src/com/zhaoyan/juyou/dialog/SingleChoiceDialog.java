@@ -29,11 +29,14 @@ public class SingleChoiceDialog extends ZyAlertDialog implements OnItemClickList
 	
 	private int mChoiceItemId;
 	
-	public SingleChoiceDialog(Context context, ActionMenu actionMenu) {
+	private int mDefaultChoiceItem;
+	
+	public SingleChoiceDialog(Context context, int defaultChoiceitem, ActionMenu actionMenu) {
 		super(context);
 		mContext = context;
 		mActionMenu = actionMenu;
-		mChoiceItemId = actionMenu.getItem(0).getItemId();
+		mChoiceItemId = actionMenu.getItem(defaultChoiceitem).getItemId();
+		mDefaultChoiceItem = defaultChoiceitem;
 	}
 	
 	@Override
@@ -50,6 +53,7 @@ public class SingleChoiceDialog extends ZyAlertDialog implements OnItemClickList
 		
 		mAdapter = new SingleChoiceAdapter();
 		mListView.setAdapter(mAdapter);
+		mAdapter.setChoicePosition(mDefaultChoiceItem);
 		
 		setCanceledOnTouchOutside(true);
 		setCustomView(view);

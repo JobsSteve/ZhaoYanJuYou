@@ -18,6 +18,10 @@
     <string name="help_check_update">检查更新</string>
     <string name="help_current_version">当前版本号：%s</string>
     <string name="traffic_statistics">流量统计</string>
+    <string name="view_switch">切换浏览视图</string>
+    <string name="view_default">默认视图</string>
+    <string name="view_list">列表视图</string>
+    <string name="view_grid">网格视图</string>
     <string name="help_about">关于我们</string>
     <string name="account_management">账号管理</string>
     <string name="http_share_open_warning_dialog_title">零流量邀请</string>

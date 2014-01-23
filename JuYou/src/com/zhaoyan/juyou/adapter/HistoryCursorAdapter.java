@@ -606,7 +606,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		if (HistoryManager.TYPE_SEND == type) {
 			actionMenu.findItem(2).setEnable(false);
 		} 
-		final SingleChoiceDialog choiceDialog = new SingleChoiceDialog(mContext, actionMenu);
+		final SingleChoiceDialog choiceDialog = new SingleChoiceDialog(mContext, 0, actionMenu);
 		choiceDialog.setTitle(R.string.delete_history);
 		choiceDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 			@Override
@@ -653,7 +653,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		actionMenu.addItem(1, 0, R.string.clear_history);
 		actionMenu.addItem(2, 0, R.string.clear_history_file);
 		
-		final SingleChoiceDialog choiceDialog = new SingleChoiceDialog(mContext, actionMenu);
+		final SingleChoiceDialog choiceDialog = new SingleChoiceDialog(mContext, 0, actionMenu);
 		choiceDialog.setTitle(R.string.clear_history);
 		choiceDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
 			@Override

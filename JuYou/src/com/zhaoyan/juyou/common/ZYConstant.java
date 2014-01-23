@@ -55,6 +55,12 @@ public class ZYConstant {
 		public static final String SEND_USERS = "send_users";
 
 		public static final String APP_ID = "app_id";
+		
+		//view types
+		public static final String View_TYPE = "view_type";
+		public static final int VIEW_TYPE_DEFAULT = 0;
+		public static final int VIEW_TYPE_LIST = 1;
+		public static final int VIEW_TYPE_GRID = 2;
 
 	}
 

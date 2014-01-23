@@ -195,6 +195,59 @@
                         android:textSize="16sp" />
                 </LinearLayout>
             </RelativeLayout>
+            
+            <!-- Traffic statitics -->
+
+            <RelativeLayout
+                android:id="@+id/rl_wo_view_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/setting_item_bg"
+                android:clickable="true"
+                android:padding="10dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wo_view_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/traffic_statistics" />
+
+                <ImageView
+                    android:id="@+id/iv_wo_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/setting_item_arrow" />
+                
+                <LinearLayout 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                    android:orientation="vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/iv_wo_view"
+                    android:layout_toRightOf="@id/iv_wo_view_setting"
+                    >
+                    <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_switch"
+                    android:textSize="16sp" />
+                
+                <TextView
+                    android:id="@+id/tv_wo_view_tip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/gray"
+                    android:text="默认视图"
+                    android:textSize="12sp" />
+                </LinearLayout>
+            </RelativeLayout>
             <!-- Check update -->
 
             <RelativeLayout
