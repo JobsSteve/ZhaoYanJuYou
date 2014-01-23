@@ -13,12 +13,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -26,6 +23,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.zhaoyan.common.file.FileManager;
@@ -51,6 +49,7 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 			 OnScrollListener, MenuBarInterface {
 	private static final String TAG = "VideoFragment";
 	private GridView mGridView;
+	private ListView mListView;
 	private ProgressBar mLoadingBar;
 	
 	private VideoCursorAdapter mAdapter;
@@ -109,9 +108,24 @@ public class VideoFragment extends BaseFragment implements OnItemClickListener, 
 		mGridView.setOnItemLongClickListener(this);
 		mGridView.setDrawSelectorOnTop(true);
 		mGridView.setOnScrollListener(this);
+		
+		mListView = (ListView) rootView.findViewById(R.id.lv_video);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
+		mListView.setOnScrollListener(this);
+		
 		mLoadingBar = (ProgressBar) rootView.findViewById(R.id.bar_video_loading);
 		mAdapter = new VideoCursorAdapter(mContext);
-		mGridView.setAdapter(mAdapter);
+		mAdapter.setCurrentViewType(mViewType);
+		if (isListView()) {
+			mListView.setVisibility(View.VISIBLE);
+			mGridView.setVisibility(View.GONE);
+			mListView.setAdapter(mAdapter);
+		} else {
+			mListView.setVisibility(View.GONE);
+			mGridView.setVisibility(View.VISIBLE);
+			mGridView.setAdapter(mAdapter);
+		}
 		
 		initTitle(rootView.findViewById(R.id.rl_video_main), R.string.video);
 		initMenuBar(rootView);

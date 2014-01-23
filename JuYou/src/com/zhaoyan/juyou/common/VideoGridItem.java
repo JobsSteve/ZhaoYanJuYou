@@ -32,7 +32,7 @@ public class VideoGridItem extends RelativeLayout implements Checkable {
 	public VideoGridItem(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		mContext = context;
-		LayoutInflater.from(context).inflate(R.layout.video_item, this);
+		LayoutInflater.from(context).inflate(R.layout.video_item_grid, this);
 		mIconView = (ImageView) findViewById(R.id.iv_video_icon);
 		mTimeView = (TextView) findViewById(R.id.tv_video_time);
 	}

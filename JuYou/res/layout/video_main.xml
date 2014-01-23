@@ -24,6 +24,16 @@
             android:gravity="center"
             android:numColumns="3"
             android:stretchMode="columnWidth" />
+        
+        <ListView 
+            android:id="@+id/lv_video"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/title"
+            android:layout_above="@+id/bottom"
+            android:fastScrollEnabled="true"
+            android:visibility="gone"
+            ></ListView>
 
         <ProgressBar
             android:id="@+id/bar_video_loading"

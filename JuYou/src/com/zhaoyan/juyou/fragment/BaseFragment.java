@@ -156,4 +156,8 @@ public class BaseFragment extends Fragment implements OnMenuItemClickListener{
 		}
 		return mActionMenuInflater;
 	}
+	
+	protected boolean isListView(){
+		return Extra.VIEW_TYPE_LIST == mViewType;
+	}
 }

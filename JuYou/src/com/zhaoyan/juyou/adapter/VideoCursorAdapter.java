@@ -14,9 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AsyncVideoLoader;
 import com.zhaoyan.juyou.common.AsyncVideoLoader.ILoadVideoCallback;
+import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.common.VideoGridItem;
 
 public class VideoCursorAdapter extends BaseCursorAdapter {
@@ -75,30 +77,48 @@ public class VideoCursorAdapter extends BaseCursorAdapter {
 
 	@Override
 	public void bindView(View view, Context arg1, Cursor cursor) {
-//		final ViewHolder holder = (ViewHolder) view.getTag();
-//		long id = cursor.getLong(cursor
-//				.getColumnIndex(MediaStore.Video.Media._ID));
-//		long duration = cursor.getLong(cursor
-//				.getColumnIndex(MediaStore.Video.Media.DURATION)); // 时长
-//		
-//		Bitmap bitmap = asyncVideoLoader.loadBitmap(id, new ILoadVideoCallback() {
-//			@Override
-//			public void onObtainBitmap(Bitmap bitmap, long id) {
-//				holder.iconView.setImageBitmap(bitmap);
-//			}
-//		});
-//		
-//		if (null == bitmap) {
-//			//在图片没有读取出来的情况下预先放一张图
-//			holder.iconView.setImageResource(R.drawable.default_video_iv);
-//		}else {
-//			holder.iconView.setImageBitmap(bitmap);
-//		}
-//		
-//		holder.timeView.setText(DreamUtil.mediaTimeFormat(duration));
-//		
-//		boolean isSelected = isSelected(cursor.getPosition());
-//		updateViewBackground(isSelected, cursor.getPosition(), view);
+		if (Extra.VIEW_TYPE_LIST == mViewType) {
+			final ViewHolder holder = (ViewHolder) view.getTag();
+			long id = cursor.getLong(cursor
+					.getColumnIndex(MediaStore.Video.Media._ID));
+			long duration = cursor.getLong(cursor
+					.getColumnIndex(MediaStore.Video.Media.DURATION)); // 时长
+			String name = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
+			long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
+			
+			if (!mIdleFlag) {
+				if (AsyncVideoLoader.bitmapCaches.size() > 0
+						&& AsyncVideoLoader.bitmapCaches.get(id) != null) {
+					holder.iconView.setImageBitmap(AsyncVideoLoader.bitmapCaches.get(id)
+							.get());
+				} else {
+					holder.iconView.setImageResource(R.drawable.default_video_iv);
+				}
+			} else {
+				Bitmap bitmap = asyncVideoLoader.loadBitmap(id, new ILoadVideoCallback() {
+					@Override
+					public void onObtainBitmap(Bitmap bitmap, long id) {
+						holder.iconView.setImageBitmap(bitmap);
+					}
+				});
+				
+				if (null == bitmap) {
+					//在图片没有读取出来的情况下预先放一张图
+					holder.iconView.setImageResource(R.drawable.default_video_iv);
+				}else {
+					holder.iconView.setImageBitmap(bitmap);
+				}
+			}
+			
+			holder.nameView.setText(name);
+			holder.timeView.setText(ZYUtils.mediaTimeFormat(duration) + "  "
+					+ ZYUtils.getFormatSize(size));
+			
+			boolean isSelected = isChecked(cursor.getPosition());
+			updateViewBackground(isSelected, cursor.getPosition(), view);
+			
+			return;
+		}
 		
 		final VideoGridItem item = (VideoGridItem) view;
 		long id = cursor.getLong(cursor
@@ -137,13 +157,15 @@ public class VideoCursorAdapter extends BaseCursorAdapter {
 
 	@Override
 	public View newView(Context arg0, Cursor cursor, ViewGroup arg2) {
-//		View view = mInflater.inflate(R.layout.ui_media_video_item, null);
-//		
-//		ViewHolder holder = new ViewHolder();
-//		holder.iconView = (ImageView) view.findViewById(R.id.iv_video_icon);
-//		holder.timeView = (TextView) view.findViewById(R.id.tv_video_time);
-//		
-//		view.setTag(holder);
+		if (Extra.VIEW_TYPE_LIST == mViewType) {
+			View view = mInflater.inflate(R.layout.video_item_list, null);
+			ViewHolder holder = new ViewHolder();
+			holder.iconView = (ImageView) view.findViewById(R.id.iv_video_icon);
+			holder.nameView = (TextView) view.findViewById(R.id.tv_video_name);
+			holder.timeView = (TextView) view.findViewById(R.id.tv_video_time);
+			view.setTag(holder);
+			return view;
+		}
 		
 		VideoGridItem item = new VideoGridItem(arg0);
 		//do not set layoutParams here,because 2.3 will force close by Java.lang.ClassCastException
@@ -153,6 +175,7 @@ public class VideoCursorAdapter extends BaseCursorAdapter {
 	
 	public class ViewHolder{
 		ImageView iconView;
+		TextView nameView;
 		TextView timeView;
 	}
 
