@@ -36,5 +36,9 @@
     <color name="list_item_bg_normal">@android:color/transparent</color>
     <color name="list_item_bg_checked">@color/holo_blue_light</color>
     <color name="list_item_bg_pressed">@color/holo_blue_light_transparent2</color>
+    
+    <drawable name="listselector_pressed">@color/holo_blue_light_transparent2</drawable>
+    <drawable name="listselector_selected">@color/holo_blue_light</drawable>
+    <drawable name="listselector_normal">@android:color/transparent</drawable>
 
 </resources>

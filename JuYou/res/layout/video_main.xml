@@ -32,6 +32,7 @@
             android:layout_below="@+id/title"
             android:layout_above="@+id/bottom"
             android:fastScrollEnabled="true"
+            android:listSelector="@drawable/list_selector"
             android:visibility="gone"
             ></ListView>
 

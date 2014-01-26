@@ -121,7 +121,13 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 		holder.iconView.setImageDrawable(applicationInfo.loadIcon(pm));
 		holder.nameView.setText(applicationInfo.loadLabel(pm));
 		long size = new File(applicationInfo.sourceDir).length();
-		holder.sizeView.setText(ZYUtils.getFormatSize(size));
+		String version = "";
+		try {
+			version = pm.getPackageInfo(packagename, 0).versionName;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		holder.sizeView.setText("版本:" + version + "  " + ZYUtils.getFormatSize(size));
 		
 		boolean isChecked = isChecked(cursor.getPosition());
 		updateViewBackground(isChecked, cursor.getPosition(), view);

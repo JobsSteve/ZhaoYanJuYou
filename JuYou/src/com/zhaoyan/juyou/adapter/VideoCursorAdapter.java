@@ -114,9 +114,8 @@ public class VideoCursorAdapter extends BaseCursorAdapter {
 			holder.timeView.setText(ZYUtils.mediaTimeFormat(duration) + "  "
 					+ ZYUtils.getFormatSize(size));
 			
-			boolean isSelected = isChecked(cursor.getPosition());
-			updateViewBackground(isSelected, cursor.getPosition(), view);
-			
+//			boolean isSelected = isChecked(cursor.getPosition());
+//			updateViewBackground(isSelected, cursor.getPosition(), view);
 			return;
 		}
 		
