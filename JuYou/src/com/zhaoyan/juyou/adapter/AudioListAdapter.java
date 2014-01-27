@@ -1,7 +1,6 @@
 package com.zhaoyan.juyou.adapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -12,21 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.MediaInfo;
 
-public class AudioListAdapter extends BaseAdapter implements SelectInterface, SectionIndexer{
+public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 	private static final String TAG = "AudioListAdapter";
 	private LayoutInflater mInflater = null;
 	private List<MediaInfo> mDataList;
-	private HashMap<String, Integer> mAlphaIndexer;
-	private String[] mSections;
 	
 	/**save status of item selected*/
 	private SparseBooleanArray mCheckArray;
@@ -37,18 +32,7 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface, Se
 		mInflater = LayoutInflater.from(context);
 		mDataList = itemList;
 		mCheckArray = new SparseBooleanArray();
-		
-		mAlphaIndexer = new HashMap<String, Integer>();
-		
-	}
-	
-	public void initIndexer(){
-		mSections = new String[mDataList.size()];
-		for (int i = 0; i < mDataList.size(); i++) {
-			String sortLetter = mDataList.get(i).getSortLetter();
-			mAlphaIndexer.put(sortLetter, i);
-			mSections[i] = sortLetter;
-		}
+		checkedAll(false);
 	}
 	
 	@Override
@@ -98,11 +82,12 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface, Se
 		String sortLetter = mDataList.get(position).getSortLetter();
 		String preLetter = (position - 1) >= 0 ? 
 				mDataList.get(position - 1).getSortLetter() : " ";
-		if (sortLetter.equals(preLetter)) {
-			holder.sortView.setVisibility(View.GONE);
-		} else {
+		
+		if (!preLetter.equals(sortLetter)) {
 			holder.sortView.setVisibility(View.VISIBLE);
 			holder.sortView.setText(sortLetter);
+		} else {
+			holder.sortView.setVisibility(View.GONE);
 		}
 				
 		return view;
@@ -206,26 +191,6 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface, Se
 
 	@Override
 	public void setIdleFlag(boolean flag) {
-	}
-	
-	@Override
-	public int getSectionForPosition(int position) {
-		return 0;
-	}
-
-	@Override
-	public int getPositionForSection(int section) {
-//		String later = section - 2 >= 0 ? mSections[section - 2] :mSections[section];
-		String later = mSections[section];
-		int position = mAlphaIndexer.get(later);
-//		Log.d(TAG, "getPositionForSection:" + section + "," + later + ","+ position);
-		return position;
-	}
-
-	@Override
-	public Object[] getSections() {
-		// TODO Auto-generated method stub
-		return mSections;
 	}
 	
 }

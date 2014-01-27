@@ -149,8 +149,6 @@ public class AudioFragment2 extends BaseFragment implements OnItemClickListener,
 		mLoadingBar = (ProgressBar) rootView.findViewById(R.id.audio_progressbar);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
-		mAdapter = new AudioListAdapter(mContext, mAudioLists);
-		mListView.setAdapter(mAdapter);
 		
 		mToastView = (TextView) rootView.findViewById(R.id.tv_toast);
 		mSideBar = (SideBar) rootView.findViewById(R.id.sidrbar);
@@ -162,10 +160,10 @@ public class AudioFragment2 extends BaseFragment implements OnItemClickListener,
 			public void onTouchingLetterChanged(String s) {
 				// TODO Auto-generated method stub
 				//该字母首次出现的位置
-				int position = mAdapter.getPositionForSection(s.charAt(0));
-				if(position != -1){
-					mListView.setSelection(position);
-				}
+//				int position = mAdapter.getPositionForSection(s.charAt(0));
+//				if(position != -1){
+//					mListView.setSelection(position);
+//				}
 			}
 		});
 		
@@ -250,9 +248,11 @@ public class AudioFragment2 extends BaseFragment implements OnItemClickListener,
 					cursor.close();
 				}
 				num = mAudioLists.size();
-				mAdapter.initIndexer();
-				mAdapter.notifyDataSetChanged();
-				mAdapter.checkedAll(false);
+				
+				mAdapter = new AudioListAdapter(mContext, mAudioLists);
+				mListView.setAdapter(mAdapter);
+				
+//				mAdapter.checkedAll(false);
 			}
 			mLoadingBar.setVisibility(View.INVISIBLE);
 			updateUI(num);
