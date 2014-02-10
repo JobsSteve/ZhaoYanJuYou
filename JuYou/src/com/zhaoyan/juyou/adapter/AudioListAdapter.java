@@ -96,7 +96,7 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 	public void updateViewBackground(int position, View view){
 		boolean isChecked = isChecked(position);
 		if (isChecked) {
-			view.setBackgroundResource(R.color.holo_blue1);
+			view.setBackgroundResource(R.color.holo_blue_light);
 		}else {
 			view.setBackgroundResource(Color.TRANSPARENT);
 		}

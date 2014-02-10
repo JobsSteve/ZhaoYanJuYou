@@ -16,7 +16,7 @@
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/holo_blue1" />
+            android:background="@color/holo_blue_light" />
 
         <TextView
             android:id="@+id/tv_storage"
@@ -26,7 +26,7 @@
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/holo_blue1" />
+            android:background="@color/holo_blue_light" />
 
         <RelativeLayout
             android:layout_width="fill_parent"

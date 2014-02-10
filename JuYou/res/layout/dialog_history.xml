@@ -11,13 +11,13 @@
         android:background="#f0f0f0f0"
         android:gravity="center"
         android:text="属性"
-        android:textColor="@color/holo_blue1"
+        android:textColor="@color/holo_blue_light"
         android:textSize="15sp" />
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="@color/holo_blue1" />
+        android:background="@color/holo_blue_light" />
 
     <ListView
         android:id="@+id/lv_history"

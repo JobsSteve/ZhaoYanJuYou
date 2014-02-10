@@ -213,7 +213,7 @@ public class HistoryCursorAdapter extends CursorAdapter {
 		case HistoryManager.STATUS_SEND_SUCCESS:
 		case HistoryManager.STATUS_RECEIVE_SUCCESS:
 			statusStr = mContext.getString(R.string.transfer_ok);
-			color = mContext.getResources().getColor(R.color.holo_blue1);
+			color = mContext.getResources().getColor(R.color.holo_blue_light);
 			break;
 		case HistoryManager.STATUS_SEND_FAIL:
 			statusStr = mContext.getString(R.string.send_fail);

@@ -35,7 +35,7 @@ public class BaseCursorAdapter extends CursorAdapter implements SelectInterface 
 	
 	public void updateViewBackground(boolean selected, int position, View view){
 		if (selected) {
-			view.setBackgroundResource(R.color.holo_blue1);
+			view.setBackgroundResource(R.color.holo_blue_light);
 		}else {
 			view.setBackgroundResource(Color.TRANSPARENT);
 		}

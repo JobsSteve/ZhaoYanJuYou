@@ -16,14 +16,14 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/delete_confirm_msg"
-            android:textColor="@color/holo_blue1"
+            android:textColor="@color/holo_blue_light"
             android:textSize="15sp" />
 
         <View
             android:layout_width="fill_parent"
             android:layout_height="2dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/holo_blue1" />
+            android:background="@color/holo_blue_light" />
     </RelativeLayout>
 
     <RelativeLayout 

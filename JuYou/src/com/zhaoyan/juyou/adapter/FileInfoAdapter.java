@@ -270,7 +270,7 @@ public class FileInfoAdapter extends BaseAdapter {
 		FileListItem.setupFileListItemInfo(mContext, view, fileInfo, iconHelper);
 
 		if (isMode(ActionMenu.MODE_EDIT) || isMode(ActionMenu.MODE_COPY)) {
-			updateListViewBackground(position, view, R.color.holo_blue1);
+			updateListViewBackground(position, view, R.color.holo_blue_light);
 		} else if (isMode(ActionMenu.MODE_CUT)) {
 			updateListViewBackground(position, view, R.color.holo_blue_light_transparent);
 		}else {
