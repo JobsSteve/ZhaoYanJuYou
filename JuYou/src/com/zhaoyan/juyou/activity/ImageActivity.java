@@ -10,6 +10,7 @@ import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.ImageAdapter;
+import com.zhaoyan.juyou.adapter.ImageGridAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileDeleteHelper;
 import com.zhaoyan.juyou.common.FileDeleteHelper.OnDeleteListener;
@@ -62,7 +63,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	private ProgressBar mLoadingBar;
 	private ViewGroup mViewGroup;
 	
-	private ImageAdapter mAdapter;
+//	private ImageAdapter mAdapter;
+	private ImageGridAdapter mAdapter;
 	private List<ImageInfo> mPictureItemInfoList = new ArrayList<ImageInfo>();
 	
 	private static final int QUERY_TOKEN_FOLDER = 0x11;
@@ -161,7 +163,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		
 		mLoadingBar = (ProgressBar) findViewById(R.id.bar_loading_image);
 		
-		mAdapter = new ImageAdapter(getApplicationContext(), mViewType, mPictureItemInfoList);
+//		mAdapter = new ImageAdapter(getApplicationContext(), mViewType, mPictureItemInfoList);
+		mAdapter = new ImageGridAdapter(this, mViewType, mPictureItemInfoList);
 		
 		if (isListView()) {
 			mListView.setVisibility(View.VISIBLE);

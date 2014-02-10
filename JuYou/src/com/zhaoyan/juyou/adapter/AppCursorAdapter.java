@@ -127,7 +127,11 @@ public class AppCursorAdapter extends BaseCursorAdapter {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-		holder.sizeView.setText("版本:" + version + "  " + ZYUtils.getFormatSize(size));
+		if (Extra.VIEW_TYPE_LIST == mViewType) {
+			holder.sizeView.setText("版本:" + version + "  " + ZYUtils.getFormatSize(size));
+		} else {
+			holder.sizeView.setText(ZYUtils.getFormatSize(size));
+		}
 		
 		boolean isChecked = isChecked(cursor.getPosition());
 		updateViewBackground(isChecked, cursor.getPosition(), view);
