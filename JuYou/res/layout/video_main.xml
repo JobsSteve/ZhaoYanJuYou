@@ -23,7 +23,9 @@
             android:verticalSpacing="2dp"
             android:gravity="center"
             android:numColumns="3"
-            android:stretchMode="columnWidth" />
+            android:stretchMode="columnWidth"
+            android:listSelector="@drawable/list_selector"
+             />
         
         <ListView 
             android:id="@+id/lv_video"
