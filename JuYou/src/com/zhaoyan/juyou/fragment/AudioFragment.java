@@ -252,7 +252,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		System.out.println("onItemClick.position=" + position);
 		for(Section section : mSections){
 			if (section.getFirstPosition() < position) {
 				position -- ;
@@ -275,7 +274,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
-		System.out.println("onItemLongClick.position=" + position);
 		for(Section section : mSections){
 			if (section.getFirstPosition() < position) {
 				position -- ;
