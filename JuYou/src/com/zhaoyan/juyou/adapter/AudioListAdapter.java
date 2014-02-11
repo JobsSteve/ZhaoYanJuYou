@@ -42,13 +42,11 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
 		return mDataList.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
@@ -67,7 +65,6 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 			holder.artistView = (TextView) view.findViewById(R.id.audio_artist);
 			holder.sizeView = (TextView) view.findViewById(R.id.audio_size);
 			holder.timeView = (TextView) view.findViewById(R.id.audio_time);
-			holder.sortView = (TextView) view.findViewById(R.id.tv_selection);
 			view.setTag(holder);
 		}
 		
@@ -78,17 +75,6 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 		holder.artistView.setText(mDataList.get(position).getArtist());
 		holder.sizeView.setText(mDataList.get(position).getFormatSize());
 		holder.timeView.setText(ZYUtils.mediaTimeFormat(mDataList.get(position).getDuration()));
-		
-		String sortLetter = mDataList.get(position).getSortLetter();
-		String preLetter = (position - 1) >= 0 ? 
-				mDataList.get(position - 1).getSortLetter() : " ";
-		
-		if (!preLetter.equals(sortLetter)) {
-			holder.sortView.setVisibility(View.VISIBLE);
-			holder.sortView.setText(sortLetter);
-		} else {
-			holder.sortView.setVisibility(View.GONE);
-		}
 				
 		return view;
 	}
@@ -102,13 +88,12 @@ public class AudioListAdapter extends BaseAdapter implements SelectInterface{
 		}
 	}
 	
-	private class ViewHolder {
+	public class ViewHolder {
 		public ImageView iconView;
 		TextView titleView;
 		TextView timeView;
 		TextView artistView;
 		TextView sizeView;
-		TextView sortView;
 	}
 
 

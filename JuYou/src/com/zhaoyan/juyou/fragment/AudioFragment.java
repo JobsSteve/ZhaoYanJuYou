@@ -1,17 +1,20 @@
 package com.zhaoyan.juyou.fragment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Dialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract.RawContacts;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Audio.Media;
 import android.provider.MediaStore.MediaColumns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,28 +32,42 @@ import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.adapter.AudioCursorAdapter;
-import com.zhaoyan.juyou.adapter.AudioCursorAdapter.ViewHolder;
+import com.zhaoyan.juyou.adapter.AudioListAdapter;
+import com.zhaoyan.juyou.adapter.AudioListAdapter.ViewHolder;
+import com.zhaoyan.juyou.astickyheader.SectionedListAdapter;
+import com.zhaoyan.juyou.astickyheader.SectionedListAdapter.Section;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.FileDeleteHelper;
 import com.zhaoyan.juyou.common.FileDeleteHelper.OnDeleteListener;
+import com.zhaoyan.juyou.common.MediaInfo;
 import com.zhaoyan.juyou.common.MenuBarInterface;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
+import com.zhaoyan.juyou.dialog.ZyEditDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
+/**
+ * use baseAdapter
+ * @author Yuri
+ *
+ */
 public class AudioFragment extends BaseFragment implements OnItemClickListener, OnItemLongClickListener, 
 			OnClickListener, MenuBarInterface {
 	private static final String TAG = "AudioFragment";
 	private ListView mListView;
-	private AudioCursorAdapter mAdapter;
+	private AudioListAdapter mAdapter;
+	//save audios
+	private List<MediaInfo> mAudioLists = new ArrayList<MediaInfo>();
 	private ProgressBar mLoadingBar;
 	
 	private QueryHandler mQueryHandler = null;
+	
+	private ArrayList<Section> mSections = new ArrayList<Section>();
+	private SectionedListAdapter mSectionedListAdapter;
 	
 	private static final String[] PROJECTION = {
 		MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE,
@@ -72,9 +89,29 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				updateTitleNum(-1);
 				break;
 			case MSG_DELETE_OVER:
-				count = mAdapter.getCount();
-				updateTitleNum(-1);
 				mNotice.showToast(R.string.operator_over);
+				
+				List<Integer> poslist = new ArrayList<Integer>();
+				Bundle bundle = msg.getData();
+				if (null != bundle) {
+					poslist = bundle.getIntegerArrayList("position");
+					int removePosition;
+					for(int i = 0; i < poslist.size() ; i++){
+						//remove from the last item to the first item
+						removePosition = poslist.get(poslist.size() - (i + 1));
+						mAudioLists.remove(removePosition);
+						mAdapter.notifyDataSetChanged();
+					}
+					
+					//get artists
+					getSections();
+					mSectionedListAdapter.setSections(mSections.toArray(new Section[0]));
+					
+					count = mAudioLists.size();
+					updateTitleNum(-1);
+				}else {
+					Log.e(TAG, "bundle is null");
+				}
 				break;
 			default:
 				break;
@@ -105,8 +142,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		mLoadingBar = (ProgressBar) rootView.findViewById(R.id.audio_progressbar);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
-		mAdapter = new AudioCursorAdapter(mContext);
-		mListView.setAdapter(mAdapter);
 		
 		initTitle(rootView.findViewById(R.id.rl_audio_main), R.string.music);
 		initMenuBar(rootView);
@@ -117,10 +152,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	@Override
 	public void onDestroyView() {
 		Log.d(TAG, "onDestroyView()");
-		if (mAdapter != null && mAdapter.getCursor() != null) {
-			mAdapter.getCursor().close();
-			mAdapter.changeCursor(null);
-		}
 		super.onDestroyView();
 	}
 	
@@ -139,10 +170,8 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	public void query() {
 		//just show music files
 		String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
-//		mQueryHandler.startQuery(0, null, ZYConstant.AUDIO_URI,
-//				PROJECTION, selection, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 		mQueryHandler.startQuery(0, null, ZYConstant.AUDIO_URI,
-				PROJECTION, selection, null, MediaStore.Audio.Media.TITLE + " COLLATE LOCALIZED ASC");
+				PROJECTION, selection, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 	}
 	
 	// query db
@@ -155,26 +184,83 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			Log.d(TAG, "onQueryComplete");
-			mLoadingBar.setVisibility(View.INVISIBLE);
 			int num = 0;
 			if (null != cursor) {
-				mAdapter.changeCursor(cursor);
-				mAdapter.checkedAll(false);
-				num = mAdapter.getCount();
+				if (cursor.moveToFirst()) {
+					do {
+						MediaInfo mediaInfo = new MediaInfo();
+						long id = cursor.getLong(cursor.getColumnIndex(MediaColumns._ID));
+						String title = cursor.getString(cursor.getColumnIndex(MediaColumns.TITLE));
+						String artist = cursor.getString(cursor.getColumnIndex(Media.ARTIST));
+						long duration = cursor.getLong(cursor
+								.getColumnIndex(MediaStore.Audio.Media.DURATION)); // 时长
+						long size = cursor.getLong(cursor
+								.getColumnIndex(MediaStore.Audio.Media.SIZE)); // 文件大小
+						String url = 
+							cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+						String name = 
+							cursor.getString(cursor.getColumnIndex(MediaColumns.DISPLAY_NAME));
+						long date_modify = cursor.getLong(cursor
+								.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED));
+						date_modify = date_modify * 1000L;
+
+						mediaInfo.setId(id);
+						mediaInfo.setTitle(title);
+						mediaInfo.setArtist(artist);
+						mediaInfo.setDisplayName(name);
+						mediaInfo.setDuration(duration);
+						mediaInfo.setSize(size);
+						mediaInfo.setUrl(url);
+						mediaInfo.setDate(date_modify);
+
+						mAudioLists.add(mediaInfo);
+						Collections.sort(mAudioLists, MediaInfo.getArtistCompartor());
+						
+					} while (cursor.moveToNext());
+					cursor.close();
+				}
+				num = mAudioLists.size();
+				
+				//get artists
+				getSections();
+				
+				mAdapter = new AudioListAdapter(mContext, mAudioLists);
+				
+				mSectionedListAdapter = new SectionedListAdapter(
+						mContext,R.layout.list_item_header, mAdapter);
+				mSectionedListAdapter.setSections(mSections.toArray(new Section[0]));
+				mListView.setAdapter(mSectionedListAdapter);
 			}
+			mLoadingBar.setVisibility(View.INVISIBLE);
 			updateUI(num);
 		}
-
 	}
-
+	
+	private void getSections(){
+		mSections.clear();
+		//get artists
+		Section section = null;
+		for (int i = 0; i < mAudioLists.size(); i++) {
+			String artist = mAudioLists.get(i).getArtist();
+			String preArtist = i - 1 >= 0 ? mAudioLists.get(i-1 ).getArtist() : " ";
+			if (!preArtist.equals(artist)) {
+				section = new Section(i, artist);
+				mSections.add(section);
+			}
+		}
+	}
+	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		System.out.println("onItemClick.position=" + position);
+		for(Section section : mSections){
+			if (section.getFirstPosition() < position) {
+				position -- ;
+			}
+		}
 		if (mAdapter.isMode(ActionMenu.MODE_NORMAL)) {
 			//open audio
-			Cursor cursor = mAdapter.getCursor();
-			cursor.moveToPosition(position);
-			String url = cursor.getString(cursor
-					.getColumnIndex(MediaStore.Audio.Media.DATA)); // 文件路径
+			String url = mAudioLists.get(position).getUrl();
 			IntentBuilder.viewFile(getActivity(), url);
 		}else {
 			mAdapter.setChecked(position);
@@ -188,7 +274,13 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	} 
 	
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
+	public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+		System.out.println("onItemLongClick.position=" + position);
+		for(Section section : mSections){
+			if (section.getFirstPosition() < position) {
+				position -- ;
+			}
+		}
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			//do nothing
 			//doCheckAll();
@@ -217,11 +309,8 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		deleteDialog.setTitle(R.string.delete_music);
 		String msg = "";
 		if (posList.size() == 1) {
-			Cursor cursor1 = mAdapter.getCursor();
-			cursor1.moveToPosition(posList.get(0));
-			String name = cursor1.getString(cursor1
-					.getColumnIndex(MediaStore.Audio.Media.TITLE));
-			msg = mContext.getString(R.string.delete_file_confirm_msg, name);
+			String title = mAudioLists.get(posList.get(0)).getTitle();
+			msg = mContext.getString(R.string.delete_file_confirm_msg, title);
 		}else {
 			msg = mContext.getString(R.string.delete_file_confirm_msg_music, posList.size());
 		}
@@ -237,7 +326,12 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 					@Override
 					public void onDeleteFinished() {
 						Log.d(TAG, "onFinished");
-						mHandler.sendMessage(mHandler.obtainMessage(MSG_DELETE_OVER));
+						Message message = mHandler.obtainMessage();
+						Bundle bundle = new Bundle();
+						bundle.putIntegerArrayList("position", (ArrayList<Integer>)posList);
+						message.setData(bundle);
+						message.what = MSG_DELETE_OVER;
+						message.sendToTarget();
 					}
 				});
 				mediaDeleteHelper.doDelete();
@@ -257,11 +351,8 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
      */
 	public long getTotalSize(List<Integer> list){
 		long totalSize = 0;
-		Cursor cursor = mAdapter.getCursor();
 		for(int pos : list){
-			cursor.moveToPosition(pos);
-			long size = cursor.getLong(cursor
-					.getColumnIndex(MediaStore.Audio.Media.SIZE)); // 文件大小
+			long size = mAudioLists.get(pos).getSize(); // 文件大小
 			totalSize += size;
 		}
 		
@@ -333,19 +424,15 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 			if (1 == list.size()) {
 				dialog = new InfoDialog(mContext,InfoDialog.SINGLE_FILE);
 				dialog.setTitle(R.string.info_music_info);
-				Cursor cursor = mAdapter.getCursor();
-				cursor.moveToPosition(list.get(0));
+				final int position = list.get(0);
+				MediaInfo mediaInfo = mAudioLists.get(position);
 				
-				final int id = cursor.getInt(cursor.getColumnIndex(MediaColumns._ID));
-				long size = cursor.getLong(cursor
-						.getColumnIndex(MediaStore.Audio.Media.SIZE)); // 文件大小
-				String url = cursor.getString(cursor
-						.getColumnIndex(MediaStore.Audio.Media.DATA)); // 文件路径
-				final String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-				long date = cursor.getLong(cursor
-						.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED));
-				date = date * 1000L;
-				String displayName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
+				final long id = mediaInfo.getId();
+				long size = mediaInfo.getSize();
+				String url = mediaInfo.getUrl();
+				final String title = mediaInfo.getTitle();
+				long date = mediaInfo.getDate();
+				String displayName = mediaInfo.getDisplayName();
 				
 				String musicType = FileManager.getExtFromFilename(displayName);
 				if ("".equals(musicType)) {
@@ -360,7 +447,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 				dialog.setPositiveButton(R.string.modify, new OnZyAlertDlgClickListener() {
 					@Override
 					public void onClick(Dialog dialog) {
-						FileManager.showModifyDialog(mContext, id, FileManager.AUDIO, title);
+						showModifyDialog(mContext, id, position, title);
 						dialog.dismiss();
 						destroyMenuBar();
 					}
@@ -438,5 +525,43 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
+	}
+	
+	private void showModifyDialog(final Context context, final long id, final int position, String oldName) {
+		final ZyEditDialog editDialog = new ZyEditDialog(context);
+		editDialog.setTitle(R.string.info_modify_music_name);
+		editDialog.setEditStr(oldName);
+		editDialog.selectAll();
+		editDialog.showIME(true);
+		editDialog.setPositiveButton(R.string.ok, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				String newName = editDialog.getEditTextStr();
+				//verify name's format
+				String ret = ZYUtils.FileNameFormatVerify(context, newName);
+				if (null != ret) {
+					editDialog.showTipMessage(true, ret);
+					return;
+				}else {
+					editDialog.showTipMessage(false, null);
+				}
+				
+				ContentResolver contentResolver = context.getContentResolver();
+				ContentValues values = new ContentValues();
+				values.put(Media.TITLE, newName);
+				
+				try {
+					contentResolver.update(ZYConstant.AUDIO_URI, values, MediaColumns._ID + "=" + id, null);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e(TAG, "showModifyDialog.update db error");
+				}
+				mAudioLists.get(position).setTitle(newName);
+				mAdapter.notifyDataSetChanged();
+				dialog.dismiss();
+			}
+		});		
+		editDialog.setNegativeButton(R.string.cancel, null);
+		editDialog.show();
 	}
 }

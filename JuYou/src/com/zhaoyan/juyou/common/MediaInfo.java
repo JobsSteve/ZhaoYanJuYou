@@ -150,7 +150,26 @@ public class MediaInfo {
 		}
 	};
 	
+	private static class ArtistCompartor implements Comparator<MediaInfo>{
+		@Override
+		public int compare(MediaInfo lhs, MediaInfo rhs) {
+			// TODO Auto-generated method stub
+			String name1 = lhs.getArtist();
+			String name2 = rhs.getArtist();
+			if (name1.compareToIgnoreCase(name2) < 0) {
+				return 1;
+			} else if (name1.compareToIgnoreCase(name2) > 0) {
+				return -1;
+			}
+			return 0;
+		}
+	}
+	
 	public static Comparator<MediaInfo> getNameComparator() {
 		return new NameComparator();
+	}
+	
+	public static Comparator<MediaInfo> getArtistCompartor() {
+		return new ArtistCompartor();
 	}
 }
