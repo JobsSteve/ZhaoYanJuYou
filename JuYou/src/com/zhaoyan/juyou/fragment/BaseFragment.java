@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -81,11 +82,15 @@ public class BaseFragment extends Fragment implements OnMenuItemClickListener{
 	
 	public void startMenuBar(){
 		mMenuBarView.setVisibility(View.VISIBLE);
+		mMenuBarView.clearAnimation();
+		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(mContext,R.anim.grow_from_bottom));
 		mMenuBarManager.refreshMenus(mActionMenu);
 	}
 	
 	public void destroyMenuBar(){
 		mMenuBarView.setVisibility(View.GONE);
+		mMenuBarView.clearAnimation();
+		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(mContext,R.anim.shrink_from_top));
 	}
 	
 	protected void updateTitleNum(int selected){

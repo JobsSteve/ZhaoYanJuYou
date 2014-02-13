@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -73,11 +74,15 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 
 	public void startMenuBar() {
 		mMenuBarView.setVisibility(View.VISIBLE);
+		mMenuBarView.clearAnimation();
+		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.grow_from_bottom));
 		mMenuBarManager.refreshMenus(mActionMenu);
 	}
 
 	public void destroyMenuBar() {
 		mMenuBarView.setVisibility(View.GONE);
+		mMenuBarView.clearAnimation();
+		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.shrink_from_top));
 	}
 
 	protected void setTitleNumVisible(boolean visible) {
