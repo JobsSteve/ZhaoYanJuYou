@@ -14,7 +14,7 @@
             android:id="@+id/title"
             layout="@layout/title" />
 
-        <com.zhaoyan.juyou.astickyheader.PinnedSectionListView
+        <ListView
             android:id="@+id/audio_listview"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -25,7 +25,6 @@
             android:fastScrollEnabled="false"
             android:listSelector="@drawable/list_selector"
             android:focusable="false"
-            android:paddingLeft="10dp"
             android:paddingRight="10dp"
              />
 

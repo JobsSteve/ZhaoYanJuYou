@@ -39,5 +39,8 @@
     <drawable name="listselector_pressed">@color/holo_blue_light_transparent2</drawable>
     <drawable name="listselector_selected">@color/holo_blue_light</drawable>
     <drawable name="listselector_normal">@android:color/transparent</drawable>
+    
+    <color name="header_normal">#ffe74c3c</color>
+    <color name="header_pressed">#ffc0392b</color>
 
 </resources>

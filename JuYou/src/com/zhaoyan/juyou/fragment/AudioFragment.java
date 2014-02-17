@@ -34,10 +34,9 @@ import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.AudioListAdapter;
 import com.zhaoyan.juyou.adapter.AudioListAdapter.ViewHolder;
-import com.zhaoyan.juyou.astickyheader.SectionedListAdapter;
-import com.zhaoyan.juyou.astickyheader.SectionedListAdapter.Section;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.ActionMenu.ActionMenuItem;
+import com.zhaoyan.juyou.common.CharacterParser;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.common.FileDeleteHelper;
@@ -66,8 +65,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	
 	private QueryHandler mQueryHandler = null;
 	
-	private ArrayList<Section> mSections = new ArrayList<Section>();
-	private SectionedListAdapter mSectionedListAdapter;
+	private CharacterParser mCharacterParser;
 	
 	private static final String[] PROJECTION = {
 		MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE,
@@ -102,10 +100,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 						mAudioLists.remove(removePosition);
 						mAdapter.notifyDataSetChanged();
 					}
-					
-					//get artists
-					getSections();
-					mSectionedListAdapter.setSections(mSections.toArray(new Section[0]));
 					
 					count = mAudioLists.size();
 					updateTitleNum(-1);
@@ -146,6 +140,7 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		initTitle(rootView.findViewById(R.id.rl_audio_main), R.string.music);
 		initMenuBar(rootView);
 		
+		mCharacterParser = CharacterParser.getInstance();
 		return rootView;
 	}
 	
@@ -213,50 +208,27 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 						mediaInfo.setUrl(url);
 						mediaInfo.setDate(date_modify);
 
+						String sortLetter = getSortLetter(title);
+						mediaInfo.setSortLetter(sortLetter);
+
 						mAudioLists.add(mediaInfo);
-						Collections.sort(mAudioLists, MediaInfo.getArtistCompartor());
+						Collections.sort(mAudioLists, MediaInfo.getNameComparator());
 						
 					} while (cursor.moveToNext());
 					cursor.close();
 				}
 				num = mAudioLists.size();
 				
-				//get artists
-				getSections();
-				
 				mAdapter = new AudioListAdapter(mContext, mAudioLists);
-				
-				mSectionedListAdapter = new SectionedListAdapter(
-						mContext,R.layout.list_item_header, mAdapter);
-				mSectionedListAdapter.setSections(mSections.toArray(new Section[0]));
-				mListView.setAdapter(mSectionedListAdapter);
+				mListView.setAdapter(mAdapter);
 			}
 			mLoadingBar.setVisibility(View.INVISIBLE);
 			updateUI(num);
 		}
 	}
 	
-	private void getSections(){
-		mSections.clear();
-		//get artists
-		Section section = null;
-		for (int i = 0; i < mAudioLists.size(); i++) {
-			String artist = mAudioLists.get(i).getArtist();
-			String preArtist = i - 1 >= 0 ? mAudioLists.get(i-1 ).getArtist() : " ";
-			if (!preArtist.equals(artist)) {
-				section = new Section(i, artist);
-				mSections.add(section);
-			}
-		}
-	}
-	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		for(Section section : mSections){
-			if (section.getFirstPosition() < position) {
-				position -- ;
-			}
-		}
 		if (mAdapter.isMode(ActionMenu.MODE_NORMAL)) {
 			//open audio
 			String url = mAudioLists.get(position).getUrl();
@@ -274,11 +246,6 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
-		for(Section section : mSections){
-			if (section.getFirstPosition() < position) {
-				position -- ;
-			}
-		}
 		if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 			//do nothing
 			//doCheckAll();
@@ -561,5 +528,24 @@ public class AudioFragment extends BaseFragment implements OnItemClickListener, 
 		});		
 		editDialog.setNegativeButton(R.string.cancel, null);
 		editDialog.show();
+	}
+	
+	private String getSortLetter(String title){
+		if (title == null) {
+			return "#";
+		}
+		
+		if (title.trim().length() == 0) {
+			return "#";
+		}
+		
+		String pinyin = mCharacterParser.getSelling(title);
+		String sortLetter = pinyin.substring(0, 1).toUpperCase();
+		
+		if (!sortLetter.matches("[A-Z]")) {
+			return "#";
+		}
+		
+		return sortLetter;
 	}
 }
