@@ -25,7 +25,6 @@
             android:fastScrollEnabled="false"
             android:listSelector="@drawable/list_selector"
             android:focusable="false"
-            android:paddingRight="10dp"
              />
 
         <ProgressBar

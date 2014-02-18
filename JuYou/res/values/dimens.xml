@@ -14,4 +14,6 @@
     
     <dimen name="dialog_left_margin">20dp</dimen>
     <dimen name="dialog_right_margin">20dp</dimen>
+    
+    <dimen name="dialog_title_height">60dp</dimen>
 </resources>
