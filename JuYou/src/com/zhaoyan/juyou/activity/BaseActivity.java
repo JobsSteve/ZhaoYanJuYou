@@ -75,14 +75,14 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 	public void startMenuBar() {
 		mMenuBarView.setVisibility(View.VISIBLE);
 		mMenuBarView.clearAnimation();
-		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.grow_from_bottom));
+		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_up_in));
 		mMenuBarManager.refreshMenus(mActionMenu);
 	}
 
 	public void destroyMenuBar() {
 		mMenuBarView.setVisibility(View.GONE);
 		mMenuBarView.clearAnimation();
-		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.shrink_from_top));
+		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_down_out));
 	}
 
 	protected void setTitleNumVisible(boolean visible) {

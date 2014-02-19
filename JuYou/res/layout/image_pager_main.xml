@@ -3,58 +3,82 @@
     android:id="@+id/fl_content"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/black"
-    >
-        <com.zhaoyan.common.view.HackyViewPager
+    android:background="@color/black" >
+
+    <com.zhaoyan.common.view.HackyViewPager
         android:id="@+id/image_viewpager"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        />
-    <RelativeLayout 
+        android:layout_height="fill_parent" />
+
+    <RelativeLayout
         android:id="@+id/rl_image_pager_title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/gray"
         android:layout_gravity="top"
-        >
-        <RelativeLayout 
+        android:background="@color/gray" >
+
+        <RelativeLayout
             android:id="@+id/rl_back"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/blue_bg"
             android:layout_alignParentLeft="true"
-            >
-            <ImageView 
-            android:id="@+id/iv_back"
+            android:background="@drawable/blue_bg" >
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_action_back" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_image_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_action_back"
-            />
-        </RelativeLayout>
+            android:textColor="@color/white" />
     </RelativeLayout>
-    <RelativeLayout 
+
+    <RelativeLayout
         android:id="@+id/rl_image_pager_bottom"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/gray"
         android:layout_gravity="bottom"
-        >
-        <RelativeLayout 
+        android:background="@color/gray" >
+
+        <RelativeLayout
+            android:id="@+id/rl_info"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/blue_bg"
             android:layout_alignParentLeft="true"
-            >
-            <ImageView 
-            android:id="@+id/iv_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_action_back"
-            />
+            android:background="@drawable/blue_bg" >
+
+            <ImageView
+                android:id="@+id/iv_show_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_action_info_light" />
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:id="@+id/rl_delete"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/blue_bg" >
+
+            <ImageView
+                android:id="@+id/iv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_action_delete_light" />
         </RelativeLayout>
     </RelativeLayout>
+
 </FrameLayout>

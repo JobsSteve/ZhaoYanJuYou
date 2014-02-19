@@ -9,7 +9,6 @@ import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
-import com.zhaoyan.juyou.adapter.ImageAdapter;
 import com.zhaoyan.juyou.adapter.ImageGridAdapter;
 import com.zhaoyan.juyou.common.ActionMenu;
 import com.zhaoyan.juyou.common.FileDeleteHelper;
@@ -25,6 +24,7 @@ import com.zhaoyan.juyou.dialog.InfoDialog;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
+import android.R.integer;
 import android.app.Dialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
@@ -85,6 +85,8 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 	private static final String MIMETYPE_PNG = "image/png";
 	
 	private Notice mNotice = null;
+	
+	private static final int REQUEST_CODE_PAGER = 0x10;
 	
 	private static final int MSG_UPDATE_UI = 0;
 	private static final int MSG_UPDATE_LIST = 1;
@@ -296,9 +298,10 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			urlList.add(url);
 		}
 		Intent intent = new Intent(this, ImagePagerActivity.class);
+//		Intent intent = new Intent(this, OtherActivithy.class);
 		intent.putExtra(Extra.IMAGE_POSITION, position);
 		intent.putStringArrayListExtra(Extra.IMAGE_INFO, (ArrayList<String>) urlList);
-		startActivity(intent);
+		startActivityForResult(intent, REQUEST_CODE_PAGER);
 	}
 	
 	@Override
@@ -529,5 +532,22 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 			mActionMenu.findItem(R.id.menu_delete).setEnable(true);
 			mActionMenu.findItem(R.id.menu_info).setEnable(true);
 		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_PAGER) {
+			List<Integer> deleteList = data.getIntegerArrayListExtra(ImagePagerActivity.DELETE_POSITION);
+			int removePosition;
+			for(int i = 0; i < deleteList.size() ; i++){
+				//remove from the last item to the first item
+				removePosition = deleteList.get(deleteList.size() - (i + 1));
+				mPictureItemInfoList.remove(removePosition);
+				mAdapter.notifyDataSetChanged();
+				
+				updateTitleNum(-1, mPictureItemInfoList.size());
+			}
+		} 
 	}
 }
