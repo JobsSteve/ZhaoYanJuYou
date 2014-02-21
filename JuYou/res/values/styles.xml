@@ -138,5 +138,10 @@
         <item name="android:background">@drawable/abs__list_section_divider_holo_light</item>
         <item name="android:textColor">#ff33b5e5</item>
     </style>
+    
+    <style name="PopupAnimation" parent="android:Animation">
+	    <item name="android:windowEnterAnimation">@anim/slide_up_in</item>
+	    <item name="android:windowExitAnimation">@anim/slide_down_out</item>
+	</style>
 
 </resources>

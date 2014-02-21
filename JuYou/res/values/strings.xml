@@ -248,6 +248,8 @@
     <string name="search_remote_share">搜索共享列表</string>
     <string name="hide">隐藏</string>
     <string name="exit_app">退出程序</string>
+    <string name="quit_juyou">退出聚游</string>
+    <string name="quit_tip">退出后,你将不能收到来自朋友的文件，确定要退出？</string>
     <string name="confirm_exit">确定要退出聚游？</string>
     <string name="running">正在运行&#8230;</string>
     <string name="unconnected">未连接局域网</string>

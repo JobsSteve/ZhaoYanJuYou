@@ -2,29 +2,39 @@ package com.zhaoyan.juyou.activity;
 
 import java.util.ArrayList;
 
+import android.R.anim;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.Window;
 
 import com.zhaoyan.common.util.Log;
+import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.BottomBar;
 import com.zhaoyan.common.view.BottomBar.OnBottomBarItemSelectChangeListener;
 import com.zhaoyan.common.view.BottomBarItem;
 import com.zhaoyan.juyou.JuYouApplication;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.SimpleFramgentPagerAdapter;
+import com.zhaoyan.juyou.common.ZyExitMenu;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog;
+import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 import com.zhaoyan.juyou.fragment.GuanJiaFragment;
 import com.zhaoyan.juyou.fragment.GuangChangFragment;
 import com.zhaoyan.juyou.fragment.JuYouFragment;
 import com.zhaoyan.juyou.fragment.WoFragment;
 
 public class MainActivity extends FragmentActivity implements
-		OnPageChangeListener, OnBottomBarItemSelectChangeListener {
+		OnPageChangeListener, OnBottomBarItemSelectChangeListener, OnMenuItemClickListener {
 	private static final String TAG = "ZhaoYanActivity";
 
 	private BottomBar mBottomBar;
@@ -42,6 +52,8 @@ public class MainActivity extends FragmentActivity implements
 	private Fragment mGuanJiaFragment;
 	private Fragment mGuangChangFragment;
 	private Fragment mWoFragment;
+	
+	private ZyExitMenu mExitMenu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +61,51 @@ public class MainActivity extends FragmentActivity implements
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 		PreviewPagesActivity.skipPreviewPagesForever(getApplicationContext());
+		
+		ZYUtils.forceShowMenuKey(getWindow());
 
 		initView();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		
+		mExitMenu = new ZyExitMenu(getApplicationContext(), menu, R.style.PopupAnimation);
+		mExitMenu.setOnMenuItemClick(this);
+		mExitMenu.update();
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		if (mExitMenu != null) {
+			if (mExitMenu.isShowing())
+				mExitMenu.dismiss();
+			else {
+				mExitMenu.showAtLocation(findViewById(R.id.rl_juyou_main),
+						Gravity.BOTTOM, 0, 0);
+			}
+		}
+		return false;//true:show system menu
+	}
+	
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		//exit
+		ZyAlertDialog exitDialog = new ZyAlertDialog(this);
+		exitDialog.setTitle(R.string.quit_juyou);
+		exitDialog.setMessage(R.string.quit_tip);
+		exitDialog.setPositiveButton(R.string.quit, new OnZyAlertDlgClickListener() {
+			@Override
+			public void onClick(Dialog dialog) {
+				MainActivity.this.finish();
+				dialog.dismiss();
+			}
+		});
+		exitDialog.setNegativeButton(android.R.string.cancel, null);
+		exitDialog.show();
+		return false;
 	}
 
 	@Override
