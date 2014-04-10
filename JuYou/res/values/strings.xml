@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">聚游</string>
+    <string name="app_name">管家</string>
     <string name="login">登录</string>
     <string name="preview_page1">preview_page1</string>
     <string name="preview_page2">preview_page2</string>

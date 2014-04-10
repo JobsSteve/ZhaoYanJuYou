@@ -94,11 +94,17 @@ public class WelcomeActivity extends Activity {
 				.isNeedShowPreviewPages(getApplicationContext())) {
 			launchPreviewPages();
 		} else {
-			launchLogin();
+			launchGuanJiaLauncher();
 		}
 
 		finish();
 		overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+	}
+
+	private void launchGuanJiaLauncher() {
+		Intent intent = new Intent();
+		intent.setClass(this, GuanJiaLauncherActivity.class);
+		startActivity(intent);
 	}
 
 	private void launchPreviewPages() {
@@ -107,11 +113,6 @@ public class WelcomeActivity extends Activity {
 		startActivity(intent);
 	}
 
-	private void launchLogin() {
-		Intent intent = new Intent();
-		intent.setClass(this, LoginActivity.class);
-		startActivity(intent);
-	}
 
 	private void releaseResource() {
 		mBackgroundImageView.setImageDrawable(null);

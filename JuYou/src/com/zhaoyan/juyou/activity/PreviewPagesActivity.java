@@ -50,12 +50,21 @@ public class PreviewPagesActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_pg_login:
-			launchLogin();
+			launchGuanJia();
 			break;
 
 		default:
 			break;
 		}
+	}
+
+	private void launchGuanJia() {
+		Intent intent = new Intent();
+		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		intent.setClass(this, GuanJiaLauncherActivity.class);
+		startActivity(intent);
+		finish();
+		overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 	}
 
 	@Override
@@ -114,15 +123,6 @@ public class PreviewPagesActivity extends Activity implements OnClickListener {
 		mImageView3 = null;
 		mBitmap3 = null;
 		System.gc();
-	}
-
-	private void launchLogin() {
-		Intent intent = new Intent();
-		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		intent.setClass(this, LoginActivity.class);
-		startActivity(intent);
-		finish();
-		overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 	}
 
 	/**

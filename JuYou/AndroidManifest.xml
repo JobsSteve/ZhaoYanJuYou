@@ -183,6 +183,10 @@
             android:name="com.zhaoyan.juyou.activity.AccountSettingAccountZhaoyanActivity"
             android:theme="@style/Theme.Translucent" >
         </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.GuanJiaLauncherActivity"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
 
         <service android:name="com.zhaoyan.communication.LoginService" >
         </service>
