@@ -3,8 +3,8 @@
 
 package com.zhaoyan.communication.protocol.pb;
 
-public final class PBUserUserInfoProtos {
-  private PBUserUserInfoProtos() {}
+public final class PBUserInfoProtos {
+  private PBUserInfoProtos() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
@@ -246,14 +246,14 @@ public final class PBUserUserInfoProtos {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_descriptor;
+      return com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_fieldAccessorTable
+      return com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.class, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder.class);
+              com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.class, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder.class);
     }
 
     public static com.google.protobuf.Parser<PBUserInfo> PARSER =
@@ -655,53 +655,53 @@ public final class PBUserUserInfoProtos {
       return super.writeReplace();
     }
 
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(byte[] data)
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(java.io.InputStream input)
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseDelimitedFrom(java.io.InputStream input)
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseDelimitedFrom(
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parseFrom(
+    public static com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -710,7 +710,7 @@ public final class PBUserUserInfoProtos {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo prototype) {
+    public static Builder newBuilder(com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -726,20 +726,20 @@ public final class PBUserUserInfoProtos {
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfoOrBuilder {
+       implements com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_descriptor;
+        return com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_fieldAccessorTable
+        return com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.class, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder.class);
+                com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.class, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder.class);
       }
 
-      // Construct using com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.newBuilder()
+      // Construct using com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -788,23 +788,23 @@ public final class PBUserUserInfoProtos {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_descriptor;
+        return com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.internal_static_com_zhaoyan_juyou_PBUserInfo_descriptor;
       }
 
-      public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo getDefaultInstanceForType() {
-        return com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.getDefaultInstance();
+      public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo getDefaultInstanceForType() {
+        return com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.getDefaultInstance();
       }
 
-      public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo build() {
-        com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo result = buildPartial();
+      public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo build() {
+        com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo buildPartial() {
-        com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo result = new com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo(this);
+      public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo buildPartial() {
+        com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo result = new com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -853,16 +853,16 @@ public final class PBUserUserInfoProtos {
       }
 
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo) {
-          return mergeFrom((com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo)other);
+        if (other instanceof com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo) {
+          return mergeFrom((com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo other) {
-        if (other == com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo other) {
+        if (other == com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.getDefaultInstance()) return this;
         if (other.hasUserId()) {
           setUserId(other.getUserId());
         }
@@ -913,11 +913,11 @@ public final class PBUserUserInfoProtos {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo parsedMessage = null;
+        com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo) e.getUnfinishedMessage();
+          parsedMessage = (com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -1455,9 +1455,9 @@ public final class PBUserUserInfoProtos {
       "\002 \001(\t\022\023\n\013headImageId\030\003 \001(\005\022\025\n\rheadImageD" +
       "ata\030\004 \001(\014\022\021\n\tipAddress\030\005 \001(\t\022\014\n\004type\030\006 \001" +
       "(\005\022\014\n\004ssid\030\007 \001(\t\022\016\n\006status\030\010 \001(\005\022\023\n\013netw" +
-      "orkType\030\t \001(\005\022\021\n\tsignature\030\n \001(\tB=\n%com." +
-      "zhaoyan.communication.protocol.pbB\024PBUse" +
-      "rUserInfoProtos"
+      "orkType\030\t \001(\005\022\021\n\tsignature\030\n \001(\tB9\n%com." +
+      "zhaoyan.communication.protocol.pbB\020PBUse" +
+      "rInfoProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

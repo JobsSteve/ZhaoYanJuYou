@@ -3,7 +3,7 @@ package com.zhaoyan.communication.protocol;
 import com.dreamlink.communication.aidl.User;
 import com.google.protobuf.ByteString;
 import com.zhaoyan.communication.UserInfo;
-import com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo;
+import com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo;
 
 public class UserInfoUtil {
 

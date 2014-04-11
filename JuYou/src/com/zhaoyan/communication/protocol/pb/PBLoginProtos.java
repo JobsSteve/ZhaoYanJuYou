@@ -174,11 +174,11 @@ public final class PBLoginProtos {
     /**
      * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
      */
-    com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo getUserInfo();
+    com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo getUserInfo();
     /**
      * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
      */
-    com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfoOrBuilder getUserInfoOrBuilder();
+    com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfoOrBuilder getUserInfoOrBuilder();
   }
   /**
    * Protobuf type {@code com.zhaoyan.juyou.PBLoginRequest}
@@ -232,11 +232,11 @@ public final class PBLoginProtos {
               break;
             }
             case 10: {
-              com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder subBuilder = null;
+              com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder subBuilder = null;
               if (((bitField0_ & 0x00000001) == 0x00000001)) {
                 subBuilder = userInfo_.toBuilder();
               }
-              userInfo_ = input.readMessage(com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.PARSER, extensionRegistry);
+              userInfo_ = input.readMessage(com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(userInfo_);
                 userInfo_ = subBuilder.buildPartial();
@@ -286,7 +286,7 @@ public final class PBLoginProtos {
     private int bitField0_;
     // required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;
     public static final int USERINFO_FIELD_NUMBER = 1;
-    private com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo userInfo_;
+    private com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo userInfo_;
     /**
      * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
      */
@@ -296,18 +296,18 @@ public final class PBLoginProtos {
     /**
      * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
      */
-    public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo getUserInfo() {
+    public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo getUserInfo() {
       return userInfo_;
     }
     /**
      * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
      */
-    public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfoOrBuilder getUserInfoOrBuilder() {
+    public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfoOrBuilder getUserInfoOrBuilder() {
       return userInfo_;
     }
 
     private void initFields() {
-      userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.getDefaultInstance();
+      userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -459,7 +459,7 @@ public final class PBLoginProtos {
       public Builder clear() {
         super.clear();
         if (userInfoBuilder_ == null) {
-          userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.getDefaultInstance();
+          userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.getDefaultInstance();
         } else {
           userInfoBuilder_.clear();
         }
@@ -551,9 +551,9 @@ public final class PBLoginProtos {
       private int bitField0_;
 
       // required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;
-      private com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.getDefaultInstance();
+      private com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
-          com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfoOrBuilder> userInfoBuilder_;
+          com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfoOrBuilder> userInfoBuilder_;
       /**
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
@@ -563,7 +563,7 @@ public final class PBLoginProtos {
       /**
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
-      public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo getUserInfo() {
+      public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo getUserInfo() {
         if (userInfoBuilder_ == null) {
           return userInfo_;
         } else {
@@ -573,7 +573,7 @@ public final class PBLoginProtos {
       /**
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
-      public Builder setUserInfo(com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo value) {
+      public Builder setUserInfo(com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo value) {
         if (userInfoBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -590,7 +590,7 @@ public final class PBLoginProtos {
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
       public Builder setUserInfo(
-          com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder builderForValue) {
+          com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder builderForValue) {
         if (userInfoBuilder_ == null) {
           userInfo_ = builderForValue.build();
           onChanged();
@@ -603,12 +603,12 @@ public final class PBLoginProtos {
       /**
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
-      public Builder mergeUserInfo(com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo value) {
+      public Builder mergeUserInfo(com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo value) {
         if (userInfoBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001) &&
-              userInfo_ != com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.getDefaultInstance()) {
+              userInfo_ != com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.getDefaultInstance()) {
             userInfo_ =
-              com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.newBuilder(userInfo_).mergeFrom(value).buildPartial();
+              com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.newBuilder(userInfo_).mergeFrom(value).buildPartial();
           } else {
             userInfo_ = value;
           }
@@ -624,7 +624,7 @@ public final class PBLoginProtos {
        */
       public Builder clearUserInfo() {
         if (userInfoBuilder_ == null) {
-          userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.getDefaultInstance();
+          userInfo_ = com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.getDefaultInstance();
           onChanged();
         } else {
           userInfoBuilder_.clear();
@@ -635,7 +635,7 @@ public final class PBLoginProtos {
       /**
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
-      public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder getUserInfoBuilder() {
+      public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder getUserInfoBuilder() {
         bitField0_ |= 0x00000001;
         onChanged();
         return getUserInfoFieldBuilder().getBuilder();
@@ -643,7 +643,7 @@ public final class PBLoginProtos {
       /**
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
-      public com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfoOrBuilder getUserInfoOrBuilder() {
+      public com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfoOrBuilder getUserInfoOrBuilder() {
         if (userInfoBuilder_ != null) {
           return userInfoBuilder_.getMessageOrBuilder();
         } else {
@@ -654,11 +654,11 @@ public final class PBLoginProtos {
        * <code>required .com.zhaoyan.juyou.PBUserInfo userInfo = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfoOrBuilder> 
+          com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfoOrBuilder> 
           getUserInfoFieldBuilder() {
         if (userInfoBuilder_ == null) {
           userInfoBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfo.Builder, com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.PBUserInfoOrBuilder>(
+              com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfo.Builder, com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.PBUserInfoOrBuilder>(
                   userInfo_,
                   getParentForChildren(),
                   isClean());
@@ -1315,7 +1315,7 @@ public final class PBLoginProtos {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.zhaoyan.communication.protocol.pb.PBUserUserInfoProtos.getDescriptor(),
+          com.zhaoyan.communication.protocol.pb.PBUserInfoProtos.getDescriptor(),
         }, assigner);
   }
 

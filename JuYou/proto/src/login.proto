@@ -21,4 +21,3 @@ enum PBLoginResult {
 enum PBLoginFailReason {
 	UNKOWN = 1;
 }
-

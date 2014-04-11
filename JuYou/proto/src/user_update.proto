@@ -4,11 +4,9 @@ package com.zhaoyan.juyou;
 option java_package = "com.zhaoyan.communication.protocol.pb";
 option java_outer_classname = "PBUserUpdateProtos";
 message PBUpdateUserId {
-	repeated int32 userId = 1;
+    repeated int32 userId = 1;
 }
 
 message PBUpdateUserInfo {
-	required PBUserInfo userInfo = 1;
+    required PBUserInfo userInfo = 1;
 }
-
-
