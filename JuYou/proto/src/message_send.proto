@@ -14,4 +14,3 @@ message PBSendMessageToAll {
 	required int32 appId = 2;
 	required bytes data = 3;
 }
-

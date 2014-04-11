@@ -9,4 +9,3 @@ message PBLogoutClient {
 message PBLogoutServer {
 	required int32 userId = 1;
 }
-
