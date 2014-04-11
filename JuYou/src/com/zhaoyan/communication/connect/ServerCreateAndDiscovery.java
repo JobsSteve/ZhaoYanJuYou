@@ -23,6 +23,10 @@ public class ServerCreateAndDiscovery extends Thread {
 
 	@Override
 	public void run() {
+		startServerAndDiscovery();
+	}
+	
+	private void startServerAndDiscovery() {
 		SocketCommunicationManager communicationManager = SocketCommunicationManager
 				.getInstance();
 		communicationManager.startServer(mContext);
