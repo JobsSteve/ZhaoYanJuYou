@@ -305,11 +305,19 @@ public class FileOperationHelper {
             Log.e(TAG, "CopyFile: null parameter");
             return false;
         }
-
+        
+        String fileName = f.fileName;
         File file = new File(f.filePath);
-        String newPath = FileManager.makePath(dest, f.fileName);
+        String newPath = FileManager.makePath(dest, fileName);
+        if (new File(newPath).exists()) {
+			fileName = FileInfoManager.autoRename(fileName);
+			newPath = FileManager.makePath(dest, fileName);
+		}
+        
         try {
+        	//when file.name equals newPath's name.it will return false
         	boolean ret = file.renameTo(new File(newPath));
+        	Log.d(TAG, "MoveFile >>> ret:" + ret);
         	if (ret) {
         		pathsList.add(file.getAbsolutePath());
         		pathsList.add(newPath);
