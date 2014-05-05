@@ -43,7 +43,6 @@ import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.HistoryInfo;
 import com.zhaoyan.juyou.common.HistoryManager;
-import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.common.ZYConstant.Extra;
 import com.zhaoyan.juyou.provider.AppData;
@@ -141,13 +140,11 @@ public class FileTransferService extends Service implements
 			} else if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
 				Log.d(TAG, "onReceive:ACTION_MEDIA_MOUNTED");
 				mNotice.showToast("SD卡可用");
-				MountManager.init(getApplicationContext());
 			} else if (Intent.ACTION_MEDIA_UNMOUNTED.equals(action)
 					|| Intent.ACTION_MEDIA_REMOVED.equals(action)
 					|| Intent.ACTION_MEDIA_SHARED.equals(action)) {
 				Log.d(TAG, "onReceive:ACTION_MEDIA_UNMOUNTED");
 				mNotice.showToast("SD卡已拔出");
-				MountManager.init(getApplicationContext());
 			}
 		}
 	};

@@ -23,12 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dreamlink.communication.lib.util.Notice;
-import com.zhaoyan.common.file.FileManager;
-import com.zhaoyan.common.file.MultiMediaScanner;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.common.util.SharedPreferenceUtil;
-import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter;
 import com.zhaoyan.juyou.adapter.FileInfoAdapter.ViewHolder;
@@ -43,10 +40,9 @@ import com.zhaoyan.juyou.common.FileInfo;
 import com.zhaoyan.juyou.common.FileInfoManager;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.MenuBarInterface;
-import com.zhaoyan.juyou.common.MountManager;
+import com.zhaoyan.juyou.common.ZyStorageManager;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
-import com.zhaoyan.juyou.dialog.ZyEditDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
 
 public class FileCategoryActivity extends BaseActivity implements
@@ -166,43 +162,31 @@ public class FileCategoryActivity extends BaseActivity implements
 		mNotice = new Notice(getApplicationContext());
 		initMenuBar();
 
-		SharedPreferences sp = SharedPreferenceUtil.getSharedPreference(getApplicationContext());
-		String sdcard_path = sp.getString(SharedPreferenceUtil.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
-		String internal_path = sp.getString(SharedPreferenceUtil.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
-		Log.d(TAG, "sdcard_path:" + sdcard_path + "\n," + "internal_path:" + internal_path);
-
-		// init
-		//get storage status
-		int status = MountManager.getStorageStatus(internal_path, sdcard_path);
-		switch (status) {
-		case 0:
-			File[] rootDirs = new File[2];
-			rootDirs[0] = new File(sdcard_path);
-			rootDirs[1] = new File(internal_path);
-			
-			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
-					rootDirs,filterType, mType);
-			break;
-		case 1:
-			File internalFileRoot = new File(internal_path);
-			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
-					internalFileRoot,filterType, mType);
-			break;
-		case 2:
-			File sdcardFileRoot = new File(sdcard_path);
-			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
-					sdcardFileRoot,filterType, mType);
-			break;
-		case 3:
-			//no storage
+		ZyStorageManager zsm = ZyStorageManager.getInstance(getApplicationContext());
+		String[] volumnPaths = zsm.getVolumePaths();
+		if (volumnPaths == null) {
+			Log.e(TAG, "No storage.");
 			mTipView.setVisibility(View.VISIBLE);
 			mTipView.setText(R.string.no_sdcard);
 			mListView.setEmptyView(mTipView);
-			break;
-		default:
-			break;
+		} else if (volumnPaths.length == 1) {
+			//only internal storage
+			Log.d(TAG, "internal path:" + volumnPaths[0]);
+			File internalFileRoot = new File(volumnPaths[0]);
+			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
+					internalFileRoot,filterType, mType);
+		} else {
+			//have internal & external
+			Log.d(TAG, "internal path:" + volumnPaths[0]);
+			Log.d(TAG, "external path:" + volumnPaths[1]);
+			File[] rootDirs = new File[2];
+			rootDirs[0] = new File(volumnPaths[0]);
+			rootDirs[1] = new File(volumnPaths[1]);
+			mFileCategoryScanner = new FileCategoryScanner(getApplicationContext(),
+					rootDirs,filterType, mType);
+			//遇到的问题：万一有三张卡呢？  不会吧，如今的手机我可没见过
 		}
-		
+
 		if (null != mFileCategoryScanner) {
 			long start = System.currentTimeMillis();
 			mFileCategoryScanner.setScanListener(this);

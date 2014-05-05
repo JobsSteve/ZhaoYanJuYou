@@ -59,7 +59,7 @@ import com.zhaoyan.juyou.common.FileOperationHelper.OnOperationListener;
 import com.zhaoyan.juyou.common.FileInfoManager.NavigationRecord;
 import com.zhaoyan.juyou.common.FileTransferUtil;
 import com.zhaoyan.juyou.common.FileTransferUtil.TransportCallback;
-import com.zhaoyan.juyou.common.MountManager;
+import com.zhaoyan.juyou.common.ZyStorageManager;
 import com.zhaoyan.juyou.dialog.CopyMoveDialog;
 import com.zhaoyan.juyou.dialog.ZyDeleteDialog;
 import com.zhaoyan.juyou.dialog.ZyAlertDialog.OnZyAlertDlgClickListener;
@@ -106,8 +106,8 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	//delete item positions
 	private List<Integer> mDeletePosList = new ArrayList<Integer>();
 
-	public static final int INTERNAL = MountManager.INTERNAL;
-	public static final int SDCARD = MountManager.SDCARD;
+	public static final int INTERNAL = ZyStorageManager.INTERNAL;
+	public static final int SDCARD = ZyStorageManager.SDCARD;
 	private static final int STATUS_FILE = 0;
 	private static final int STATUS_HOME = 1;
 	private int mStatus = STATUS_HOME;
@@ -125,11 +125,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	// save current root path
 	private String mRootPath;
 
-	private SharedPreferences sp = null;
-
-	private String sdcard_path;
-	private String internal_path;
-	
 	private Comparator<FileInfo> NAME_COMPARATOR = FileInfo.getNameComparator();
 	
 	private FileOperationHelper mFileOperationHelper;
@@ -207,7 +202,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
 	}
 
@@ -249,44 +243,44 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		sp = SharedPreferenceUtil.getSharedPreference(mApplicationContext);
 
 		mFileInfoManager = new FileInfoManager();
-
-		sdcard_path = sp.getString(SharedPreferenceUtil.SDCARD_PATH, MountManager.NO_EXTERNAL_SDCARD);
-		internal_path = sp.getString(SharedPreferenceUtil.INTERNAL_PATH, MountManager.NO_INTERNAL_SDCARD);
-		Log.d(TAG, "sdcard_path:" + sdcard_path + "\n," + "internal_path:" + internal_path);
-		
 		mHomeInfoList.clear();
-		// init
+		
 		FileHomeInfo homeInfo = null;
-		StatFs stat = null;
-		if (MountManager.isInternalExist(internal_path)) {
+		
+		// init
+		ZyStorageManager zsm = ZyStorageManager.getInstance(mApplicationContext);
+		String[] volumnPaths = zsm.getVolumePaths();
+		if (volumnPaths == null) {
+			Log.e(TAG, "No storage.");
+			//do nothing
+		} 
+		
+		if (volumnPaths.length != 0) {
+			String internalPath = volumnPaths[0];
+			Log.d(TAG, "internal path:" + internalPath);
 			homeInfo = new FileHomeInfo();
 			homeInfo.setStorageId(INTERNAL);
-			homeInfo.setRootPath(internal_path);
+			homeInfo.setRootPath(internalPath);
 			
-			stat = new StatFs(internal_path);
-			long blocksize = stat.getBlockSize();
-			long availableblocks = stat.getAvailableBlocks();
-			long totalBlocks = stat.getBlockCount();
-			homeInfo.setAvailableSize(availableblocks * blocksize);
-			homeInfo.setTotalSize(totalBlocks * blocksize);
+			homeInfo.setAvailableSize(ZyStorageManager.getAvailableBlockSize(internalPath));
+			homeInfo.setTotalSize(ZyStorageManager.getTotalBlockSize(internalPath));
 			
 			mHomeInfoList.add(homeInfo);
-		}
-
-		if (!MountManager.NO_EXTERNAL_SDCARD.equals(sdcard_path)) {
+		} 
+		
+		if (volumnPaths.length >= 2) {
+			//have internal & external
+			String externalPath = volumnPaths[1];
+			Log.d(TAG, "internal path:" + volumnPaths[0]);
+			Log.d(TAG, "external path:" + externalPath);
 			homeInfo = new FileHomeInfo();
 			homeInfo.setStorageId(SDCARD);
-			homeInfo.setRootPath(sdcard_path);
+			homeInfo.setRootPath(externalPath);
 			
-			stat = new StatFs(sdcard_path);
-			long blocksize = stat.getBlockSize();
-			long availableblocks = stat.getAvailableBlocks();
-			long totalBlocks = stat.getBlockCount();
-			homeInfo.setAvailableSize(availableblocks * blocksize);
-			homeInfo.setTotalSize(totalBlocks * blocksize);
+			homeInfo.setAvailableSize(ZyStorageManager.getAvailableBlockSize(externalPath));
+			homeInfo.setTotalSize(ZyStorageManager.getTotalBlockSize(externalPath));
 			
 			mHomeInfoList.add(homeInfo);
 		}
@@ -641,7 +635,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			curFilePath = initFileInfo;
 
 			if (curFilePath != null) {
-				String[] result = MountManager.getShowPath(mRootPath, curFilePath).split(MountManager.SEPERATOR);
+				String[] result = ZyStorageManager.getShowPath(mRootPath, curFilePath).split(ZyStorageManager.SEPERATOR);
 				for (String string : result) {
 					// add string to tab
 					addTab(string);
@@ -743,10 +737,10 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 				if (id == 0) {
 					curFilePath = mRootPath;
 				} else {
-					String[] result = MountManager.getShowPath(mRootPath, curFilePath).split(MountManager.SEPERATOR);
+					String[] result = ZyStorageManager.getShowPath(mRootPath, curFilePath).split(ZyStorageManager.SEPERATOR);
 					StringBuilder sb = new StringBuilder();
 					for (int i = 0; i <= id; i++) {
-						sb.append(MountManager.SEPERATOR);
+						sb.append(ZyStorageManager.SEPERATOR);
 						sb.append(result[i]);
 					}
 					curFilePath = mRootPath + sb.toString();
