@@ -36,7 +36,6 @@ import android.widget.TextView;
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.util.IntentBuilder;
 import com.zhaoyan.common.util.Log;
-import com.zhaoyan.common.util.SharedPreferenceUtil;
 import com.zhaoyan.common.util.ZYUtils;
 import com.zhaoyan.common.view.SlowHorizontalScrollView;
 import com.zhaoyan.common.view.ZyPopupMenu;
@@ -1041,6 +1040,7 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	}
 	
 	private void onOperationCut(){
+		Log.d(TAG, "onOperationCut()");
 		showCopyDialog(mApplicationContext.getString(R.string.filecut));
 		if (!mFileOperationHelper.doCut(mCurrentPath)) {
 			onFinished();
