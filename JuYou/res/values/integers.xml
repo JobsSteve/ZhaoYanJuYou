@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="gj_gridview_column">3</integer>
+    <integer name="gj_gridview_row">4</integer>
+
+</resources>

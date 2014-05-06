@@ -165,6 +165,10 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 		if (bundle != null) {
 			intent.putExtras(bundle);
 		}
+		openActivity(intent);
+	}
+	
+	protected void openActivity(Intent intent) {
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_right_in, 0);
 	}

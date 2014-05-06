@@ -185,6 +185,7 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.GuanJiaLauncherActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Translucent" >
         </activity>
 

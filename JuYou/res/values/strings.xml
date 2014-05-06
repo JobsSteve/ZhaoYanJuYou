@@ -361,5 +361,18 @@
 	<string name="errcode_deny">发送被拒绝</string>
 	<string name="errcode_unknown">发送返回</string>
 	<string name="please_install_weixin">请安装微信客户端</string>
+	
+	<string name="gj_item_app">聚游应用</string>
+	<string name="gj_item_music">音乐</string>
+	<string name="gj_item_photo">相册</string>
+	<string name="gj_item_video">视频</string>
+	<string name="gj_item_apk">安卓安装</string>
+	<string name="gj_item_history">历史</string>
+	<string name="gj_item_folder">文件夹</string>
+	<string name="gj_item_book">阅读</string>
+	<string name="gj_item_picture">图片</string>
+	<string name="gj_item_game">游戏</string>
+	<string name="gj_item_compress">压缩文件</string>
+	<string name="gj_item_more">更多</string>
 
 </resources>
