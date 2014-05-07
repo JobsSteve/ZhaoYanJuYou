@@ -5,7 +5,7 @@
     android:background="@color/activity_background"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
@@ -14,7 +14,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/gj_bg_top_unconnected" />
-    </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:padding="10dp" >
+
+            <ImageView
+                android:id="@+id/iv_gj_title_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/gj_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/iv_gj_title_icon"
+                android:text="@string/juyou"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/iv_gj_inviteic_connect.png"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_connect" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +61,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:numColumns="@integer/gj_gridview_column"
-            android:stretchMode="columnWidth"/>
+            android:stretchMode="columnWidth" />
     </LinearLayout>
 
 </LinearLayout>

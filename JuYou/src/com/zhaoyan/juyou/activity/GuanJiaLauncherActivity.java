@@ -3,7 +3,6 @@ package com.zhaoyan.juyou.activity;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -43,6 +42,7 @@ public class GuanJiaLauncherActivity extends BaseActivity implements
 		PreviewPagesActivity.skipPreviewPagesForever(mContext);
 		initLaunchers();
 		initView();
+		disableFinishAnimation();
 	}
 
 	private void initLaunchers() {
@@ -95,4 +95,6 @@ public class GuanJiaLauncherActivity extends BaseActivity implements
 		intent.setClassName(mContext, mData.get(position).get(KEY_ITEM_CLASS_NAME).toString());
 		openActivity(intent);
 	}
+	
+	
 }
