@@ -40,7 +40,7 @@
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/iv_gj_inviteic_connect.png"
+                android:id="@+id/iv_gj_invite_connect"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignParentRight="true"

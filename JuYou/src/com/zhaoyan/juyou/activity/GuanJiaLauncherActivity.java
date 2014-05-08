@@ -8,12 +8,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
@@ -21,7 +23,7 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.GuanJiaLauncherUtil;
 
 public class GuanJiaLauncherActivity extends BaseActivity implements
-		OnItemClickListener {
+		OnItemClickListener, OnClickListener {
 	private static final String TAG = GuanJiaLauncherActivity.class
 			.getSimpleName();
 	private Context mContext;
@@ -31,6 +33,7 @@ public class GuanJiaLauncherActivity extends BaseActivity implements
 	private final String KEY_ITEM_ICON = "icon";
 	private final String KEY_ITEM_TEXT = "text";
 	private final String KEY_ITEM_CLASS_NAME = "class";
+	private ImageView mConnectImageView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,9 @@ public class GuanJiaLauncherActivity extends BaseActivity implements
 		mGridView.setAdapter(mAdapter);
 		mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
 		mGridView.setOnItemClickListener(this);
+		
+		mConnectImageView = (ImageView) findViewById(R.id.iv_gj_invite_connect);
+		mConnectImageView.setOnClickListener(this);
 	}
 
 	@Override
@@ -88,6 +94,18 @@ public class GuanJiaLauncherActivity extends BaseActivity implements
 			long id) {
 		openActivity(GuanJiaLauncherUtil.getLaunchIntent(mContext,
 				mData.get(position).get(KEY_ITEM_CLASS_NAME).toString()));
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.iv_gj_invite_connect:
+			openActivity(ConnectFriendsActivity.class);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 }
