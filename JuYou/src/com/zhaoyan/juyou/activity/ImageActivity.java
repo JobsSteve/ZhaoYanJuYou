@@ -133,7 +133,10 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 		setContentView(R.layout.image_main);
 		
 		Bundle bundle = getIntent().getExtras();
-		mImageType = bundle.getInt(IMAGE_TYPE);
+		mImageType = TYPE_GALLERY;
+		if (bundle != null) {
+			mImageType = bundle.getInt(IMAGE_TYPE);
+		}
 		
 		initView();
 		
@@ -549,5 +552,15 @@ public class ImageActivity extends BaseActivity implements OnScrollListener, OnI
 				updateTitleNum(-1, mPictureItemInfoList.size());
 			}
 		} 
+	}
+	
+	public static class PhotoActivity extends ImageActivity {
+		
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			Intent intent = getIntent();
+			intent.putExtra(IMAGE_TYPE, TYPE_PHOTO);
+			super.onCreate(savedInstanceState);
+		}
 	}
 }

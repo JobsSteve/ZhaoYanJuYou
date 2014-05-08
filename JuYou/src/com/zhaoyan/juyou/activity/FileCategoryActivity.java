@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -130,7 +131,10 @@ public class FileCategoryActivity extends BaseActivity implements
 		setContentView(R.layout.category_main);
 
 		Bundle bundle = getIntent().getExtras();
-		mType = bundle.getInt(CATEGORY_TYPE);
+		mType = TYPE_DOC;
+		if (bundle != null) {
+			mType = bundle.getInt(CATEGORY_TYPE);
+		}
 		if (TYPE_DOC == mType) {
 			initTitle(R.string.file_document);
 			filterType = getResources().getStringArray(R.array.doc_file);
@@ -461,5 +465,35 @@ public class FileCategoryActivity extends BaseActivity implements
 	@Override
 	public void onScanCancel() {
 		Log.d(TAG, "onScanCancel");
+	}
+	
+	public static class Document extends FileCategoryActivity {
+		
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			Intent intent = getIntent();
+			intent.putExtra(CATEGORY_TYPE, TYPE_DOC);
+			super.onCreate(savedInstanceState);
+		}
+	}
+	
+	public static class Compress extends FileCategoryActivity {
+		
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			Intent intent = getIntent();
+			intent.putExtra(CATEGORY_TYPE, TYPE_ARCHIVE);
+			super.onCreate(savedInstanceState);
+		}
+	}
+	
+	public static class APK extends FileCategoryActivity {
+		
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			Intent intent = getIntent();
+			intent.putExtra(CATEGORY_TYPE, TYPE_APK);
+			super.onCreate(savedInstanceState);
+		}
 	}
 }

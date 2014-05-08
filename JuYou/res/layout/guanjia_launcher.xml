@@ -16,6 +16,7 @@
             android:src="@drawable/gj_bg_top_connected" />
 
         <RelativeLayout
+            android:id="@+id/relativeLayout1"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_alignParentTop="true" >
@@ -49,6 +50,15 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/gj_title_connect_selector" />
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_connected_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#ddfb43" 
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <LinearLayout
@@ -63,7 +73,9 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:numColumns="@integer/gj_gridview_column"
-            android:stretchMode="columnWidth" />
+            android:stretchMode="columnWidth" >
+        </GridView>
+
     </LinearLayout>
 
 </LinearLayout>

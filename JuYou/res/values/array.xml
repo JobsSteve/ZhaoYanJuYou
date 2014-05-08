@@ -148,20 +148,20 @@
         <item>@string/more</item>
     </string-array>
     <string-array name="gj_launcher_item_classname">
+        <item>com.zhaoyan.juyou.activity.JiFenActivity</item>
+        <item>com.zhaoyan.juyou.activity.ZhaoHuActivity</item>
+        <item>com.zhaoyan.juyou.activity.WiFiAPShareActivity</item>
+        
+        <item>com.zhaoyan.juyou.activity.QRCodeScanActivity</item>
+        <item>com.zhaoyan.juyou.activity.JuYouAppActivity</item>
         <item>com.zhaoyan.juyou.activity.AppActivity</item>
+        
+        <item>com.zhaoyan.juyou.activity.AppActivity$GameActivity</item>
+        <item>com.zhaoyan.juyou.activity.ImageActivity$PhotoActivity</item>
+        <item>com.zhaoyan.juyou.activity.ImageActivity</item>
+        
         <item>com.zhaoyan.juyou.activity.AudioActivity</item>
         <item>com.zhaoyan.juyou.activity.VideoActivity</item>
-        
-        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
-        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
-        <item>com.zhaoyan.juyou.activity.HistoryActivity</item>
-        
-        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
-        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
-        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
-        
-        <item>com.zhaoyan.juyou.activity.AppActivity</item>
-        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
         <item>com.zhaoyan.juyou.activity.GuanJiaLaunchMoreActivity</item>
     </string-array>
     
@@ -192,17 +192,17 @@
         <item>@string/user_guide</item>
     </string-array>
     <string-array name="gj_launcher_more_item_classname">
-        <item>com.zhaoyan.juyou.activity.AppActivity</item>
-        <item>com.zhaoyan.juyou.activity.AudioActivity</item>
-        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
-        
-        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
         <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
+        <item>com.zhaoyan.juyou.activity.FileCategoryActivity$Document</item>
+        <item>com.zhaoyan.juyou.activity.FileCategoryActivity$Compress</item>
+        
+        <item>com.zhaoyan.juyou.activity.FileCategoryActivity$APK</item>
+        <item>com.zhaoyan.juyou.activity.BackupRestoreActivity</item>
         <item>com.zhaoyan.juyou.activity.HistoryActivity</item>
         
-        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
-        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
-        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
+        <item>com.zhaoyan.juyou.activity.InviteActivity</item>
+        <item>com.zhaoyan.juyou.activity.SettingsActivity</item>
+        <item>com.zhaoyan.juyou.activity.UserGuideActivity</item>
     </string-array>
     
     
