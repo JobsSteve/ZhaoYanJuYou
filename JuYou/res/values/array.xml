@@ -114,38 +114,38 @@
     </string-array>
     
     <array name="gj_launcher_item_icon">
+        <item>@drawable/gj_jifen_selector</item>
+        <item>@drawable/gj_zhaohu_selector</item>
+        <item>@drawable/gj_wifi_ap_selector</item>
+        
+        <item>@drawable/gj_qrcode_selector</item>
         <item>@drawable/gj_juyou_app_selector</item>
-        <item>@drawable/gj_music_selector</item>
-        <item>@drawable/gj_photo_selector</item>
-        
-        <item>@drawable/gj_video_selector</item>
-        <item>@drawable/gj_apk_selector</item>
-        <item>@drawable/gj_history_selector</item>
-        
-        <item>@drawable/gj_folder_selector</item>
-        <item>@drawable/gj_book_selector</item>
-        <item>@drawable/gj_picture_selector</item>
+        <item>@drawable/gj_app_selector</item>
         
         <item>@drawable/gj_game_selector</item>
-        <item>@drawable/gj_compress_selector</item>
+        <item>@drawable/gj_photo_selector</item>
+        <item>@drawable/gj_picture_selector</item>
+        
+        <item>@drawable/gj_music_selector</item>
         <item>@drawable/gj_video_selector</item>
+        <item>@drawable/gj_more_selector</item>
     </array>
     <string-array name="gj_launcher_item_text">
-        <item>@string/gj_item_app</item>
-        <item>@string/gj_item_music</item>
-        <item>@string/gj_item_photo</item>
+        <item>@string/jifen</item>
+        <item>@string/zhaohu</item>
+        <item>@string/wifi_ap</item>
         
-        <item>@string/gj_item_video</item>
-        <item>@string/gj_item_apk</item>
-        <item>@string/gj_item_history</item>
+        <item>@string/qrcode</item>
+        <item>@string/juyou_app</item>
+        <item>@string/app</item>
         
-        <item>@string/gj_item_folder</item>
-        <item>@string/gj_item_book</item>
-        <item>@string/gj_item_picture</item>
+        <item>@string/game</item>
+        <item>@string/photo</item>
+        <item>@string/image</item>
         
-        <item>@string/gj_item_game</item>
-        <item>@string/gj_item_compress</item>
-        <item>@string/gj_item_more</item>
+        <item>@string/music</item>
+        <item>@string/video</item>
+        <item>@string/more</item>
     </string-array>
     <string-array name="gj_launcher_item_classname">
         <item>com.zhaoyan.juyou.activity.AppActivity</item>
@@ -162,7 +162,47 @@
         
         <item>com.zhaoyan.juyou.activity.AppActivity</item>
         <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
+        <item>com.zhaoyan.juyou.activity.GuanJiaLaunchMoreActivity</item>
+    </string-array>
+    
+    <array name="gj_launcher_more_item_icon">
+        <item>@drawable/ic_folder_normal</item>
+        <item>@drawable/ic_book_normal</item>
+        <item>@drawable/ic_compress_normal</item>
+        
+        <item>@drawable/ic_apk_normal</item>
+        <item>@drawable/ic_backup_restore_normal</item>
+        <item>@drawable/ic_history_normal</item>
+        
+        <item>@drawable/ic_invite_normal</item>
+        <item>@drawable/ic_settings_normal</item>
+        <item>@drawable/ic_help_normal</item>
+    </array>
+    <string-array name="gj_launcher_more_item_text">
+        <item>@string/folder</item>
+        <item>@string/file_ebook</item>
+        <item>@string/file_compressed</item>
+        
+        <item>@string/file_apk</item>
+        <item>@string/backup_restore</item>
+        <item>@string/transfer_history</item>
+        
+        <item>@string/invite</item>
+        <item>@string/settings</item>
+        <item>@string/user_guide</item>
+    </string-array>
+    <string-array name="gj_launcher_more_item_classname">
         <item>com.zhaoyan.juyou.activity.AppActivity</item>
+        <item>com.zhaoyan.juyou.activity.AudioActivity</item>
+        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
+        
+        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
+        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
+        <item>com.zhaoyan.juyou.activity.HistoryActivity</item>
+        
+        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
+        <item>com.zhaoyan.juyou.activity.FileBrowserActivity</item>
+        <item>com.zhaoyan.juyou.activity.VideoActivity</item>
     </string-array>
     
     

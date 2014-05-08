@@ -13,27 +13,26 @@
             android:id="@+id/iv_gj_bg_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/gj_bg_top_unconnected" />
+            android:src="@drawable/gj_bg_top_connected" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_alignParentTop="true"
-            android:padding="10dp" >
+            android:layout_alignParentTop="true" >
 
             <ImageView
                 android:id="@+id/iv_gj_title_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:scaleType="centerInside"
                 android:src="@drawable/gj_logo" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/iv_gj_title_icon"
                 android:text="@string/juyou"
                 android:textColor="#ffffff"
@@ -41,11 +40,14 @@
 
             <ImageView
                 android:id="@+id/iv_gj_inviteic_connect.png"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_connect" />
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/gj_title_connect_selector" />
         </RelativeLayout>
     </RelativeLayout>
 

@@ -188,6 +188,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Translucent" >
         </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.GuanJiaLaunchMoreActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
 
         <service android:name="com.zhaoyan.communication.LoginService" >
         </service>
