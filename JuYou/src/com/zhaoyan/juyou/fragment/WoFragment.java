@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,6 +99,11 @@ public class WoFragment extends BaseFragment implements OnClickListener {
 
 	private void updateAccountInfo() {
 		AccountInfo accountInfo = AccountHelper.getCurrentAccount(mContext);
+		if (accountInfo == null) {
+			// TODO accountInfo may be null, why.
+			Log.e(TAG, "updateAccountInfo accountInfo is null!!!");
+			return;
+		}
 		int headId = accountInfo.getHeadId();
 		if (headId != AccountInfo.HEAD_ID_NOT_PRE_INSTALL) {
 			mHeadImageView.setImageResource(AccountHelper
