@@ -41,6 +41,8 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 	
 	//视图模式
 	protected int mViewType = Extra.VIEW_TYPE_DEFAULT;
+	
+	private boolean mHasFinishAnimation = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +114,10 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 		transportAnimationView.startTransportAnimation(viewGroup,
 				mTitleNameView, startViews);
 	}
+	
+	public void disableFinishAnimation() {
+		mHasFinishAnimation = false;
+	}
 
 	protected void finishWithAnimation() {
 		finish();
@@ -123,7 +129,9 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (onBackKeyPressed()) {
 				finish();
-				overridePendingTransition(0, R.anim.activity_right_out);
+				if (mHasFinishAnimation) {
+					overridePendingTransition(0, R.anim.activity_right_out);
+				}
 				return true;
 			} else {
 				return false;
@@ -165,6 +173,10 @@ public class BaseActivity extends Activity implements OnMenuItemClickListener {
 		if (bundle != null) {
 			intent.putExtras(bundle);
 		}
+		openActivity(intent);
+	}
+	
+	protected void openActivity(Intent intent) {
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_right_in, 0);
 	}

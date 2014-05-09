@@ -3,6 +3,7 @@ package com.zhaoyan.juyou.activity;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.fragment.AppFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -55,5 +56,15 @@ public class AppActivity extends FragmentActivity{
 			mAppFragment = null;
 		}
 		super.onDestroy();
+	}
+	
+	public static class GameActivity extends AppActivity {
+		
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			Intent intent = getIntent();
+			intent.putExtra(AppActivity.APP_TYPE, TYPE_GAME);
+			super.onCreate(savedInstanceState);
+		}
 	}
 }

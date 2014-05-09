@@ -22,7 +22,6 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.AppInfo;
 import com.zhaoyan.juyou.common.AppManager;
 import com.zhaoyan.juyou.common.HistoryManager;
-import com.zhaoyan.juyou.common.MountManager;
 import com.zhaoyan.juyou.common.ZYConstant;
 import com.zhaoyan.juyou.provider.AppData;
 

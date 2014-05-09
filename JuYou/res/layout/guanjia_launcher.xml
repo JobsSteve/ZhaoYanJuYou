@@ -1,13 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/activity_background" >
+    android:background="@color/activity_background"
+    android:orientation="vertical" >
 
-    <ImageView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <com.zhaoyan.common.view.AspectRatioImageView
+            android:id="@+id/iv_gj_bg_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gj_bg_top_connected" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true" >
+
+            <ImageView
+                android:id="@+id/iv_gj_title_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/gj_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/iv_gj_title_icon"
+                android:text="@string/juyou"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/iv_gj_invite_connect"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/gj_title_connect_selector" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_connected_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#ddfb43" 
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/guanjia_sample" />
+        android:background="@drawable/gj_bg_bottom"
+        android:orientation="vertical" >
 
-</RelativeLayout>
+        <GridView
+            android:id="@+id/gv_gj_launchers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:numColumns="@integer/gj_gridview_column"
+            android:stretchMode="columnWidth" >
+        </GridView>
+
+    </LinearLayout>
+
+</LinearLayout>

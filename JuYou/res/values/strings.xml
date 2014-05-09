@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">管家</string>
+    <string name="app_name">聚游</string>
     <string name="login">登录</string>
     <string name="preview_page1">preview_page1</string>
     <string name="preview_page2">preview_page2</string>
@@ -361,5 +361,17 @@
 	<string name="errcode_deny">发送被拒绝</string>
 	<string name="errcode_unknown">发送返回</string>
 	<string name="please_install_weixin">请安装微信客户端</string>
-
+	
+	<string name="jifen">积分</string>
+	<string name="zhaohu">招呼</string>
+	<string name="wifi_ap">热点管理</string>
+	<string name="qrcode">扫二维码</string>
+	<string name="juyou_app">聚游乐</string>
+	<string name="more">更多</string>
+	<string name="backup_restore">备份还原</string>
+	<string name="user_guide">使用指南</string>
+	<string name="file_ebook">电子书</string>
+	<string name="transfer_history">传输记录</string>
+	<string name="settings">设置</string>
+	
 </resources>

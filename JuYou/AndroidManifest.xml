@@ -185,9 +185,79 @@
         </activity>
         <activity
             android:name="com.zhaoyan.juyou.activity.GuanJiaLauncherActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Translucent" >
         </activity>
-
+        <activity
+            android:name="com.zhaoyan.juyou.activity.GuanJiaLaunchMoreActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.JiFenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.ZhaoHuActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.WiFiAPShareActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.QRCodeScanActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.JuYouAppActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.AppActivity$GameActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.ImageActivity$PhotoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.FileCategoryActivity$APK"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.FileCategoryActivity$Compress"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.FileCategoryActivity$Document"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.zhaoyan.juyou.activity.BackupRestoreActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>    
+        <activity
+            android:name="com.zhaoyan.juyou.activity.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>          
+        <activity
+            android:name="com.zhaoyan.juyou.activity.UserGuideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
         <service android:name="com.zhaoyan.communication.LoginService" >
         </service>
         <service android:name="com.zhaoyan.communication.FileTransferService" >

@@ -12,7 +12,6 @@ public class FileBrowserActivity extends FragmentActivity{
 	private FileBrowserFragment mBrowserFragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -23,7 +22,6 @@ public class FileBrowserActivity extends FragmentActivity{
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			boolean ret = mBrowserFragment.onBackPressed();
 			if (ret) {
@@ -39,7 +37,6 @@ public class FileBrowserActivity extends FragmentActivity{
 	
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		if (null != mBrowserFragment) {
 			mBrowserFragment = null;
 		}

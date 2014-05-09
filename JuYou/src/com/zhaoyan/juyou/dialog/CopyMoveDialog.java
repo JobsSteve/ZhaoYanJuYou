@@ -53,6 +53,9 @@ public class CopyMoveDialog extends ZyAlertDialog{
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case MSG_UPDATE_PROGRESS_COUNT:
+				if (mSingleFileTotalSize == -1) {
+					mFileSizeBar.setVisibility(View.GONE);
+				}
 				int count = msg.arg1;
 				String fileName = msg.obj.toString();
 				mMessageView.setText(fileName + "->" + mDespath);
@@ -122,11 +125,10 @@ public class CopyMoveDialog extends ZyAlertDialog{
 	}
 	
 	public void updateCountProgress(String fileName, int count, long filesize){
+		this.mSingleFileTotalSize = filesize;
 		if (filesize == -1) {
 			//is move operation
-			mFileSizeBar.setVisibility(View.GONE);
 		}else {
-			this.mSingleFileTotalSize = filesize;
 			mTotalSizeStr = ZYUtils.getFormatSize(filesize);
 		}
 		Message message = mHandler.obtainMessage();
