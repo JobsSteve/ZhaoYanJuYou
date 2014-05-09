@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
+import com.zhaoyan.juyou.DirectLogin;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.common.GuanJiaLauncherUtil;
 
@@ -42,6 +43,10 @@ public class GuanJiaLauncherActivity extends BaseActivity implements
 
 		mContext = this;
 		PreviewPagesActivity.skipPreviewPagesForever(mContext);
+		// TODO move login in the future.
+		DirectLogin directLogin = new DirectLogin(mContext);
+		directLogin.login();
+		
 		initLaunchers();
 		initView();
 		disableFinishAnimation();
