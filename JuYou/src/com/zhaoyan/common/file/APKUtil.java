@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
@@ -231,5 +232,15 @@ public class APKUtil {
 			e.printStackTrace();
 		}
 		return name;
+	}
+	
+	public static boolean isAppInstalled(Context context,String packageName){
+		PackageInfo packageInfo = null;
+		try {
+			packageInfo = context.getPackageManager().getPackageInfo(packageName, 0);
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return packageInfo == null ? false : true;
 	}
 }

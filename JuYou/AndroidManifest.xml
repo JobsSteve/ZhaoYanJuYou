@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhaoyan.juyou"
     android:versionCode="1"
-    android:versionName="1.0_20140214" >
+    android:versionName="1.0_20140507" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -17,6 +17,18 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+    
+    <uses-permission android:name="android.permission.READ_CONTACTS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.READ_SMS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.WRITE_SMS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.READ_MMS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.WRITE_MMS" />
 
     <application
         android:name="com.zhaoyan.juyou.JuYouApplication"
@@ -244,11 +256,6 @@
             android:theme="@style/Theme.Translucent" >
         </activity>
         <activity
-            android:name="com.zhaoyan.juyou.activity.BackupRestoreActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Translucent" >
-        </activity>    
-        <activity
             android:name="com.zhaoyan.juyou.activity.SettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Translucent" >
@@ -258,6 +265,45 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Translucent" >
         </activity>
+        
+        <!-- backup and restore -->
+        <activity
+            android:name="com.zhaoyan.juyou.backuprestore.BackupResotreActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        
+        <activity
+            android:name="com.zhaoyan.juyou.backuprestore.DataBackupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        
+        <activity
+            android:name="com.zhaoyan.juyou.backuprestore.AppBackupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        
+        <activity
+            android:name="com.zhaoyan.juyou.backuprestore.DataRestoreItemActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        
+        <activity
+            android:name="com.zhaoyan.juyou.backuprestore.AppRestoreActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent" >
+        </activity>
+        
+        <activity 
+            android:name="com.zhaoyan.juyou.backuprestore.DataRestoreActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Translucent"
+            ></activity>
+        <!-- backup and restore -->
+
         <service android:name="com.zhaoyan.communication.LoginService" >
         </service>
         <service android:name="com.zhaoyan.communication.FileTransferService" >
@@ -267,7 +313,11 @@
         </service>
         <service android:name="com.zhaoyan.communication.ScreenMonitor" >
         </service>
-
+        <service android:name="com.zhaoyan.juyou.backuprestore.BackupService">
+        </service>
+		<service android:name="com.zhaoyan.juyou.backuprestore.RestoreService">
+		</service>
+        
         <provider
             android:name="com.zhaoyan.juyou.provider.JuyouProvider"
             android:authorities="com.zhaoyan.juyou.provider.JuyouProvider"

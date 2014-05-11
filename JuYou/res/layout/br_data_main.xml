@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <com.zhaoyan.common.view.RightSlideLayout xmlns:android="http://schemas.android.com/apk/res/android" -->
+<!--     android:layout_width="match_parent" -->
+<!--     android:layout_height="match_parent" > -->
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:background="@color/activity_background"
+        >
+        
+         <include
+            android:id="@+id/title"
+            android:layout_alignParentTop="true"
+            layout="@layout/custom_title" />
+         
+         
+<!--          <LinearLayout  -->
+<!--              android:id="@+id/ll_backup" -->
+<!--              android:layout_width="fill_parent" -->
+<!--              android:layout_height="54dp" -->
+<!--              android:orientation="vertical" -->
+<!--              android:layout_alignParentBottom="true" -->
+<!--              android:background="@drawable/blue_bg" -->
+<!--              android:gravity="center" -->
+<!--              > -->
+<!--              <TextView  -->
+<!--                  android:layout_width="wrap_content" -->
+<!--                  android:layout_height="wrap_content" -->
+<!--                  android:text="备份至存储卡" -->
+<!--                  android:layout_gravity="center" -->
+<!--                  /> -->
+<!--          </LinearLayout> -->
+         
+         <Button 
+             android:id="@+id/btn_backup"
+              android:layout_width="fill_parent"
+             android:layout_height="54dp"
+             android:layout_alignParentBottom="true"
+             android:text="备份至存储卡"
+             android:textColor="@color/white"
+             style="@android:style/ButtonBar"
+             android:background="@drawable/br_button_selector"
+             />
+         
+         <ListView 
+             android:id="@id/android:list"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_below="@+id/title"
+             android:layout_above="@+id/btn_backup"
+             ></ListView>
+         
+         <ProgressBar 
+             style="?android:attr/progressBarStyleLarge"
+             android:id="@+id/bar_loading"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerInParent="true"
+             android:visibility="invisible"
+             />
+    </RelativeLayout>
+
+<!-- </com.zhaoyan.common.view.RightSlideLayout> -->
