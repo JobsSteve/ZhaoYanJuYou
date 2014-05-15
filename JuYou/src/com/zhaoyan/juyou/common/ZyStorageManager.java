@@ -3,6 +3,7 @@ package com.zhaoyan.juyou.common;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
@@ -56,6 +57,7 @@ public class ZyStorageManager {
 	 * 获取存储位置数组，通过反射方式 
 	 * 默认第一个路径是内置存储
 	 * 如果只有一个那么就是内置存储
+	 * 还有一种情况是，获得的路径是空的
 	 * @return
 	 */
 	public String[] getVolumePaths() {
@@ -68,6 +70,28 @@ public class ZyStorageManager {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
+		}
+		
+		if (paths == null || paths.length == 0) {
+			return paths;
+		}
+		
+		ArrayList<String> resultPaths = new ArrayList<String>();
+		File file = null;
+		File[] files = null;
+		//判断一下，如果挂载的路径是个空的，就不显示
+		for(String path : paths){
+			file = new File(path);
+			files = file.listFiles();
+			if (files != null && files.length > 0) {
+				resultPaths.add(path);
+			}
+		}
+		
+		if (resultPaths.size() == 0) {
+			paths = null;
+		} else {
+			paths = (String[]) resultPaths.toArray(new String[resultPaths.size()]);
 		}
 		return paths;
 	}

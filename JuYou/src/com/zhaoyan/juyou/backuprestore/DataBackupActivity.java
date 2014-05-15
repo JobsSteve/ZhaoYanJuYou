@@ -17,7 +17,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
@@ -36,8 +35,7 @@ import com.zhaoyan.juyou.backuprestore.Constants.ContactType;
 import com.zhaoyan.juyou.backuprestore.Constants.DialogID;
 import com.zhaoyan.juyou.backuprestore.ResultDialog.ResultEntity;
 
-public class DataBackupActivity extends AbstractBackupActivity implements
-		OnClickListener {
+public class DataBackupActivity extends AbstractBackupActivity {
 	private static final String TAG = "DataBackupActivity";
 	private DataBackupAdapter mAdapter;
 
@@ -52,21 +50,41 @@ public class DataBackupActivity extends AbstractBackupActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mTitleView.setText("本地数据备份");
+		showButtonBar(true);
 	}
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 		mInitPersonalDataTask = new InitPersonalDataTask();
 		mInitPersonalDataTask.execute();
+	}
+	
+	@Override
+	public void onCheckedCountChanged() {
+		super.onCheckedCountChanged();
+		updateTitle();
 	}
 
 	private void updateData(ArrayList<PersonalItemData> data) {
 		mBackupList = data;
 		mAdapter.changeData(mBackupList);
+		syncUnCheckedItems();
+		mAdapter.notifyDataSetChanged();
+		updateTitle();
+		updateButtonState();
+		checkBackupState();
 	}
+	
+	public void updateTitle() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getString(R.string.backup_personal_data));
+        int totalNum = getCount();
+        int checkedNum = getCheckedCount();
+        sb.append("(" + checkedNum + "/" + totalNum + ")");
+        setTitle("");
+        setTitle(sb.toString());
+    }
 
 	List<String> messageEnable = new ArrayList<String>();
 
@@ -129,17 +147,8 @@ public class DataBackupActivity extends AbstractBackupActivity implements
 					if (countSMS != 0) {
 						messageEnable.add("短信");
 					}
-					// composer = new
-					// MmsBackupComposer(DataBackupActivity.this);
-					// if(composer.init()){
-					// countMMS = composer.getCount();
-					// composer.onEnd();
-					// }
 					count = countSMS + countMMS;
 					Log.e(TAG, "countSMS = " + countSMS + "countMMS" + countMMS);
-					// if(countMMS!=0){
-					// messageEnable.add(getString(R.string.message_mms));
-					// }
 					break;
 				case ModuleType.TYPE_PICTURE:
 					count = getModulesCount(new PictureBackupComposer(
@@ -176,14 +185,7 @@ public class DataBackupActivity extends AbstractBackupActivity implements
 	}
 
 	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void startBackup() {
-		// TODO Auto-generated method stub
 		showDialog(DialogID.DLG_EDIT_FOLDER_NAME);
 	}
 
@@ -479,34 +481,13 @@ public class DataBackupActivity extends AbstractBackupActivity implements
 			mBackupService.setBackupModelList(list);
 			if (list.contains(ModuleType.TYPE_CONTACT)) {
 				ArrayList<String> params = new ArrayList<String>();
-				String[] contactTypes = new String[] { ContactType.ALL,
-						ContactType.PHONE, ContactType.SIM1, ContactType.SIM2,
-						ContactType.SIM3, ContactType.SIM4 };
-				// if (mContactCheckTypes[0]) {
 				params.add(ContactType.PHONE);
-				// }
-				// if(mSimCount >= 1){
-				// //modify by yuri
-				// //no simcard function
-				// // for (int i = 1; i <= mSimCount; i++) {
-				// // if(mContactCheckTypes[i]){
-				// // params.add(mSimInfoList.get(i-1).mDisplayName);
-				// // MyLogger.logD(TAG," mDisplayName is " +
-				// mSimInfoList.get(i-1).mDisplayName);
-				// // }
-				// // }
-				// }
 				mBackupService.setBackupItemParam(ModuleType.TYPE_CONTACT,
 						params);
 			}
 			if (list.contains(ModuleType.TYPE_MESSAGE)) {
 				ArrayList<String> params = new ArrayList<String>();
-				// if(mMessageCheckTypes[0]){
 				params.add(Constants.ModulePath.NAME_SMS);
-				// }
-				// if(mMessageCheckTypes[1]){
-				// params.add(Constants.ModulePath.NAME_MMS);
-				// }
 				mBackupService.setBackupItemParam(ModuleType.TYPE_MESSAGE,
 						params);
 			}
@@ -660,7 +641,6 @@ public class DataBackupActivity extends AbstractBackupActivity implements
 					chxbox.setChecked(false);
 				}
 			}
-
 			return view;
 		}
 	}

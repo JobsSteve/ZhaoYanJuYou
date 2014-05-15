@@ -45,9 +45,9 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
     private String TAG = "AbstractBackupActivity";
     //test
     protected BaseAdapter mAdapter;
+    private LinearLayout mBackupRestoreButtonBar;
     private Button mButtonBackup;
-    private View mBackupView;
-    //private Button mButtonSelect;
+    private Button mSelectAllBtn;
     private CheckBox mCheckBoxSelect;
     private View mDivider ;
     protected ProgressDialog mProgressDialog;
@@ -94,14 +94,6 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress()) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
@@ -122,7 +114,7 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
 		backView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				finish();
+				finishWithAnimation();
 			}
 		});
         initButton();
@@ -141,6 +133,13 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
     	mLoadingBar =(ProgressBar) findViewById(R.id.bar_loading);
 	}
     
+    protected void setTitle(String title){
+    	mTitleView.setText(title);
+    }
+    
+    protected void showButtonBar(boolean show) {
+		mBackupRestoreButtonBar.setVisibility(show ?  View.VISIBLE : View.GONE);
+	}
 		
 	protected void showLoadingContent(boolean show){
 		findViewById(R.id.bar_loading).setVisibility(show?View.VISIBLE:View.GONE);
@@ -223,6 +222,7 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
     }
 
     private void initButton() {
+    	mBackupRestoreButtonBar = (LinearLayout) findViewById(R.id.ll_backup);
         mButtonBackup = (Button) findViewById(R.id.btn_backup);
         mButtonBackup.setOnClickListener(new OnClickListener() {
 			@Override
@@ -252,44 +252,42 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
 		});
         
         //select all
-//        mCheckBoxSelect = (CheckBox) findViewById(R.id.cb);
-//        mCheckBoxSelect.setChecked(true);
-//        mCheckBoxSelect.setVisibility(View.INVISIBLE);
-//        mCheckBoxSelect.setOnClickListener(new Button.OnClickListener() {
-//            @Override
-//            public void onClick(final View view) {
-//                if (isAllChecked(true)) {
-//                    setAllChecked(false);
-//                } else {
-//                    setAllChecked(true);
-//                }
-//            }
-//        });
+        mSelectAllBtn = (Button) findViewById(R.id.btn_selectall);
+        mSelectAllBtn.setText("全部取消");
+        mSelectAllBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (isAllChecked(true)) {
+					setAllChecked(false);
+					mSelectAllBtn.setText("全部选中");
+				} else {
+					setAllChecked(true);
+					mSelectAllBtn.setText("全部取消");
+				}
+			}
+		});
     }
 
     protected void setButtonsEnable(boolean enable) {
     	Log.d(TAG, "setButtonsEnable - " +enable);
-        if (mBackupView != null) {
-        	mBackupView.setEnabled(enable);
+        if (mButtonBackup != null) {
+        	mButtonBackup.setEnabled(enable);
         }
-//        if (mCheckBoxSelect != null) {
-//        	mCheckBoxSelect.setEnabled(enable);
-////        	mCheckBoxSelect.setVisibility(enable?View.VISIBLE:View.INVISIBLE);
-////        	findViewById(R.id.divider).setVisibility(enable?View.VISIBLE:View.INVISIBLE);
-//        }
+        if (mSelectAllBtn != null) {
+        	mSelectAllBtn.setEnabled(enable);
+        }
     }
 
     protected void updateButtonState() {
-//    	mCheckBoxSelect.setVisibility(View.VISIBLE);
-//    	mCheckBoxSelect.setText(getApplication().getResources().getString(R.string.selectall));
-//    	mDivider.setVisibility(View.VISIBLE);
-//        if (isAllChecked(false)) {
-//            mButtonBackup.setEnabled(false);
-//            mCheckBoxSelect.setChecked(false);
-//        } else {
-//            mButtonBackup.setEnabled(true);
-//            mCheckBoxSelect.setChecked(isAllChecked(true));
-//        }
+        if (isAllChecked(false)) {
+            mButtonBackup.setEnabled(false);
+            mSelectAllBtn.setText("全部选中");
+        } else {
+            mButtonBackup.setEnabled(true);
+            mSelectAllBtn.setText("全部取消");
+        }
     }
 
     protected final void initHandler() {
@@ -371,25 +369,25 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
                     }).setCancelable(false).create();
             break;
         case DialogID.DLG_RUNNING:
-//            dialog = new AlertDialog.Builder(AbstractBackupActivity.this)
-//                    .setIconAttribute(android.R.attr.alertDialogIcon).setTitle(R.string.warning)
-//                    .setMessage(R.string.state_running)
-//                    .setPositiveButton(android.R.string.ok, null).create();
+            dialog = new AlertDialog.Builder(AbstractBackupActivity.this)
+                    .setTitle(R.string.warning)
+                    .setMessage(R.string.state_running)
+                    .setPositiveButton(android.R.string.ok, null).create();
             break;
             
         case DialogID.DLG_NO_SDCARD:
-//            dialog = new AlertDialog.Builder(AbstractBackupActivity.this)
-//                    .setIconAttribute(android.R.attr.alertDialogIcon).setTitle(R.string.notice)
-//                    .setMessage(SDCardUtils.getSDStatueMessage(this))
-//                    .setPositiveButton(android.R.string.ok, null).create();
+            dialog = new AlertDialog.Builder(AbstractBackupActivity.this)
+                    .setTitle(R.string.notice)
+                    .setMessage(SDCardUtils.getSDStatueMessage(this))
+                    .setPositiveButton(android.R.string.ok, null).create();
             break;
 
         case DialogID.DLG_CREATE_FOLDER_FAILED:
-//            String name = args.getString("name");
-//            String msg = String.format(getString(R.string.create_folder_fail), name);
-//            dialog = new AlertDialog.Builder(AbstractBackupActivity.this)
-//                    .setIconAttribute(android.R.attr.alertDialogIcon).setTitle(R.string.notice)
-//                    .setMessage(msg).setPositiveButton(android.R.string.ok, null).create();
+            String name = args.getString("name");
+            String msg = String.format(getString(R.string.create_folder_fail), name);
+            dialog = new AlertDialog.Builder(AbstractBackupActivity.this)
+                   	.setTitle(R.string.notice)
+                    .setMessage(msg).setPositiveButton(android.R.string.ok, null).create();
             break;
 
         default:
@@ -522,5 +520,20 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
             }
         }
     }
+    
+    protected void finishWithAnimation() {
+		finish();
+		overridePendingTransition(0, R.anim.activity_right_out);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+				finish();
+				overridePendingTransition(0, R.anim.activity_right_out);
+				return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 
 }

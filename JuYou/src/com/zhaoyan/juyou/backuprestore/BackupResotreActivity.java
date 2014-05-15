@@ -34,7 +34,7 @@ public class BackupResotreActivity extends BaseActivity implements OnClickListen
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.ll_title:
-			finish();
+			finishWithAnimation();
 			break;
 
 		default:

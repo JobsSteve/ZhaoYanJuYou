@@ -44,7 +44,9 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
     protected ArrayList<String> mUnCheckedList = new ArrayList<String>();
     protected Handler mHandler;
     BaseAdapter mAdapter;
+    private LinearLayout mBackupRestoreButtonBar = null;
     private Button mBtRestore = null;
+    private Button mSelectAllBtn = null;
     private CheckBox mChboxSelect = null;
     private View mDivider ;
     private ProgressDialog mProgressDialog;
@@ -136,14 +138,6 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
         updateButtonState();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress()) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     private void init() {
         registerOnCheckedCountChangedListener(this);
         registerSDCardListener();
@@ -154,7 +148,7 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
 		backView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				finish();
+				finishWithAnimation();
 			}
 		});
 		
@@ -212,10 +206,10 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
                     }).setCancelable(false).create();
             break;
         case DialogID.DLG_RUNNING:
-//            dialog = new AlertDialog.Builder(AbstractRestoreActivity.this)
-//                    .setIconAttribute(android.R.attr.alertDialogIcon).setTitle(R.string.warning)
-//                    .setMessage(R.string.state_running)
-//                    .setPositiveButton(android.R.string.ok, null).create();
+            dialog = new AlertDialog.Builder(AbstractRestoreActivity.this)
+                    .setTitle(R.string.warning)
+                    .setMessage(R.string.state_running)
+                    .setPositiveButton(android.R.string.ok, null).create();
             break;
         case DialogID.DLG_SDCARD_FULL:
             dialog = new AlertDialog.Builder(this).setTitle(R.string.error)
@@ -258,18 +252,24 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
         SDCardReceiver receiver = SDCardReceiver.getInstance();
         receiver.registerOnSDCardChangedListener(mSDCardListener);
     }
+    
+    protected void  setTitle(String title) {
+		mTitleView.setText(title);
+	}
+    
+    protected void showButtonBar(boolean show) {
+		mBackupRestoreButtonBar.setVisibility(show ? View.VISIBLE : View.GONE);
+	}
 
     private void initHandler() {
         mHandler = new Handler();
     }
 
     private void initButton() {
-//    	mDivider  = findViewById(R.id.restore_divider);
-//    	mDivider.setBackground(getListView().getDivider());
+    	mBackupRestoreButtonBar = (LinearLayout) findViewById(R.id.ll_backup);
         mBtRestore = (Button) findViewById(R.id.btn_backup);
         mBtRestore.setText("恢复");
         mBtRestore.setOnClickListener(new Button.OnClickListener() {
-
             public void onClick(View v) {
                 if (getCheckedCount() > 0) {
                 	if(Utils.getWorkingInfo()>0){
@@ -280,42 +280,44 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
                 }
             }
         });
-//        mChboxSelect = (CheckBox) findViewById(R.id.restore_checkbox_select);
-//        mChboxSelect.setVisibility(View.INVISIBLE);
-//        mChboxSelect.setOnClickListener(new CheckBox.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                if (isAllChecked(true)) {
-//                    setAllChecked(false);
-//                } else {
-//                    setAllChecked(true);
-//                }
-//            }
-//        });
+        
+        //select all
+        mSelectAllBtn = (Button) findViewById(R.id.btn_selectall);
+        mSelectAllBtn.setText("全部取消");
+        mSelectAllBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (isAllChecked(true)) {
+					setAllChecked(false);
+					mSelectAllBtn.setText("全部选中");
+				} else {
+					setAllChecked(true);
+					mSelectAllBtn.setText("全部取消");
+				}
+			}
+		});
     }
 
     protected void updateButtonState() {
         if (getCount() == 0) {
             setButtonsEnable(false);
-//            mChboxSelect.setVisibility(View.GONE);
             return;
         }
-//        mDivider.setVisibility(View.VISIBLE);
         if (isAllChecked(false)) {
             mBtRestore.setEnabled(false);
-//            mChboxSelect.setChecked(false);
+            mSelectAllBtn.setText("全部选中");
         } else {
             mBtRestore.setEnabled(true);
-//            mChboxSelect.setChecked(isAllChecked(true));
-//            mChboxSelect.setVisibility(View.VISIBLE);
-//            mChboxSelect.setText(getApplication().getResources().getString(R.string.selectall));
+            mSelectAllBtn.setText("全部取消");
         }
     }
 
     protected void setButtonsEnable(boolean enabled) {
-        if (mChboxSelect != null) {
-        	mChboxSelect.setEnabled(enabled);
+    	if (mSelectAllBtn != null) {
+        	mSelectAllBtn.setEnabled(enabled);
         }
+
         if (mBtRestore != null) {
             mBtRestore.setEnabled(enabled);
         }
@@ -509,4 +511,19 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
             }
         }
     }
+    
+    protected void finishWithAnimation() {
+		finish();
+		overridePendingTransition(0, R.anim.activity_right_out);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+				finish();
+				overridePendingTransition(0, R.anim.activity_right_out);
+				return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 }

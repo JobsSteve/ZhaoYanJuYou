@@ -28,6 +28,8 @@
      <color name="result_fail">#33B5E5</color>
     <color name="result_success">#FF7F7F7F</color>
     
+    <color name="button_bar_bg">#46494D</color>
+    
     <drawable name="home_normal">#cccccc</drawable>
     <drawable name="home_pressed">#bbbbbb</drawable>
     

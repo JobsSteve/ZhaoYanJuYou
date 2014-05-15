@@ -50,7 +50,7 @@ public class AppBackupActivity extends AbstractBackupActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setProgressBarIndeterminateVisibility(false);
-        mTitleView.setText("本地应用备份");
+        showButtonBar(true);
         Log.d(TAG,  "onCreate");
     }
 
@@ -163,7 +163,7 @@ public class AppBackupActivity extends AbstractBackupActivity {
         int totalNum = mAdapter.getCount();
         int selectNum = this.getSelectedPackageNameList().size();
         sb.append("(" + selectNum + "/" + totalNum + ")");
-        this.setTitle(sb.toString());
+        setTitle(sb.toString());
     }
 
     @Override
@@ -317,7 +317,7 @@ public class AppBackupActivity extends AbstractBackupActivity {
             // show progress and set title as "updating"
             //setProgressBarIndeterminateVisibility(true);
             showLoadingContent(true);
-            setTitle(R.string.backup_app);
+            setTitle(getString(R.string.backup_app));
             setButtonsEnable(false);
         }
 

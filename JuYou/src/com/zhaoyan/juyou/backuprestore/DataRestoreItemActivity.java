@@ -31,7 +31,7 @@ import com.zhaoyan.juyou.backuprestore.RestoreService.RestoreProgress;
 import com.zhaoyan.juyou.backuprestore.ResultDialog.ResultEntity;
 
 public class DataRestoreItemActivity extends AbstractRestoreActivity {
-	private String TAG = "PersonalDataRestoreActivity";
+	private String TAG = "DataRestoreItemActivity";
 	private PersonalDataRestoreAdapter mRestoreAdapter;
 	private File mFile;
 	private boolean mIsDataInitialed;
@@ -52,10 +52,11 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 		}
 		mFile = new File(intent.getStringExtra(Constants.FILENAME));
 		if (!mFile.exists()) {
-			Toast.makeText(this, "file don't exist", Toast.LENGTH_LONG);
+			Toast.makeText(this, "file don't exist", Toast.LENGTH_LONG).show();
 			finish();
 			return;
 		}
+		showButtonBar(true);
 		Log.i(TAG, "onCreate");
 		init();
 	}
@@ -66,7 +67,7 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 		Log.i(TAG, "onResume");
 		if (!mFile.exists()) {
 			Toast.makeText(this, R.string.file_no_exist_and_update,
-					Toast.LENGTH_LONG);
+					Toast.LENGTH_LONG).show();
 			finish();
 			return;
 		}
@@ -91,12 +92,19 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
+		Log.e(TAG, "=======================");
 		mIsStoped = true;
+		if (mRestoreService != null) {
+			mRestoreService.cancelRestore();
+		} else {
+			Log.e(TAG, "NULLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+		}
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		Log.e(TAG, "=======================");
 		mHandler = null;
 	}
 
@@ -106,13 +114,13 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 	}
 
 	public void updateTitle() {
-		mTitleView.setText("本地数据恢复");
 		StringBuilder sb = new StringBuilder();
 		sb.append(getString(R.string.backup_personal_data));
 		int totalCount = getCount();
 		int selectCount = getCheckedCount();
 		sb.append("(" + selectCount + "/" + totalCount + ")");
-		this.setTitle(sb.toString());
+		Log.d(TAG, "updateTitle:" + sb.toString());
+		setTitle(sb.toString());
 	}
 
 	private void initActionBar() {
@@ -129,6 +137,7 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 	@Override
 	public void onCheckedCountChanged() {
 		super.onCheckedCountChanged();
+		Log.d(TAG, "onCheckedCountChanged");
 		updateTitle();
 	}
 
@@ -422,7 +431,6 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 			showLoadingContent(true);
 			initActionBar();
 			// showUpdatingTitle();
-
 		}
 
 		@Override

@@ -16,7 +16,6 @@ public class PlutoBackupHandler implements BackupsHandler {
 
 	@Override
 	public boolean init(Context context) {
-		// TODO Auto-generated method stub
 		String externalStoragePath = SDCardUtils.getExternalStoragePath(context);
 		if(externalStoragePath == null){
 			return false;

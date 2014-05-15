@@ -183,11 +183,13 @@ public class RestoreService extends Service implements ProgressReporter, OnResto
         }
 
         public void cancelRestore() {
+        	 Log.d(TAG,  "cancelRestore");
             moveToState(State.CANCELLING);
             if (mRestoreEngine != null) {
                 mRestoreEngine.cancel();
-            }
-            Log.d(TAG,  "cancelRestore");
+            } else {
+				Log.e(TAG, "NNNNNNNNNNNNNNNNNNNNNNN");
+			}
         }
 
         public void reset() {

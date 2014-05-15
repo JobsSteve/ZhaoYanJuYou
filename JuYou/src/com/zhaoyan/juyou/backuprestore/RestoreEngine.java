@@ -58,24 +58,24 @@ public class RestoreEngine {
         return mIsPause;
     }
 
-    public void continueRestore() {/*
-        if (mIsPause) {
-            synchronized (mLock) {
-                mIsPause = false;
-                mLock.notify();
-            }
-        }
-    */}
+	public void continueRestore() {
+		if (mIsPause) {
+			synchronized (mLock) {
+				mIsPause = false;
+				mLock.notify();
+			}
+		}
+	}
 
-    public void cancel() {/*
-    	MyLogger.logE(CLASS_TAG, "cancel");
-        if (mComposerList != null && mComposerList.size() > 0) {
-            for (Composer composer : mComposerList) {
-                composer.setCancel(true);
-            }
-            continueRestore();
-        }
-    */}
+	public void cancel() {
+		Log.e(TAG, "cancel");
+		if (mComposerList != null && mComposerList.size() > 0) {
+			for (Composer composer : mComposerList) {
+				composer.setCancel(true);
+			}
+			continueRestore();
+		}
+	}
 
     public void setOnRestoreEndListner(OnRestoreDoneListner restoreEndListner) {
         mRestoreDoneListner = restoreEndListner;

@@ -1,13 +1,5 @@
 package com.zhaoyan.juyou.backuprestore;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentValues;
-import android.content.Context;
-import android.net.Uri;
-//import android.provider.Telephony.Sms;
-//import android.provider.Telephony.WapPush;
-import android.telephony.SmsMessage;
-import android.text.TextUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.backuprestore.Constants.ModulePath;
@@ -32,10 +29,6 @@ public class SmsRestoreComposer extends Composer {
     	//yuri
     	Uri.parse("content://sms/inbox"),
     	Uri.parse("content://sms/sent"),
-//        Sms.Inbox.CONTENT_URI,
-//        Sms.Sent.CONTENT_URI
-        //Sms.Draft.CONTENT_URI,
-        //Sms.Outbox.CONTENT_URI
     };
     
     private static final Uri mSmsUri = Uri.parse("content://sms/");
@@ -43,7 +36,7 @@ public class SmsRestoreComposer extends Composer {
     private long mTime;
     private ArrayList<ContentProviderOperation> mOperationList;
 //    private ArrayList<SmsRestoreEntry> mVmessageList;
-    private ArrayList<SmsItem> mVmessageList2;
+    private ArrayList<SmsItem> mVmessageList;
 
     public SmsRestoreComposer(Context context) {
         super(context);
@@ -55,8 +48,8 @@ public class SmsRestoreComposer extends Composer {
 
     public int getCount() {
         int count = 0;
-        if (mVmessageList2 != null) {
-            count = mVmessageList2.size();
+        if (mVmessageList != null) {
+            count = mVmessageList.size();
         }
 
         Log.d(TAG, "getCount():" + count);
@@ -71,22 +64,22 @@ public class SmsRestoreComposer extends Composer {
         try {
             mTime = System.currentTimeMillis();
 //            mVmessageList = getSmsRestoreEntry();
-            mVmessageList2 = getSmsRestoreItem();
+            mVmessageList = getSmsRestoreItem();
             result = true;
         } catch (Exception e) {
             Log.d(TAG, "init failed");
         }
 
         Log.d(TAG, "end init:" + System.currentTimeMillis());
-        Log.d(TAG, "init():" + result + ",count:" + mVmessageList2.size());
+        Log.d(TAG, "init():" + result + ",count:" + mVmessageList.size());
         return result;
     }
 
     @Override
     public boolean isAfterLast() {
         boolean result = true;
-        if (mVmessageList2 != null) {
-            result = (mIndex >= mVmessageList2.size()) ? true : false;
+        if (mVmessageList != null) {
+            result = (mIndex >= mVmessageList.size()) ? true : false;
         }
 
         Log.d(TAG, "isAfterLast():" + result);
@@ -97,7 +90,7 @@ public class SmsRestoreComposer extends Composer {
     public boolean implementComposeOneEntity() {
         boolean result = false;
 //        SmsRestoreEntry vMsgFileEntry = mVmessageList.get(mIndex++);
-        SmsItem item = mVmessageList2.get(mIndex++);
+        SmsItem item = mVmessageList.get(mIndex++);
 
         if (item != null) {
             ContentValues values = parsePdu(item);
@@ -261,8 +254,8 @@ public class SmsRestoreComposer extends Composer {
     @Override
     public void onEnd() {
         super.onEnd();
-        if (mVmessageList2 != null) {
-        	mVmessageList2.clear();
+        if (mVmessageList != null) {
+        	mVmessageList.clear();
         }
 
         if (mOperationList != null) {
@@ -513,6 +506,9 @@ public class SmsRestoreComposer extends Composer {
             boolean appendbody = false;
             SmsItem smsentry = null;
             while ((line = buffreader.readLine()) != null) {
+            	if (isCancel()) {
+					break;
+				}
                 if (line.startsWith(BEGIN_VMSG) && !appendbody) {
                     smsentry = new SmsItem();
                     Log.d(TAG,"startsWith(BEGIN_VMSG)");
@@ -557,17 +553,9 @@ public class SmsRestoreComposer extends Composer {
 					smsentry.setErrorCode(line.substring(ERROR_CODE.length()));
 					Log.d(TAG,"startsWith(ERROR_CODE)");
 				}
-                //                if (line.startsWith(XTYPE)) {
-                //                    smsentry.set(line.substring(XTYPE.length()));
-                //                    Log.d(TAG, "startsWith(XTYPE)  line.substring(XTYPE.length()) ="+line.substring(XTYPE.length()));
-                //                }
                 if (line.startsWith(DATE) && !appendbody) {
                     long result = sd.parse(line.substring(DATE.length())).getTime();
                     smsentry.setDate(String.valueOf(result));
-                    Log.d(TAG, "result.date:" + result);
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            		String dateString = format.format(new Date(result));
-            		Log.d(TAG, "result.formatedate:" + dateString);
                     Log.d(TAG,"startsWith(DATE)");
                 }
 

@@ -23,7 +23,6 @@ import com.zhaoyan.juyou.backuprestore.Constants.MessageID;
 import com.zhaoyan.juyou.backuprestore.Constants.ModulePath;
 
 public class BackupFileScanner {
-
     private static final String TAG = "BackupFileScanner";
     private Handler mHandler;
     private Context mContext;
@@ -210,7 +209,6 @@ public class BackupFileScanner {
 		 * @return true is reset
 		 */
 		private boolean isBootReset(boolean insert) {
-			// TODO Auto-generated method stub
 			SharedPreferences sp = mContext.getSharedPreferences("boot_reset_flag", Context.MODE_PRIVATE);
 			if(insert){
 				sp.edit().putBoolean("boot_reset", false).commit();
@@ -222,7 +220,6 @@ public class BackupFileScanner {
 		}
 
 		private void addMD5toPreference(List<String> newDetectList) {
-			// TODO Auto-generated method stub
 			SharedPreferences preferences = mContext.getSharedPreferences("md5_info", Context.MODE_PRIVATE);;
 			Editor editor = preferences.edit();
 			for(String md5 : newDetectList){
@@ -232,7 +229,6 @@ public class BackupFileScanner {
 		}
 
 		private String makeOneBackupHistory(List<File> result)  throws IOException{
-			// TODO Auto-generated method stub
 			File newestFile = FileUtils.getNewestFile(result);
 			if(newestFile==null){
 				return null;
@@ -350,24 +346,9 @@ public class BackupFileScanner {
         
 		private HashMap<String, List<BackupFilePreview>> getDataTransferBackups() {
 			File[] files = scanPersonalBackupFiles();
-			Log.d(TAG, "getDataTransferBackups.filesize=" + files.length);
             HashMap<String, List<BackupFilePreview>> result = new HashMap<String, List<BackupFilePreview>>();
             List<BackupFilePreview> backupItems = generateBackupFileItems(files);
-            Log.d(TAG, "getDataTransferBackups.backupItems=" + backupItems.size());
             result.put(Constants.SCAN_RESULT_KEY_PERSONAL_DATA, backupItems);
-            //delete by yuri,do not scan app
-            /*String path = SDCardUtils.getAppsBackupPath(mContext);
-            if(path == null || path.trim().equals("")){
-            	return null;
-            }
-            File appFolderFile = new File(path);
-            backupItems = new ArrayList<BackupFilePreview>();
-            BackupFilePreview appBackupFile = null;
-            if(appFolderFile.exists()){
-                appBackupFile = new BackupFilePreview(appFolderFile);
-                backupItems.add(appBackupFile);
-            }
-            result.put(Constants.SCAN_RESULT_KEY_APP_DATA, backupItems);*/
 			return result;
 		}
 
@@ -381,10 +362,6 @@ public class BackupFileScanner {
                     break;
                 }
                 BackupFilePreview backupFile = new BackupFilePreview(file);
-                Log.d(TAG, "====generateBackupFileItems.begin====");
-                Log.d(TAG, "backupFile.name=" + backupFile.getFileName());
-                Log.d(TAG, "backupFile.size=" + backupFile.getFileSize());
-                Log.d(TAG, "====generateBackupFileItems.end====");
                 if (backupFile != null) {
                 	if(backupFile.getFileSize()>1024*2){
                 		list.add(backupFile);

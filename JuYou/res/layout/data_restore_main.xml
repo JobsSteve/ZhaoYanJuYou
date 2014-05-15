@@ -22,7 +22,7 @@ android:layout_height="match_parent" >
         android:background="@color/button_bar_bg"
         android:orientation="horizontal"
         android:visibility="gone"
-        android:weightSum="2" >
+        android:weightSum="3" >
 
         <Button
             android:id="@+id/btn_backup"
@@ -31,7 +31,7 @@ android:layout_height="match_parent" >
             android:layout_height="54dp"
             android:layout_weight="1"
             android:background="@drawable/br_button_selector"
-            android:text="备份至存储卡"
+            android:text="删除"
             android:textColor="@drawable/btn_color" />
 
         <View
@@ -48,6 +48,22 @@ android:layout_height="match_parent" >
             android:layout_weight="1"
             android:background="@drawable/br_button_selector"
             android:text="全部选中"
+            android:textColor="@drawable/btn_color" />
+        
+        <View
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="#616467" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            style="@android:style/ButtonBar"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:background="@drawable/br_button_selector"
+            android:text="取消"
             android:textColor="@drawable/btn_color" />
     </LinearLayout>
 

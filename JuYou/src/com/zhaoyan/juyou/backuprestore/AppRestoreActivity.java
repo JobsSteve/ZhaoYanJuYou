@@ -45,22 +45,26 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,  "onCreate");
-        String appBackupPath = SDCardUtils.getAppsBackupPath(getApplicationContext());
-        mFile = new File(appBackupPath);
-        Log.d(TAG,  "onCreate: file is " + mFile);
-        mTitleView.setText("本地应用恢复");
-        updateTitle();
+        if (SDCardUtils.isSdCardAvailable(getApplicationContext())) {
+        	 String appBackupPath = SDCardUtils.getAppsBackupPath(getApplicationContext());
+             mFile = new File(appBackupPath);
+             Log.d(TAG,  "onCreate: file is " + mFile);
+             showButtonBar(true);
+             updateTitle();
+		} else {
+			setTitle(getString(R.string.app));
+		}
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (mFile.exists()) {
+        if (mFile != null && mFile.exists()) {
             mInitDataTask = new InitDataTask();
             mInitDataTask.execute();
         } else {
-            Toast.makeText(this, R.string.file_no_exist_and_update, Toast.LENGTH_SHORT).show();
-            finish();
+//            Toast.makeText(this, R.string.file_no_exist_and_update, Toast.LENGTH_SHORT).show();
+//            finish();
         }
     }
 
@@ -100,7 +104,7 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
         int totalNum = getCount();
         int selectNum = getCheckedCount();
         sb.append("(" + selectNum + "/" + totalNum + ")");
-        this.setTitle(sb.toString());
+       setTitle(sb.toString());
     }
 
     private void showRestoreResult(ArrayList<ResultEntity> list) {
