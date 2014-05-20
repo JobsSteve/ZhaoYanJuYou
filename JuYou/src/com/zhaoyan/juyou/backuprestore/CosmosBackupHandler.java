@@ -135,7 +135,7 @@ public class CosmosBackupHandler implements BackupsHandler {
                 String locked = "UNLOCKED";
                 try {
                     if(mWriter != null) {
-                        mWriter.write(SmsBackupComposer.combineVmsg(timeStamp,read,boxType,mSlotid,locked,smsAddress,body,seen));
+                        mWriter.write(SmsBackupComposer.combineVmsg(timeStamp,read,boxType,locked,smsAddress,body,seen));
                         mWriter.flush();
                     }
                 } catch (Exception e) {

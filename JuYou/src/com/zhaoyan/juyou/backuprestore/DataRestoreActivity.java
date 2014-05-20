@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import android.R.integer;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,12 +70,12 @@ public class DataRestoreActivity extends ListActivity implements
 		View titleView = findViewById(R.id.title);
 		View backView = titleView.findViewById(R.id.ll_title);
 		mTitleView = (TextView) titleView.findViewById(R.id.tv_custom_title);
-		mTitleView.setText("本地数据备份列表");
+		mTitleView.setText(R.string.local_backup_list);
 		backView.setOnClickListener(this);
 
 		mButtonBarView = findViewById(R.id.ll_backup);
 		mDeleteButton  = (Button) findViewById(R.id.btn_backup);
-		mDeleteButton.setText("删除");
+		mDeleteButton.setText(R.string.menu_delete);
 		mSelectAllBtn = (Button) findViewById(R.id.btn_selectall);
 		mCancelBtn = (Button) findViewById(R.id.btn_cancel);
 		mDeleteButton.setOnClickListener(this);
@@ -146,7 +146,7 @@ public class DataRestoreActivity extends ListActivity implements
 	
 	private void updateTitle(){
 		StringBuilder sb = new StringBuilder();
-        sb.append("本地数据备份列表");
+        sb.append(getString(R.string.local_backup_list));
         int totalNum = mAdapter.getCount();
         int selectNum = mAdapter.getCheckedCount();
         sb.append("(" + selectNum + "/" + totalNum + ")");
@@ -154,13 +154,13 @@ public class DataRestoreActivity extends ListActivity implements
         
         if (selectNum == 0) {
 			mDeleteButton.setEnabled(false);
-			mSelectAllBtn.setText("全部选中");
+			mSelectAllBtn.setText(R.string.select_all);
 		} else if (selectNum == totalNum) {
 			mDeleteButton.setEnabled(true);
-			mSelectAllBtn.setText("全部取消");
+			mSelectAllBtn.setText(R.string.unselect_all);
 		} else {
 			mDeleteButton.setEnabled(true);
-			mSelectAllBtn.setText("全部选中");
+			mSelectAllBtn.setText(R.string.select_all);
 		}
 	}
 
@@ -264,7 +264,7 @@ public class DataRestoreActivity extends ListActivity implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.ll_title:
-			finish();
+			finishWithAnimation();
 			break;
 		case R.id.btn_backup:
 			//delete
@@ -286,7 +286,7 @@ public class DataRestoreActivity extends ListActivity implements
 			mAdapter.checkedAll(false);
 			mAdapter.notifyDataSetChanged();
 			
-			mTitleView.setText("本地数据备份列表");
+			mTitleView.setText(R.string.local_backup_list);
 			
 			mButtonBarView.setVisibility(View.GONE);
 			mButtonBarView.clearAnimation();
@@ -479,5 +479,20 @@ public class DataRestoreActivity extends ListActivity implements
 		mButtonBarView.clearAnimation();
 		mButtonBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_up_in));
 		return true;
+	}
+	
+	private void finishWithAnimation() {
+		finish();
+		overridePendingTransition(0, R.anim.activity_right_out);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			finish();
+			overridePendingTransition(0, R.anim.activity_right_out);
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

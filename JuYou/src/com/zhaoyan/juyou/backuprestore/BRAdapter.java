@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 public class BRAdapter extends BaseAdapter {
 
-
 	private LayoutInflater mInflater = null;
 
 	public BRAdapter(Context context) {
@@ -57,53 +56,53 @@ public class BRAdapter extends BaseAdapter {
 		switch (position) {
 		case 0:
 			bShow = false;
-			headerTextView.setText("本地");
+			headerTextView.setText(R.string.local);
 			headerView.setEnabled(false);
 			break;
 		case 1:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_backupdata_sdcard);
-			textView.setText("备份数据");
+			textView.setText(R.string.backup_data);
 			break;
 		case 2:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_backupapps_sdcard);
-			textView.setText("备份应用");
+			textView.setText(R.string.backup_app);
 			break;
 		case 3:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_restoredata_sdcard);
-			textView.setText("恢复数据");
+			textView.setText(R.string.restore_data);
 			break;
 		case 4:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_restoreapps_sdcard);
-			textView.setText("恢复应用");
+			textView.setText(R.string.restore_app);
 			break;
 		case 5:
 			bShow = false;
-			headerTextView.setText("云端");
+			headerTextView.setText(R.string.clound);
 			headerView.setEnabled(false);
 			break;
 		case 6:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_backupdata_cloud);
-			textView.setText("备份数据");
+			textView.setText(R.string.backup_data);
 			break;
 		case 7:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_backupapps_cloud);
-			textView.setText("备份应用");
+			textView.setText(R.string.backup_app);
 			break;
 		case 8:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_restoredata_sdcard);
-			textView.setText("恢复数据");
+			textView.setText(R.string.restore_data);
 			break;
 		case 9:
 			bShow = true;
 			imageView.setImageResource(R.drawable.ic_restoreapps_sdcard);
-			textView.setText("恢复应用");
+			textView.setText(R.string.restore_app);
 			break;
 		default:
 			break;

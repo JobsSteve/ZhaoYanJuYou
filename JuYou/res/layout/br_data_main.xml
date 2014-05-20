@@ -3,8 +3,7 @@
 android:layout_width="match_parent"
 android:layout_height="match_parent" >
 
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/activity_background" >
@@ -47,7 +46,7 @@ android:layout_height="match_parent" >
             android:layout_height="54dp"
             android:layout_weight="1"
             android:background="@drawable/br_button_selector"
-            android:text="全部选中"
+            android:text="@string/select_all"
             android:textColor="@drawable/btn_color" />
     </LinearLayout>
 
@@ -59,12 +58,27 @@ android:layout_height="match_parent" >
         android:layout_below="@+id/title" >
     </ListView>
 
-    <ProgressBar
-        android:id="@+id/bar_loading"
-        style="?android:attr/progressBarStyleLarge"
+    <LinearLayout
+        android:id="@+id/ll_loading_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="invisible" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+         >
+
+        <ProgressBar
+            android:id="@+id/bar_loading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_loading" />
+    </LinearLayout>
+
 </RelativeLayout>
 </com.zhaoyan.common.view.RightSlideLayout>

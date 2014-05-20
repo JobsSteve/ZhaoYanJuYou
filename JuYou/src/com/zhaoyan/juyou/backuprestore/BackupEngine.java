@@ -159,16 +159,16 @@ public class BackupEngine {
                 case ModuleType.TYPE_CONTACT:
                     addComposer(new ContactBackupComposer(mContext));
                     break;
-//                case ModuleType.TYPE_SMS:
-//                    addComposer(new SmsBackupComposer(mContext));
-//                    break;
+                case ModuleType.TYPE_SMS:
+                    addComposer(new SmsBackupComposer(mContext));
+                    break;
 //
 //                case ModuleType.TYPE_MMS:
 //                    addComposer(new MmsBackupComposer(mContext));
 //                    break;
-                case ModuleType.TYPE_MESSAGE:
-                    addComposer(new MessageBackupComposer(mContext));
-                    break;
+//                case ModuleType.TYPE_MESSAGE:
+//                    addComposer(new MessageBackupComposer(mContext));
+//                    break;
                 case ModuleType.TYPE_PICTURE:
                     addComposer(new PictureBackupComposer(mContext));
                     break;

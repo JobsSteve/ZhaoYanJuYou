@@ -2,16 +2,14 @@ package com.zhaoyan.juyou.backuprestore;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import android.content.Context;
 import android.os.Environment;
-import android.os.storage.StorageManager;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.backuprestore.Constants.ModulePath;
+import com.zhaoyan.juyou.common.ZyStorageManager;
 
 public class SDCardUtils {
 	private static final String TAG = "SDCardUtils";
@@ -26,24 +24,9 @@ public class SDCardUtils {
 		Log.d(TAG, "getExternalStoragePath");
 		String[] paths = null;
 		String result = null;
-		StorageManager sm = (StorageManager) context
-				.getSystemService(Context.STORAGE_SERVICE);
-		try {
-			Method method = sm.getClass().getMethod("getVolumePaths");
-			paths = (String[]) method.invoke(sm);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		ZyStorageManager zyStorageManager = ZyStorageManager.getInstance(context);
+		paths = zyStorageManager.getVolumePaths();
 
 		if (paths == null) {
 			// do nothing
@@ -79,7 +62,6 @@ public class SDCardUtils {
 		Log.d(TAG, "getStoragePath: path is " + storagePath);
 		File file = new File(storagePath);
 		if (file != null) {
-
 			if (file.exists() && file.isDirectory()) {
 				File temp = new File(storagePath + File.separator
 						+ ".BackupRestoretemp");
@@ -106,9 +88,6 @@ public class SDCardUtils {
 			} else if (file.mkdir()) {
 				return storagePath;
 			}
-		} else {
-			Log.e(TAG, "getStoragePath: path is not ok");
-			return null;
 		}
 		return null;
 	}
@@ -133,14 +112,5 @@ public class SDCardUtils {
 
 	public static boolean isSdCardAvailable(Context context) {
 		return (getStoragePath(context) != null);
-	}
-
-	public static long getAvailableSize(String file) {
-		android.os.StatFs stat = new android.os.StatFs(file);
-		long count = stat.getAvailableBlocks();
-		long size = stat.getBlockSize();
-		long totalSize = count * size;
-		Log.v(TAG, "file remain size = " + totalSize);
-		return totalSize;
 	}
 }

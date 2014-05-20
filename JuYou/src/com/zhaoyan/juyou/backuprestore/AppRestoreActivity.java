@@ -193,18 +193,24 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
                 view = mInflater.inflate(mLayoutId, parent, false);
             }
             final AppSnippet item = mList.get(position);
+            
             String info = item.getFormatFileSize();
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append(info);
+            
             boolean isInstalled = item.isInstalled();
             if (isInstalled) {
-				info += "  已安装";
+            	sb.append(" " + getString(R.string.installed));
 			} 
+            
             ImageView imgView = (ImageView) view.findViewById(R.id.iv_item_icon);
             TextView titleView = (TextView) view.findViewById(R.id.tv_item_title);
             TextView infoView = (TextView) view.findViewById(R.id.tv_item_info);
             CheckBox checkbox = (CheckBox) view.findViewById(R.id.cb_item_check);
             imgView.setBackgroundDrawable(item.getIcon());
             titleView.setText(item.getName());
-            infoView.setText(info);
+            infoView.setText(sb.toString());
             checkbox.setChecked(isItemCheckedByPosition(position));
             return view;
         }
@@ -223,7 +229,6 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
             setButtonsEnable(true);
             notifyListItemCheckedChanged();
             mIsDataInitialed = true;
-//            setProgressBarIndeterminateVisibility(false);
             showLoadingContent(false);
             if (mRestoreStoreStatusListener == null) {
                 mRestoreStoreStatusListener = new AppRestoreStatusListener();
@@ -236,7 +241,6 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             setButtonsEnable(false);
-//            setProgressBarIndeterminateVisibility(true);
             showLoadingContent(true);
             setTitle(R.string.backup_app);
 
@@ -352,28 +356,6 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
 				installApp(file);
 			}
 		}
-//        startService();
-//        if (mRestoreService != null) {
-//            ArrayList<Integer> backupList = new ArrayList<Integer>();
-//            backupList.add(ModuleType.TYPE_APP);
-//            mRestoreService.setRestoreModelList(backupList);
-//            ArrayList<String> params = getSelectedApkNameList();
-//            mRestoreService.setRestoreItemParam(ModuleType.TYPE_APP, params);
-//            boolean ret = mRestoreService.startRestore(mFile.getAbsolutePath());
-//            if (ret) {
-//                String apkName = params.get(0);
-//                Log.d(TAG,  "first restore app name: " + apkName);
-//                String msg = formatProgressDialogMsg(getAppSnippetByApkName(apkName));
-//                setProgressDialogMessage(msg);
-//                showProgressDialog();
-//                setProgressDialogMax(params.size());
-//                setProgressDialogProgress(0);
-//                setProgressDialogMessage(msg);
-//            } else {
-//                showDialog(DialogID.DLG_SDCARD_FULL);
-//                stopService();
-//            }
-//        }
     }
 
     private class AppRestoreStatusListener extends NormalRestoreStatusListener {
@@ -430,7 +412,6 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	// TODO Auto-generated method stub
     	super.onActivityResult(requestCode, resultCode, data);
     	if (requestCode == 123) {
 		}

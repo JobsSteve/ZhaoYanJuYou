@@ -19,9 +19,6 @@ import android.net.Uri;
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.backuprestore.Constants.ModulePath;
 
-//import android.provider.Telephony;
-//import com.mediatek.common.featureoption.FeatureOption;
-
 public class SmsRestoreComposer extends Composer {
     private static final String TAG = "SmsRestoreComposer";
     private static final String COLUMN_NAME_IMPORT_SMS = "import_sms";
@@ -184,21 +181,19 @@ public class SmsRestoreComposer extends Composer {
 
         ContentValues values = new ContentValues();
         values.put(SmsField.ADDRESS, pdu.getAddress());
-        //       values.put(Sms.SUBJECT, null);
         values.put(SmsField.BODY, pdu.getBody());
-//        Log.d(TAG, "readorunread :"+pdu.getReadByte());
-        
-        values.put(SmsField.READ, pdu.getRead());
+        Log.d(TAG, "parsePdu:"+pdu.getReadByte());
+        values.put(SmsField.READ, (pdu.getReadByte().equals("UNREAD")) ? 0 : 1);
         values.put(SmsField.SEEN,pdu.getSeen());
-        values.put(SmsField.LOCKED,pdu.getLocked());
+        values.put(SmsField.LOCKED,(pdu.getLocked().equals("LOCKED") ? "1" : "0"));
         Log.d(TAG, "parsePdu.date:" + pdu.getDate());
         values.put(SmsField.DATE, pdu.getDate());
-        values.put(SmsField.TYPE, pdu.getType());
-        values.put(SmsField.PERSON, pdu.getPerson());
-        values.put(SmsField.PROTOCOL, pdu.getProtocol());
-        values.put(SmsField.STATUS, pdu.getStatus());
-        values.put(SmsField.REPLY_PATH_PRESENT, pdu.getReplyPathPresent());
-        values.put(SmsField.ERROR_CODE, pdu.getErrorcode());
+        values.put(SmsField.TYPE, (pdu.getBoxType().equals("INBOX") ? 1 : 2));
+//        values.put(SmsField.PERSON, pdu.getPerson());
+//        values.put(SmsField.PROTOCOL, pdu.getProtocol());
+//        values.put(SmsField.STATUS, pdu.getStatus());
+//        values.put(SmsField.REPLY_PATH_PRESENT, pdu.getReplyPathPresent());
+//        values.put(SmsField.ERROR_CODE, pdu.getErrorcode());
         //       values.put("import_sms", true);
 
         return values;
@@ -506,9 +501,9 @@ public class SmsRestoreComposer extends Composer {
             boolean appendbody = false;
             SmsItem smsentry = null;
             while ((line = buffreader.readLine()) != null) {
-            	if (isCancel()) {
-					break;
-				}
+//            	if (isCancel()) {
+//					break;
+//				}
                 if (line.startsWith(BEGIN_VMSG) && !appendbody) {
                     smsentry = new SmsItem();
                     Log.d(TAG,"startsWith(BEGIN_VMSG)");
@@ -518,41 +513,41 @@ public class SmsRestoreComposer extends Composer {
                     Log.d(TAG,"startsWith(FROMTEL)");
                 }
                 if (line.startsWith(XBOX) && !appendbody) {
-                    smsentry.setType(line.substring(XBOX.length()));
+                    smsentry.setBoxType(line.substring(XBOX.length()));
                     Log.d(TAG,"startsWith(XBOX)");
                 }
                 if (line.startsWith(XREAD) && !appendbody) {
-                    smsentry.setRead(line.substring(XREAD.length()));
+                    smsentry.setReadByte(line.substring(XREAD.length()));
                     Log.d(TAG,"startsWith(XREAD)");
                 }
                 if (line.startsWith(XSEEN) && !appendbody) {
                     smsentry.setSeen(line.substring(XSEEN.length()));
                     Log.d(TAG,"startsWith(XSEEN)");
                 }
-                if (line.startsWith(PERSON) && !appendbody) {
-                    smsentry.setPerson(line.substring(PERSON.length()));
-                    Log.d(TAG,"startsWith(PERSON)");
-                }
+//                if (line.startsWith(PERSON) && !appendbody) {
+//                    smsentry.setPerson(line.substring(PERSON.length()));
+//                    Log.d(TAG,"startsWith(PERSON)");
+//                }
                 if (line.startsWith(XLOCKED) && !appendbody) {
                     smsentry.setLocked(line.substring(XLOCKED.length()));
                     Log.d(TAG,"startsWith(XLOCKED)");
                 }
-                if (line.startsWith(PROTOCOL) && !appendbody) {
-					smsentry.setProtocol(line.substring(PROTOCOL.length()));
-					Log.d(TAG,"startsWith(PROTOCOL)");
-				}
-                if (line.startsWith(STATUS) && !appendbody) {
-					smsentry.setStatus(line.substring(STATUS.length()));
-					Log.d(TAG,"startsWith(STATUS)");
-				}
-                if (line.startsWith(REPLY_PATH_PRESENT) && !appendbody) {
-					smsentry.setReplyPathPresent(line.substring(REPLY_PATH_PRESENT.length()));
-					Log.d(TAG,"startsWith(REPLY_PATH_PRESENT)");
-				}
-                if (line.startsWith(ERROR_CODE) && !appendbody) {
-					smsentry.setErrorCode(line.substring(ERROR_CODE.length()));
-					Log.d(TAG,"startsWith(ERROR_CODE)");
-				}
+//                if (line.startsWith(PROTOCOL) && !appendbody) {
+//					smsentry.setProtocol(line.substring(PROTOCOL.length()));
+//					Log.d(TAG,"startsWith(PROTOCOL)");
+//				}
+//                if (line.startsWith(STATUS) && !appendbody) {
+//					smsentry.setStatus(line.substring(STATUS.length()));
+//					Log.d(TAG,"startsWith(STATUS)");
+//				}
+//                if (line.startsWith(REPLY_PATH_PRESENT) && !appendbody) {
+//					smsentry.setReplyPathPresent(line.substring(REPLY_PATH_PRESENT.length()));
+//					Log.d(TAG,"startsWith(REPLY_PATH_PRESENT)");
+//				}
+//                if (line.startsWith(ERROR_CODE) && !appendbody) {
+//					smsentry.setErrorCode(line.substring(ERROR_CODE.length()));
+//					Log.d(TAG,"startsWith(ERROR_CODE)");
+//				}
                 if (line.startsWith(DATE) && !appendbody) {
                     long result = sd.parse(line.substring(DATE.length())).getTime();
                     smsentry.setDate(String.valueOf(result));

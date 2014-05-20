@@ -200,12 +200,12 @@ public class BackupFilePreview {
         if (files != null) {
             for (File file : files) {
                 String[] moduleFolders = new String[] { 
-                        ModulePath.FOLDER_CONTACT, ModulePath.FOLDER_MMS, ModulePath.FOLDER_MUSIC,
+                        ModulePath.FOLDER_CONTACT, ModulePath.FOLDER_MUSIC,
                         ModulePath.FOLDER_PICTURE, ModulePath.FOLDER_SMS};
 
                 int[] moduleTypes = new int[] { ModuleType.TYPE_CONTACT,
-                        ModuleType.TYPE_MESSAGE, ModuleType.TYPE_MUSIC, ModuleType.TYPE_PICTURE,
-                        ModuleType.TYPE_MESSAGE };
+                         ModuleType.TYPE_MUSIC, ModuleType.TYPE_PICTURE,
+                        ModuleType.TYPE_SMS };
 
                 if (file.isDirectory() && !FileUtils.isEmptyFolder(file)) {
                     String name = file.getName();
@@ -234,12 +234,13 @@ public class BackupFilePreview {
             composer = new ContactRestoreComposer(context);
             break;
 
-        case ModuleType.TYPE_CALENDAR:
-//            composer = new CalendarRestoreComposer(context);
-            break;
+//        case ModuleType.TYPE_CALENDAR:
+////            composer = new CalendarRestoreComposer(context);
+//            break;
 
-        case ModuleType.TYPE_MESSAGE:
-            composer = new MessageRestoreComposer(context);
+        case ModuleType.TYPE_SMS:
+//            composer = new MessageRestoreComposer(context);
+        	composer = new SmsRestoreComposer(context);
             break;
 
         case ModuleType.TYPE_MUSIC:

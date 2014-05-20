@@ -18,7 +18,6 @@ public class SmartPhoneBackupHandler implements BackupsHandler {
 
 	@Override
 	public boolean init(Context context) {
-		// TODO Auto-generated method stub
 		String externalStoragePath = SDCardUtils.getExternalStoragePath(context);
 		if(externalStoragePath == null){
 			return false;
@@ -29,7 +28,6 @@ public class SmartPhoneBackupHandler implements BackupsHandler {
 	}
 	@Override
 	public void onStart() {
-		// TODO Auto-generated method stub
 		Log.d(TAG, "onStart()");
 		File file = new File(mPath);
 		if(file.exists()&&file.isDirectory()&&file.canRead()){
@@ -41,7 +39,6 @@ public class SmartPhoneBackupHandler implements BackupsHandler {
 	}
 
 	private Collection<? extends File> filterFile(File[] files) {
-		// TODO Auto-generated method stub
 		ArrayList<File> resultList = new ArrayList<File>();
 		if (files == null || files.length == 0){
 			return resultList;
@@ -67,27 +64,23 @@ public class SmartPhoneBackupHandler implements BackupsHandler {
 
 	@Override
 	public void cancel() {
-		// TODO Auto-generated method stub
 		Log.d(TAG, "cancel()");
 		
 	}
 
 	@Override
 	public List<File> onEnd() {
-		// TODO Auto-generated method stub
 		Log.d(TAG, "onEnd()");
 		return result;
 	}
 
 	@Override
 	public String getBackupType() {
-		// TODO Auto-generated method stub
 		return Constants.BackupScanType.PLUTO;
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		result.clear();
 	}
 }

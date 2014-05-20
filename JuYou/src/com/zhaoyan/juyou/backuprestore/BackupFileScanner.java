@@ -20,7 +20,6 @@ import android.os.Message;
 
 import com.zhaoyan.common.util.Log;
 import com.zhaoyan.juyou.backuprestore.Constants.MessageID;
-import com.zhaoyan.juyou.backuprestore.Constants.ModulePath;
 
 public class BackupFileScanner {
     private static final String TAG = "BackupFileScanner";
@@ -245,15 +244,12 @@ public class BackupFileScanner {
 			}
 			destFile = FileUtils.createFile(path);			
 			File contactDestFile = FileUtils.createFile(path+File.separator+Constants.ModulePath.FOLDER_CONTACT);
-			File mmsDestFile = FileUtils.createFile(path+File.separator+Constants.ModulePath.FOLDER_MMS);
 			File smsDestFile = FileUtils.createFile(path+File.separator+Constants.ModulePath.FOLDER_SMS);
 			for(File file : result){
 				String name = file.getName();
 				if(name.endsWith(".vcf")){		//find it is a contact file
 					org.apache.commons.io.FileUtils.copyFileToDirectory(file,contactDestFile );
 					Log.d(TAG,  "makeOneBackupHistory <=====>file = " + file.getName()+ "TO: "+destFile.getName());
-				}else if(name.endsWith(".s")||name.endsWith(".m")){
-					org.apache.commons.io.FileUtils.copyFileToDirectory(file,mmsDestFile );
 				}else if(name.equals("sms.vmsg")){
 					org.apache.commons.io.FileUtils.copyFileToDirectory(file,smsDestFile );
 				}
@@ -265,26 +261,6 @@ public class BackupFileScanner {
 					continue;
 				}
 				FileUtils.deleteFileOrFolder(file);
-			}
-			//add MMS record xml file
-			if (mmsDestFile != null && mmsDestFile.isDirectory()
-					&& mmsDestFile.listFiles().length > 0){
-				MmsXmlComposer composer = new MmsXmlComposer();
-				composer.startCompose();
-				for(File file : mmsDestFile.listFiles()){
-					MmsXmlInfo record = new MmsXmlInfo();
-					record.setID(file.getName());
-					record.setIsRead("1");
-					record.setMsgBox(file.getName().endsWith(".m")?"1":"2");
-					record.setDate(""+file.lastModified());
-					record.setSize(""+file.length());
-					record.setSimId("0");
-					record.setIsLocked("0");
-					composer.addOneMmsRecord(record);
-				}
-				composer.endCompose();
-				String xmlInfoString = composer.getXmlInfo();
-				FileUtils.writeToFile(path+File.separator + ModulePath.FOLDER_MMS + File.separator + ModulePath.MMS_XML,xmlInfoString.getBytes());
 			}
 			
 			makeRootRecordXml(historySecond, path, destFile);
@@ -361,6 +337,12 @@ public class BackupFileScanner {
                 if (isCanceled) {
                     break;
                 }
+                
+                if (!file.isDirectory()) {
+                	//if is not directory,ingore
+					continue;
+				}
+                
                 BackupFilePreview backupFile = new BackupFilePreview(file);
                 if (backupFile != null) {
                 	if(backupFile.getFileSize()>1024*2){

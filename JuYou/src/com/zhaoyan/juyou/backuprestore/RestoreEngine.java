@@ -141,25 +141,25 @@ public class RestoreEngine {
                 addComposer(new ContactRestoreComposer(mContext));
                 break;
 
-            case ModuleType.TYPE_MESSAGE:
-                addComposer(new MessageRestoreComposer(mContext));
-                break;
+//            case ModuleType.TYPE_MESSAGE:
+//                addComposer(new MessageRestoreComposer(mContext));
+//                break;
 
             case ModuleType.TYPE_SMS:
                 addComposer(new SmsRestoreComposer(mContext));
                 break;
 
-            case ModuleType.TYPE_MMS:
-//                addComposer(new MmsRestoreComposer(mContext));
-                break;
+//            case ModuleType.TYPE_MMS:
+////                addComposer(new MmsRestoreComposer(mContext));
+//                break;
 
             case ModuleType.TYPE_PICTURE:
                 addComposer(new PictureRestoreComposer(mContext));
                 break;
 
-            case ModuleType.TYPE_CALENDAR:
-//                addComposer(new CalendarRestoreComposer(mContext));
-                break;
+//            case ModuleType.TYPE_CALENDAR:
+////                addComposer(new CalendarRestoreComposer(mContext));
+//                break;
 
             case ModuleType.TYPE_APP:
                 addComposer(new AppRestoreComposer(mContext));

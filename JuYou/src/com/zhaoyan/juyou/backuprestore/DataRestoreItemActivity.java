@@ -104,7 +104,6 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		Log.e(TAG, "=======================");
 		mHandler = null;
 	}
 
@@ -395,7 +394,7 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 		protected void onPostExecute(Long arg0) {
 			super.onPostExecute(arg0);
 			int types[] = new int[] { ModuleType.TYPE_CONTACT,
-					ModuleType.TYPE_MESSAGE, ModuleType.TYPE_PICTURE, ModuleType.TYPE_MUSIC };
+					ModuleType.TYPE_SMS, ModuleType.TYPE_PICTURE, ModuleType.TYPE_MUSIC };
 
 			ArrayList<PersonalItemData> list = new ArrayList<PersonalItemData>();
 			int count = 0;
@@ -427,7 +426,6 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			setButtonsEnable(false);
-			// setProgressBarIndeterminateVisibility(true);
 			showLoadingContent(true);
 			initActionBar();
 			// showUpdatingTitle();

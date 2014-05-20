@@ -26,7 +26,7 @@ public class PersonalItemData {
             ret = R.drawable.backup_contact;
             break;
 
-        case ModuleType.TYPE_MESSAGE:
+        case ModuleType.TYPE_SMS:
             ret = R.drawable.backup_sms;
             break;
 
@@ -49,7 +49,7 @@ public class PersonalItemData {
         case ModuleType.TYPE_CONTACT:
             ret = R.string.contact_module;
             break;
-        case ModuleType.TYPE_MESSAGE:
+        case ModuleType.TYPE_SMS:
             ret = R.string.message_sms;
             break;
         case ModuleType.TYPE_PICTURE:

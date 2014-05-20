@@ -378,17 +378,11 @@
 	<string name="backup">备份</string>
     <string name="restore">恢复</string>
     <string name="backuptosd">备份到存储卡</string>
-    <string name="selectall">全部选中</string>
-    <string name="unselectall">全部取消</string>
     <string name="contact_module">联系人</string>
-    <string name="message_module">消息</string>
     <string name="picture_module">图片</string>
     <string name="calllog_module">通话记录</string>
-    <string name="calendar_module">日历</string>
     <string name="app_module">应用</string>
     <string name="music_module">音乐</string>
-    <string name="notebook_module">记事本</string>
-    <string name="bookmark_module">书签</string>
     <string name="backuping">备份中</string>
     <string name="restoring">恢复中</string>
     <string name="warning">警告</string>
@@ -436,7 +430,6 @@
     <string name="notification_restore_title">恢复中</string>
     <string name="restored_flag">已恢复</string>
     <string name="message_sms">短信</string>
-    <string name="message_mms">彩信</string>
     <string name="activity_loading">正在载入\u2026</string>
     <string name="sdcard_busy_message">您的SD卡正忙。</string>
     <string name="backup_running_toast">在备份时无法恢复数据。</string>
@@ -447,5 +440,11 @@
     <string name="notification_restore_failed">恢复失败</string>
     <string name="backup_confirm_overwrite_notice">目录已经存在，要覆盖吗？</string>
     <string name="state_running">在备份/恢复过程中不能备份/恢复。</string>
+    <string name="installed">已安装</string>
+    <string name="local_backup_list">本地数据备份列表</string>
+    <string name="local">本地</string>
+    <string name="clound">云端</string>
+    <string name="restore_data">恢复数据</string>
+    <string name="restore_app">恢复应用</string>
 
 </resources>

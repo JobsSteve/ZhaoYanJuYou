@@ -23,9 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhaoyan.common.util.Log;
@@ -38,18 +36,15 @@ import com.zhaoyan.juyou.backuprestore.Constants.DialogID;
 import com.zhaoyan.juyou.backuprestore.Constants.MessageID;
 import com.zhaoyan.juyou.backuprestore.Constants.State;
 import com.zhaoyan.juyou.backuprestore.ResultDialog.ResultEntity;
+import com.zhaoyan.juyou.common.ZyStorageManager;
 
 public abstract class AbstractBackupActivity extends CheckedListActivity implements
         OnCheckedCountChangedListener {
-
     private String TAG = "AbstractBackupActivity";
-    //test
     protected BaseAdapter mAdapter;
     private LinearLayout mBackupRestoreButtonBar;
     private Button mButtonBackup;
     private Button mSelectAllBtn;
-    private CheckBox mCheckBoxSelect;
-    private View mDivider ;
     protected ProgressDialog mProgressDialog;
     protected ProgressDialog mCancelDlg;
     protected Handler mHandler;
@@ -126,11 +121,8 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
     }
     
     LinearLayout loadingContent = null;
-    ProgressBar mLoadingBar = null;
     private void initLoadingView() {
-		// TODO Auto-generated method stub
-//    	loadingContent =  (LinearLayout) findViewById(R.id.loading_container);
-    	mLoadingBar =(ProgressBar) findViewById(R.id.bar_loading);
+    	loadingContent =  (LinearLayout) findViewById(R.id.ll_loading_content);
 	}
     
     protected void setTitle(String title){
@@ -142,7 +134,7 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
 	}
 		
 	protected void showLoadingContent(boolean show){
-		findViewById(R.id.bar_loading).setVisibility(show?View.VISIBLE:View.GONE);
+		loadingContent.setVisibility(show?View.VISIBLE:View.GONE);
 		getListView().setVisibility(!show?View.VISIBLE:View.GONE);
     }
 
@@ -203,7 +195,7 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
                     }
                 });
             }
-        } else if (SDCardUtils.getAvailableSize(path) <= SDCardUtils.MINIMUM_SIZE) {
+        } else if (ZyStorageManager.getAvailableBlockSize(path) <= SDCardUtils.MINIMUM_SIZE) {
             // no space
             Log.d(TAG, "SDCard is full");
             ret = true;
@@ -253,18 +245,16 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
         
         //select all
         mSelectAllBtn = (Button) findViewById(R.id.btn_selectall);
-        mSelectAllBtn.setText("全部取消");
+        mSelectAllBtn.setText(R.string.unselect_all);
         mSelectAllBtn.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if (isAllChecked(true)) {
 					setAllChecked(false);
-					mSelectAllBtn.setText("全部选中");
+					mSelectAllBtn.setText(R.string.select_all);
 				} else {
 					setAllChecked(true);
-					mSelectAllBtn.setText("全部取消");
+					mSelectAllBtn.setText(R.string.unselect_all);
 				}
 			}
 		});
@@ -283,10 +273,10 @@ public abstract class AbstractBackupActivity extends CheckedListActivity impleme
     protected void updateButtonState() {
         if (isAllChecked(false)) {
             mButtonBackup.setEnabled(false);
-            mSelectAllBtn.setText("全部选中");
+            mSelectAllBtn.setText(R.string.select_all);
         } else {
             mButtonBackup.setEnabled(true);
-            mSelectAllBtn.setText("全部取消");
+            mSelectAllBtn.setText(R.string.unselect_all);
         }
     }
 

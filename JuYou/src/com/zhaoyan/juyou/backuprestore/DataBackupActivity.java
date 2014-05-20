@@ -34,6 +34,7 @@ import com.zhaoyan.juyou.backuprestore.BackupService.OnBackupStatusListener;
 import com.zhaoyan.juyou.backuprestore.Constants.ContactType;
 import com.zhaoyan.juyou.backuprestore.Constants.DialogID;
 import com.zhaoyan.juyou.backuprestore.ResultDialog.ResultEntity;
+import com.zhaoyan.juyou.common.ZyStorageManager;
 
 public class DataBackupActivity extends AbstractBackupActivity {
 	private static final String TAG = "DataBackupActivity";
@@ -86,31 +87,25 @@ public class DataBackupActivity extends AbstractBackupActivity {
         setTitle(sb.toString());
     }
 
-	List<String> messageEnable = new ArrayList<String>();
 
 	private class InitPersonalDataTask extends AsyncTask<Void, Void, Long> {
-		private static final String TASK_TAG = "InitPersonalDataTask";
 		ArrayList<PersonalItemData> mBackupDataList;
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			Log.d(TAG, TASK_TAG + "---onPreExecute");
-			// show progress and set title as "updating"
-			// setProgressBarIndeterminateVisibility(true);
+			Log.d(TAG, "onPreExecute");
 			showLoadingContent(true);
-			setTitle("备份数据");
 			setButtonsEnable(false);
 		}
 
 		@Override
 		protected void onPostExecute(Long arg0) {
-			Log.d(TAG, TASK_TAG + "---onPostExecute");
+			Log.d(TAG, "onPostExecute");
 			showLoadingContent(false);
 			setButtonsEnable(true);
 			updateData(mBackupDataList);
 			setOnBackupStatusListener(mBackupListener);
-			// setProgressBarIndeterminateVisibility(false);
 			Log.d(TAG,
 					"---onPostExecute----getTitle"
 							+ DataBackupActivity.this.getTitle());
@@ -119,10 +114,9 @@ public class DataBackupActivity extends AbstractBackupActivity {
 
 		@Override
 		protected Long doInBackground(Void... arg0) {
-			messageEnable.clear();
 			mBackupDataList = new ArrayList<PersonalItemData>();
 			int types[] = new int[] { ModuleType.TYPE_CONTACT,
-					ModuleType.TYPE_MESSAGE, ModuleType.TYPE_PICTURE,
+					ModuleType.TYPE_SMS, ModuleType.TYPE_PICTURE,
 					ModuleType.TYPE_MUSIC };
 			int num = types.length;
 			boolean skipAppend = false;
@@ -136,19 +130,14 @@ public class DataBackupActivity extends AbstractBackupActivity {
 					count = getModulesCount(new ContactBackupComposer(
 							DataBackupActivity.this));
 					break;
-				case ModuleType.TYPE_MESSAGE:
+				case ModuleType.TYPE_SMS:
 					int countSMS = 0;
-					int countMMS = 0;
 					composer = new SmsBackupComposer(DataBackupActivity.this);
 					if (composer.init()) {
 						countSMS = composer.getCount();
 						composer.onEnd();
 					}
-					if (countSMS != 0) {
-						messageEnable.add("短信");
-					}
-					count = countSMS + countMMS;
-					Log.e(TAG, "countSMS = " + countSMS + "countMMS" + countMMS);
+					count = countSMS;
 					break;
 				case ModuleType.TYPE_PICTURE:
 					count = getModulesCount(new PictureBackupComposer(
@@ -485,10 +474,10 @@ public class DataBackupActivity extends AbstractBackupActivity {
 				mBackupService.setBackupItemParam(ModuleType.TYPE_CONTACT,
 						params);
 			}
-			if (list.contains(ModuleType.TYPE_MESSAGE)) {
+			if (list.contains(ModuleType.TYPE_SMS)) {
 				ArrayList<String> params = new ArrayList<String>();
 				params.add(Constants.ModulePath.NAME_SMS);
-				mBackupService.setBackupItemParam(ModuleType.TYPE_MESSAGE,
+				mBackupService.setBackupItemParam(ModuleType.TYPE_SMS,
 						params);
 			}
 			boolean ret = mBackupService.startBackup(folderName);
@@ -507,7 +496,7 @@ public class DataBackupActivity extends AbstractBackupActivity {
 							showDialog(DialogID.DLG_SDCARD_REMOVED);
 						}
 					});
-				} else if (SDCardUtils.getAvailableSize(path) <= SDCardUtils.MINIMUM_SIZE) {
+				} else if (ZyStorageManager.getAvailableBlockSize(path) <= SDCardUtils.MINIMUM_SIZE) {
 					// no space
 					Log.d(TAG, "SDCard is full");
 					ret = true;

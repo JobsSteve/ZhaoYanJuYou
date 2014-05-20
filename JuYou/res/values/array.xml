@@ -197,7 +197,7 @@
         <item>com.zhaoyan.juyou.activity.FileCategoryActivity$Compress</item>
         
         <item>com.zhaoyan.juyou.activity.FileCategoryActivity$APK</item>
-        <item>com.zhaoyan.juyou.activity.BackupRestoreActivity</item>
+        <item>com.zhaoyan.juyou.backuprestore.BackupResotreActivity</item>
         <item>com.zhaoyan.juyou.activity.HistoryActivity</item>
         
         <item>com.zhaoyan.juyou.activity.InviteActivity</item>

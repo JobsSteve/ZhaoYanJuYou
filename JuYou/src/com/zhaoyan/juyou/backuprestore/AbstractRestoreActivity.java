@@ -1,6 +1,8 @@
 package com.zhaoyan.juyou.backuprestore;
 
-import android.app.ActionBar;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -17,25 +19,23 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import com.zhaoyan.juyou.R;
+import com.zhaoyan.juyou.backuprestore.CheckedListActivity.OnCheckedCountChangedListener;
 import com.zhaoyan.juyou.backuprestore.Constants.DialogID;
 import com.zhaoyan.juyou.backuprestore.Constants.State;
 import com.zhaoyan.juyou.backuprestore.RestoreService.OnRestoreStatusListener;
 import com.zhaoyan.juyou.backuprestore.RestoreService.RestoreBinder;
 import com.zhaoyan.juyou.backuprestore.ResultDialog.ResultEntity;
 import com.zhaoyan.juyou.backuprestore.SDCardReceiver.OnSDCardStatusChangedListener;
-import com.zhaoyan.juyou.backuprestore.CheckedListActivity.OnCheckedCountChangedListener;
+import com.zhaoyan.juyou.common.ZyStorageManager;
 
 public abstract class AbstractRestoreActivity extends CheckedListActivity implements
         OnCheckedCountChangedListener { 
@@ -47,8 +47,6 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
     private LinearLayout mBackupRestoreButtonBar = null;
     private Button mBtRestore = null;
     private Button mSelectAllBtn = null;
-    private CheckBox mChboxSelect = null;
-    private View mDivider ;
     private ProgressDialog mProgressDialog;
     protected RestoreBinder mRestoreService;
     OnRestoreStatusListener mRestoreListener;
@@ -160,13 +158,11 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
     }
     LinearLayout loadingContent = null;
     private void initLoadingView() {
-		// TODO Auto-generated method stub
-//    	loadingContent =  (LinearLayout) findViewById(R.id.loading_container);
+    	loadingContent =  (LinearLayout) findViewById(R.id.ll_loading_content);
 	}
-    
 		
 	protected void showLoadingContent(boolean show){
-		findViewById(R.id.bar_loading).setVisibility(show?View.VISIBLE:View.GONE);
+		loadingContent.setVisibility(show?View.VISIBLE:View.GONE);
 		getListView().setVisibility(!show?View.VISIBLE:View.GONE);
     }
     protected Dialog onCreateDialog(int id) {
@@ -268,7 +264,7 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
     private void initButton() {
     	mBackupRestoreButtonBar = (LinearLayout) findViewById(R.id.ll_backup);
         mBtRestore = (Button) findViewById(R.id.btn_backup);
-        mBtRestore.setText("恢复");
+        mBtRestore.setText(R.string.restore);
         mBtRestore.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 if (getCheckedCount() > 0) {
@@ -283,17 +279,17 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
         
         //select all
         mSelectAllBtn = (Button) findViewById(R.id.btn_selectall);
-        mSelectAllBtn.setText("全部取消");
+        mSelectAllBtn.setText(R.string.unselect_all);
         mSelectAllBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				if (isAllChecked(true)) {
 					setAllChecked(false);
-					mSelectAllBtn.setText("全部选中");
+					mSelectAllBtn.setText(R.string.select_all);
 				} else {
 					setAllChecked(true);
-					mSelectAllBtn.setText("全部取消");
+					mSelectAllBtn.setText(R.string.unselect_all);
 				}
 			}
 		});
@@ -306,10 +302,10 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
         }
         if (isAllChecked(false)) {
             mBtRestore.setEnabled(false);
-            mSelectAllBtn.setText("全部选中");
+            mSelectAllBtn.setText(R.string.select_all);
         } else {
             mBtRestore.setEnabled(true);
-            mSelectAllBtn.setText("全部取消");
+            mSelectAllBtn.setText(R.string.unselect_all);
         }
     }
 
@@ -413,7 +409,7 @@ public abstract class AbstractRestoreActivity extends CheckedListActivity implem
                     }
                 });
             }
-        } else if (SDCardUtils.getAvailableSize(path) <= 512) {
+        } else if (ZyStorageManager.getAvailableBlockSize(path) <= 512) {
             // no space
             ret = true;
             if (mHandler != null) {

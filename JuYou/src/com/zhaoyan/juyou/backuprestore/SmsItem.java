@@ -1,18 +1,14 @@
 package com.zhaoyan.juyou.backuprestore;
 
 public class SmsItem implements Comparable<SmsItem> {
-	String address;  //�ռ���
+	String address;  //收件人
     String person;  //
-    String date;  //�շ�������
-    String protocol;  
-    String read;  //1���Ѷ���0��δ��
-    String status;  
-    String type;  //1���ռ��� 2��������
-    String reply_path_present;  
-    String body;  //��������
+    String date;  //收发件日期
+    String readByte;  //已读，未读
+    String boxType;  //1：收件箱 2：发件箱
+    String body;  //短信内容
     String locked;  //
-    String errorCode;  
-    String seen;//�Ѷ���δ��
+    String seen;//已读，未读
     String sc;
 	public String getAddress() {
 		return address;
@@ -32,35 +28,17 @@ public class SmsItem implements Comparable<SmsItem> {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public String getProtocol() {
-		return protocol;
+	public String getReadByte() {
+		return readByte == null ? "READ" : readByte;
 	}
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
+	public void setReadByte(String read) {
+		this.readByte = read;
 	}
-	public String getRead() {
-		return read;
+	public String getBoxType() {
+		return boxType;
 	}
-	public void setRead(String read) {
-		this.read = read;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getReplyPathPresent() {
-		return reply_path_present;
-	}
-	public void setReplyPathPresent(String reply_path_present) {
-		this.reply_path_present = reply_path_present;
+	public void setBoxType(String type) {
+		this.boxType = type;
 	}
 	public String getBody() {
 		return body;
@@ -74,14 +52,8 @@ public class SmsItem implements Comparable<SmsItem> {
 	public void setLocked(String locked) {
 		this.locked = locked;
 	}
-	public String getErrorcode() {
-		return errorCode;
-	}
-	public void setErrorCode(String error_code) {
-		this.errorCode = error_code;
-	}
 	public String getSeen() {
-		return seen;
+		return seen == null ? "1" : seen;
 	}
 	public void setSeen(String seen) {
 		this.seen = seen;

@@ -175,15 +175,6 @@ public class ContactBackupComposer extends Composer {
     	 Log.d(TAG, "getCondition.params:" + mParams);
          if(mParams != null) {
              List<String> conditionList = new ArrayList<String>();
-//             List<SIMInfo> simInfoList = SIMInfo.getInsertedSIMList(mContext);
-//             List<SimInfoRecord> simInfoList = SimInfoManager.getInsertedSimInfoList(mContext);
-//             if(simInfoList != null && simInfoList.size() > 0) {
-//                 for(SimInfoRecord simInfo : simInfoList){
-//                     if(mParams.contains(simInfo.mDisplayName)) {
-//                         conditionList.add(Long.toString(simInfo.mSimInfoId));
-//                     }
-//                 }
-//             }
 
              if(mParams.contains(ContactType.PHONE)) {
                  conditionList.add("-1");
@@ -192,10 +183,6 @@ public class ContactBackupComposer extends Composer {
              int len = conditionList.size();
              if(len > 0) {
                  StringBuilder condition = new StringBuilder();
-//                 condition.append(Contacts.INDICATE_PHONE_SIM + " =" + conditionList.get(0));
-//                 for(int i = 1; i < len; ++i) {
-//                     condition.append(" OR " + Contacts.INDICATE_PHONE_SIM + " =" + conditionList.get(i));
-//                 }
                  return condition.toString();
              }
          }

@@ -17,7 +17,6 @@ public class Constants {
     public static final String RESET_FLAG_FILE = "data/.backuprestore";
     
     public static final String KEY_SAVED_DATA = "data";
-    //public static final String SDCARD2 = "%/mnt/sdcard2/%";
 
     public static final String ANDROID = "Android ";
     public static final String DATE = "date";
@@ -57,13 +56,13 @@ public class Constants {
         public static final String FOLDER_CALENDAR = "calendar";
         public static final String FOLDER_TEMP = "temp";
         public static final String FOLDER_CONTACT = "Contact";
-        public static final String FOLDER_MMS = "mms";
+//        public static final String FOLDER_MMS = "mms";
         public static final String FOLDER_SMS = "sms";
         public static final String FOLDER_MUSIC = "music";
         public static final String FOLDER_PICTURE = "picture";
-        public static final String FOLDER_NOTEBOOK = "notebook";
-        public static final String FOLDER_SETTINGS = "settings";
-        public static final String FOLDER_BOOKMARK = "bookmark";
+//        public static final String FOLDER_NOTEBOOK = "notebook";
+//        public static final String FOLDER_SETTINGS = "settings";
+//        public static final String FOLDER_BOOKMARK = "bookmark";
 
         public static final String NAME_CALENDAR = "calendar.vcs";
         public static final String NAME_CONTACT = "contact.vcf";
@@ -139,10 +138,6 @@ public class Constants {
     public class ContactType{
         public static final String ALL = "all";
         public static final String PHONE = "phone";
-        public static final String SIM1 = "sim1";
-        public static final String SIM2 = "sim2";
-        public static final String SIM3 = "sim3";
-        public static final String SIM4 = "sim4";
     }
     
     public class BackupScanType{
