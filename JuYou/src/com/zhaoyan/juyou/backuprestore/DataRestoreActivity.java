@@ -288,13 +288,21 @@ public class DataRestoreActivity extends ListActivity implements
 			
 			mTitleView.setText(R.string.local_backup_list);
 			
-			mButtonBarView.setVisibility(View.GONE);
-			mButtonBarView.clearAnimation();
-			mButtonBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_down_out));
+			showButtonBar(false);
 			break;
 
 		default:
 			break;
+		}
+	}
+	
+	private void showButtonBar(boolean show){
+		mButtonBarView.setVisibility(show ? View.VISIBLE : View.GONE);
+		mButtonBarView.clearAnimation();
+		if (show) {
+			mButtonBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_up_in));
+		} else {
+			mButtonBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_down_out));
 		}
 	}
 	
@@ -331,6 +339,10 @@ public class DataRestoreActivity extends ListActivity implements
 		
 		@Override
 		protected void onPostExecute(Long result) {
+			showButtonBar(false);
+			mAdapter.checkedAll(false);
+			mDeleteActionMode = false;
+			mTitleView.setText(R.string.local_backup_list);
 			startScanFiles();
 			if (deleteDialog != null) {
 				deleteDialog.cancel();
@@ -475,9 +487,7 @@ public class DataRestoreActivity extends ListActivity implements
 		
 		updateTitle();
 		
-		mButtonBarView.setVisibility(View.VISIBLE);
-		mButtonBarView.clearAnimation();
-		mButtonBarView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_up_in));
+		showButtonBar(true);
 		return true;
 	}
 	

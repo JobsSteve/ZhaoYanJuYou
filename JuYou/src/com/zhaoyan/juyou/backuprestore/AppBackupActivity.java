@@ -159,7 +159,7 @@ public class AppBackupActivity extends AbstractBackupActivity {
 
     public void updateTitle() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getString(R.string.backup_app));
+        sb.append(getString(R.string.backup_app_title));
         int totalNum = mAdapter.getCount();
         int selectNum = this.getSelectedPackageNameList().size();
         sb.append("(" + selectNum + "/" + totalNum + ")");
@@ -317,7 +317,7 @@ public class AppBackupActivity extends AbstractBackupActivity {
             // show progress and set title as "updating"
             //setProgressBarIndeterminateVisibility(true);
             showLoadingContent(true);
-            setTitle(getString(R.string.backup_app));
+            setTitle(getString(R.string.backup_app_title));
             setButtonsEnable(false);
         }
 

@@ -100,7 +100,7 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
 
     protected void updateTitle() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getString(R.string.backup_app));
+        sb.append(getString(R.string.backup_app_title));
         int totalNum = getCount();
         int selectNum = getCheckedCount();
         sb.append("(" + selectNum + "/" + totalNum + ")");
@@ -242,7 +242,7 @@ public class AppRestoreActivity extends AbstractRestoreActivity {
             super.onPreExecute();
             setButtonsEnable(false);
             showLoadingContent(true);
-            setTitle(R.string.backup_app);
+            setTitle(R.string.backup_app_title);
 
         }
 
