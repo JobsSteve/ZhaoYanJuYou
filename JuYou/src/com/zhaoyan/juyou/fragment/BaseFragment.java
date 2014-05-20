@@ -87,6 +87,12 @@ public class BaseFragment extends Fragment implements OnMenuItemClickListener{
 		mMenuBarManager.refreshMenus(mActionMenu);
 	}
 	
+	public void showMenuBar(){
+		mMenuBarView.setVisibility(View.VISIBLE);
+		mMenuBarView.clearAnimation();
+		mMenuBarView.startAnimation(AnimationUtils.loadAnimation(mContext,R.anim.slide_up_in));
+	}
+	
 	public void destroyMenuBar(){
 		mMenuBarView.setVisibility(View.GONE);
 		mMenuBarView.clearAnimation();

@@ -6,13 +6,15 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 import com.zhaoyan.common.file.FileManager;
 import com.zhaoyan.common.file.ZyMediaScanner;
+import com.zhaoyan.common.util.Log;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class FileOperationHelper {
 	private static final String TAG = "FileOperationHelper";
@@ -264,13 +266,14 @@ public class FileOperationHelper {
 			@Override
 			public void run() {
 				//count file nums
-				int fileCounts = 0;
-				File file = null;
-				for(FileInfo f : mCurFilesList){
-					file = new File(f.filePath);
-					fileCounts += count(file);
-				}
-				mOperationListener.onRefreshFiles(null, fileCounts, -1, -1);
+				//yuri:20140520,显示拷贝文件个数为用户选择的文件个数，不去计算文件夹内有多少个文件
+//				int fileCounts = 0;
+//				File file = null;
+//				for(FileInfo f : mCurFilesList){
+//					file = new File(f.filePath);
+////					fileCounts += count(file);
+//				}
+				mOperationListener.onRefreshFiles(null, mCurFilesList.size(), -1, -1);
 				
 				boolean cut_to_child = false;
 				for (FileInfo f : mCurFilesList) {
@@ -307,28 +310,33 @@ public class FileOperationHelper {
         }
         
         String fileName = f.fileName;
-        File file = new File(f.filePath);
+        File srcFile = new File(f.filePath);
         String newPath = FileManager.makePath(dest, fileName);
         if (new File(newPath).exists()) {
 			fileName = FileInfoManager.autoRename(fileName);
 			newPath = FileManager.makePath(dest, fileName);
 		}
-        
+        File destFile = new File(newPath);
+//        Log.d(TAG, "MoveFile >>> srcFile:" + srcFile.getAbsolutePath());
+//        Log.d(TAG, "MoveFile >>> destFile:" + destFile.getAbsolutePath());
+        //yuri:20140520,fix a bug
+        //file.renameTo(),Both paths be on the same mount point. so we cannot use this function
+        //modify to use appache common-io.jar FileUtils.moveFile() instead of
         try {
-        	//when file.name equals newPath's name.it will return false
-        	boolean ret = file.renameTo(new File(newPath));
-        	Log.d(TAG, "MoveFile >>> ret:" + ret);
-        	if (ret) {
-        		pathsList.add(file.getAbsolutePath());
-        		pathsList.add(newPath);
+        	if (srcFile.isDirectory()) {
+				FileUtils.moveDirectory(srcFile, destFile);
+			} else {
+				FileUtils.moveFile(srcFile, destFile);
 			}
-            return ret;
+			pathsList.add(srcFile.getAbsolutePath());
+			pathsList.add(destFile.getAbsolutePath());
         } catch (Exception e){
         	e.printStackTrace();
         	Log.e(TAG, "Fail to move file," + e.toString());
+        	return false;
         } 
         
-        return false;
+        return true;
     }
 	
 	private void asnycExecute(Runnable r) {

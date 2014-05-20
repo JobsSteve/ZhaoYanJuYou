@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.drm.DrmStore.Action;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -299,7 +300,9 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.ll_home:
-			destroyMenuBar();
+			if (!mAdapter.isCopyMode()) {
+				destroyMenuBar();
+			}
 			goToHome();
 			break;
 		default:
@@ -330,6 +333,11 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 			
 			setAdapter(mAllLists);
 			browserTo(new File(mRootPath));
+			//yuri:20140502,解决两张存储卡之间不能拷贝文件的BUG
+			if (mAdapter.isMode(ActionMenu.MODE_COPY)
+					|| mAdapter.isMode(ActionMenu.MODE_CUT)) {
+				super.showMenuBar();
+			}
 		} else {
 			if (mAdapter.isMode(ActionMenu.MODE_EDIT)) {
 				mAdapter.setSelected(position);
@@ -806,6 +814,11 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 		updateUI(mHomeInfoList.size());
 		mListView.setAdapter(mHomeAdapter);
 		mHomeAdapter.notifyDataSetChanged();
+		
+		//yuri:20140520,解决两张存储卡之间不能拷贝文件的Bug
+		if (mAdapter.isCopyMode()) {
+			super.destroyMenuBar();
+		} 
 	}
 
 	/**
@@ -1114,7 +1127,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 	
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		if (null != mFileOperationHelper) {
 			mFileOperationHelper.cancelOperationListener();
@@ -1129,7 +1141,6 @@ public class FileBrowserFragment extends BaseFragment implements OnClickListener
 
 	@Override
 	public void onDeleteFinished() {
-		// TODO Auto-generated method stub
 		Log.d(TAG, "onDeleteFinished");
 		//when delete over,send message to update ui
 		Message message = mHandler.obtainMessage();

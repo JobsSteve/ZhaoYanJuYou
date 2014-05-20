@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.AvoidXfermode.Mode;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -191,6 +192,18 @@ public class FileInfoAdapter extends BaseAdapter {
 	 */
 	public boolean isMode(int mode) {
 		return mMode == mode;
+	}
+	
+	/**
+	 * This method checks that current mode equals copy or cut mode, or not
+	 * @return
+	 */
+	public boolean isCopyMode(){
+		if (mMode == ActionMenu.MODE_COPY
+				|| mMode == ActionMenu.MODE_CUT) {
+			return true;
+		}
+		return false;
 	}
 
 	public List<FileInfo> getList() {
