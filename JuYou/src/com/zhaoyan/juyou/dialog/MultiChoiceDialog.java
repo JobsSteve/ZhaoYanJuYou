@@ -42,6 +42,10 @@ public class MultiChoiceDialog extends ZyAlertDialog implements OnItemClickListe
 		mListView = (ListView) view.findViewById(R.id.lv_contextmenu);
 		mListView.setOnItemClickListener(this);
 		
+		if (mActionMenu == null) {
+			return;
+		}
+		
 		if (mActionMenu.getItem(0).getIcon() == 0) {
 			mShowIcon = false;
 		}else {

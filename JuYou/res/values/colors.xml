@@ -25,6 +25,11 @@
 	<color name="black">#000000</color>
     <color name="disable_color">#D9D9D9</color>
     
+     <color name="result_fail">#33B5E5</color>
+    <color name="result_success">#FF7F7F7F</color>
+    
+    <color name="button_bar_bg">#46494D</color>
+    
     <drawable name="home_normal">#cccccc</drawable>
     <drawable name="home_pressed">#bbbbbb</drawable>
     
@@ -39,6 +44,8 @@
     <drawable name="listselector_pressed">@color/holo_blue_light_transparent2</drawable>
     <drawable name="listselector_selected">@color/holo_blue_light</drawable>
     <drawable name="listselector_normal">@android:color/transparent</drawable>
+    <drawable name="whilte">@color/white</drawable>
+    <drawable name="gray">#eed1d1d1</drawable>
     
     <color name="header_normal">#ffe74c3c</color>
     <color name="header_pressed">#ffc0392b</color>

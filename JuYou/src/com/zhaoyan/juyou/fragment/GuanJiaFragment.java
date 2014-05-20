@@ -20,13 +20,14 @@ import com.zhaoyan.juyou.R;
 import com.zhaoyan.juyou.activity.AppActivity;
 import com.zhaoyan.juyou.activity.AudioActivity;
 import com.zhaoyan.juyou.activity.ConnectFriendsActivity;
-import com.zhaoyan.juyou.activity.FileCategoryActivity;
 import com.zhaoyan.juyou.activity.FileBrowserActivity;
+import com.zhaoyan.juyou.activity.FileCategoryActivity;
 import com.zhaoyan.juyou.activity.HistoryActivity;
 import com.zhaoyan.juyou.activity.ImageActivity;
-// import com.zhaoyan.juyou.activity.InviteActivity;
 import com.zhaoyan.juyou.activity.VideoActivity;
+import com.zhaoyan.juyou.backuprestore.BackupResotreActivity;
 import com.zhaoyan.juyou.wxapi.WXEntryActivity;
+// import com.zhaoyan.juyou.activity.InviteActivity;
 
 public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = "GuanJiaFragment";
@@ -130,6 +131,9 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 		
 		View connectView = view.findViewById(R.id.rl_guanjia_connect);
 		connectView.setOnClickListener(this);
+		
+		View backupRestoreView = view.findViewById(R.id.rl_guanjia_backuprestore);
+		backupRestoreView.setOnClickListener(this);
 	}
 
 	@Override
@@ -188,6 +192,10 @@ public class GuanJiaFragment extends BaseFragment implements OnClickListener {
 			
 		case R.id.rl_guanjia_connect:
 			openActivity(ConnectFriendsActivity.class);
+			break;
+			
+		case R.id.rl_guanjia_backuprestore:
+			openActivity(BackupResotreActivity.class);
 			break;
 
 		default:
