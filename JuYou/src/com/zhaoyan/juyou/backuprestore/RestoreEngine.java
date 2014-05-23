@@ -107,8 +107,8 @@ public class RestoreEngine {
         reset();
         if (path != null && list.size() > 0) {
             mRestoreFolder = path;
-            setupComposer(list);
             Utils.isRestoring = mIsRunning = true;
+            setupComposer(list);
             new RestoreThread().start();
         }
     }

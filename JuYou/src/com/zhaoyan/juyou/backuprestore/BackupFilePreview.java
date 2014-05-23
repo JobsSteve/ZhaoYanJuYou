@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import android.R.integer;
 import android.content.Context;
 
 import com.zhaoyan.common.util.Log;
@@ -153,7 +154,6 @@ public class BackupFilePreview {
     }
 
     private String formatString(String showNameString) {
-		// TODO Auto-generated method stub
     	if(showNameString!=null){
     		String yearString = showNameString.substring(0, 4);
     		String monthString = showNameString.substring(4,6);
@@ -234,13 +234,14 @@ public class BackupFilePreview {
             composer = new ContactRestoreComposer(context);
             break;
 
-//        case ModuleType.TYPE_CALENDAR:
-////            composer = new CalendarRestoreComposer(context);
-//            break;
-
         case ModuleType.TYPE_SMS:
-//            composer = new MessageRestoreComposer(context);
-        	composer = new SmsRestoreComposer(context);
+//        	composer = new SmsRestoreComposer(context);
+        	//sms special handler
+        	SmsRestoreComposer smsRestoreComposer = new SmsRestoreComposer(context);
+        	smsRestoreComposer.setParentFolderPath(mFolderName.getAbsolutePath());
+        	int count = smsRestoreComposer.getBackupSmsCount();
+        	mNumberMap.put(type, count);
+        	Log.v(TAG, "initNumByType: count = " + count);
             break;
 
         case ModuleType.TYPE_MUSIC:

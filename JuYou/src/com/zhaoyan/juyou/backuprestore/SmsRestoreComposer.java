@@ -488,6 +488,28 @@ public class SmsRestoreComposer extends Composer {
         return smsEntryList;
     }
     
+	public int getBackupSmsCount() {
+		int result = 0;
+		try {
+			File file = new File(mParentFolderPath + File.separator
+					+ ModulePath.FOLDER_SMS + File.separator
+					+ ModulePath.SMS_VMSG);
+			InputStream instream = new FileInputStream(file);
+			InputStreamReader inreader = new InputStreamReader(instream);
+			BufferedReader buffreader = new BufferedReader(inreader);
+			String line = buffreader.readLine();
+			if (line != null) {
+				result = Integer.parseInt(line);
+			} 
+			instream.close();
+		} catch (Exception e) {
+			Log.e(TAG, "getBackupSmsCount.ERROR:" + e.toString());
+			result = 0;
+		}
+		
+		return result;
+	}
+    
     public ArrayList<SmsItem> getSmsRestoreItem() {
         ArrayList<SmsItem> smsEntryList = new ArrayList<SmsItem>();
         SimpleDateFormat sd = new SimpleDateFormat("yyyy/MM/dd kk:mm:ss");
@@ -501,9 +523,6 @@ public class SmsRestoreComposer extends Composer {
             boolean appendbody = false;
             SmsItem smsentry = null;
             while ((line = buffreader.readLine()) != null) {
-//            	if (isCancel()) {
-//					break;
-//				}
                 if (line.startsWith(BEGIN_VMSG) && !appendbody) {
                     smsentry = new SmsItem();
                     Log.d(TAG,"startsWith(BEGIN_VMSG)");

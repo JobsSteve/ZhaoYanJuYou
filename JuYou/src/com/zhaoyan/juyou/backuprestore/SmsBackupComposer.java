@@ -221,6 +221,9 @@ public class SmsBackupComposer extends Composer {
 
             try {
                 mWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+                //在文件的开头记录已备份的短信的个数
+                mWriter.write(getCount() + "");
+                mWriter.write("\n");
             } catch (Exception e) {
                 Log.e(TAG, "new BufferedWriter failed");
             }

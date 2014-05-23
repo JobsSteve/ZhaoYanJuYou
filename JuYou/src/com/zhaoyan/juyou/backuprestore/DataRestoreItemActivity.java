@@ -92,13 +92,7 @@ public class DataRestoreItemActivity extends AbstractRestoreActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
-		Log.e(TAG, "=======================");
 		mIsStoped = true;
-		if (mRestoreService != null) {
-			mRestoreService.cancelRestore();
-		} else {
-			Log.e(TAG, "NULLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-		}
 	}
 
 	@Override

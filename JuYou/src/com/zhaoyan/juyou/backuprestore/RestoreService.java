@@ -54,6 +54,7 @@ public class RestoreService extends Service implements ProgressReporter, OnResto
     public boolean onUnbind(Intent intent) {
         super.onUnbind(intent);
         Log.i(TAG, "onUnbind");
+        Log.d(TAG, "mResotreENigne:" + mRestoreEngine);
         return true;
     }
 
@@ -75,9 +76,16 @@ public class RestoreService extends Service implements ProgressReporter, OnResto
     public void onDestroy() {
         super.onDestroy();
         stopForeground(true);
-        Log.i(TAG, "onDestroy");
+        Log.i(TAG, "onDestroy.mRestorEninge:" + mRestoreEngine);
+        if (mRestoreEngine != null) {
+			Log.e(TAG, mRestoreEngine.isRunning() + "," + mRestoreEngine.isPaused());
+		} else {
+			Log.d(TAG, "onDestroy.mResotrENigne is null");
+		}
+        
         if (mRestoreEngine != null && mRestoreEngine.isRunning()) {
             mRestoreEngine.setOnRestoreEndListner(null);
+            Log.e(TAG, "===========onDestroy.........=========");
             mRestoreEngine.cancel();
         }
     }
@@ -118,11 +126,13 @@ public class RestoreService extends Service implements ProgressReporter, OnResto
         }
         
         public boolean startRestore(String fileName) {
+        	Log.d(TAG, "startRestore");
         	startForeground(1,new Notification());
             if (mRestoreEngine == null) {
                 Log.e(TAG, "startRestore Error: engine is not initialed");
                 return false;
             }
+            Log.d(TAG, "startRestore,mResortEngine:" + mRestoreEngine);
             mRestoreEngine.setOnRestoreEndListner(RestoreService.this);
             mRestoreEngine.startRestore(fileName);
             moveToState(State.RUNNING);
